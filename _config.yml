@@ -9,14 +9,15 @@ baseurl: ""
 permalink: /:title/
 
 # Build settings
-markdown: kramdown
-theme: minimal-mistakes-jekyll  # <-- PHẢI SỬA DÒNG NÀY
+markdown: kradmdown
+theme: minimal-mistakes-jekyll
 
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
-  - jekyll-include-cache  # <-- PHẢI THÊM DÒNG NÀY
-  - jekyll-sitemap        # <-- PHẢI THÊM DÒNG NÀY
+  - jekyll-include-cache  # Đảm bảo bạn đã thêm dòng này
+  - jekyll-sitemap        # Đảm bảo bạn đã thêm dòng này
+  - minimal-mistakes-jekyll # <-- THÊM DÒNG NÀY ĐỂ SỬA LỖI SASS/IMPORT
 
 exclude:
   - Gemfile
