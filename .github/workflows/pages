@@ -25,24 +25,36 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2' 
-          # KHÔNG SỬ DỤNG bundler-cache: true
-      
-      # Bước 2: Cài đặt dependencies (gem) thủ công
-      # Thêm bước này để buộc cài đặt mới
-      - name: Install dependencies
-        run: bundle install
+          ruby-version: '3.2' # Giữ nguyên Ruby 3.2
 
-      # Bước 3: Cấu hình GitHub Pages
+      # Bước 2: Cache thư mục gem (thay cho bundler-cache)
+      - name: Cache Gem dependencies
+        uses: actions/cache@v4
+        with:
+          # Đường dẫn cache là thư mục vendor/bundle
+          path: vendor/bundle
+          # Key cache dựa trên file Gemfile.lock
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+
+      # Bước 3: Cấu hình Bundler và cài đặt dependencies
+      - name: Install dependencies
+        run: |
+          # Chỉ định cài gem vào thư mục vendor/bundle
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+
+      # Bước 4: Cấu hình GitHub Pages
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
       
-      # Bước 4: Build trang Jekyll
+      # Bước 5: Build trang Jekyll
       - name: Build with Jekyll
         run: bundle exec jekyll build --source ./ --destination ./_site --baseurl ${{ steps.pages.outputs.base_path }}
       
-      # Bước 5: Tải artifact lên
+      # Bước 6: Tải artifact lên
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
