@@ -35,15 +35,15 @@ jobs:
             ${{ runner.os }}-gems-
 
       # SỬA BƯỚC NÀY
-      - name: Install dependencies
-        run: |
-          bundle config path vendor/bundle
-          
-          # Bước 1: Cập nhật gem gây lỗi
-          bundle update kramdown-parser-gfm
-          
-          # Bước 2: Cài đặt các gem còn lại
-          bundle install --jobs 4 --retry 3
+- name: Install dependencies
+    run: |
+      bundle config path vendor/bundle
+
+      # Cập nhật TẤT CẢ các gem để giải quyết xung đột
+      bundle update
+
+      # Cài đặt
+      bundle install --jobs 4 --retry 3
 
       - name: Setup Pages
         id: pages
