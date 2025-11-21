@@ -10,14 +10,14 @@ permalink: /:title/
 
 # Build settings
 markdown: kramdown
-theme: minimal-mistakes-jekyll
+remote_theme: mmistakes/minimal-mistakes   # [QUAN TRỌNG] Đổi theme: thành remote_theme:
 
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
   - jekyll-include-cache
   - jekyll-sitemap
-  - minimal-mistakes-jekyll
+  - jekyll-remote-theme                  # [QUAN TRỌNG] Đổi plugin này
 
 exclude:
   - Gemfile
@@ -27,6 +27,7 @@ exclude:
   - README.md
   - .github/
   - admin/
-  - api/ # [BẮT BUỘC PHẢI CÓ DÒNG NÀY]
+  - api/
+
 include:
   - _pages
