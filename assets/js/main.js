@@ -28,5 +28,22 @@ document.addEventListener('DOMContentLoaded', () => {
         revealElements.forEach(el => {
             revealObserver.observe(el);
         });
+        // 3. Service Tabs Logic
+const tabButtons = document.querySelectorAll('.service-tab-button');
+const tabContents = document.querySelectorAll('.service-tab-content');
+
+if (tabButtons.length > 0) {
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Add active class
+            button.classList.add('active');
+            const tabId = button.getAttribute('data-tab');
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
     }
 });
