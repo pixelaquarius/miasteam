@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lasy Tết 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font viết tay hỗ trợ tiếng Việt -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Patrick Hand', cursive; /* Font chính dạng viết tay dễ đọc */
+            background-color: #fef3c7; /* Màu kem nền nã */
+            background-image: radial-gradient(#ef4444 1px, transparent 1px);
+            background-size: 20px 20px;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #451a03;
+        }
+
+        /* Style vẽ tay 2D */
+        .hand-drawn-box {
+            background: #fff;
+            border: 3px solid #451a03;
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+            box-shadow: 4px 4px 0px 0px #451a03;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .hand-drawn-btn {
+            border: 2px solid #451a03;
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+            box-shadow: 3px 3px 0px 0px #451a03;
+            transition: all 0.1s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .hand-drawn-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 5px 5px 0px 0px #451a03;
+        }
+        .hand-drawn-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px 0px #451a03;
+        }
+
+        .animate-pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* Hiệu ứng bay */
+        .floating-item {
+            position: absolute;
+            bottom: -50px;
+            animation: floatUp 20s linear infinite;
+            opacity: 0.8;
+            font-size: 1.8rem;
+            z-index: 0;
+            pointer-events: none;
+            filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.1));
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-110vh) rotate(360deg); }
+        }
+
+        /* Trang trí góc */
+        .corner-decor {
+            position: fixed;
+            z-index: 1;
+            pointer-events: none;
+            font-size: 5rem;
+            opacity: 0.9;
+        }
+        .top-left { top: -10px; left: -10px; transform: rotate(-45deg); }
+        .top-right { top: -10px; right: -10px; transform: rotate(45deg); }
+        
+        h1, .script-font { font-family: 'Dancing Script', cursive; }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4 relative min-h-screen">
+
+    <!-- Background Animation -->
+    <div id="background-animation" class="absolute inset-0 overflow-hidden w-full h-full pointer-events-none"></div>
+
+    <!-- Góc trang trí -->
+    <div class="corner-decor top-left">🏮</div>
+    <div class="corner-decor top-right">🌸</div>
+
+    <!-- Main Container -->
+    <div class="hand-drawn-box p-6 md:p-8 w-full max-w-2xl text-center relative z-10 flex flex-col items-center bg-white/95">
+        
+        <!-- Logo Text -->
+        <div class="mb-4 transform -rotate-2">
+            <h1 class="text-5xl md:text-6xl font-bold text-red-600 drop-shadow-sm border-4 border-yellow-400 rounded-full px-6 py-1 bg-yellow-100 inline-block rotate-3">
+                LASY
+            </h1>
+        </div>
+
+        <!-- Header -->
+        <h2 class="text-2xl md:text-4xl mb-2 text-red-700 font-bold script-font">
+            Đếm Ngược Tết 2026
+        </h2>
+        <p class="text-base md:text-lg mb-6 text-gray-600 font-bold">
+            Cùng nhau về đích ngày 17/02/2026
+        </p>
+
+        <!-- Countdown Timer -->
+        <div class="grid grid-cols-4 gap-2 md:gap-4 mb-8 w-full">
+            <!-- Days -->
+            <div class="bg-red-50 border-2 border-red-200 rounded-lg p-2 md:p-3">
+                <span id="days" class="block text-2xl md:text-4xl font-bold text-red-600 leading-none">00</span>
+                <span class="text-xs md:text-sm text-red-400 font-bold">Ngày</span>
+            </div>
+            <!-- Hours -->
+            <div class="bg-red-50 border-2 border-red-200 rounded-lg p-2 md:p-3">
+                <span id="hours" class="block text-2xl md:text-4xl font-bold text-red-600 leading-none">00</span>
+                <span class="text-xs md:text-sm text-red-400 font-bold">Giờ</span>
+            </div>
+            <!-- Minutes -->
+            <div class="bg-red-50 border-2 border-red-200 rounded-lg p-2 md:p-3">
+                <span id="minutes" class="block text-2xl md:text-4xl font-bold text-red-600 leading-none">00</span>
+                <span class="text-xs md:text-sm text-red-400 font-bold">Phút</span>
+            </div>
+            <!-- Seconds -->
+            <div class="bg-red-50 border-2 border-red-200 rounded-lg p-2 md:p-3">
+                <span id="seconds" class="block text-2xl md:text-4xl font-bold text-red-600 leading-none">00</span>
+                <span class="text-xs md:text-sm text-red-400 font-bold">Giây</span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3 w-full justify-center mb-6">
+            <button id="motivationBtn" class="hand-drawn-btn flex-1 py-3 px-4 bg-yellow-300 hover:bg-yellow-400 text-red-800 font-bold text-lg">
+                💪 Cày Cuốc
+            </button>
+            
+            <button id="fortuneBtn" class="hand-drawn-btn flex-1 py-3 px-4 bg-red-400 hover:bg-red-500 text-white font-bold text-lg">
+                🥠 Bóc Quẻ
+            </button>
+
+            <button id="quitBtn" class="hand-drawn-btn flex-1 py-3 px-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold text-lg">
+                🚪 Nghỉ Việc
+            </button>
+        </div>
+
+        <!-- Motivation Quote Area -->
+        <div id="messageArea" class="w-full text-lg font-bold hidden text-red-800 italic bg-yellow-50 p-4 border-2 border-dashed border-red-300 rounded-lg"></div>
+
+        <!-- Fortune Result Area -->
+        <div id="fortuneArea" class="hidden w-full mt-2">
+             <div class="bg-red-50 p-4 border-2 border-red-800 rounded-lg relative overflow-hidden transform rotate-1">
+                <div class="absolute top-0 right-0 opacity-20 text-4xl">🧧</div>
+                <h3 class="text-red-800 font-bold uppercase text-xs mb-1 tracking-widest border-b border-red-200 inline-block pb-1">Lời Phán</h3>
+                <p id="fortuneText" class="text-2xl script-font text-red-600 font-bold mb-1"></p>
+                <p id="fortuneSub" class="text-gray-700 text-base font-medium leading-tight"></p>
+             </div>
+        </div>
+    </div>
+
+    <!-- Ms Grace Modal (The Trap) -->
+    <div id="graceModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 hidden backdrop-blur-sm p-4">
+        <div class="hand-drawn-box bg-white text-gray-800 p-6 max-w-sm w-full text-center animate-pop border-4 border-red-600 relative">
+            
+            <div class="text-6xl mb-2 animate-bounce">😤⛓️</div>
+            <h2 class="text-3xl font-bold text-red-600 mb-2 script-font">Định Mệnh Rồi!</h2>
+            
+            <div class="bg-yellow-100 p-3 rounded border border-yellow-300 mb-4 transform -rotate-1">
+                <p class="text-lg font-bold text-gray-800">
+                    "Em định bỏ chị đi đâu?"<br>
+                    <span class="text-red-600 text-xl font-bold block mt-1">Ở lại với Ms Grace cả đời nhé! ❤️</span>
+                </p>
+            </div>
+            
+            <button id="closeModalBtn" class="hand-drawn-btn w-full py-3 bg-gray-800 text-white hover:bg-black font-bold text-lg">
+                Dạ em biết lỗi rồi 😭
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- Hiệu ứng Sản phẩm & Tết Bay (Mix) ---
+        // Thêm icon Tết: Lồng đèn, bao lì xì, hoa mai, pháo
+        const items = ['💄', '👠', '👜', '👗', '🧧', '🏮', '🌸', '🌼', '🍍', '💰', '📦', '🛒'];
+        const container = document.getElementById('background-animation');
+
+        function createFloatingItem() {
+            const el = document.createElement('div');
+            el.innerText = items[Math.floor(Math.random() * items.length)];
+            el.classList.add('floating-item');
+            el.style.left = Math.random() * 90 + 'vw'; // Tránh sát lề quá
+            el.style.animationDuration = (Math.random() * 10 + 15) + 's';
+            el.style.fontSize = (Math.random() * 1 + 1.5) + 'rem';
+            container.appendChild(el);
+            setTimeout(() => el.remove(), 25000);
+        }
+        setInterval(createFloatingItem, 1800);
+        // Tạo sẵn vài cái
+        for(let i=0; i<6; i++) createFloatingItem();
+
+        // --- Logic Đếm Ngược (Tết 2026: 17/02/2026) ---
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const fixedTarget = new Date("Feb 17, 2026 00:00:00").getTime();
+            const distance = fixedTarget - now;
+
+            if (distance < 0) {
+                document.getElementById("days").innerText = "00";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerText = days < 10 ? "0" + days : days;
+            document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
+            document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
+            document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // --- Data: 15 câu mỗi loại ---
+        const motivationQuotes = [
+            "Làm nhiệt tình, cuối năm hình mình lên bảng vàng!",
+            "Deadline dí? Chạy nhanh hơn deadline là được!",
+            "Cố lên em! Túi hiệu đang vẫy gọi!",
+            "Ms Grace tin tưởng em (và KPI của em).",
+            "Đừng để việc hôm nay chảy sang năm sau!",
+            "Khách hàng khó tính là khách hàng... nhiều tiền.",
+            "Tập trung cao độ, tối về ngủ ngon!",
+            "Mỗi đơn hàng là một niềm vui (và hoa hồng).",
+            "Thần thái Lasy: Tự tin, Chăm chỉ, Sang chảnh.",
+            "Nghèo thì lâu, giàu thì mấy hồi (nếu chăm).",
+            "Sắp Tết rồi, bánh chưng cần có nhân thịt!",
+            "Áp lực tạo nên kim cương (hoặc tạo nên nếp nhăn, nhớ dưỡng da).",
+            "Hãy làm việc như thể bạn là cổ đông lớn nhất.",
+            "Tương lai khóc hay cười phụ thuộc vào độ lười quá khứ.",
+            "Vượt qua KPI, đời em sẽ nở hoa!"
+        ];
+
+        const fortunes = [
+            { text: "Đại Cát", sub: "Tiền vào cửa trước... lẻn ngay ra cửa sau." },
+            { text: "Đào Hoa", sub: "Ra ngõ gặp người yêu... cũ đòi nợ 500k." },
+            { text: "Thăng Quan", sub: "Sếp hứa tăng lương... bằng niềm tin và hy vọng." },
+            { text: "Bình An", sub: "Cả ngày không ai réo tên... vì công ty mất mạng." },
+            { text: "Tài Lộc", sub: "Trúng số độc đắc... ở trong giấc mơ trưa nay." },
+            { text: "May Mắn", sub: "Nhặt được ví tiền... của chính mình rớt 5 phút trước." },
+            { text: "Sức Khỏe", sub: "Ăn được ngủ được... lăn còn nhanh hơn đi bộ." },
+            { text: "Hỷ Sự", sub: "Crush nhắn tin 'muốn gặp em'... để mời đi đám cưới nó." },
+            { text: "Như Ý", sub: "Cầu mưa được nắng, cầu tiền được... việc." },
+            { text: "Vinh Hoa", sub: "Được lên tivi... mục tìm trẻ lạc." },
+            { text: "Phú Quý", sub: "Vàng đeo đầy người... toàn vàng giả mua Shopee." },
+            { text: "Cát Tường", sub: "Mọi việc suôn sẻ... trừ cái deadline chiều nay." },
+            { text: "Lợi Lộc", sub: "Bạn bè lì xì... toàn voucher hết hạn sử dụng." },
+            { text: "Tương Phùng", sub: "Gặp lại cố nhân... nó nhờ mượn tiền đóng hụi." },
+            { text: "Yên Vui", sub: "Cười cả ngày... vì sếp đi vắng (nhưng mai sếp về)." }
+        ];
+
+        // --- Logic Buttons ---
+        const motivationBtn = document.getElementById('motivationBtn');
+        const fortuneBtn = document.getElementById('fortuneBtn');
+        const quitBtn = document.getElementById('quitBtn');
+        
+        const messageArea = document.getElementById('messageArea');
+        const fortuneArea = document.getElementById('fortuneArea');
+        const fortuneText = document.getElementById('fortuneText');
+        const fortuneSub = document.getElementById('fortuneSub');
+        
+        const graceModal = document.getElementById('graceModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modalContent = graceModal.querySelector('div');
+
+        function hideAllAreas() {
+            messageArea.classList.add('hidden');
+            fortuneArea.classList.add('hidden');
+        }
+
+        // 1. Motivation
+        motivationBtn.addEventListener('click', () => {
+            hideAllAreas();
+            const randomQuote = motivationQuotes[Math.floor(Math.random() * motivationQuotes.length)];
+            messageArea.innerText = `✨ "${randomQuote}"`;
+            messageArea.classList.remove('hidden');
+            messageArea.classList.add('animate-pop');
+            setTimeout(() => messageArea.classList.remove('animate-pop'), 300);
+        });
+
+        // 2. Fortune
+        fortuneBtn.addEventListener('click', () => {
+            hideAllAreas();
+            fortuneArea.classList.remove('hidden');
+            fortuneText.innerText = "⏳ Đang lắc...";
+            fortuneSub.innerText = "";
+            
+            setTimeout(() => {
+                const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+                fortuneText.innerText = `🌟 Quẻ ${randomFortune.text}`;
+                fortuneSub.innerText = randomFortune.sub;
+                fortuneArea.classList.add('animate-pop');
+                setTimeout(() => fortuneArea.classList.remove('animate-pop'), 300);
+            }, 600);
+        });
+
+        // 3. Quit (Trap)
+        quitBtn.addEventListener('click', () => {
+            graceModal.classList.remove('hidden');
+            modalContent.classList.add('shake');
+            setTimeout(() => modalContent.classList.remove('shake'), 500);
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            graceModal.classList.add('hidden');
+            hideAllAreas();
+            messageArea.innerText = "Ngoan! Quay lại làm việc đi nhé. 👋";
+            messageArea.classList.remove('hidden');
+        });
+
+    </script>
+</body>
+</html>
