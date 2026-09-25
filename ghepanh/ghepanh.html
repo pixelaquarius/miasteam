@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công Cụ Ghép Ảnh Nguyên Bản (Không Cắt)</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f9; text-align: center; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: #333; }
+        
+        /* Khu vực kéo thả */
+        #drop-zone {
+            border: 3px dashed #aaa; border-radius: 10px; padding: 50px;
+            cursor: pointer; background: #fafafa; transition: 0.3s;
+            color: #666; font-size: 18px; margin-bottom: 20px;
+        }
+        #drop-zone.dragover { border-color: #2196F3; background: #e3f2fd; color: #1565C0; }
+
+        /* Vùng điều khiển */
+        .controls-panel { display: none; margin-bottom: 20px; border-top: 1px solid #eee; padding-top: 20px; }
+        .control-group { margin: 10px 0; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        label { font-weight: bold; }
+        
+        button#download-btn {
+            padding: 10px 20px; font-size: 16px; background: #4CAF50; color: white;
+            border: none; border-radius: 5px; cursor: pointer; transition: 0.2s;
+        }
+        button#download-btn:hover { background: #388E3C; }
+
+        /* Preview ảnh */
+        #preview-container { margin-top: 20px; }
+        #preview-img { max-width: 100%; height: auto; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        #canvas { display: none; } /* Canvas ẩn, chỉ dùng để xử lý */
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Ghép Ảnh Lưới (Giữ Nguyên Ảnh Gốc, Không Cắt)</h2>
+    <p>Quăng file vào, công cụ tự tính số cột (3-6) và thêm viền để ảnh không bị mất góc.</p>
+
+    <div id="drop-zone">Kéo & Thả ảnh vào đây hoặc Click để chọn file</div>
+    <input type="file" id="file-input" multiple accept="image/*" style="display: none;">
+
+    <div id="controls-panel" class="controls-panel">
+        <div class="control-group">
+            <label for="bg-color">Màu nền khoảng trống:</label>
+            <input type="color" id="bg-color" value="#ffffff"> <!-- Mặc định nền trắng -->
+        </div>
+        <button id="download-btn">Tải Ảnh Kết Quả (Chất Lượng Cao)</button>
+        <div id="preview-container">
+            <p>Bản xem trước (giảm dung lượng):</p>
+            <img id="preview-img" alt="Bản xem trước">
+        </div>
+    </div>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const previewImg = document.getElementById('preview-img');
+    const controlsPanel = document.getElementById('controls-panel');
+    const downloadBtn = document.getElementById('download-btn');
+    const bgColorInput = document.getElementById('bg-color');
+
+    let loadedImages = [];
+
+    // --- Xử lý sự kiện kéo thả và chọn file ---
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
+    fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+    bgColorInput.addEventListener('input', () => processImages()); // Vẽ lại khi đổi màu nền
+
+    // --- Đọc file ảnh ---
+    async function handleFiles(files) {
+        const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+        if (imageFiles.length === 0) return;
+
+        dropZone.innerText = "Đang tải ảnh...";
+        loadedImages = [];
+
+        for (let file of imageFiles) {
+            const img = await loadImage(file);
+            loadedImages.push(img);
+        }
+
+        processImages();
+        dropZone.innerText = "Kéo & Thả ảnh vào đây hoặc Click để chọn lại";
+    }
+
+    function loadImage(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // --- Thuật toán ghép ảnh CHÍNH (Giữ nguyên ảnh gốc) ---
+    function processImages() {
+        const n = loadedImages.length;
+        if (n === 0) return;
+
+        // 1. TÍNH TOÁN LƯỚI GẦN VUÔNG NHẤT (3-6 cột)
+        let cols = Math.ceil(Math.sqrt(n));
+        if (n >= 3) {
+            if (cols < 3) cols = 3;
+            if (cols > 6) cols = 6;
+        }
+        const rows = Math.ceil(n / cols);
+
+        // 2. XÁC ĐỊNH KÍCH THƯỚC Ô VUÔNG CHUẨN (Bảo toàn chất lượng)
+        // Tìm cạnh lớn nhất của tất cả ảnh để làm kích thước cho mỗi ô vuông
+        let maxSide = 0;
+        loadedImages.forEach(img => {
+            maxSide = Math.max(maxSide, img.width, img.height);
+        });
+        
+        // Giới hạn nhẹ để tránh crash trình duyệt nếu ảnh quá lớn, nhưng vẫn giữ nét
+        const tileSize = Math.min(maxSide, 2500); 
+
+        // 3. THIẾT LẬP CANVAS TỔNG
+        canvas.width = cols * tileSize;
+        canvas.height = rows * tileSize;
+
+        // 4. VẼ NỀN (Màu người dùng chọn)
+        ctx.fillStyle = bgColorInput.value;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 5. VẼ TỪNG ÁNH (Thuật toán Fit-in, không cắt)
+        loadedImages.forEach((img, index) => {
+            const col = index % cols;
+            const row = Math.floor(index / cols);
+
+            // Tính toán vị trí gốc của ô vuông
+            const xOffset = col * tileSize;
+            const yOffset = row * tileSize;
+
+            // Thuật toán tính tỷ lệ để ảnh nằm trọn trong ô vuông (Fit inside)
+            let drawWidth, drawHeight, drawX, drawY;
+            const imageRatio = img.width / img.height;
+
+            if (imageRatio > 1) { // Ảnh ngang
+                drawWidth = tileSize;
+                drawHeight = tileSize / imageRatio;
+                drawX = xOffset;
+                drawY = yOffset + (tileSize - drawHeight) / 2; // Căn giữa dọc
+            } else { // Ảnh dọc hoặc vuông
+                drawHeight = tileSize;
+                drawWidth = tileSize * imageRatio;
+                drawX = xOffset + (tileSize - drawWidth) / 2; // Căn giữa ngang
+                drawY = yOffset;
+            }
+
+            // Vẽ ảnh gốc (đã co dãn tỷ lệ) vào canvas
+            ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+        });
+
+        // 6. HIỂN THỊ PREVIEW (JPEG chất lượng vừa phải để load nhanh)
+        previewImg.src = canvas.toDataURL("image/jpeg", 0.8);
+        controlsPanel.style.display = "block";
+    }
+
+    // --- Tải ảnh về (Chất lượng gốc 100%) ---
+    downloadBtn.addEventListener('click', () => {
+        const link = document.createElement('a');
+        link.download = `VietGhep_Full_${new Date().getTime()}.jpg`;
+        link.href = canvas.toDataURL("image/jpeg", 1.0); // Chất lượng cao nhất
+        link.click();
+    });
+</script>
+
+</body>
+</html>
