@@ -115,107 +115,72 @@
   <main id="stageLanding" class="flex-1 flex items-center justify-center p-6">
     <div class="max-w-3xl w-full space-y-6">
 
-      <!-- CARD 1: PASTE KALODATA LINK & SESSION TOKEN (AUTO-FETCH) -->
-      <div class="office-card p-7 border-t-4 border-t-sky-600">
-        <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-sky-50 border border-sky-200 text-sky-600 flex items-center justify-center shrink-0">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+      <!-- HERO CARD: 1-CLICK KALODATA AUTO-AUDITOR (BOOKMARKLET) -->
+      <div class="office-card p-7 border-t-4 border-t-sky-600 space-y-6">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div class="flex items-center gap-3.5">
+            <div class="w-11 h-11 rounded-xl bg-sky-50 border border-sky-200 text-sky-600 flex items-center justify-center shrink-0">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             </div>
             <div>
-              <div class="flex items-center gap-2">
-                <h1 class="text-base font-bold text-slate-900">Quick Audit via Kalodata Link & Session Token</h1>
-                <span class="px-2 py-0.5 text-[10px] font-mono font-bold rounded bg-sky-100 text-sky-800">AUTO-SCAN</span>
+              <div class="flex items-center gap-2.5 flex-wrap">
+                <h1 class="text-base font-bold text-slate-900">1-Click Kalodata Auto-Auditor</h1>
+                <span class="px-2 py-0.5 text-[10px] font-mono font-bold rounded bg-emerald-100 text-emerald-800 border border-emerald-200">ZERO TOKEN • 100% GITHUB PAGES</span>
               </div>
-              <p class="text-xs text-slate-500 mt-0.5">
-                Paste one or multiple Kalodata Creator URLs below. Uses your saved Kalodata session cookie/token to fetch all 30D metrics, stores, products & videos automatically.
+              <p class="text-xs text-slate-500 mt-1">
+                Drag the button below to your Bookmarks Bar. When you are on any Kalodata creator page, click it to automatically extract full 30D metrics and beam the report straight here!
               </p>
             </div>
           </div>
-          <button onclick="toggleTokenConfigDrawer()" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-1.5 cursor-pointer shrink-0">
-            <svg class="w-3.5 h-3.5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
-            <span id="tokenStatusBtnLabel">Session & Bridge Config</span>
-          </button>
         </div>
 
-        <!-- URL INPUT BOX -->
-        <div class="space-y-3">
-          <div>
-            <div class="flex items-center justify-between text-[11px] font-mono text-slate-500 mb-1">
-              <span>KALODATA CREATOR URL(S) — 1 PER LINE</span>
-              <button onclick="fillSampleKalodataUrls()" class="text-sky-600 hover:underline font-semibold cursor-pointer">Load Your 2 Sample Links</button>
-            </div>
-            <textarea id="kalodataUrlInput" rows="3" placeholder="https://www.kalodata.com/creator/detail?id=7379091354314507272&language=vi-VN&currency=VND&region=VN&sellerId=7495318359741597705&dateRange=%5B%222026-10-03%22%2C%222026-11-01%22%5D" class="w-full p-3 text-xs font-mono bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-sky-600 text-slate-800"></textarea>
+        <!-- ACTION BUTTON & INSTRUCTION BANNER -->
+        <div class="p-5 rounded-xl bg-gradient-to-r from-sky-50 to-slate-50 border border-sky-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="space-y-1 text-center sm:text-left">
+            <div class="text-xs font-bold text-slate-900">Drag this button to your Bookmarks Bar:</div>
+            <p class="text-[11px] text-slate-500">
+              Press <kbd class="px-1.5 py-0.5 rounded bg-white border border-slate-300 font-mono text-[10px] text-slate-700">Ctrl + Shift + B</kbd> if your browser Bookmarks Bar is hidden.
+            </p>
           </div>
-
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <div id="urlFetchStatusMsg" class="text-xs font-mono text-slate-500">
-              Ready. Supports batch scanning multiple links into History Tracking.
-            </div>
-            <button id="fetchKalodataUrlBtn" onclick="handleFetchKalodataUrls()" class="px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-semibold text-xs rounded-lg transition shadow-sm flex items-center gap-2 cursor-pointer">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-              <span>Fetch & Audit Link(s)</span>
+          <div class="flex items-center gap-2.5 shrink-0 flex-wrap justify-center">
+            <a id="kalodataBookmarkletLink" href="#" onclick="event.preventDefault(); alert('Drag this blue button up to your browser Bookmarks Bar! Then click it whenever you are viewing a Kalodata creator page.');" class="inline-flex items-center gap-2 px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-xl shadow-md transition cursor-grab border border-sky-500 active:cursor-grabbing">
+              <svg class="w-4 h-4 text-sky-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              <span>⚡ Send to KOL Auditor</span>
+            </a>
+            <button onclick="copyKalodataConsoleScript()" class="px-3.5 py-2.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-semibold text-xs rounded-xl cursor-pointer transition shadow-sm" title="Copy JavaScript snippet to run in browser F12 Console">
+              Copy Console Script
             </button>
           </div>
         </div>
 
-        <!-- COLLAPSIBLE TOKEN & BRIDGE DRAWER -->
-        <div id="tokenConfigDrawer" class="hidden mt-5 pt-5 border-t border-slate-200 space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Left: Session Cookie + Proxy -->
-            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-slate-900">Method A: Your Session Cookie + Bridge</span>
-                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-200 text-slate-700">Saved in Browser</span>
-              </div>
-              <p class="text-[11px] text-slate-500 leading-relaxed">
-                On <code class="font-mono text-slate-700">kalodata.com</code>, press <code class="font-mono text-slate-700">F12 → Network</code>, click any request (e.g. <code class="font-mono">detail</code>), copy the <code class="font-mono font-semibold text-slate-800">Cookie</code> request header value (or <code class="font-mono">SESSION=...</code>), and paste it below:
-              </p>
-              <div>
-                <label class="block text-[10px] font-mono uppercase text-slate-500 mb-1">Kalodata Session Cookie / Token</label>
-                <input id="kalodataCookieInput" type="password" placeholder="SESSION=...; or full Cookie header string" class="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-sky-600 text-slate-800" />
-              </div>
-              <div>
-                <label class="block text-[10px] font-mono uppercase text-slate-500 mb-1">Bridge / Cloudflare Worker URL (Bypasses Browser CORS)</label>
-                <input id="kalodataBridgeUrlInput" type="text" value="http://localhost:8787" placeholder="http://localhost:8787 or https://your-worker.workers.dev" class="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-sky-600 text-slate-800" />
-              </div>
-              <div class="flex items-center justify-between pt-1">
-                <button onclick="saveKalodataTokenConfig()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg cursor-pointer transition">
-                  Save Token & Bridge
-                </button>
-                <button onclick="toggleCookieVisibility()" class="text-[11px] text-slate-500 hover:text-slate-800 underline cursor-pointer">
-                  Show/Hide Token
-                </button>
-              </div>
+        <!-- 3-STEP VISUAL WORKFLOW -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 text-left">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="w-5 h-5 rounded-full bg-sky-600 text-white font-mono text-[11px] font-bold flex items-center justify-center">1</span>
+              <span class="text-xs font-bold text-slate-900">Drag to Bookmarks</span>
             </div>
-
-            <!-- Right: Zero-Server 1-Click Bookmarklet / Console Snippet -->
-            <div class="p-4 rounded-xl bg-sky-50/60 border border-sky-200 space-y-3 flex flex-col justify-between">
-              <div class="space-y-2">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-bold text-sky-950">Method B: 1-Click Bookmarklet (No Proxy Needed!)</span>
-                  <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">100% GITHUB PAGES</span>
-                </div>
-                <p class="text-[11px] text-slate-600 leading-relaxed">
-                  Browsers block GitHub Pages from sending your <code class="font-mono">Cookie</code> directly to <code class="font-mono">kalodata.com</code> without a proxy. To audit <strong>without any server or token copying</strong>:
-                </p>
-                <ol class="text-[11px] text-slate-600 list-decimal list-inside space-y-1">
-                  <li>Drag the blue button below to your <strong>Bookmarks Bar</strong>.</li>
-                  <li>Open any Kalodata Creator link (logged in as usual).</li>
-                  <li>Click <strong>⚡ Send to KOL Auditor</strong> on your Bookmarks Bar — it fetches all 5 Kalodata APIs using your live session and beams the result straight into this page!</li>
-                </ol>
-              </div>
-              <div class="pt-2 space-y-2">
-                <div class="flex items-center gap-2">
-                  <a id="kalodataBookmarkletLink" href="#" onclick="event.preventDefault(); alert('Drag this blue button up to your browser Bookmarks Bar! Then click it whenever you are viewing a Kalodata creator page.');" class="flex-1 py-2 px-3 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-lg text-center shadow-sm cursor-grab">
-                    ⚡ Send to KOL Auditor
-                  </a>
-                  <button onclick="copyKalodataConsoleScript()" class="px-3 py-2 bg-white hover:bg-slate-50 border border-sky-300 text-sky-800 font-semibold text-xs rounded-lg cursor-pointer transition" title="Copy JS snippet to run in Kalodata F12 Console">
-                    Copy Console Script
-                  </button>
-                </div>
-              </div>
+            <p class="text-[11px] text-slate-500 leading-relaxed">
+              Drag the blue <strong class="text-slate-800">⚡ Send to KOL Auditor</strong> button to your browser toolbar once.
+            </p>
+          </div>
+          <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 text-left">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="w-5 h-5 rounded-full bg-sky-600 text-white font-mono text-[11px] font-bold flex items-center justify-center">2</span>
+              <span class="text-xs font-bold text-slate-900">Open Kalodata Tab</span>
             </div>
+            <p class="text-[11px] text-slate-500 leading-relaxed">
+              Open any Kalodata Creator page (logged in as usual with your account).
+            </p>
+          </div>
+          <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 text-left">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="w-5 h-5 rounded-full bg-sky-600 text-white font-mono text-[11px] font-bold flex items-center justify-center">3</span>
+              <span class="text-xs font-bold text-slate-900">1-Click Auto Audit</span>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-relaxed">
+              Click the bookmark! It extracts all 6 APIs and opens your audited report with 1-click Copy Summary.
+            </p>
           </div>
         </div>
       </div>
@@ -572,6 +537,80 @@
           <button onclick="clearAllHistory()" class="px-3 py-2 rounded-lg border border-rose-200 hover:bg-rose-50 text-xs font-semibold text-rose-600 cursor-pointer">
             Clear History
           </button>
+        </div>
+      </div>
+
+      <!-- HISTORY FILTERS & SEARCH TOOLBAR -->
+      <div class="mb-5 p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          <!-- 1. Search Query -->
+          <div class="lg:col-span-2">
+            <label class="block text-[10px] font-mono uppercase text-slate-500 mb-1">Search KOL Handle / Keyword</label>
+            <div class="relative">
+              <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <input id="historySearchInput" type="text" placeholder="Search @handle, brand, or notes..." oninput="handleHistoryFilterChange()" class="w-full pl-9 pr-3 py-1.5 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-sky-600 text-slate-800" />
+            </div>
+          </div>
+
+          <!-- 2. Track Mode -->
+          <div>
+            <label class="block text-[10px] font-mono uppercase text-slate-500 mb-1">Track Model</label>
+            <select id="historyFilterTrack" onchange="handleHistoryFilterChange()" class="w-full px-2.5 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-sky-600 text-slate-800 cursor-pointer">
+              <option value="ALL">All Revenue Models</option>
+              <option value="VIDEO_TRACK">Short-Video Track</option>
+              <option value="LIVE_TRACK">Livestream Track</option>
+            </select>
+          </div>
+
+          <!-- 3. Compatibility Tier / Score -->
+          <div>
+            <label class="block text-[10px] font-mono uppercase text-slate-500 mb-1">Compatibility Tier</label>
+            <select id="historyFilterTier" onchange="handleHistoryFilterChange()" class="w-full px-2.5 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-sky-600 text-slate-800 cursor-pointer">
+              <option value="ALL">All Compatibility Scores</option>
+              <option value="TIER1">Tier 1: High Fit (≥82%)</option>
+              <option value="TIER2">Tier 2: Moderate Fit (62–81%)</option>
+              <option value="TIER3">Tier 3: Low Fit (<62%)</option>
+            </select>
+          </div>
+
+          <!-- 4. Skincare Depth / Industry -->
+          <div>
+            <label class="block text-[10px] font-mono uppercase text-slate-500 mb-1">Skincare & Industry</label>
+            <select id="historyFilterCategory" onchange="handleHistoryFilterChange()" class="w-full px-2.5 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-sky-600 text-slate-800 cursor-pointer">
+              <option value="ALL">All Categories</option>
+              <option value="TOP20">Has Top 20 Beauty Brands</option>
+              <option value="SKINCARE_STORES">Has Skincare Stores (>0)</option>
+              <option value="SKINCARE_SKUS">Has Skincare SKUs (>0)</option>
+              <option value="FEMALE_MAJORITY">Female Majority (>50%)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 2: Sort By & Filter Meta Counters -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-200 text-xs">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-[11px] font-mono text-slate-600 font-semibold" id="historyFilterCountText">Showing 0 of 0 snapshots</span>
+            <div id="historyFilterPills" class="flex items-center gap-1.5 flex-wrap"></div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-mono text-slate-500 whitespace-nowrap">Sort By:</span>
+              <select id="historySortBy" onchange="handleHistoryFilterChange()" class="px-2.5 py-1 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-sky-600 text-slate-800 cursor-pointer">
+                <option value="NEWEST">Audit Date: Newest First</option>
+                <option value="OLDEST">Audit Date: Oldest First</option>
+                <option value="GMV_DESC">30D GMV: High → Low</option>
+                <option value="VIDEO_GMV_DESC">Video GMV: High → Low</option>
+                <option value="LIVE_GMV_DESC">Live GMV: High → Low</option>
+                <option value="AOV_DESC">AOV: High → Low</option>
+                <option value="SCORE_DESC">Score: High → Low</option>
+                <option value="HANDLE_ASC">Handle: A → Z</option>
+              </select>
+            </div>
+            <button id="historyResetFilterBtn" onclick="resetHistoryFilters()" class="text-[11px] font-semibold text-sky-600 hover:text-sky-800 underline cursor-pointer">
+              Reset Filters
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1929,32 +1968,177 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
       }
     }
 
+    // ============================================================================
+    // 8. HISTORY FILTER & SORT STATE & ENGINE
+    // ============================================================================
+    const historyFilterState = {
+      query: '',
+      track: 'ALL',
+      tier: 'ALL',
+      category: 'ALL',
+      sortBy: 'NEWEST'
+    };
+
+    function handleHistoryFilterChange() {
+      historyFilterState.query = (document.getElementById('historySearchInput')?.value || '').trim().toLowerCase();
+      historyFilterState.track = document.getElementById('historyFilterTrack')?.value || 'ALL';
+      historyFilterState.tier = document.getElementById('historyFilterTier')?.value || 'ALL';
+      historyFilterState.category = document.getElementById('historyFilterCategory')?.value || 'ALL';
+      historyFilterState.sortBy = document.getElementById('historySortBy')?.value || 'NEWEST';
+      renderHistoryTable();
+    }
+
+    function resetHistoryFilters() {
+      historyFilterState.query = '';
+      historyFilterState.track = 'ALL';
+      historyFilterState.tier = 'ALL';
+      historyFilterState.category = 'ALL';
+      historyFilterState.sortBy = 'NEWEST';
+
+      const searchInput = document.getElementById('historySearchInput');
+      const trackSel = document.getElementById('historyFilterTrack');
+      const tierSel = document.getElementById('historyFilterTier');
+      const catSel = document.getElementById('historyFilterCategory');
+      const sortSel = document.getElementById('historySortBy');
+
+      if (searchInput) searchInput.value = '';
+      if (trackSel) trackSel.value = 'ALL';
+      if (tierSel) tierSel.value = 'ALL';
+      if (catSel) catSel.value = 'ALL';
+      if (sortSel) sortSel.value = 'NEWEST';
+
+      renderHistoryTable();
+    }
+
+    function getFilteredAndSortedHistory() {
+      const allHistory = getSavedHistory();
+      const q = historyFilterState.query;
+      const track = historyFilterState.track;
+      const tier = historyFilterState.tier;
+      const cat = historyFilterState.category;
+      const sort = historyFilterState.sortBy;
+
+      let filtered = allHistory.filter((item) => {
+        // Search query filter (handle, file, brands, stores, bio)
+        if (q) {
+          const matchHandle = (item.handle || '').toLowerCase().includes(q);
+          const matchFileName = (item.fileName || '').toLowerCase().includes(q);
+          const matchBio = (item.bioText || '').toLowerCase().includes(q);
+          const matchBrands = (item.top20MatchedBrands || []).some(b => b.toLowerCase().includes(q));
+          const matchStores = (item.stores || []).some(s => (s.storeName || '').toLowerCase().includes(q));
+          if (!matchHandle && !matchFileName && !matchBio && !matchBrands && !matchStores) return false;
+        }
+
+        // Track model filter
+        if (track !== 'ALL') {
+          if (item.dominantTrack !== track) return false;
+        }
+
+        // Tier score filter
+        if (tier === 'TIER1' && !(item.scorePct >= 82)) return false;
+        if (tier === 'TIER2' && !(item.scorePct >= 62 && item.scorePct < 82)) return false;
+        if (tier === 'TIER3' && !(item.scorePct < 62)) return false;
+
+        // Category / Skincare filter
+        if (cat === 'TOP20' && !(item.top20MatchedBrands && item.top20MatchedBrands.length > 0)) return false;
+        if (cat === 'SKINCARE_STORES' && !(item.specialistSkincareStores > 0)) return false;
+        if (cat === 'SKINCARE_SKUS' && !(item.skincareSkuCount > 0)) return false;
+        if (cat === 'FEMALE_MAJORITY' && !item.isFemaleMajority) return false;
+
+        return true;
+      });
+
+      // Sort
+      filtered.sort((a, b) => {
+        switch (sort) {
+          case 'OLDEST':
+            return new Date(a.savedAtIso || 0) - new Date(b.savedAtIso || 0);
+          case 'GMV_DESC':
+            return (b.totalGmv || 0) - (a.totalGmv || 0);
+          case 'VIDEO_GMV_DESC':
+            return (b.videoGmv || 0) - (a.videoGmv || 0);
+          case 'LIVE_GMV_DESC':
+            return (b.liveGmv || 0) - (a.liveGmv || 0);
+          case 'AOV_DESC':
+            return (b.aov || 0) - (a.aov || 0);
+          case 'SCORE_DESC':
+            return (b.scorePct || 0) - (a.scorePct || 0);
+          case 'HANDLE_ASC':
+            return (a.handle || '').localeCompare(b.handle || '');
+          case 'NEWEST':
+          default:
+            return new Date(b.savedAtIso || 0) - new Date(a.savedAtIso || 0);
+        }
+      });
+
+      // Update counters & active filter badges
+      const countEl = document.getElementById('historyFilterCountText');
+      if (countEl) {
+        countEl.textContent = `Showing ${filtered.length} of ${allHistory.length} snapshots`;
+      }
+
+      const pillsContainer = document.getElementById('historyFilterPills');
+      if (pillsContainer) {
+        pillsContainer.innerHTML = '';
+        if (q) {
+          pillsContainer.innerHTML += `<span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-mono text-[10px]">Query: "${q}"</span>`;
+        }
+        if (track !== 'ALL') {
+          pillsContainer.innerHTML += `<span class="px-2 py-0.5 rounded bg-slate-200 text-slate-800 font-mono text-[10px]">${track === 'VIDEO_TRACK' ? 'Video Track' : 'Live Track'}</span>`;
+        }
+        if (tier !== 'ALL') {
+          pillsContainer.innerHTML += `<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-mono text-[10px]">${tier}</span>`;
+        }
+        if (cat !== 'ALL') {
+          pillsContainer.innerHTML += `<span class="px-2 py-0.5 rounded bg-purple-100 text-purple-800 font-mono text-[10px]">${cat}</span>`;
+        }
+      }
+
+      return { allHistory, filtered };
+    }
+
     function renderHistoryTable() {
-      const history = getSavedHistory();
+      const { allHistory, filtered } = getFilteredAndSortedHistory();
       const tbody = document.getElementById('historyTableBody');
       if (!tbody) return;
       tbody.innerHTML = '';
 
       updateCompareSelectedButtonLabel();
 
-      if (history.length === 0) {
+      if (allHistory.length === 0) {
         tbody.innerHTML = `
           <tr>
             <td colspan="10" class="py-10 text-center text-slate-400 font-mono text-xs">
-              No saved KOL audits yet. Upload a Kalodata .html file on Homepage to automatically archive it here.
+              No saved KOL audits yet. Drag the ⚡ Bookmarklet on Homepage or upload a Kalodata .html file to archive it here.
             </td>
           </tr>
         `;
         return;
       }
 
-      history.forEach((item) => {
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="10" class="py-10 text-center text-slate-500 font-mono text-xs">
+              No snapshots match your current search/filter criteria.
+              <button onclick="resetHistoryFilters()" class="text-sky-600 underline font-semibold ml-1 cursor-pointer">Reset Filters</button>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      filtered.forEach((item) => {
         const isChecked = selectedComparisonIds.includes(item.snapshotId);
         const tr = document.createElement('tr');
         tr.className = isChecked ? 'bg-sky-50/70 hover:bg-sky-50' : 'hover:bg-slate-50';
         const scoreBadgeClass = item.scorePct >= 82
           ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
           : (item.scorePct >= 62 ? 'bg-sky-50 text-sky-700 border-sky-200' : 'bg-rose-50 text-rose-700 border-rose-200');
+
+        const trackBadge = item.dominantTrack === 'VIDEO_TRACK'
+          ? '<span class="px-1.5 py-0.5 rounded bg-sky-50 text-sky-700 text-[10px] font-mono border border-sky-200 font-semibold">Video</span>'
+          : '<span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 text-[10px] font-mono border border-purple-200 font-semibold">Live</span>';
 
         tr.innerHTML = `
           <td class="py-3 px-3 text-center">
@@ -1965,14 +2149,20 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
           </td>
           <td class="py-3 px-3 font-mono text-slate-700 whitespace-nowrap">${item.savedAtFormatted || '--'}</td>
           <td class="py-3 px-3">
-            <div class="font-bold text-slate-900 font-mono">${item.handle}</div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold text-slate-900 font-mono">${item.handle}</span>
+              ${trackBadge}
+            </div>
             <div class="text-[11px] text-slate-500 font-mono">Window: ${item.dateRangeWindow || '30 Days'}</div>
           </td>
           <td class="py-3 px-3 text-right font-mono font-bold text-slate-900">${formatVnCurrency(item.totalGmv)}</td>
           <td class="py-3 px-3 text-right font-mono text-slate-700">${formatVnCurrency(item.videoGmv)} <span class="text-[10px] text-slate-400">(${item.videoSharePct.toFixed(0)}%)</span></td>
           <td class="py-3 px-3 text-right font-mono text-slate-700">${formatVnCurrency(item.liveGmv)} <span class="text-[10px] text-slate-400">(${item.liveSharePct.toFixed(0)}%)</span></td>
           <td class="py-3 px-3 text-right font-mono text-slate-800">${formatVnCurrency(item.aov)}</td>
-          <td class="py-3 px-3 font-mono text-[11px] text-slate-600">${item.specialistSkincareStores} Stores | ${item.skincareSkuCount} SKUs</td>
+          <td class="py-3 px-3 font-mono text-[11px] text-slate-600">
+            <div>${item.specialistSkincareStores} Stores | ${item.skincareSkuCount} SKUs</div>
+            ${item.top20MatchedBrands && item.top20MatchedBrands.length > 0 ? `<div class="text-[10px] text-sky-700 truncate max-w-[150px]" title="${item.top20MatchedBrands.join(', ')}">Top 20: ${item.top20MatchedBrands.join(', ')}</div>` : ''}
+          </td>
           <td class="py-3 px-3 text-center">
             <span class="px-2 py-0.5 text-[11px] font-mono font-bold rounded border ${scoreBadgeClass}">${item.scorePct || 0}%</span>
           </td>
@@ -2584,150 +2774,27 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
       };
     }
 
-    function toggleTokenConfigDrawer() {
-      const drawer = document.getElementById('tokenConfigDrawer');
-      if (drawer) drawer.classList.toggle('hidden');
-    }
-
-    function toggleCookieVisibility() {
-      const input = document.getElementById('kalodataCookieInput');
-      if (!input) return;
-      input.type = input.type === 'password' ? 'text' : 'password';
-    }
-
-    function saveKalodataTokenConfig() {
-      const cookieVal = document.getElementById('kalodataCookieInput')?.value?.trim() || '';
-      const bridgeVal = document.getElementById('kalodataBridgeUrlInput')?.value?.trim() || 'http://localhost:8787';
-      localStorage.setItem(KALODATA_COOKIE_STORAGE_KEY, cookieVal);
-      localStorage.setItem(KALODATA_BRIDGE_STORAGE_KEY, bridgeVal);
-      updateTokenStatusBadge();
-      const statusEl = document.getElementById('urlFetchStatusMsg');
-      if (statusEl) {
-        statusEl.textContent = '✓ Saved your Kalodata Session Cookie & Bridge URL in browser storage.';
-        statusEl.className = 'text-xs font-mono text-emerald-700 font-semibold';
-      }
-    }
-
-    function updateTokenStatusBadge() {
-      const cookieVal = localStorage.getItem(KALODATA_COOKIE_STORAGE_KEY) || '';
-      const bridgeVal = localStorage.getItem(KALODATA_BRIDGE_STORAGE_KEY) || 'http://localhost:8787';
-      const cookieInput = document.getElementById('kalodataCookieInput');
-      const bridgeInput = document.getElementById('kalodataBridgeUrlInput');
-      if (cookieInput && !cookieInput.value) cookieInput.value = cookieVal;
-      if (bridgeInput && bridgeVal) bridgeInput.value = bridgeVal;
-
-      const label = document.getElementById('tokenStatusBtnLabel');
-      if (label) {
-        label.textContent = cookieVal ? 'Session Token: Saved ✓' : 'Session & Bridge Config';
-      }
-      initBookmarkletHref();
-    }
-
-    function fillSampleKalodataUrls() {
-      const box = document.getElementById('kalodataUrlInput');
-      if (!box) return;
-      box.value = [
-        'https://www.kalodata.com/creator/detail?id=7379091354314507272&language=vi-VN&currency=VND&region=VN&sellerId=7495318359741597705&dateRange=%5B%222026-10-03%22%2C%222026-11-01%22%5D',
-        'https://www.kalodata.com/creator/detail?id=6612497812800962562&language=vi-VN&currency=VND&region=VN&sellerId=7495318359741597705&dateRange=%5B%222026-10-03%22%2C%222026-11-01%22%5D'
-      ].join('\n');
-    }
-
-    async function fetchSingleKalodataUrlViaBridge(urlParams, bridgeUrl, sessionCookie) {
-      const cleanBridge = bridgeUrl.replace(/\/+$/, '');
-      const resp = await fetch(`${cleanBridge}/api/kalodata/audit`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...urlParams,
-          cookie: sessionCookie
-        })
-      });
-      if (!resp.ok) {
-        const errText = await resp.text();
-        throw new Error(`Bridge HTTP ${resp.status}: ${errText}`);
-      }
-      const bundle = await resp.json();
-      if (!bundle.success && bundle.error) {
-        throw new Error(bundle.error);
-      }
-      return parseKalodataApiBundle(bundle.data || bundle);
-    }
-
-    async function handleFetchKalodataUrls() {
-      const rawText = document.getElementById('kalodataUrlInput')?.value || '';
-      const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-      const statusEl = document.getElementById('urlFetchStatusMsg');
-
-      if (lines.length === 0) {
-        alert('Please paste at least one Kalodata Creator Detail URL.');
-        return;
-      }
-
-      const parsedUrls = lines.map(parseKalodataUrlParams).filter(Boolean);
-      if (parsedUrls.length === 0) {
-        alert('Could not find a valid Kalodata Creator ID (?id=...) in the pasted link(s).');
-        return;
-      }
-
-      const sessionCookie = (document.getElementById('kalodataCookieInput')?.value || localStorage.getItem(KALODATA_COOKIE_STORAGE_KEY) || '').trim();
-      const bridgeUrl = (document.getElementById('kalodataBridgeUrlInput')?.value || localStorage.getItem(KALODATA_BRIDGE_STORAGE_KEY) || 'http://localhost:8787').trim();
-
-      if (sessionCookie) {
-        localStorage.setItem(KALODATA_COOKIE_STORAGE_KEY, sessionCookie);
-      }
-
-      const btn = document.getElementById('fetchKalodataUrlBtn');
-      if (btn) btn.disabled = true;
-
-      let lastAuditData = null;
-      let successCount = 0;
-
-      for (let i = 0; i < parsedUrls.length; i++) {
-        const u = parsedUrls[i];
-        if (statusEl) {
-          statusEl.textContent = `[${i + 1}/${parsedUrls.length}] Fetching Creator ID ${u.id} (${u.startDate} ~ ${u.endDate}) via Bridge...`;
-          statusEl.className = 'text-xs font-mono text-sky-700 font-semibold';
-        }
-        try {
-          const auditData = await fetchSingleKalodataUrlViaBridge(u, bridgeUrl, sessionCookie);
-          saveAuditSnapshotToHistory(auditData);
-          lastAuditData = auditData;
-          successCount++;
-        } catch (err) {
-          console.error('Bridge fetch error:', err);
-          if (statusEl) {
-            statusEl.innerHTML = `⚠️ Bridge connection failed (${err.message}). Open <strong>Session & Bridge Config</strong> above to start the local bridge or use the <strong>⚡ 1-Click Bookmarklet</strong>!`;
-            statusEl.className = 'text-xs font-mono text-rose-600 font-semibold';
-          }
-          document.getElementById('tokenConfigDrawer')?.classList.remove('hidden');
-          if (btn) btn.disabled = false;
-          return;
-        }
-      }
-
-      if (btn) btn.disabled = false;
-      if (lastAuditData) {
-        if (statusEl) {
-          statusEl.textContent = `✓ Successfully fetched & audited ${successCount} creator(s)!`;
-          statusEl.className = 'text-xs font-mono text-emerald-700 font-semibold';
-        }
-        renderDashboard(lastAuditData);
-        switchNavTab('tracking');
-      }
-    }
-
+    // ============================================================================
+    // 11. KALODATA 1-CLICK BOOKMARKLET & AUTO-AUDIT ENGINE
+    // ============================================================================
     function buildKalodataInPageExtractorCode(auditorTargetOrigin) {
       return `(async function(){
   try {
     if (!location.hostname.includes('kalodata.com')) {
-      alert('Please run this on a Kalodata.com tab (while logged in)!');
+      alert('⚡ Please run this bookmarklet on a Kalodata.com Creator Detail page (while logged in)!');
       return;
     }
+    const toast = document.createElement('div');
+    toast.id = '__kol_audit_toast__';
+    toast.style.cssText = 'position:fixed;top:24px;right:24px;z-index:9999999;background:#0284c7;color:#fff;padding:14px 22px;border-radius:12px;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;font-size:13px;font-weight:600;box-shadow:0 12px 30px rgba(0,0,0,0.25);display:flex;align-items:center;gap:10px;';
+    toast.innerHTML = '<span style="font-size:16px;">⚡</span> Extracting Creator Data (6 APIs)...';
+    document.body.appendChild(toast);
+
     const u = new URL(location.href);
     let id = u.searchParams.get('id');
     if (!id) {
-      const pasted = prompt('Paste Kalodata Creator Detail URL (or Creator ID):');
-      if (!pasted) return;
+      const pasted = prompt('Please enter Kalodata Creator Detail URL or ID:');
+      if (!pasted) { toast.remove(); return; }
       try { id = new URL(pasted).searchParams.get('id') || pasted.trim(); } catch { id = pasted.trim(); }
     }
     const language = u.searchParams.get('language') || localStorage.getItem('language') || 'vi-VN';
@@ -2745,8 +2812,21 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
       endDate = e.toISOString().slice(0, 10);
     }
     const headers = { 'Content-Type': 'application/json', language, currency, country };
-    const post = (path, body) => fetch(path, { method: 'POST', credentials: 'include', headers, body: JSON.stringify(body) }).then(r => r.json()).then(j => j.data);
-    const baseReq = { id, startDate, endDate, cateIds: [], sellerId: '' };
+    const post = async (path, body) => {
+      try {
+        let r = await fetch(path, { method: 'POST', credentials: 'include', headers, body: JSON.stringify(body) });
+        if (r.status === 404) {
+          r = await fetch('/api' + path, { method: 'POST', credentials: 'include', headers, body: JSON.stringify(body) });
+        }
+        const j = await r.json();
+        return (j && j.data !== undefined) ? j.data : j;
+      } catch (err) {
+        console.warn('API fetch warning on ' + path, err);
+        return null;
+      }
+    };
+    const baseReq = { id: String(id), startDate, endDate, cateIds: [], sellerId: '' };
+    try { await post('/creator/detail/access', baseReq); } catch {}
     const [creatorDetail, coreMetrics, shops, products, videos, videoCount] = await Promise.all([
       post('/creator/detail', baseReq),
       post('/creator/detail/total', baseReq),
@@ -2756,14 +2836,30 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
       post('/creator/detail/video/count', baseReq)
     ]);
     const payload = { creatorDetail, coreMetrics, shops, products, videos, videoCount, meta: { id, startDate, endDate, language, currency, country } };
+    toast.style.background = '#059669';
+    toast.innerHTML = '<span style="font-size:16px;">✓</span> Audited @' + (creatorDetail?.handle || id) + '! Opening KOL Auditor...';
+    setTimeout(() => toast.remove(), 2500);
+
     const targetUrl = '${auditorTargetOrigin}';
-    const win = window.open(targetUrl, '_blank');
+    const win = window.open(targetUrl, 'kalodata_auditor_tab');
+    let attempts = 0;
     const timer = setInterval(() => {
-      if (win) win.postMessage({ type: 'KALODATA_AUTO_AUDIT_BUNDLE', payload }, '*');
-    }, 600);
-    setTimeout(() => clearInterval(timer), 8000);
+      attempts++;
+      if (win && !win.closed) {
+        win.postMessage({ type: 'KALODATA_AUTO_AUDIT_BUNDLE', payload }, '*');
+      }
+      if (attempts >= 15) clearInterval(timer);
+    }, 500);
+    window.addEventListener('message', function onAck(e) {
+      if (e.data && e.data.type === 'KALODATA_AUTO_AUDIT_ACK') {
+        clearInterval(timer);
+        window.removeEventListener('message', onAck);
+      }
+    });
   } catch (err) {
     alert('Kalodata Auto-Fetch Error: ' + err.message);
+    const t = document.getElementById('__kol_audit_toast__');
+    if (t) t.remove();
   }
 })();`;
     }
@@ -2781,7 +2877,7 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
       const code = buildKalodataInPageExtractorCode(currentUrl);
       try {
         await navigator.clipboard.writeText(code);
-        alert('Copied Kalodata Console Script! Open Kalodata.com -> Press F12 -> Console -> Paste & Enter.');
+        alert('Copied Kalodata Console Script!\n\nOpen any Kalodata Creator page -> Press F12 -> Console -> Paste & Press Enter.');
       } catch {
         prompt('Copy this script and run it in Kalodata F12 Console:', code);
       }
@@ -2805,10 +2901,10 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
       }
     });
 
-    // Initialize Drag & Drop Listeners, Token Vault & History Counter on Startup
+    // Initialize Drag & Drop Listeners, Bookmarklet & History Counter on Startup
     (function _initDropZone() {
       updateHistoryCountBadge();
-      updateTokenStatusBadge();
+      initBookmarkletHref();
       const dz = document.getElementById('dropZone');
       if (!dz) return;
       ['dragenter', 'dragover'].forEach(evtName => {
