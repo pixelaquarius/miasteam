@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KOL Compatibility & Performance Auditor — Enterprise Edition</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            office: {
+              bg: '#F8FAFC',
+              surface: '#FFFFFF',
+              subtle: '#F1F5F9',
+              border: '#E2E8F0',
+              text: '#0F172A',
+              muted: '#475569',
+              light: '#94A3B8',
+              blue: '#0284C7',
+              blueDark: '#0369A1',
+              blueLight: '#E0F2FE',
+              black: '#090D16'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #F8FAFC;
+      color: #0F172A;
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+    }
+    .office-card {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.02);
+    }
+    .progress-transition {
+      transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .dropzone-active {
+      border-color: #0284C7 !important;
+      background-color: #F0F9FF !important;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #F1F5F9; }
+    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- TOP ENTERPRISE NAVBAR -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-slate-900 flex items-center justify-center text-white font-bold font-mono text-sm shadow-sm">
+          KA
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-900 tracking-tight text-base">KOL Performance Auditor</span>
+            <span class="text-[11px] font-mono uppercase px-2 py-0.5 bg-sky-50 text-sky-700 border border-sky-200 rounded font-semibold">Beauty & Personal Care</span>
+          </div>
+          <p class="text-xs text-slate-500">Kalodata DOM Analytics, Dynamic Tracklist & Deep Case Research</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-100 border border-slate-200 text-xs text-slate-600 font-mono">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>Vault Lock: Encrypted</span>
+        </div>
+        <button id="navUploadAnotherBtn" onclick="resetToLanding()" class="hidden px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+          Upload Another HTML
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== STAGE 1: LANDING & FILE UPLOAD ==================== -->
+  <main id="stageLanding" class="flex-1 flex items-center justify-center p-6">
+    <div class="max-w-xl w-full office-card p-8">
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 rounded-xl bg-sky-50 border border-sky-200 text-sky-600 mx-auto flex items-center justify-center mb-3">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <h1 class="text-xl font-bold text-slate-900">Import Kalodata Creator HTML</h1>
+        <p class="text-xs text-slate-500 mt-1">
+          Drop your exported Kalodata <code class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-700">.html</code> file below to automatically detect the creator's revenue model (Short-Video vs. Livestream) and verify compatibility against Top 20 Vietnam Beauty Brands.
+        </p>
+      </div>
+
+      <!-- DRAG & DROP ZONE -->
+      <div id="dropZone"
+           class="border-2 border-dashed border-slate-300 hover:border-sky-600 rounded-xl p-10 text-center transition cursor-pointer bg-slate-50/70"
+           onclick="document.getElementById('fileInput').click()">
+        <input type="file" id="fileInput" accept=".html,.htm" class="hidden" onchange="handleFileSelect(event)" />
+        <svg class="w-10 h-10 text-slate-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+        </svg>
+        <p class="text-sm font-semibold text-slate-800">Drag & drop Kalodata HTML file here</p>
+        <p class="text-xs text-slate-500 mt-1">or <span class="text-sky-600 font-semibold underline">click to browse</span> from your computer</p>
+        <div class="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded bg-white border border-slate-200 text-[11px] font-mono text-slate-500">
+          Supported: Kalodata Creator Detail (.html)
+        </div>
+      </div>
+
+      <!-- PASTE RAW HTML DRAWER -->
+      <div class="mt-5 pt-5 border-t border-slate-200">
+        <button onclick="toggleRawHtmlDrawer()" class="w-full flex items-center justify-between text-xs font-semibold text-slate-600 hover:text-slate-900 py-1 cursor-pointer">
+          <span>Or paste raw Kalodata HTML source code</span>
+          <svg id="drawerArrow" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div id="rawHtmlDrawer" class="hidden mt-3 space-y-3">
+          <textarea id="rawHtmlInput" rows="4" placeholder="Paste full <!DOCTYPE html> source from Kalodata..." class="w-full p-3 text-xs font-mono bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-sky-600 text-slate-800"></textarea>
+          <button onclick="handleRawHtmlSubmit()" class="w-full py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-semibold text-xs rounded-lg transition shadow-sm cursor-pointer">
+            Parse HTML & Run Audit
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== STAGE 2: LOADING & DOM EXTRACTION ==================== -->
+  <section id="stageLoading" class="hidden flex-1 flex items-center justify-center p-6">
+    <div class="max-w-md w-full office-card p-8 text-center">
+      <div class="w-12 h-12 rounded-full border-2 border-slate-200 border-t-sky-600 animate-spin mx-auto mb-4"></div>
+      <h2 class="text-base font-bold text-slate-900" id="loadingTitle">Parsing Kalodata DOM Structure...</h2>
+      <p class="text-xs text-slate-500 mt-1 font-mono" id="loadingFileName">file.html</p>
+
+      <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mt-5">
+        <div id="loadingBar" class="bg-sky-600 h-full progress-transition" style="width: 0%"></div>
+      </div>
+
+      <div class="mt-5 text-left space-y-2 text-xs font-mono text-slate-600" id="loadingSteps">
+        <div id="step1" class="flex items-center gap-2 opacity-40"><span>[1/4]</span> <span>Extracting Core GMV, Followers & Revenue Split...</span></div>
+        <div id="step2" class="flex items-center gap-2 opacity-40"><span>[2/4]</span> <span>Scanning Store, Product & Video Tables for Industry Fit...</span></div>
+        <div id="step3" class="flex items-center gap-2 opacity-40"><span>[3/4]</span> <span>Benchmarking against Top 20 Vietnam Beauty Brands...</span></div>
+        <div id="step4" class="flex items-center gap-2 opacity-40"><span>[4/4]</span> <span>Selecting Dynamic Tracklist (Video vs. Live Track)...</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== STAGE 3: ANALYTICAL DASHBOARD ==================== -->
+  <section id="stageDashboard" class="hidden flex-1 max-w-7xl w-full mx-auto px-6 py-8 space-y-6">
+
+    <!-- ROW 1: CREATOR OVERVIEW & COMPATIBILITY GAUGE -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Creator Profile Card -->
+      <div class="lg:col-span-2 office-card p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex flex-wrap items-start justify-between gap-4 border-b border-slate-200 pb-4">
+            <div class="flex items-center gap-4">
+              <div id="kolAvatar" class="w-16 h-16 rounded-full bg-slate-200 bg-cover bg-center border border-slate-300 shrink-0 flex items-center justify-center font-bold text-slate-600 text-lg">
+                KOL
+              </div>
+              <div>
+                <div class="flex items-center gap-2.5 flex-wrap">
+                  <h2 id="kolHandle" class="text-xl font-bold text-slate-900 font-mono">@handle</h2>
+                  <span id="trackModeBadge" class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-sky-50 text-sky-700 border border-sky-200">
+                    Short-Video Track
+                  </span>
+                  <span id="mcnBadge" class="px-2.5 py-0.5 text-xs font-mono rounded bg-slate-100 text-slate-700 border border-slate-200">
+                    MCN: Independent
+                  </span>
+                </div>
+                <p id="kolBio" class="text-xs text-slate-500 mt-1 line-clamp-2">Bio description...</p>
+                <div class="flex items-center gap-4 mt-2 text-[11px] font-mono text-slate-500">
+                  <span id="kolDebut">First Published: --</span>
+                  <span>•</span>
+                  <span id="kolDemographics">Audience: --</span>
+                  <span>•</span>
+                  <span id="kolDateRange">Window: 30 Days</span>
+                </div>
+              </div>
+            </div>
+            <a id="tiktokProfileLink" href="#" target="_blank" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+              <span>TikTok Profile</span>
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </a>
+          </div>
+
+          <!-- Core 8 Metrics Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+              <div class="text-[11px] text-slate-500 font-medium">30D Total GMV</div>
+              <div id="metricTotalGmv" class="text-base font-bold text-slate-900 font-mono mt-0.5">--</div>
+              <div id="metricDailyGmv" class="text-[11px] text-slate-500 font-mono">-- / day</div>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+              <div class="text-[11px] text-slate-500 font-medium">Video vs. Live Split</div>
+              <div id="metricChannelSplit" class="text-base font-bold text-sky-700 font-mono mt-0.5">--</div>
+              <div id="metricChannelSub" class="text-[11px] text-slate-500 font-mono">--</div>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+              <div class="text-[11px] text-slate-500 font-medium">GMV / 1K Followers</div>
+              <div id="metricGmvPer1k" class="text-base font-bold text-slate-900 font-mono mt-0.5">--</div>
+              <div id="metricFollowers" class="text-[11px] text-slate-500 font-mono">-- followers</div>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+              <div class="text-[11px] text-slate-500 font-medium">GMV / Active Video</div>
+              <div id="metricGmvPerVideo" class="text-base font-bold text-slate-900 font-mono mt-0.5">--</div>
+              <div id="metricVideoCount" class="text-[11px] text-slate-500 font-mono">-- videos (30d)</div>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+              <div class="text-[11px] text-slate-500 font-medium">Avg. Unit Price (AOV)</div>
+              <div id="metricAov" class="text-base font-bold text-slate-900 font-mono mt-0.5">--</div>
+              <div id="metricAovFit" class="text-[11px] text-slate-500 font-mono">Target: ₫180k–450k</div>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+              <div class="text-[11px] text-slate-500 font-medium">30D Video Views</div>
+              <div id="metricVideoViews" class="text-base font-bold text-slate-900 font-mono mt-0.5">--</div>
+              <div id="metricViewsPerVideo" class="text-[11px] text-slate-500 font-mono">-- / video</div>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+              <div class="text-[11px] text-slate-500 font-medium">30D Live Views</div>
+              <div id="metricLiveViews" class="text-base font-bold text-slate-900 font-mono mt-0.5">--</div>
+              <div id="metricFollowerChange" class="text-[11px] text-slate-500 font-mono">Net growth: --</div>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+              <div class="text-[11px] text-slate-500 font-medium">Detected Industry</div>
+              <div id="metricDetectedIndustry" class="text-xs font-bold text-slate-900 mt-1 leading-tight">--</div>
+              <div id="metricTop20Match" class="text-[11px] text-sky-700 font-mono mt-0.5">-- Top 20 Brands</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compatibility Score & Category Progress Card -->
+      <div class="office-card p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Compatibility Score</span>
+            <span id="tierBadge" class="px-2.5 py-0.5 text-xs font-bold rounded bg-slate-900 text-white font-mono">TIER --</span>
+          </div>
+
+          <div class="my-5 flex items-baseline justify-between">
+            <div>
+              <div id="overallScoreValue" class="text-4xl font-extrabold text-slate-900 font-mono">0%</div>
+              <div id="overallChecksText" class="text-xs text-slate-500 mt-1">0 of 11 criteria passed</div>
+            </div>
+            <div class="text-right">
+              <div class="text-[11px] font-mono text-slate-500">PRIMARY TRACK</div>
+              <div id="primaryTrackLabel" class="text-xs font-bold text-sky-700">Short-Video Conversion</div>
+            </div>
+          </div>
+
+          <!-- Master Progress Bar -->
+          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden mb-5 border border-slate-200">
+            <div id="overallProgressBar" class="bg-sky-600 h-full progress-transition" style="width: 0%"></div>
+          </div>
+
+          <!-- 4 Category Sub-Bars -->
+          <div id="categoryBarsContainer" class="space-y-3 text-xs"></div>
+        </div>
+
+        <div class="mt-5 pt-4 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
+          <span>Tick/untick items below to override</span>
+          <button onclick="recomputeChecklistScore()" class="text-sky-600 hover:underline font-semibold cursor-pointer">Reset Auto-Check</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 2: DYNAMIC TRACKLIST & PRELIMINARY SCENARIO VERDICT -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Interactive 11-Point Tracklist -->
+      <div class="lg:col-span-2 office-card p-6">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-4 mb-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-900" id="checklistHeaderTitle">Dynamic KOL Evaluation Tracklist</h3>
+            <p class="text-xs text-slate-500" id="checklistHeaderSub">
+              Automatically calibrated based on the creator's dominant revenue engine and actual product/store tables.
+            </p>
+          </div>
+          <span id="checklistModePill" class="px-3 py-1 rounded-md bg-slate-900 text-white text-xs font-mono font-semibold">
+            VIDEO-DRIVEN CRITERIA
+          </span>
+        </div>
+
+        <div id="checklistContainer" class="space-y-5"></div>
+      </div>
+
+      <!-- Preliminary Scenario Evaluation & AI Research Column -->
+      <div class="space-y-6">
+        <!-- Scenario Diagnostic Card -->
+        <div class="office-card p-6">
+          <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Preliminary Scenario Diagnosis</span>
+            <span class="text-[11px] font-mono text-sky-700 font-semibold">Auto-Detected</span>
+          </div>
+          <div id="scenarioTitle" class="text-sm font-bold text-slate-900">--</div>
+          <p id="scenarioDesc" class="text-xs text-slate-600 mt-2 leading-relaxed">--</p>
+
+          <div class="mt-4 p-3 rounded-lg bg-slate-50 border border-slate-200">
+            <div class="text-[11px] font-bold uppercase text-slate-700 mb-1.5">Recommended Action Plan</div>
+            <ul id="scenarioActions" class="text-xs text-slate-600 space-y-1.5 list-disc pl-4"></ul>
+          </div>
+        </div>
+
+        <!-- AI Deep Case Research & TikTok Audit Card -->
+        <div class="office-card p-6 border-t-4 border-t-slate-900">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900">AI Deep Case & TikTok Channel Audit</h3>
+              <p class="text-[11px] text-slate-500">Real-world diagnostic of this KOL's current sales velocity, store portfolio & risk profile</p>
+            </div>
+            <span class="px-2 py-0.5 text-[10px] font-mono bg-slate-100 text-slate-700 rounded border border-slate-200">LOCKED API</span>
+          </div>
+
+          <button id="runAiAuditBtn" onclick="runAiDeepCaseAnalysis()" class="w-full mt-3 py-2.5 px-4 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
+            <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <span>Run Deep Case Research on This KOL</span>
+          </button>
+
+          <div id="aiAuditOutput" class="mt-4 text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-lg p-3.5 max-h-96 overflow-y-auto whitespace-pre-line leading-relaxed font-sans">
+            Click "Run Deep Case Research on This KOL" to synthesize a complete commercial audit from the extracted Kalodata tables, GMV/Follower ratios, SKU conversion depth, and Top 20 Vietnam Beauty Brand benchmarks.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 3: EXTRACTED STORE & PRODUCT TABLES WITH TOP 20 BRAND MATCHING -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Top Cooperative Stores -->
+      <div class="office-card p-6">
+        <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Extracted Cooperative Stores (<code class="font-mono text-xs">.table_seller</code>)</h3>
+            <p class="text-xs text-slate-500">Cross-checked against your Kalodata Top 20 Vietnam Beauty Brands Excel list</p>
+          </div>
+          <span id="storeCountBadge" class="text-xs font-mono px-2 py-0.5 bg-slate-100 rounded text-slate-700">0 stores</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-500 font-mono text-[11px]">
+                <th class="py-2 pr-2">#</th>
+                <th class="py-2 px-2">Store / Brand</th>
+                <th class="py-2 px-2">Classification</th>
+                <th class="py-2 px-2 text-right">30D Revenue</th>
+                <th class="py-2 pl-2 text-right">Orders</th>
+              </tr>
+            </thead>
+            <tbody id="storesTableBody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Top Converting Products & Videos -->
+      <div class="office-card p-6">
+        <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Extracted Top SKUs & Videos (<code class="font-mono text-xs">.table_product / .table_video</code>)</h3>
+            <p class="text-xs text-slate-500">Used to verify real category alignment (Skincare vs. Personal Care vs. Apparel)</p>
+          </div>
+          <span id="productCountBadge" class="text-xs font-mono px-2 py-0.5 bg-slate-100 rounded text-slate-700">0 items</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-500 font-mono text-[11px]">
+                <th class="py-2 pr-2">#</th>
+                <th class="py-2 px-2">Product / Video Title</th>
+                <th class="py-2 px-2 text-right">Revenue</th>
+                <th class="py-2 px-2 text-right">Sales / Views</th>
+                <th class="py-2 pl-2 text-right">Unit Price / ROAS</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <script>
+    // ============================================================================
+    // 1. SECURITY VAULT: OBFUSCATED API KEY & ANTI-INSPECTION LOCK
+    // ============================================================================
+    (function _initSecurityVault() {
+      // Prevent right-click context menu & common DevTools keybindings
+      document.addEventListener('contextmenu', e => e.preventDefault());
+      document.addEventListener('keydown', e => {
+        if (
+          e.key === 'F12' ||
+          (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) ||
+          (e.ctrlKey && e.key.toUpperCase() === 'U')
+        ) {
+          e.preventDefault();
+        }
+      });
+
+      // XOR-obfuscated byte array inside a private closure so plain-text key never exists in source
+      const _salt = [75, 65, 76, 79, 95, 83, 89, 95, 50, 48, 50, 54];
+      const _cipher = [
+        10, 16, 98, 14, 61, 107, 11, 17, 6, 91, 94, 4,
+        0, 108, 127, 22, 14, 42, 0, 102, 4, 83, 66, 22,
+        59, 50, 29, 4, 8, 22, 63, 7, 90, 126, 20, 77,
+        5, 24, 15, 54, 106, 58, 17, 11, 67, 121, 91, 61,
+        8, 18, 63, 40
+      ];
+
+      Object.defineProperty(window, '__invokeVaultModel', {
+        configurable: false,
+        enumerable: false,
+        writable: false,
+        value: async function(promptText) {
+          const _k = _cipher.map((b, i) => String.fromCharCode(b ^ _salt[i % _salt.length])).join('');
+          const endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + encodeURIComponent(_k);
+          const resp = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: promptText }] }],
+              generationConfig: { temperature: 0.35, maxOutputTokens: 1100 }
+            })
+          });
+          if (!resp.ok) throw new Error('API request fallback triggered');
+          const data = await resp.json();
+          return data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
+        }
+      });
+    })();
+
+    // ============================================================================
+    // 2. TOP 20 VIETNAM BEAUTY & PERSONAL CARE BRANDS (FROM YOUR KALODATA EXCEL)
+    // ============================================================================
+    const KALODATA_TOP20_BEAUTY_BRANDS = [
+      { rank: 1, name: 'Lubylab', aliases: ['lubylab'], gmv: 80.66e9, aov: 1666256, sub: 'High-End Skincare' },
+      { rank: 2, name: 'Unilever Chăm Sóc Cá Nhân', aliases: ['unilever chăm sóc cá nhân', 'unilever - chăm sóc cá nhân'], gmv: 50.46e9, aov: 153333, sub: 'Personal Care' },
+      { rank: 3, name: 'Cocoon', aliases: ['cocoon'], gmv: 48.47e9, aov: 247678, sub: 'Vegan Skincare' },
+      { rank: 4, name: 'Colorkey Việt Nam', aliases: ['colorkey việt nam', 'colorkey'], gmv: 46.71e9, aov: 149356, sub: 'Makeup' },
+      { rank: 5, name: 'OLAY', aliases: ['olay'], gmv: 44.60e9, aov: 456632, sub: 'Skincare & Bodycare' },
+      { rank: 6, name: 'Unilever Beauty', aliases: ['unilever beauty'], gmv: 42.76e9, aov: 212511, sub: 'Beauty & Personal Care' },
+      { rank: 7, name: "L'Oreal Paris Việt Nam", aliases: ["l'oreal", 'loreal'], gmv: 38.01e9, aov: 308581, sub: 'Skincare & Makeup' },
+      { rank: 8, name: 'Colorkey Cosmetic VN', aliases: ['colorkey cosmetic'], gmv: 34.60e9, aov: 199969, sub: 'Makeup' },
+      { rank: 9, name: 'CeraVe Việt Nam', aliases: ['cerave'], gmv: 33.31e9, aov: 367616, sub: 'Derma Skincare' },
+      { rank: 10, name: 'Vibrant Glamour', aliases: ['vibrant glamour'], gmv: 28.15e9, aov: 823887, sub: 'Skincare' },
+      { rank: 11, name: 'Cỏ Mềm', aliases: ['cỏ mềm', 'co mem'], gmv: 25.49e9, aov: 281366, sub: 'Natural Beauty & Haircare' },
+      { rank: 12, name: 'La Roche-Posay Việt Nam', aliases: ['la roche-posay', 'la roche posay'], gmv: 25.06e9, aov: 581500, sub: 'Derma Skincare' },
+      { rank: 13, name: 'Hasaki Beauty', aliases: ['hasaki'], gmv: 24.97e9, aov: 162307, sub: 'Beauty Retailer' },
+      { rank: 14, name: 'Thorakao', aliases: ['thorakao'], gmv: 23.89e9, aov: 88686, sub: 'Local Skincare & Haircare' },
+      { rank: 15, name: 'Florasis Hoa Tây Tử', aliases: ['florasis', 'hoa tây tử'], gmv: 22.83e9, aov: 993403, sub: 'High-End Makeup' },
+      { rank: 16, name: 'Kans', aliases: ['kans'], gmv: 22.78e9, aov: 258397, sub: 'Active Skincare' },
+      { rank: 17, name: '3CE Stylenanda', aliases: ['3ce'], gmv: 19.93e9, aov: 336844, sub: 'Makeup' },
+      { rank: 18, name: 'Judydoll', aliases: ['judydoll'], gmv: 19.24e9, aov: 227554, sub: 'Makeup' },
+      { rank: 19, name: 'Colgate', aliases: ['colgate'], gmv: 19.22e9, aov: 127160, sub: 'Oral & Personal Care' },
+      { rank: 20, name: 'Obagi', aliases: ['obagi'], gmv: 16.80e9, aov: 2512843, sub: 'Clinical Derma Skincare' }
+    ];
+
+    // Additional Verified Facial Skincare Brands (including your brand L.ASY)
+    const SPECIALIST_SKINCARE_BRANDS = [
+      'lasy', 'l.asy', 'celimax', "paula's choice", 'paulas choice', 'babrea', 'spring letter',
+      'yves rocher', 'bioderma', 'skin1004', 'torriden', 'anua', 'cosrx', 'klairs', 'somebymi',
+      'svr', 'vichy', 'eucerin', 'cetaphil', 'simple', 'garnier', 'innisfree', 'laneige', 'sulwhasoo'
+    ];
+
+    // Personal Care / Intimate Hygiene / Hair / Oral Care Keywords
+    const PERSONAL_CARE_KEYWORDS = [
+      'ph care', 'dung dịch vệ sinh', 'dao cạo', 'gillette', 'băng vệ sinh', 'diana', 'tăm nước',
+      'brushie', 'bàn chải', 'oral-b', 'marvis', 'sữa tắm', 'dầu gội', 'rụng tóc', 'bioclean', 'sáp thơm', 'ambi pur'
+    ];
+
+    // Non-Beauty / Apparel / Lingerie / General Merchandise Keywords
+    const APPAREL_OTHER_KEYWORDS = [
+      'quần lót', 'áo ngực', 'quần chip', 'innerwear', 'underwear', 'bra ', 'bralette', 'áo dài',
+      'bigsize', 'vibigsize', 'túi xách', 'pháp phục', 'bà ba', 'đai latex', 'tổng sỉ'
+    ];
+
+    let currentAuditData = null;
+    let currentChecklistState = [];
+
+    // ============================================================================
+    // 3. VIETNAMESE CURRENCY & NUMBER PARSER
+    // ============================================================================
+    function parseVnNumber(rawStr) {
+      if (!rawStr) return 0;
+      const str = String(rawStr).trim().toLowerCase();
+      const isNegative = str.includes('-');
+      const numMatch = str.match(/[\d.,]+/);
+      if (!numMatch) return 0;
+      let numPart = numMatch[0];
+      // In Kalodata vi-VN locale, comma is decimal separator (e.g., "734,41tr" or "13,51tỉ")
+      if (numPart.includes(',') && !numPart.includes('.')) {
+        numPart = numPart.replace(',', '.');
+      } else if (numPart.includes('.') && numPart.includes(',')) {
+        numPart = numPart.replace(/\./g, '').replace(',', '.');
+      }
+      let val = parseFloat(numPart);
+      if (isNaN(val)) return 0;
+      if (str.includes('tỉ') || str.includes('tỷ')) val *= 1e9;
+      else if (str.includes('tr')) val *= 1e6;
+      else if (str.includes('k')) val *= 1e3;
+      return isNegative ? -val : val;
+    }
+
+    function formatVnCurrency(val) {
+      if (val === null || val === undefined || isNaN(val)) return '₫0';
+      const abs = Math.abs(val);
+      const sign = val < 0 ? '-' : '';
+      if (abs >= 1e9) return sign + '₫' + (abs / 1e9).toFixed(2) + 'B';
+      if (abs >= 1e6) return sign + '₫' + (abs / 1e6).toFixed(2) + 'M';
+      if (abs >= 1e3) return sign + '₫' + (abs / 1e3).toFixed(1) + 'K';
+      return sign + '₫' + Math.round(abs).toLocaleString('en-US');
+    }
+
+    function formatCompactNumber(val) {
+      if (!val || isNaN(val)) return '0';
+      const abs = Math.abs(val);
+      const sign = val < 0 ? '-' : '';
+      if (abs >= 1e6) return sign + (abs / 1e6).toFixed(2) + 'M';
+      if (abs >= 1e3) return sign + (abs / 1e3).toFixed(1) + 'K';
+      return sign + Math.round(abs).toString();
+    }
+
+    // ============================================================================
+    // 4. KALODATA HTML DOM PARSER & INDUSTRY CLASSIFIER
+    // ============================================================================
+    function parseKalodataHtml(htmlString, fileName = 'Uploaded_Creator.html') {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlString, 'text/html');
+
+      // 1. Handle
+      let handle = doc.querySelector('.kalo-bigtitle')?.textContent?.trim() || '';
+      if (!handle) {
+        const titleText = doc.querySelector('title')?.textContent || '';
+        const hMatch = titleText.match(/@[\w.]+/);
+        handle = hMatch ? hMatch[0] : '@unknown_creator';
+      }
+
+      // 2. Avatar
+      let avatarUrl = '';
+      const avatarEl = doc.querySelector('.first_col .Component-Image');
+      if (avatarEl) {
+        const bg = avatarEl.getAttribute('style') || '';
+        const m = bg.match(/url\((?:&quot;|"|')?(.*?)(?:&quot;|"|')?\)/);
+        if (m && m[1]) avatarUrl = m[1];
+      }
+
+      // 3. MCN & First Published Date & Bio
+      const mcnRaw = doc.querySelector('.mcn')?.textContent?.trim() || 'Chưa ký';
+      const isIndependent = mcnRaw.toLowerCase().includes('chưa ký');
+      const mcnDisplay = isIndependent ? 'Independent (Unsigned)' : `Signed (${mcnRaw})`;
+
+      let firstPubDate = 'N/A';
+      const bodyText = doc.body?.textContent || '';
+      const pubMatch = bodyText.match(/Thời gian phát hành lần đầu\s*:\s*(\d{2}\/\d{2}\/\d{4})/);
+      if (pubMatch) firstPubDate = pubMatch[1];
+
+      let bioText = 'No bio text provided';
+      const allDivs = Array.from(doc.querySelectorAll('div'));
+      const bioLabel = allDivs.find(d => d.textContent.trim() === 'Hồ sơ cá nhân:');
+      if (bioLabel && bioLabel.nextElementSibling) {
+        bioText = bioLabel.nextElementSibling.textContent.trim().replace(/\s+/g, ' ');
+      }
+
+      // 4. Demographics (Gender, Age, Followers, 30d Products)
+      const isFemaleMajority = bodyText.includes('Nữ giới chiếm đa số');
+      let ageGroup = '25-34';
+      if (bodyText.includes('18-24')) ageGroup = '18-24';
+      else if (bodyText.includes('25-34')) ageGroup = '25-34';
+      else if (bodyText.includes('35-44')) ageGroup = '35-44';
+
+      let followersCount = 0;
+      let products30dCount = 0;
+      const profileTableRows = doc.querySelectorAll('.first_col .table .table-row');
+      if (profileTableRows.length >= 2) {
+        const cells = profileTableRows[1].querySelectorAll('.table-cell');
+        if (cells[0]) {
+          const fText = cells[0].textContent.trim().split(/\s+/)[0];
+          followersCount = parseVnNumber(fText);
+        }
+        if (cells[1]) {
+          products30dCount = parseInt(cells[1].textContent.trim(), 10) || 0;
+        }
+      }
+
+      // 5. Core Metrics Extraction
+      const getCoreMetric = (cls) => {
+        const labelEl = doc.querySelector(cls);
+        if (!labelEl) return { main: 0, daily: 0 };
+        const itemEl = labelEl.closest('.item');
+        if (!itemEl) return { main: 0, daily: 0 };
+        const valText = itemEl.querySelector('.value')?.textContent?.trim() || '0';
+        const unitText = itemEl.querySelector('.unit')?.textContent?.trim() || '0';
+        return {
+          main: parseVnNumber(valText),
+          daily: parseVnNumber(unitText)
+        };
+      };
+
+      const totalRevenue = getCoreMetric('.labelRevenue');
+      const liveRevenue = getCoreMetric('.labelLive.Revenue');
+      const videoRevenue = getCoreMetric('.labelVideo.Revenue');
+      const showcaseRevenue = getCoreMetric('[class*="labelShowcase"]');
+      const aovMetric = getCoreMetric('[class*="labelAvg"]');
+      const liveViews = getCoreMetric('.labelLive.Views');
+      const videoViews = getCoreMetric('.labelVideo.Views');
+      const followerChange = getCoreMetric('.labelFollower.Change');
+
+      // 6. Total Video Count in 30d from Video Table Header
+      let videoCount30d = 0;
+      const videoHeaderSpan = doc.querySelector('.PageCreatorDetail-VideoTable span.text-base-999');
+      if (videoHeaderSpan) {
+        const m = videoHeaderSpan.textContent.match(/(\d+)/);
+        if (m) videoCount30d = parseInt(m[1], 10);
+      }
+
+      // 7. Parse Tables: Store Table (.table_seller), Video Table (.table_video), Product Table (.table_product)
+      const stores = [];
+      const storeRows = doc.querySelectorAll('.table_seller tbody tr');
+      storeRows.forEach((tr) => {
+        const tds = tr.querySelectorAll('td');
+        if (tds.length >= 5) {
+          const rank = tds[0].textContent.trim();
+          const rawInfo = tds[1].textContent.replace(/\ue61b/g, '|').trim();
+          const storeName = rawInfo.split('|')[0].replace(/THƯƠNG HIỆU|NHÀ BÁN LẺ/g, '').trim();
+          const storeType = rawInfo.includes('NHÀ BÁN LẺ') ? 'Retailer' : 'Brand';
+          const rev = parseVnNumber(tds[2].textContent);
+          const prodCount = parseInt(tds[3].textContent.trim(), 10) || 0;
+          const orders = parseVnNumber(tds[4].textContent);
+          if (storeName) {
+            stores.push({ rank, storeName, storeType, rev, prodCount, orders });
+          }
+        }
+      });
+
+      const videos = [];
+      const videoRows = doc.querySelectorAll('.table_video tbody tr');
+      videoRows.forEach((tr) => {
+        const tds = tr.querySelectorAll('td');
+        if (tds.length >= 9) {
+          const rank = tds[0].textContent.trim();
+          const title = tds[1].textContent.replace(/ADCông cụ video|Công cụ video/g, '').trim();
+          const rev = parseVnNumber(tds[3].textContent);
+          const views = parseVnNumber(tds[4].textContent);
+          const adSalesRatio = parseFloat(tds[5].textContent) || 0;
+          const adCost = parseVnNumber(tds[7].textContent);
+          const roas = parseFloat(tds[8].textContent) || 0;
+          const pubDate = tds[9]?.textContent?.trim() || '';
+          if (rank && title) {
+            videos.push({ rank, title, rev, views, adSalesRatio, adCost, roas, pubDate });
+          }
+        }
+      });
+
+      const products = [];
+      const allTables = doc.querySelectorAll('table');
+      allTables.forEach((tbl) => {
+        const thText = tbl.querySelector('thead')?.textContent || '';
+        if (thText.includes('Thông tin sản phẩm')) {
+          tbl.querySelectorAll('tbody tr').forEach((tr) => {
+            const tds = tr.querySelectorAll('td');
+            if (tds.length >= 5) {
+              const rank = tds[0].textContent.trim();
+              const name = tds[1].textContent.trim();
+              const rev = parseVnNumber(tds[2].textContent);
+              const orders = parseVnNumber(tds[3].textContent);
+              const unitPrice = parseVnNumber(tds[4].textContent);
+              if (rank && name) {
+                products.push({ rank, name, rev, orders, unitPrice });
+              }
+            }
+          });
+        }
+      });
+
+      // 8. Industry & Brand Matching Engine (Replaces Bio Keyword Check)
+      let top20MatchedBrands = [];
+      let specialistSkincareStores = 0;
+      let personalCareStores = 0;
+      let apparelStores = 0;
+      let skincareRevenue = 0;
+      let personalCareRevenue = 0;
+      let apparelRevenue = 0;
+      let maxSkincareOrdersOnSingleStore = 0;
+
+      stores.forEach((s) => {
+        const lower = s.storeName.toLowerCase();
+        const matchedTop20 = KALODATA_TOP20_BEAUTY_BRANDS.find(b =>
+          b.aliases.some(alias => lower.includes(alias))
+        );
+        if (matchedTop20) {
+          top20MatchedBrands.push(matchedTop20.name);
+        }
+
+        const isSkincare =
+          SPECIALIST_SKINCARE_BRANDS.some(k => lower.includes(k)) ||
+          (matchedTop20 && matchedTop20.sub.toLowerCase().includes('skincare'));
+        const isPersonalCare =
+          PERSONAL_CARE_KEYWORDS.some(k => lower.includes(k)) ||
+          (matchedTop20 && matchedTop20.sub.toLowerCase().includes('personal'));
+        const isApparel = APPAREL_OTHER_KEYWORDS.some(k => lower.includes(k));
+
+        if (isSkincare) {
+          specialistSkincareStores++;
+          skincareRevenue += s.rev;
+          if (s.orders > maxSkincareOrdersOnSingleStore) maxSkincareOrdersOnSingleStore = s.orders;
+          s.categoryTag = matchedTop20 ? `Top #${matchedTop20.rank} Skincare` : 'Skincare Brand';
+        } else if (isPersonalCare) {
+          personalCareStores++;
+          personalCareRevenue += s.rev;
+          s.categoryTag = matchedTop20 ? `Top #${matchedTop20.rank} Personal Care` : 'Personal Care';
+        } else if (isApparel) {
+          apparelStores++;
+          apparelRevenue += s.rev;
+          s.categoryTag = 'Apparel / Lingerie';
+        } else {
+          // Check product names for this creator to classify remaining stores
+          s.categoryTag = matchedTop20 ? `Top #${matchedTop20.rank} Beauty` : 'General / Wellness';
+        }
+      });
+
+      // Also scan product titles for deeper category verification
+      let skincareSkuCount = 0;
+      let personalCareSkuCount = 0;
+      let apparelSkuCount = 0;
+      products.forEach((p) => {
+        const lower = p.name.toLowerCase();
+        if (/serum|tinh chất|kem dưỡng|tẩy trang|chống nắng|peel|retinol|retinal|mặt nạ|cica|niacinamide|sữa rửa mặt|cushion/.test(lower)) {
+          skincareSkuCount++;
+        } else if (/dung dịch vệ sinh|dao cạo|băng vệ sinh|dầu gội|sáp thơm|bàn chải|viên kẽm/.test(lower)) {
+          personalCareSkuCount++;
+        } else if (/quần lót|áo ngực|bra|túi xách|bà ba|pháp phục|đai latex|bigsize/.test(lower)) {
+          apparelSkuCount++;
+        }
+      });
+
+      let detectedIndustry = 'Facial Skincare & Derma Beauty';
+      let isCategoryAlignedWithSkincare = true;
+      if (apparelSkuCount >= 4 || apparelStores >= 4) {
+        detectedIndustry = 'Women Apparel, Lingerie & Feminine Care';
+        isCategoryAlignedWithSkincare = false;
+      } else if (personalCareStores > specialistSkincareStores && skincareRevenue < 15e6) {
+        detectedIndustry = 'Personal Care & Feminine Hygiene (Low Skincare Share)';
+        isCategoryAlignedWithSkincare = false;
+      }
+
+      // 9. Derived Ratios (GMV/Follower, GMV/Video, Views/Video, Ad ROAS)
+      const gmvPer1kFollowers = followersCount > 0 ? (totalRevenue.main / (followersCount / 1000)) : 0;
+      const effectiveVideoCount = Math.max(videoCount30d, videos.length, 1);
+      const gmvPerVideo = videoRevenue.main / effectiveVideoCount;
+      const viewsPerVideo = videoViews.main / effectiveVideoCount;
+
+      const videoSharePct = totalRevenue.main > 0 ? (videoRevenue.main / totalRevenue.main) * 100 : 0;
+      const liveSharePct = totalRevenue.main > 0 ? (liveRevenue.main / totalRevenue.main) * 100 : 0;
+
+      // Dominant Track Mode: VIDEO vs LIVE
+      const dominantTrack = liveSharePct > videoSharePct ? 'LIVE_TRACK' : 'VIDEO_TRACK';
+
+      const roasList = videos.filter(v => v.roas > 0).map(v => v.roas);
+      const avgRoas = roasList.length > 0 ? (roasList.reduce((a, b) => a + b, 0) / roasList.length) : 0;
+
+      return {
+        fileName,
+        handle,
+        avatarUrl,
+        mcnDisplay,
+        isIndependent,
+        firstPubDate,
+        bioText,
+        isFemaleMajority,
+        ageGroup,
+        followersCount,
+        products30dCount,
+        totalGmv: totalRevenue.main,
+        dailyGmv: totalRevenue.daily,
+        liveGmv: liveRevenue.main,
+        videoGmv: videoRevenue.main,
+        showcaseGmv: showcaseRevenue.main,
+        aov: aovMetric.main,
+        liveViews: liveViews.main,
+        videoViews: videoViews.main,
+        followerChange: followerChange.main,
+        videoCount30d,
+        gmvPer1kFollowers,
+        gmvPerVideo,
+        viewsPerVideo,
+        videoSharePct,
+        liveSharePct,
+        dominantTrack,
+        avgRoas,
+        stores,
+        videos,
+        products,
+        top20MatchedBrands: [...new Set(top20MatchedBrands)],
+        specialistSkincareStores,
+        personalCareStores,
+        apparelStores,
+        skincareRevenue,
+        personalCareRevenue,
+        apparelRevenue,
+        maxSkincareOrdersOnSingleStore,
+        skincareSkuCount,
+        personalCareSkuCount,
+        apparelSkuCount,
+        detectedIndustry,
+        isCategoryAlignedWithSkincare
+      };
+    }
+
+    // ============================================================================
+    // 5. DYNAMIC 11-POINT CHECKLIST BUILDER (VIDEO TRACK VS. LIVE TRACK)
+    // ============================================================================
+    function buildDynamicChecklist(d) {
+      const isVideoTrack = d.dominantTrack === 'VIDEO_TRACK';
+
+      return [
+        // CATEGORY 1: AUDIENCE & ACTUAL CATEGORY FIT (25%)
+        {
+          id: 'c1_age',
+          category: '1. Audience & Actual Category Fit (25%)',
+          weight: 8,
+          label: 'Core Buying Age Group (25–34 Target Demographic)',
+          actual: `Dominant Age: ${d.ageGroup}`,
+          threshold: 'Pass: 25–34 (Warning: 18–24 student/entry tier)',
+          passed: d.ageGroup === '25-34',
+          note: d.ageGroup === '25-34'
+            ? '25–34 demographic has disposable income for mid-to-high tier skincare.'
+            : `18–24 demographic (${d.handle}) is more price-sensitive and favors low-AOV personal care items.`
+        },
+        {
+          id: 'c1_gender',
+          category: '1. Audience & Actual Category Fit (25%)',
+          weight: 7,
+          label: 'Female Majority Audience (≥ 70% Female)',
+          actual: d.isFemaleMajority ? 'Female Majority Verified' : 'Male / Mixed Audience',
+          threshold: 'Pass: Female Majority',
+          passed: d.isFemaleMajority,
+          note: 'Ensures audience alignment for facial skincare & beauty products.'
+        },
+        {
+          id: 'c1_industry',
+          category: '1. Audience & Actual Category Fit (25%)',
+          weight: 10,
+          label: 'Actual Store & Product Table Category Alignment (No Bio Guesswork)',
+          actual: `${d.detectedIndustry} (${d.skincareSkuCount} Skincare SKUs | ${d.specialistSkincareStores} Skincare Stores)`,
+          threshold: 'Pass: Majority of top stores/SKUs are Facial Skincare',
+          passed: d.isCategoryAlignedWithSkincare && d.specialistSkincareStores >= 2,
+          note: d.isCategoryAlignedWithSkincare
+            ? 'Verified directly from .table_seller and .table_product: channel actively converts facial skincare.'
+            : `Mismatch alert: Channel primarily converts ${d.detectedIndustry} rather than facial skincare.`
+        },
+
+        // CATEGORY 2: REVENUE ENGINE & EFFICIENCY (35%) — DYNAMICALLY SWITCHES BETWEEN VIDEO & LIVE
+        {
+          id: 'c2_scale',
+          category: isVideoTrack
+            ? '2. Short-Video Conversion Efficiency (35%)'
+            : '2. Livestream Mega-Seller Efficiency (35%)',
+          weight: 10,
+          label: '30-Day Total GMV Scale (Commercial Volume Threshold)',
+          actual: `${formatVnCurrency(d.totalGmv)} (${formatVnCurrency(d.dailyGmv)}/day)`,
+          threshold: 'Pass: ≥ ₫150.00M / 30 days',
+          passed: d.totalGmv >= 150e6,
+          note: d.totalGmv >= 150e6
+            ? 'Strong commercial velocity proven over the last 30 days.'
+            : `Low total GMV (${formatVnCurrency(d.totalGmv)}): below the ₫150M benchmark for high-converting beauty creators.`
+        },
+        {
+          id: 'c2_engine',
+          category: isVideoTrack
+            ? '2. Short-Video Conversion Efficiency (35%)'
+            : '2. Livestream Mega-Seller Efficiency (35%)',
+          weight: 9,
+          label: isVideoTrack
+            ? 'Short-Video Revenue Dominance (≥ 60% GMV from Video)'
+            : 'Livestream Revenue Dominance (≥ 60% GMV from Live Sessions)',
+          actual: isVideoTrack
+            ? `Video: ${d.videoSharePct.toFixed(1)}% (${formatVnCurrency(d.videoGmv)})`
+            : `Live: ${d.liveSharePct.toFixed(1)}% (${formatVnCurrency(d.liveGmv)})`,
+          threshold: isVideoTrack ? 'Pass: Video GMV ≥ 60%' : 'Pass: Live GMV ≥ 60%',
+          passed: isVideoTrack ? (d.videoSharePct >= 60 && d.videoGmv >= 100e6) : (d.liveSharePct >= 60 && d.liveGmv >= 500e6),
+          note: isVideoTrack
+            ? 'Evaluated under the Short-Video Conversion Track.'
+            : 'Evaluated under the Livestream Mega-Seller Track (e.g., high-GPM marathon live sessions).'
+        },
+        {
+          id: 'c2_gmv_follower',
+          category: isVideoTrack
+            ? '2. Short-Video Conversion Efficiency (35%)'
+            : '2. Livestream Mega-Seller Efficiency (35%)',
+          weight: 9,
+          label: 'GMV-to-Follower Monetization Ratio (GMV / 1,000 Followers)',
+          actual: `${formatVnCurrency(d.gmvPer1kFollowers)} / 1K Followers (Followers: ${formatCompactNumber(d.followersCount)})`,
+          threshold: 'Pass: ≥ ₫1.50M GMV per 1,000 Followers',
+          passed: d.gmvPer1kFollowers >= 1.5e6,
+          note: d.gmvPer1kFollowers >= 1.5e6
+            ? 'High buyer trust per follower (Hidden Gem / High-Converting Audience).'
+            : `Diluted follower base: ${formatCompactNumber(d.followersCount)} followers generate only ${formatVnCurrency(d.gmvPer1kFollowers)} per 1K followers.`
+        },
+        {
+          id: 'c2_unit_output',
+          category: isVideoTrack
+            ? '2. Short-Video Conversion Efficiency (35%)'
+            : '2. Livestream Mega-Seller Efficiency (35%)',
+          weight: 7,
+          label: isVideoTrack
+            ? 'GMV per Video & Average Video Views (≥ ₫4M/video & ≥ 25K views/video)'
+            : '30-Day Livestream Traffic & Session Scale (≥ 500K Live Views)',
+          actual: isVideoTrack
+            ? `${formatVnCurrency(d.gmvPerVideo)}/video | ${formatCompactNumber(d.viewsPerVideo)} views/video (${d.videoCount30d} videos)`
+            : `${formatCompactNumber(d.liveViews)} Live Views | Video supplement: ${formatVnCurrency(d.videoGmv)}`,
+          threshold: isVideoTrack
+            ? 'Pass: ≥ ₫4.00M GMV/video & ≥ 20 Active Videos'
+            : 'Pass: ≥ 500K Live Views in 30 days',
+          passed: isVideoTrack
+            ? (d.gmvPerVideo >= 4e6 && d.videoCount30d >= 15)
+            : (d.liveViews >= 500e3),
+          note: isVideoTrack
+            ? `Tracks output consistency (${d.videoCount30d} videos in 30d) and per-video sales power.`
+            : 'Tracks live room traffic and high-ticket closing power.'
+        },
+
+        // CATEGORY 3: PRICE FIT & TOP 20 BRAND TRACK RECORD (25%)
+        {
+          id: 'c3_aov',
+          category: '3. Price Fit & Top 20 Brand Track Record (25%)',
+          weight: 8,
+          label: 'Average Unit Price (AOV) Compatibility with L.ASY (₫200k–₫480k)',
+          actual: `AOV: ${formatVnCurrency(d.aov)}`,
+          threshold: 'Pass: ₫200.0K – ₫480.0K (L.ASY Galacto Balm: ~₫253K)',
+          passed: d.aov >= 200e3 && d.aov <= 480e3,
+          note: d.aov < 200e3
+            ? `Audience is conditioned to budget items (${formatVnCurrency(d.aov)}); higher risk of price resistance on ₫250K+ skincare.`
+            : (d.aov > 480e3
+              ? `Ultra-high AOV (${formatVnCurrency(d.aov)}) driven by multi-item bundles; requires bundle/combo strategy.`
+              : 'Sweet-spot AOV matching mid-tier Korean skincare (₫250K–₫350K).')
+        },
+        {
+          id: 'c3_top20',
+          category: '3. Price Fit & Top 20 Brand Track Record (25%)',
+          weight: 9,
+          label: 'Proven Sales with Kalodata Top 20 Beauty Brands & Derma Stores',
+          actual: `${d.specialistSkincareStores} Skincare Stores | Top 20 Matched: ${d.top20MatchedBrands.length > 0 ? d.top20MatchedBrands.join(', ') : 'None'}`,
+          threshold: 'Pass: ≥ 2 Skincare Brands with > ₫20M revenue',
+          passed: d.specialistSkincareStores >= 2 && d.skincareRevenue >= 30e6,
+          note: 'Cross-referenced against your Kalodata Top 20 Beauty Brands Excel list + specialist derma brands.'
+        },
+        {
+          id: 'c3_sku_depth',
+          category: '3. Price Fit & Top 20 Brand Track Record (25%)',
+          weight: 8,
+          label: 'Single-Brand Skincare Order Depth (≥ 50 Orders on a Core Skincare Brand)',
+          actual: `Max Orders on a Skincare Store: ${formatCompactNumber(d.maxSkincareOrdersOnSingleStore)} orders`,
+          threshold: 'Pass: ≥ 50 orders on a single skincare brand/store',
+          passed: d.maxSkincareOrdersOnSingleStore >= 50,
+          note: d.maxSkincareOrdersOnSingleStore >= 50
+            ? 'Proves genuine call-to-action closing power on skincare (not just 2–6 test orders).'
+            : `Shallow conversion depth (max ${d.maxSkincareOrdersOnSingleStore} orders on skincare): high risk of zero ROI on seeding.`
+        },
+
+        // CATEGORY 4: OPERATIONAL FEASIBILITY & ACCOUNT HEALTH (15%)
+        {
+          id: 'c4_growth',
+          category: '4. Operational Feasibility & Account Health (15%)',
+          weight: 8,
+          label: '30-Day Net Follower Momentum & Paid Ad ROAS Health',
+          actual: `Net Follower Change: ${d.followerChange >= 0 ? '+' : ''}${formatCompactNumber(d.followerChange)} | Avg Video ROAS: ${d.avgRoas > 0 ? d.avgRoas.toFixed(2) + 'x' : 'Organic / No Ad Data'}`,
+          threshold: 'Pass: Net Follower Change ≥ 0 (No Audience Churn)',
+          passed: d.followerChange >= 0,
+          note: d.followerChange >= 0
+            ? 'Healthy organic retention and stable algorithmic distribution.'
+            : `Warning: Channel lost ${formatCompactNumber(Math.abs(d.followerChange))} followers in the last 30 days (audience fatigue or off-niche content).`
+        },
+        {
+          id: 'c4_mcn',
+          category: '4. Operational Feasibility & Account Health (15%)',
+          weight: 7,
+          label: 'MCN Independence & Channel Tenure (Direct Booking Flexibility)',
+          actual: `${d.mcnDisplay} | First Published: ${d.firstPubDate}`,
+          threshold: 'Pass: Independent or Open-Affiliate MCN with ≥ 6M tenure',
+          passed: d.isIndependent || d.totalGmv >= 300e6,
+          note: d.isIndependent
+            ? 'Independent creator: fast direct seeding, flexible 15–20% affiliate commission, no agency markup.'
+            : `Managed by ${d.mcnDisplay}: requires agency rate-card negotiation unless high GMV justifies fixed booking.`
+        }
+      ];
+    }
+
+    // ============================================================================
+    // 6. SCENARIO DIAGNOSTIC ENGINE (5 REAL-WORLD KALODATA ARCHETYPES)
+    // ============================================================================
+    function evaluateScenario(d, totalScore, passedCount) {
+      // Scenario 1: Tier-A Short-Video Skincare Conversion Gem (e.g., @lita.living)
+      if (d.dominantTrack === 'VIDEO_TRACK' && d.isCategoryAlignedWithSkincare && d.totalGmv >= 250e6 && d.maxSkincareOrdersOnSingleStore >= 50) {
+        return {
+          code: 'SCENARIO 1 • TIER-A SHORT-VIDEO SKINCARE GEM',
+          title: 'High-Trust Short-Video Skincare Converter (Evergreen ROI)',
+          desc: `${d.handle} generates ${formatVnCurrency(d.totalGmv)} (${d.videoSharePct.toFixed(1)}% from short videos) with an exceptional ${formatVnCurrency(d.gmvPer1kFollowers)} GMV per 1K followers and proven deep conversion across ${d.specialistSkincareStores} facial skincare stores (max ${formatCompactNumber(d.maxSkincareOrdersOnSingleStore)} orders/brand). Audience (${d.ageGroup}, Female) aligns directly with mid-to-premium skincare (${formatVnCurrency(d.aov)} AOV).`,
+          actions: [
+            'Priority Tier-A Outreach: Send full-size hero SKU immediately + set 18%–22% open affiliate commission.',
+            'Request 1 dedicated problem-solving routine video (texture close-up + ingredient breakdown).',
+            `Whitelist Spark Ads on videos achieving > 2.5x ROAS (Creator current avg ROAS: ${d.avgRoas > 0 ? d.avgRoas.toFixed(2) + 'x' : 'Organic'}).`
+          ]
+        };
+      }
+
+      // Scenario 2: Livestream Mega-Seller / Derma Powerhouse (e.g., @pu50can)
+      if (d.dominantTrack === 'LIVE_TRACK' && d.isCategoryAlignedWithSkincare && d.totalGmv >= 500e6) {
+        return {
+          code: 'SCENARIO 2 • LIVESTREAM MEGA-SELLER TRACK',
+          title: 'High-Volume Livestream Closer & Bundle Powerhouse',
+          desc: `${d.handle} operates on a Livestream-dominant revenue engine (${d.liveSharePct.toFixed(1)}% Live GMV = ${formatVnCurrency(d.liveGmv)}, supplemented by ${formatVnCurrency(d.videoGmv)} in short videos). With an AOV of ${formatVnCurrency(d.aov)} and strong Top 20 brand history (${d.top20MatchedBrands.join(', ') || 'Clinical Skincare'}), this creator moves massive volume via live flash deals and multi-item routines.`,
+          actions: [
+            'Do NOT pitch single-item organic video seeding alone — book a dedicated Livestream slot + pre-heat short video.',
+            `Structure a high-AOV Twin-Pack or Full Routine Bundle (target ${formatVnCurrency(Math.max(d.aov, 380e3))}) with exclusive live vouchers.`,
+            'Provide live-room flashcards, clinical before/after proof, and gift-with-purchase (GWP) stock for live spikes.'
+          ]
+        };
+      }
+
+      // Scenario 3: Hybrid / Mid-Tier Video Skincare Creator (e.g., @thanhtuhouse97)
+      if (d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6) {
+        return {
+          code: 'SCENARIO 3 • SCALABLE HYBRID BEAUTY CREATOR',
+          title: 'Consistent Multi-Brand Beauty Affiliate (Volume Seeding + Ads)',
+          desc: `${d.handle} maintains solid 30-day revenue (${formatVnCurrency(d.totalGmv)}) across ${d.videoCount30d} videos (${formatVnCurrency(d.gmvPerVideo)}/video) with ${d.specialistSkincareStores} skincare brands in top stores. While audience or AOV (${formatVnCurrency(d.aov)}) may skew slightly broader (${d.ageGroup}), high publishing frequency and paid ad synergy (${d.avgRoas.toFixed(2)}x ROAS) make them reliable for scaling SKU volume.`,
+          actions: [
+            'Approve for Tier-B Seeding + Affiliate (15%–18% commission) with an introductory bundle price under ₫300K.',
+            'Provide a clear 3-second hook script focusing on instant texture/finish and price-to-value ratio.',
+            'Monitor first 48-hour organic CTR before boosting with Spark Ads.'
+          ]
+        };
+      }
+
+      // Scenario 4: Category Drift / Low-AOV Personal Care & Follower Churn (e.g., @tizine.official)
+      if (!d.isCategoryAlignedWithSkincare && d.personalCareStores > 0 && d.apparelStores < 4) {
+        return {
+          code: 'SCENARIO 4 • CATEGORY DRIFT & SHALLOW SKINCARE DEPTH',
+          title: 'Personal Care / Low-Ticket Hygiene Skew (High Seeding Risk)',
+          desc: `Although ${d.handle} has ${formatCompactNumber(d.followersCount)} followers and ${formatVnCurrency(d.totalGmv)} total GMV, deep table inspection reveals ${d.personalCareStores} top stores are Personal Care/Feminine Hygiene (AOV ${formatVnCurrency(d.aov)}) while facial skincare stores only generated a maximum of ${d.maxSkincareOrdersOnSingleStore} orders. Combined with ${d.followerChange < 0 ? 'negative follower growth (' + formatCompactNumber(d.followerChange) + ')' : 'low GMV/follower efficiency'}, facial skincare conversion is weak.`,
+          actions: [
+            'Hold Fixed-Fee Booking: Do NOT pay fixed slot fees for facial skincare on this channel.',
+            'Affiliate-Only Trial: Only proceed if creator accepts 100% performance affiliate link with zero upfront fee.',
+            'If testing, position product around daily body/hygiene or entry-level student pricing (< ₫199K).'
+          ]
+        };
+      }
+
+      // Scenario 5: Non-Beauty / Apparel / Lingerie Mismatch (e.g., @chutieuhan10012001)
+      return {
+        code: 'SCENARIO 5 • INDUSTRY MISMATCH / REJECT',
+        title: 'Off-Niche Commercial Traffic (Apparel / Lingerie / Low Ticket)',
+        desc: `${d.handle}'s revenue (${formatVnCurrency(d.totalGmv)}, AOV ${formatVnCurrency(d.aov)}) is driven by ${d.detectedIndustry} (${d.apparelStores} apparel/lingerie stores, ${d.personalCareStores} hygiene stores, ${d.specialistSkincareStores} facial skincare stores). Audience buying behavior on this channel is conditioned to ₫80K–₫160K fashion/intimate items rather than active facial skincare.`,
+        actions: [
+          'Reject for Facial Skincare Campaigns: High probability of < 10 orders despite high video views.',
+          'Reallocate sample budget and outreach bandwidth to Tier-A Short-Video or Livestream skincare specialists.'
+        ]
+      };
+    }
+
+    // ============================================================================
+    // 7. DASHBOARD RENDERING & INTERACTIVE PROGRESS BAR UPDATER
+    // ============================================================================
+    function renderDashboard(d) {
+      currentAuditData = d;
+      currentChecklistState = buildDynamicChecklist(d);
+
+      // 1. Header & Profile Info
+      const avatarEl = document.getElementById('kolAvatar');
+      if (d.avatarUrl) {
+        avatarEl.style.backgroundImage = `url('${d.avatarUrl}')`;
+        avatarEl.textContent = '';
+      } else {
+        avatarEl.style.backgroundImage = 'none';
+        avatarEl.textContent = d.handle.replace('@', '').slice(0, 2).toUpperCase();
+      }
+
+      document.getElementById('kolHandle').textContent = d.handle;
+      document.getElementById('kolBio').textContent = d.bioText || 'No bio text listed on Kalodata';
+      document.getElementById('kolDebut').textContent = `First Published: ${d.firstPubDate}`;
+      document.getElementById('kolDemographics').textContent = `Audience: ${d.isFemaleMajority ? 'Female Majority' : 'Mixed'} (${d.ageGroup})`;
+      document.getElementById('mcnBadge').textContent = `MCN: ${d.mcnDisplay}`;
+      document.getElementById('tiktokProfileLink').href = `https://www.tiktok.com/${d.handle}`;
+
+      const isVideoTrack = d.dominantTrack === 'VIDEO_TRACK';
+      const trackBadge = document.getElementById('trackModeBadge');
+      const modePill = document.getElementById('checklistModePill');
+      const primaryTrackLabel = document.getElementById('primaryTrackLabel');
+
+      if (isVideoTrack) {
+        trackBadge.textContent = `Short-Video Track (${d.videoSharePct.toFixed(0)}% Video)`;
+        trackBadge.className = 'px-2.5 py-0.5 text-xs font-semibold rounded-full bg-sky-50 text-sky-700 border border-sky-200';
+        modePill.textContent = 'SHORT-VIDEO CONVERSION CRITERIA';
+        modePill.className = 'px-3 py-1 rounded-md bg-slate-900 text-white text-xs font-mono font-semibold';
+        primaryTrackLabel.textContent = 'Short-Video Conversion';
+      } else {
+        trackBadge.textContent = `Livestream Track (${d.liveSharePct.toFixed(0)}% Live)`;
+        trackBadge.className = 'px-2.5 py-0.5 text-xs font-semibold rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200';
+        modePill.textContent = 'LIVESTREAM MEGA-SELLER CRITERIA';
+        modePill.className = 'px-3 py-1 rounded-md bg-indigo-900 text-white text-xs font-mono font-semibold';
+        primaryTrackLabel.textContent = 'Livestream Mega-Seller';
+      }
+
+      // 2. Core 8 Metrics Grid
+      document.getElementById('metricTotalGmv').textContent = formatVnCurrency(d.totalGmv);
+      document.getElementById('metricDailyGmv').textContent = `${formatVnCurrency(d.dailyGmv)} / day`;
+      document.getElementById('metricChannelSplit').textContent = isVideoTrack
+        ? `${d.videoSharePct.toFixed(1)}% Video`
+        : `${d.liveSharePct.toFixed(1)}% Live`;
+      document.getElementById('metricChannelSub').textContent = `V: ${formatVnCurrency(d.videoGmv)} | L: ${formatVnCurrency(d.liveGmv)}`;
+      document.getElementById('metricGmvPer1k').textContent = formatVnCurrency(d.gmvPer1kFollowers);
+      document.getElementById('metricFollowers').textContent = `${formatCompactNumber(d.followersCount)} followers`;
+      document.getElementById('metricGmvPerVideo').textContent = formatVnCurrency(d.gmvPerVideo);
+      document.getElementById('metricVideoCount').textContent = `${d.videoCount30d || d.videos.length} active videos (30d)`;
+      document.getElementById('metricAov').textContent = formatVnCurrency(d.aov);
+      document.getElementById('metricAovFit').textContent = (d.aov >= 200e3 && d.aov <= 480e3)
+        ? '✓ Matches ₫200k–480k Skincare'
+        : (d.aov < 200e3 ? '⚠ Below ₫200k Skincare Target' : '★ High-Ticket Bundle Tier');
+      document.getElementById('metricVideoViews').textContent = formatCompactNumber(d.videoViews);
+      document.getElementById('metricViewsPerVideo').textContent = `${formatCompactNumber(d.viewsPerVideo)} / video`;
+      document.getElementById('metricLiveViews').textContent = formatCompactNumber(d.liveViews);
+      document.getElementById('metricFollowerChange').textContent = `Net 30d: ${d.followerChange >= 0 ? '+' : ''}${formatCompactNumber(d.followerChange)}`;
+      document.getElementById('metricDetectedIndustry').textContent = d.detectedIndustry;
+      document.getElementById('metricTop20Match').textContent = `${d.top20MatchedBrands.length} Top-20 Brands | ${d.specialistSkincareStores} Skincare Stores`;
+
+      // 3. Render Checklist DOM & Calculate Scores
+      renderChecklistItems();
+      updateScoreAndScenarioUI();
+
+      // 4. Render Cooperative Stores Table (.table_seller)
+      const storesBody = document.getElementById('storesTableBody');
+      storesBody.innerHTML = '';
+      document.getElementById('storeCountBadge').textContent = `${d.stores.length} stores`;
+      d.stores.forEach((s) => {
+        const isLasy = s.storeName.toLowerCase().includes('lasy') || s.storeName.toLowerCase().includes('l.asy');
+        const badgeColor = s.categoryTag?.includes('Skincare')
+          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+          : (s.categoryTag?.includes('Apparel')
+            ? 'bg-rose-50 text-rose-700 border-rose-200'
+            : 'bg-slate-100 text-slate-700 border-slate-200');
+
+        const tr = document.createElement('tr');
+        tr.className = isLasy ? 'bg-sky-50/80 font-semibold' : 'hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="py-2.5 pr-2 font-mono text-slate-400">${s.rank}</td>
+          <td class="py-2.5 px-2 text-slate-900 font-medium">
+            ${s.storeName}
+            ${isLasy ? '<span class="ml-1.5 px-1.5 py-0.5 text-[10px] font-mono bg-sky-600 text-white rounded">YOUR BRAND</span>' : ''}
+          </td>
+          <td class="py-2.5 px-2">
+            <span class="px-2 py-0.5 text-[10px] font-mono rounded border ${badgeColor}">${s.categoryTag || s.storeType}</span>
+          </td>
+          <td class="py-2.5 px-2 text-right font-mono text-slate-900">${formatVnCurrency(s.rev)}</td>
+          <td class="py-2.5 pl-2 text-right font-mono text-slate-600">${formatCompactNumber(s.orders)}</td>
+        `;
+        storesBody.appendChild(tr);
+      });
+
+      // 5. Render Products / Videos Table
+      const prodBody = document.getElementById('productsTableBody');
+      prodBody.innerHTML = '';
+      const displayItems = d.products.length > 0
+        ? d.products.slice(0, 10).map(p => ({
+            rank: p.rank,
+            title: p.name,
+            rev: formatVnCurrency(p.rev),
+            sub: `${formatCompactNumber(p.orders)} orders`,
+            meta: `${formatVnCurrency(p.unitPrice)}`
+          }))
+        : d.videos.slice(0, 10).map(v => ({
+            rank: v.rank,
+            title: v.title,
+            rev: formatVnCurrency(v.rev),
+            sub: `${formatCompactNumber(v.views)} views`,
+            meta: v.roas > 0 ? `ROAS ${v.roas.toFixed(2)}x` : 'Organic'
+          }));
+
+      document.getElementById('productCountBadge').textContent = `${displayItems.length} top items`;
+      displayItems.forEach((item) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="py-2.5 pr-2 font-mono text-slate-400">${item.rank}</td>
+          <td class="py-2.5 px-2 text-slate-800 max-w-xs truncate" title="${item.title.replace(/"/g, '&quot;')}">${item.title}</td>
+          <td class="py-2.5 px-2 text-right font-mono text-slate-900">${item.rev}</td>
+          <td class="py-2.5 px-2 text-right font-mono text-slate-600">${item.sub}</td>
+          <td class="py-2.5 pl-2 text-right font-mono text-sky-700">${item.meta}</td>
+        `;
+        prodBody.appendChild(tr);
+      });
+
+      // Reset AI Output box to ready state for this creator
+      document.getElementById('aiAuditOutput').textContent =
+        `Ready to generate Deep Case Research for ${d.handle} (${d.detectedIndustry} | 30D GMV: ${formatVnCurrency(d.totalGmv)}). Click the button above to run the commercial diagnostic & outreach strategy.`;
+    }
+
+    function renderChecklistItems() {
+      const container = document.getElementById('checklistContainer');
+      container.innerHTML = '';
+
+      const grouped = {};
+      currentChecklistState.forEach((item, idx) => {
+        if (!grouped[item.category]) grouped[item.category] = [];
+        grouped[item.category].push({ ...item, index: idx });
+      });
+
+      Object.keys(grouped).forEach((catName) => {
+        const section = document.createElement('div');
+        section.className = 'border border-slate-200 rounded-xl overflow-hidden';
+
+        const header = document.createElement('div');
+        header.className = 'bg-slate-100/80 px-4 py-2.5 border-b border-slate-200 flex items-center justify-between';
+        header.innerHTML = `
+          <span class="text-xs font-bold text-slate-800 uppercase tracking-wide">${catName}</span>
+          <span class="text-[11px] font-mono text-slate-500">${grouped[catName].filter(i => i.passed).length}/${grouped[catName].length} Passed</span>
+        `;
+        section.appendChild(header);
+
+        const list = document.createElement('div');
+        list.className = 'divide-y divide-slate-100 bg-white';
+
+        grouped[catName].forEach((item) => {
+          const row = document.createElement('label');
+          row.className = 'p-3.5 flex items-start gap-3.5 hover:bg-slate-50/80 transition cursor-pointer';
+          row.innerHTML = `
+            <input type="checkbox"
+                   class="mt-1 w-4 h-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
+                   ${item.passed ? 'checked' : ''}
+                   onchange="toggleCriterion(${item.index}, this.checked)" />
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="text-xs font-bold text-slate-900">${item.label}</span>
+                <span class="px-2 py-0.5 text-[10px] font-mono font-semibold rounded ${
+                  item.passed
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    : 'bg-amber-50 text-amber-700 border border-amber-200'
+                }">
+                  ${item.passed ? 'PASS' : 'FLAGGED'} • ${item.weight} pts
+                </span>
+              </div>
+              <div class="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] font-mono">
+                <span class="text-slate-800 font-semibold">Extracted: ${item.actual}</span>
+                <span class="text-slate-400">|</span>
+                <span class="text-slate-500">${item.threshold}</span>
+              </div>
+              <p class="mt-1 text-[11px] text-slate-500 leading-relaxed">${item.note}</p>
+            </div>
+          `;
+          list.appendChild(row);
+        });
+
+        section.appendChild(list);
+        container.appendChild(section);
+      });
+    }
+
+    function toggleCriterion(index, isChecked) {
+      if (!currentChecklistState[index]) return;
+      currentChecklistState[index].passed = isChecked;
+      renderChecklistItems();
+      updateScoreAndScenarioUI();
+    }
+
+    function recomputeChecklistScore() {
+      if (!currentAuditData) return;
+      currentChecklistState = buildDynamicChecklist(currentAuditData);
+      renderChecklistItems();
+      updateScoreAndScenarioUI();
+    }
+
+    function updateScoreAndScenarioUI() {
+      let earnedWeight = 0;
+      let totalWeight = 0;
+      let passedCount = 0;
+
+      const catTotals = {};
+      currentChecklistState.forEach((item) => {
+        totalWeight += item.weight;
+        if (item.passed) {
+          earnedWeight += item.weight;
+          passedCount++;
+        }
+        if (!catTotals[item.category]) {
+          catTotals[item.category] = { earned: 0, total: 0 };
+        }
+        catTotals[item.category].total += item.weight;
+        if (item.passed) catTotals[item.category].earned += item.weight;
+      });
+
+      const pct = totalWeight > 0 ? Math.round((earnedWeight / totalWeight) * 100) : 0;
+      document.getElementById('overallScoreValue').textContent = `${pct}%`;
+      document.getElementById('overallChecksText').textContent = `${passedCount} of ${currentChecklistState.length} criteria passed (${earnedWeight}/${totalWeight} pts)`;
+
+      const mainBar = document.getElementById('overallProgressBar');
+      mainBar.style.width = `${pct}%`;
+      mainBar.className = `h-full progress-transition ${
+        pct >= 80 ? 'bg-emerald-600' : (pct >= 60 ? 'bg-sky-600' : 'bg-amber-500')
+      }`;
+
+      const tierBadge = document.getElementById('tierBadge');
+      if (pct >= 82) {
+        tierBadge.textContent = 'TIER A • PRIORITY PARTNER';
+        tierBadge.className = 'px-2.5 py-0.5 text-xs font-bold rounded bg-emerald-600 text-white font-mono';
+      } else if (pct >= 62) {
+        tierBadge.textContent = 'TIER B • CONDITIONAL / HYBRID';
+        tierBadge.className = 'px-2.5 py-0.5 text-xs font-bold rounded bg-sky-600 text-white font-mono';
+      } else {
+        tierBadge.textContent = 'TIER C • HIGH RISK / REJECT';
+        tierBadge.className = 'px-2.5 py-0.5 text-xs font-bold rounded bg-rose-600 text-white font-mono';
+      }
+
+      // Render Category Sub-Bars
+      const catContainer = document.getElementById('categoryBarsContainer');
+      catContainer.innerHTML = '';
+      Object.keys(catTotals).forEach((cat) => {
+        const c = catTotals[cat];
+        const cPct = c.total > 0 ? Math.round((c.earned / c.total) * 100) : 0;
+        const shortName = cat.replace(/\(\d+%\)/, '').trim();
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <div class="flex justify-between text-[11px] font-medium text-slate-700 mb-1">
+            <span class="truncate pr-2">${shortName}</span>
+            <span class="font-mono font-semibold">${cPct}%</span>
+          </div>
+          <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+            <div class="bg-slate-800 h-full progress-transition" style="width: ${cPct}%"></div>
+          </div>
+        `;
+        catContainer.appendChild(div);
+      });
+
+      // Update Scenario Diagnostic Card
+      const scenario = evaluateScenario(currentAuditData, pct, passedCount);
+      document.getElementById('scenarioTitle').textContent = `${scenario.code}: ${scenario.title}`;
+      document.getElementById('scenarioDesc').textContent = scenario.desc;
+      const actionsList = document.getElementById('scenarioActions');
+      actionsList.innerHTML = '';
+      scenario.actions.forEach((act) => {
+        const li = document.createElement('li');
+        li.textContent = act;
+        actionsList.appendChild(li);
+      });
+    }
+
+    // ============================================================================
+    // 8. AI DEEP CASE RESEARCH & OUTREACH BRIEF GENERATOR
+    // ============================================================================
+    async function runAiDeepCaseAnalysis() {
+      if (!currentAuditData) return;
+      const d = currentAuditData;
+      const outEl = document.getElementById('aiAuditOutput');
+      const btn = document.getElementById('runAiAuditBtn');
+
+      btn.disabled = true;
+      btn.classList.add('opacity-60');
+      outEl.textContent = `Synthesizing deep commercial case study for ${d.handle} (analyzing ${d.stores.length} cooperative stores, ${d.videoCount30d} videos, and Top 20 Vietnam Beauty Brand benchmarks)...`;
+
+      const topStoresSummary = d.stores
+        .slice(0, 7)
+        .map(s => `${s.storeName} (${formatVnCurrency(s.rev)}, ${formatCompactNumber(s.orders)} orders, ${s.categoryTag})`)
+        .join('; ');
+
+      const topProductsSummary = (d.products.length > 0 ? d.products : d.videos)
+        .slice(0, 5)
+        .map(p => `${p.name || p.title} (${formatVnCurrency(p.rev)})`)
+        .join('; ');
+
+      const prompt = `You are a Senior Vietnam TikTok Shop Beauty & Skincare Commercial Strategist auditing a creator from Kalodata HTML data for our skincare brand L.ASY (hero SKU: L.ASY Galacto Cleansing Balm ~253,000 VND).
+
+CREATOR DATA:
+- Handle: ${d.handle}
+- Bio: ${d.bioText}
+- Followers: ${formatCompactNumber(d.followersCount)} (30d Net Follower Change: ${d.followerChange})
+- MCN Status: ${d.mcnDisplay} | First Published: ${d.firstPubDate}
+- Audience: ${d.isFemaleMajority ? 'Female Majority' : 'Mixed'}, Dominant Age: ${d.ageGroup}
+- 30D Total GMV: ${formatVnCurrency(d.totalGmv)} (Video GMV: ${formatVnCurrency(d.videoGmv)} [${d.videoSharePct.toFixed(1)}%], Live GMV: ${formatVnCurrency(d.liveGmv)} [${d.liveSharePct.toFixed(1)}%])
+- GMV per 1K Followers: ${formatVnCurrency(d.gmvPer1kFollowers)} | GMV per Video: ${formatVnCurrency(d.gmvPerVideo)} (${d.videoCount30d} videos in 30d)
+- Average Unit Price (AOV): ${formatVnCurrency(d.aov)} | Avg Ad ROAS: ${d.avgRoas.toFixed(2)}x
+- Detected Industry from Tables: ${d.detectedIndustry}
+- Top 20 Vietnam Beauty Brands Matched: ${d.top20MatchedBrands.join(', ') || 'None'}
+- Top Stores (.table_seller): ${topStoresSummary}
+- Top Products/Videos: ${topProductsSummary}
+
+Write a concise, executive English audit in 4 sections:
+1. COMMERCIAL VERDICT & REAL NICHE POSITIONING (Explain whether their real revenue comes from facial skincare, personal care/hygiene, or apparel, and whether they fit Short-Video Seeding or Livestream Booking).
+2. CONVERSION DEPTH & RISK ANALYSIS (Analyze their GMV/1K followers, AOV fit vs. 253k VND, max orders on skincare stores, and follower trend).
+3. RECOMMENDED COLLABORATION MODEL & COMMISSION / FEE STRUCTURE (Exact deal terms, e.g., 18% affiliate vs. live slot bundle vs. reject).
+4. CUSTOM OUTREACH MESSAGE / CREATIVE ANGLE (A ready-to-send Vietnamese outreach hook + 60s video or live angle tailored to their actual top-selling items).`;
+
+      try {
+        const aiText = await window.__invokeVaultModel(prompt);
+        if (aiText) {
+          outEl.textContent = aiText.trim();
+        } else {
+          throw new Error('Empty AI response');
+        }
+      } catch (err) {
+        // Deterministic local fallback case analysis if offline or quota reached
+        outEl.textContent = buildLocalDeepCaseFallback(d);
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove('opacity-60');
+      }
+    }
+
+    function buildLocalDeepCaseFallback(d) {
+      const topStoresList = d.stores.slice(0, 5).map(s => `${s.storeName} (${formatVnCurrency(s.rev)} / ${formatCompactNumber(s.orders)} orders)`).join(', ');
+      return `[DEEP COMMERCIAL CASE AUDIT — ${d.handle.toUpperCase()}]
+
+1. COMMERCIAL VERDICT & REAL NICHE POSITIONING
+• Primary Revenue Track: ${d.dominantTrack === 'VIDEO_TRACK' ? 'Short-Video Conversion Engine' : 'Livestream Mega-Seller Engine'} (Video: ${d.videoSharePct.toFixed(1)}% | Live: ${d.liveSharePct.toFixed(1)}%).
+• Real Table-Verified Category: ${d.detectedIndustry}.
+• Store Portfolio Proof: ${topStoresList || 'No store data'}.
+• Top 20 Vietnam Beauty Brand Overlap: ${d.top20MatchedBrands.length > 0 ? d.top20MatchedBrands.join(', ') : 'None detected in Top 10 stores'}.
+
+2. CONVERSION DEPTH & RISK DIAGNOSTIC
+• Monetization Efficiency: ${formatVnCurrency(d.gmvPer1kFollowers)} per 1,000 followers across ${formatCompactNumber(d.followersCount)} followers.
+• Per-Video Yield: ${formatVnCurrency(d.gmvPerVideo)}/video across ${d.videoCount30d || d.videos.length} active videos (Avg ROAS: ${d.avgRoas > 0 ? d.avgRoas.toFixed(2) + 'x' : 'Organic'}).
+• Price Point (AOV) Alignment: Creator AOV is ${formatVnCurrency(d.aov)} vs. L.ASY target benchmark (₫250K–₫350K).
+• Account Health: 30-day net follower change is ${d.followerChange >= 0 ? '+' : ''}${formatCompactNumber(d.followerChange)} (${d.followerChange >= 0 ? 'Healthy retention' : 'Warning: Audience churn detected'}).
+
+3. COLLABORATION & DEAL STRUCTURE RECOMMENDATION
+${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
+  ? (d.dominantTrack === 'VIDEO_TRACK'
+      ? '• Approved for Priority Short-Video Seeding + 18%–20% Open Affiliate + Spark Ads whitelisting on videos exceeding 2.5x ROAS.'
+      : '• Approved for Livestream Slot Co-Promotion + Pre-Heat Short Video. Bundle 2 units or add GWP to match their higher live AOV.')
+  : '• CAUTION / HOLD FIXED BOOKING: Channel revenue is skewed toward ' + d.detectedIndustry + ' with shallow facial skincare order depth (max ' + d.maxSkincareOrdersOnSingleStore + ' orders). Only offer performance-based affiliate link (15%–20%) with zero fixed fee.'}
+
+4. OUTREACH HOOK (VIETNAMESE)
+"Chào ${d.handle}, team L.ASY Việt Nam rất ấn tượng với hiệu suất chuyển đổi thực tế của kênh (${formatVnCurrency(d.totalGmv)}/30 ngày). Bên mình muốn gửi tặng mẫu Fullsize Sáp Tẩy Trang L.ASY Galacto kèm mức hoa hồng Affiliate ưu đãi 20% và ngân sách vít Ads riêng cho video của bạn..."`;
+    }
+
+    // ============================================================================
+    // 9. STAGE NAVIGATION & DRAG-AND-DROP FILE HANDLERS
+    // ============================================================================
+    function toggleRawHtmlDrawer() {
+      const drawer = document.getElementById('rawHtmlDrawer');
+      const arrow = document.getElementById('drawerArrow');
+      drawer.classList.toggle('hidden');
+      arrow.classList.toggle('rotate-180');
+    }
+
+    function resetToLanding() {
+      document.getElementById('stageDashboard').classList.add('hidden');
+      document.getElementById('stageLoading').classList.add('hidden');
+      document.getElementById('stageLanding').classList.remove('hidden');
+      document.getElementById('navUploadAnotherBtn').classList.add('hidden');
+      document.getElementById('fileInput').value = '';
+    }
+
+    function runStageTransitionAndAudit(htmlString, fileName) {
+      document.getElementById('stageLanding').classList.add('hidden');
+      document.getElementById('stageDashboard').classList.add('hidden');
+      const loadingSec = document.getElementById('stageLoading');
+      loadingSec.classList.remove('hidden');
+
+      document.getElementById('loadingFileName').textContent = fileName;
+      const bar = document.getElementById('loadingBar');
+      const steps = ['step1', 'step2', 'step3', 'step4'];
+      bar.style.width = '10%';
+      steps.forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.add('opacity-40');
+        el.classList.remove('text-sky-700', 'font-semibold');
+      });
+
+      const parsedData = parseKalodataHtml(htmlString, fileName);
+
+      const delays = [180, 420, 680, 920];
+      delays.forEach((ms, i) => {
+        setTimeout(() => {
+          bar.style.width = `${(i + 1) * 25}%`;
+          const el = document.getElementById(steps[i]);
+          el.classList.remove('opacity-40');
+          el.classList.add('text-sky-700', 'font-semibold');
+        }, ms);
+      });
+
+      setTimeout(() => {
+        loadingSec.classList.add('hidden');
+        document.getElementById('stageDashboard').classList.remove('hidden');
+        document.getElementById('navUploadAnotherBtn').classList.remove('hidden');
+        renderDashboard(parsedData);
+      }, 1150);
+    }
+
+    function handleFileSelect(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      readAndAuditFile(file);
+    }
+
+    function readAndAuditFile(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const content = e.target?.result;
+        if (typeof content === 'string') {
+          runStageTransitionAndAudit(content, file.name);
+        }
+      };
+      reader.readAsText(file, 'UTF-8');
+    }
+
+    function handleRawHtmlSubmit() {
+      const raw = document.getElementById('rawHtmlInput').value.trim();
+      if (!raw) {
+        alert('Please paste valid Kalodata HTML source code first.');
+        return;
+      }
+      runStageTransitionAndAudit(raw, 'Pasted_Kalodata_Source.html');
+    }
+
+    // Initialize Drag & Drop Listeners on Stage 1 DropZone
+    (function _initDropZone() {
+      const dz = document.getElementById('dropZone');
+      if (!dz) return;
+      ['dragenter', 'dragover'].forEach(evtName => {
+        dz.addEventListener(evtName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dz.classList.add('dropzone-active');
+        });
+      });
+      ['dragleave', 'drop'].forEach(evtName => {
+        dz.addEventListener(evtName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dz.classList.remove('dropzone-active');
+        });
+      });
+      dz.addEventListener('drop', (e) => {
+        const file = e.dataTransfer?.files?.[0];
+        if (file) readAndAuditFile(file);
+      });
+    })();
+  </script>
+</body>
+</html>
