@@ -63,28 +63,49 @@
 
   <!-- TOP ENTERPRISE NAVBAR -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchNavTab('homepage')">
         <div class="w-9 h-9 rounded-lg bg-slate-900 flex items-center justify-center text-white font-bold font-mono text-sm shadow-sm">
           KA
         </div>
         <div>
           <div class="flex items-center gap-2">
             <span class="font-bold text-slate-900 tracking-tight text-base">KOL Performance Auditor</span>
-            <span class="text-[11px] font-mono uppercase px-2 py-0.5 bg-sky-50 text-sky-700 border border-sky-200 rounded font-semibold">Beauty & Personal Care</span>
+            <span class="hidden md:inline-block text-[11px] font-mono uppercase px-2 py-0.5 bg-sky-50 text-sky-700 border border-sky-200 rounded font-semibold">Beauty & Personal Care</span>
           </div>
-          <p class="text-xs text-slate-500">Kalodata DOM Analytics, Dynamic Tracklist & Deep Case Research</p>
+          <p class="text-xs text-slate-500 hidden sm:block">Kalodata DOM Analytics, Dynamic Tracklist & History Comparison</p>
         </div>
       </div>
 
+      <!-- NAVIGATION MENU TABS -->
+      <nav class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+        <button id="navTabHomepage" onclick="switchNavTab('homepage')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer bg-white text-slate-900 shadow-sm">
+          <svg class="w-3.5 h-3.5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          <span>Homepage</span>
+        </button>
+        <button id="navTabTracking" onclick="switchNavTab('tracking')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer text-slate-600 hover:text-slate-900">
+          <svg class="w-3.5 h-3.5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          <span>Tracking</span>
+        </button>
+        <button id="navTabHistory" onclick="switchNavTab('history')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer text-slate-600 hover:text-slate-900">
+          <svg class="w-3.5 h-3.5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span>History Tracking</span>
+          <span id="navHistoryCountBadge" class="px-1.5 py-0.2 bg-slate-200 text-slate-700 rounded-full text-[10px] font-mono">0</span>
+        </button>
+        <button id="navTabCompare" onclick="switchNavTab('compare')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer text-slate-600 hover:text-slate-900">
+          <svg class="w-3.5 h-3.5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+          <span>Compare Before / After</span>
+        </button>
+      </nav>
+
       <div class="flex items-center gap-3">
-        <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-100 border border-slate-200 text-xs text-slate-600 font-mono">
+        <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-100 border border-slate-200 text-xs text-slate-600 font-mono">
           <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
           <span>Vault Lock: Encrypted</span>
         </div>
         <button id="navUploadAnotherBtn" onclick="resetToLanding()" class="hidden px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-          Upload Another HTML
+          Upload HTML
         </button>
       </div>
     </div>
@@ -185,12 +206,28 @@
                   <span>•</span>
                   <span id="kolDateRange">Window: 30 Days</span>
                 </div>
+                <!-- Previous Audit History Banner inside Tracking View -->
+                <div id="previousHistoryBanner" class="hidden mt-2.5 px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-900 flex items-center justify-between gap-3">
+                  <div class="flex items-center gap-1.5 font-mono">
+                    <svg class="w-3.5 h-3.5 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span id="previousHistoryText">Previously tracked on: --</span>
+                  </div>
+                  <button id="compareWithPrevBtn" onclick="compareCurrentWithPrevious()" class="px-2 py-0.5 rounded bg-amber-600 hover:bg-amber-700 text-white font-semibold text-[10px] cursor-pointer shrink-0 transition">
+                    Compare Old vs. New →
+                  </button>
+                </div>
               </div>
             </div>
-            <a id="tiktokProfileLink" href="#" target="_blank" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-1.5">
-              <span>TikTok Profile</span>
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-            </a>
+            <div class="flex items-center gap-2 flex-wrap">
+              <button id="copySummaryBtn" onclick="copyMsSummaryToClipboard()" class="px-3.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                <span id="copySummaryBtnText">Copy Summary</span>
+              </button>
+              <a id="tiktokProfileLink" href="#" target="_blank" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                <span>TikTok Profile</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </a>
+            </div>
           </div>
 
           <!-- Core 8 Metrics Grid -->
@@ -295,6 +332,25 @@
 
       <!-- Preliminary Scenario Evaluation & AI Research Column -->
       <div class="space-y-6">
+        <!-- Quick Export Summary Message Card -->
+        <div class="office-card p-6 border-t-4 border-t-sky-600">
+          <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-3">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-800">Quick Summary</span>
+              <p class="text-[11px] text-slate-500">One-click copy to clipboard (editable Name before copying)</p>
+            </div>
+            <button id="cardCopySummaryBtn" onclick="copyMsSummaryToClipboard()" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+              <span id="cardCopySummaryBtnText">Copy to Clipboard</span>
+            </button>
+          </div>
+          <div class="mb-3 flex items-center gap-2">
+            <label for="customKolNameInput" class="text-xs font-semibold text-slate-600 shrink-0">Creator Name:</label>
+            <input id="customKolNameInput" type="text" placeholder="Enter creator display name..." oninput="updateMsSummaryPreview()" class="w-full px-2.5 py-1.5 text-xs font-mono bg-slate-50 border border-slate-300 rounded-md focus:outline-none focus:border-sky-600 text-slate-800" />
+          </div>
+          <pre id="msSummaryPreview" class="text-xs font-mono text-slate-800 bg-slate-50 border border-slate-200 rounded-lg p-3.5 whitespace-pre-wrap leading-relaxed select-all"></pre>
+        </div>
+
         <!-- Scenario Diagnostic Card -->
         <div class="office-card p-6">
           <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-3">
@@ -385,6 +441,87 @@
       </div>
     </div>
 
+  </section>
+
+  <!-- ==================== STAGE 4: HISTORY TRACKING ==================== -->
+  <section id="stageHistory" class="hidden flex-1 max-w-7xl w-full mx-auto px-6 py-8 space-y-6">
+    <div class="office-card p-6">
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4 mb-5">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">History Tracking & Saved KOL Snapshots</h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Every uploaded Kalodata HTML is automatically archived in your browser storage (works on GitHub Pages). Tick any 2 snapshots to compare Before vs. After metrics.
+          </p>
+        </div>
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <button id="compareSelectedBtn" onclick="compareSelectedSnapshots()" class="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+            <span id="compareSelectedBtnText">Compare Selected (0/2)</span>
+          </button>
+          <button onclick="exportHistoryJson()" class="px-3 py-2 rounded-lg border border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 cursor-pointer">
+            Export Backup (.json)
+          </button>
+          <button onclick="document.getElementById('importHistoryInput').click()" class="px-3 py-2 rounded-lg border border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 cursor-pointer">
+            Import Backup
+          </button>
+          <input id="importHistoryInput" type="file" accept=".json" class="hidden" onchange="importHistoryJson(event)" />
+          <button onclick="clearAllHistory()" class="px-3 py-2 rounded-lg border border-rose-200 hover:bg-rose-50 text-xs font-semibold text-rose-600 cursor-pointer">
+            Clear History
+          </button>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500 font-mono text-[11px] bg-slate-50">
+              <th class="py-3 px-3 w-10 text-center">Compare</th>
+              <th class="py-3 px-3">Audit Date (Saved)</th>
+              <th class="py-3 px-3">KOL Handle & Data Window</th>
+              <th class="py-3 px-3 text-right">30D GMV</th>
+              <th class="py-3 px-3 text-right">Video GMV</th>
+              <th class="py-3 px-3 text-right">Live GMV</th>
+              <th class="py-3 px-3 text-right">AOV</th>
+              <th class="py-3 px-3">Skincare Depth</th>
+              <th class="py-3 px-3 text-center">Score</th>
+              <th class="py-3 px-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== STAGE 5: COMPARE BEFORE / AFTER ==================== -->
+  <section id="stageCompare" class="hidden flex-1 max-w-7xl w-full mx-auto px-6 py-8 space-y-6">
+    <div class="office-card p-6">
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4 mb-5">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">Before vs. After KOL Performance Comparison</h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Compare historical vs. latest Kalodata uploads to track GMV growth, AOV shift, follower momentum, and skincare SKU conversion changes.
+          </p>
+        </div>
+        <button onclick="switchNavTab('history')" class="px-3.5 py-2 rounded-lg border border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 cursor-pointer">
+          ← Select From History Table
+        </button>
+      </div>
+
+      <!-- Snapshot Selectors -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+          <label class="block text-[11px] font-mono uppercase font-bold text-slate-500 mb-1.5">Snapshot A (Baseline / Older Audit)</label>
+          <select id="compareSelectA" onchange="renderComparisonView()" class="w-full p-2.5 text-xs font-mono bg-white border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-sky-600"></select>
+        </div>
+        <div class="p-4 rounded-xl bg-sky-50/60 border border-sky-200">
+          <label class="block text-[11px] font-mono uppercase font-bold text-sky-700 mb-1.5">Snapshot B (Current / Newer Audit)</label>
+          <select id="compareSelectB" onchange="renderComparisonView()" class="w-full p-2.5 text-xs font-mono bg-white border border-sky-300 rounded-lg text-slate-800 focus:outline-none focus:border-sky-600"></select>
+        </div>
+      </div>
+
+      <div id="comparisonContent" class="space-y-6"></div>
+    </div>
   </section>
 
   <script>
@@ -560,6 +697,18 @@
       const bodyText = doc.body?.textContent || '';
       const pubMatch = bodyText.match(/Thời gian phát hành lần đầu\s*:\s*(\d{2}\/\d{2}\/\d{4})/);
       if (pubMatch) firstPubDate = pubMatch[1];
+
+      // Extract Kalodata Date Range Window & Data Collection Date
+      let dateRangeWindow = '30 Days';
+      const startInput = doc.querySelector('input[date-range="start"]')?.value || '';
+      const endInput = doc.querySelector('input[date-range="end"]')?.value || '';
+      if (startInput && endInput) {
+        dateRangeWindow = `${startInput} ~ ${endInput}`;
+      } else {
+        const rangeMatch = bodyText.match(/30 ngày trước\s*\(([^)]+)\)/);
+        if (rangeMatch) dateRangeWindow = rangeMatch[1];
+      }
+      const dataTimeText = doc.querySelector('.dataTime')?.textContent?.trim() || '';
 
       let bioText = 'No bio text provided';
       const allDivs = Array.from(doc.querySelectorAll('div'));
@@ -772,6 +921,8 @@
         mcnDisplay,
         isIndependent,
         firstPubDate,
+        dateRangeWindow,
+        dataTimeText,
         bioText,
         isFemaleMajority,
         ageGroup,
@@ -1085,8 +1236,12 @@
       document.getElementById('kolBio').textContent = d.bioText || 'No bio text listed on Kalodata';
       document.getElementById('kolDebut').textContent = `First Published: ${d.firstPubDate}`;
       document.getElementById('kolDemographics').textContent = `Audience: ${d.isFemaleMajority ? 'Female Majority' : 'Mixed'} (${d.ageGroup})`;
+      document.getElementById('kolDateRange').textContent = `Window: ${d.dateRangeWindow || '30 Days'}`;
       document.getElementById('mcnBadge').textContent = `MCN: ${d.mcnDisplay}`;
       document.getElementById('tiktokProfileLink').href = `https://www.tiktok.com/${d.handle}`;
+
+      // Check and display previous tracking history banner for this handle
+      updatePreviousHistoryBanner(d);
 
       const isVideoTrack = d.dominantTrack === 'VIDEO_TRACK';
       const trackBadge = document.getElementById('trackModeBadge');
@@ -1198,6 +1353,81 @@
       // Reset AI Output box to ready state for this creator
       document.getElementById('aiAuditOutput').textContent =
         `Ready to generate Deep Case Research for ${d.handle} (${d.detectedIndustry} | 30D GMV: ${formatVnCurrency(d.totalGmv)}). Click the button above to run the commercial diagnostic & outreach strategy.`;
+
+      // 6. Initialize Quick Summary Message for Ms
+      const defaultName = d.handle.replace(/^@/, '');
+      const nameInput = document.getElementById('customKolNameInput');
+      if (nameInput) nameInput.value = defaultName;
+      updateMsSummaryPreview();
+    }
+
+    function buildMsSummaryText() {
+      if (!currentAuditData) return '';
+      const d = currentAuditData;
+      const customName = document.getElementById('customKolNameInput')?.value?.trim() || d.handle.replace(/^@/, '');
+      const handleId = d.handle.startsWith('@') ? d.handle : `@${d.handle}`;
+      const channelLink = `https://www.tiktok.com/${handleId}`;
+
+      const gmvVideoStr = `${formatVnCurrency(d.videoGmv)} (${d.videoSharePct.toFixed(1)}%)`;
+      const gmvLiveStr = `${formatVnCurrency(d.liveGmv)} (${d.liveSharePct.toFixed(1)}%)`;
+      const aovStr = formatVnCurrency(d.aov);
+      const genderStr = d.isFemaleMajority ? 'Female Majority' : 'Mixed / Male Majority';
+      const ageStr = d.ageGroup;
+      const skuDepthStr = `${d.specialistSkincareStores} Skincare Stores | ${d.skincareSkuCount} Skincare SKUs`;
+
+      return `Name: ${customName}
+Handle ID: ${handleId}
+Link channel: ${channelLink}
+
+Check list 30days:
+1. GMV Video: ${gmvVideoStr}
+2. GMV Livestream: ${gmvLiveStr}
+3. AOV: ${aovStr}
+4. Audience Gender: ${genderStr}
+5. Core Age Group: ${ageStr}
+6. Skincare SKU Depth: ${skuDepthStr}`;
+    }
+
+    function updateMsSummaryPreview() {
+      const previewEl = document.getElementById('msSummaryPreview');
+      if (!previewEl) return;
+      previewEl.textContent = buildMsSummaryText();
+    }
+
+    async function copyMsSummaryToClipboard() {
+      const text = buildMsSummaryText();
+      if (!text) return;
+
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (err) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+
+      const btnTexts = ['copySummaryBtnText', 'cardCopySummaryBtnText'];
+      const originalLabels = {
+        copySummaryBtnText: 'Copy Summary',
+        cardCopySummaryBtnText: 'Copy to Clipboard'
+      };
+
+      btnTexts.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '✓ Copied to Clipboard!';
+      });
+
+      setTimeout(() => {
+        btnTexts.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = originalLabels[id];
+        });
+      }, 2000);
     }
 
     function renderChecklistItems() {
@@ -1437,8 +1667,486 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
     }
 
     // ============================================================================
-    // 9. STAGE NAVIGATION & DRAG-AND-DROP FILE HANDLERS
+    // 9. STAGE NAVIGATION, HISTORY TRACKING & BEFORE/AFTER COMPARISON
     // ============================================================================
+    const HISTORY_STORAGE_KEY = 'KALODATA_KOL_AUDIT_HISTORY_V1';
+    let selectedComparisonIds = [];
+    let currentPreviousSnapshotForBanner = null;
+
+    function getSavedHistory() {
+      try {
+        const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveHistoryArray(arr) {
+      try {
+        localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(arr));
+      } catch (e) {
+        console.warn('LocalStorage quota reached, trimming oldest entries');
+        if (arr.length > 15) {
+          localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(arr.slice(0, 15)));
+        }
+      }
+      updateHistoryCountBadge();
+    }
+
+    function updateHistoryCountBadge() {
+      const history = getSavedHistory();
+      const badge = document.getElementById('navHistoryCountBadge');
+      if (badge) badge.textContent = history.length.toString();
+    }
+
+    function computeOverallScorePct(d) {
+      const list = buildDynamicChecklist(d);
+      let earned = 0;
+      let total = 0;
+      list.forEach(item => {
+        total += item.weight;
+        if (item.passed) earned += item.weight;
+      });
+      return total > 0 ? Math.round((earned / total) * 100) : 0;
+    }
+
+    function saveAuditSnapshotToHistory(d) {
+      const history = getSavedHistory();
+      const nowIso = new Date().toISOString();
+      const nowFormatted = new Date().toLocaleString('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+
+      const scorePct = computeOverallScorePct(d);
+      const snapshotId = `${d.handle}_${Date.now()}`;
+
+      // Find any previous snapshot of the same KOL handle before saving
+      const prevSameKol = history.find(item => item.handle.toLowerCase() === d.handle.toLowerCase());
+      currentPreviousSnapshotForBanner = prevSameKol || null;
+
+      const snapshotRecord = {
+        snapshotId,
+        savedAtIso: nowIso,
+        savedAtFormatted: nowFormatted,
+        scorePct,
+        ...d
+      };
+
+      d.snapshotId = snapshotId;
+      d.savedAtFormatted = nowFormatted;
+      d.scorePct = scorePct;
+
+      history.unshift(snapshotRecord);
+      // Keep up to 50 snapshots in localStorage
+      saveHistoryArray(history.slice(0, 50));
+    }
+
+    function updatePreviousHistoryBanner(d) {
+      const banner = document.getElementById('previousHistoryBanner');
+      const textEl = document.getElementById('previousHistoryText');
+      if (!banner || !textEl) return;
+
+      const history = getSavedHistory();
+      // Find previous records for this handle excluding the exact current snapshotId
+      const olderSnapshots = history.filter(
+        h => h.handle.toLowerCase() === d.handle.toLowerCase() && h.snapshotId !== d.snapshotId
+      );
+
+      if (olderSnapshots.length > 0) {
+        const latestOld = olderSnapshots[0];
+        currentPreviousSnapshotForBanner = latestOld;
+        const allDates = olderSnapshots.slice(0, 3).map(s => `${s.savedAtFormatted} (GMV: ${formatVnCurrency(s.totalGmv)})`).join(' | ');
+        textEl.textContent = `Previously tracked (${olderSnapshots.length}x): ${allDates}`;
+        banner.classList.remove('hidden');
+      } else {
+        currentPreviousSnapshotForBanner = null;
+        banner.classList.add('hidden');
+      }
+    }
+
+    function compareCurrentWithPrevious() {
+      if (!currentAuditData || !currentPreviousSnapshotForBanner) return;
+      selectedComparisonIds = [currentPreviousSnapshotForBanner.snapshotId, currentAuditData.snapshotId];
+      switchNavTab('compare');
+    }
+
+    function switchNavTab(tabName) {
+      const stages = ['stageLanding', 'stageLoading', 'stageDashboard', 'stageHistory', 'stageCompare'];
+      stages.forEach(id => document.getElementById(id)?.classList.add('hidden'));
+
+      const navButtons = {
+        homepage: 'navTabHomepage',
+        tracking: 'navTabTracking',
+        history: 'navTabHistory',
+        compare: 'navTabCompare'
+      };
+      Object.entries(navButtons).forEach(([key, btnId]) => {
+        const btn = document.getElementById(btnId);
+        if (!btn) return;
+        if (key === tabName) {
+          btn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer bg-white text-slate-900 shadow-sm';
+        } else {
+          btn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer text-slate-600 hover:text-slate-900';
+        }
+      });
+
+      if (tabName === 'homepage') {
+        document.getElementById('stageLanding').classList.remove('hidden');
+      } else if (tabName === 'tracking') {
+        if (!currentAuditData) {
+          const history = getSavedHistory();
+          if (history.length > 0) {
+            renderDashboard(history[0]);
+            document.getElementById('stageDashboard').classList.remove('hidden');
+            document.getElementById('navUploadAnotherBtn').classList.remove('hidden');
+          } else {
+            alert('No KOL HTML loaded yet. Please upload a Kalodata HTML file first.');
+            switchNavTab('homepage');
+            return;
+          }
+        } else {
+          document.getElementById('stageDashboard').classList.remove('hidden');
+          document.getElementById('navUploadAnotherBtn').classList.remove('hidden');
+        }
+      } else if (tabName === 'history') {
+        renderHistoryTable();
+        document.getElementById('stageHistory').classList.remove('hidden');
+      } else if (tabName === 'compare') {
+        populateComparisonSelectors();
+        renderComparisonView();
+        document.getElementById('stageCompare').classList.remove('hidden');
+      }
+    }
+
+    function renderHistoryTable() {
+      const history = getSavedHistory();
+      const tbody = document.getElementById('historyTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      updateCompareSelectedButtonLabel();
+
+      if (history.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="10" class="py-10 text-center text-slate-400 font-mono text-xs">
+              No saved KOL audits yet. Upload a Kalodata .html file on Homepage to automatically archive it here.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      history.forEach((item) => {
+        const isChecked = selectedComparisonIds.includes(item.snapshotId);
+        const tr = document.createElement('tr');
+        tr.className = isChecked ? 'bg-sky-50/70 hover:bg-sky-50' : 'hover:bg-slate-50';
+        const scoreBadgeClass = item.scorePct >= 82
+          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+          : (item.scorePct >= 62 ? 'bg-sky-50 text-sky-700 border-sky-200' : 'bg-rose-50 text-rose-700 border-rose-200');
+
+        tr.innerHTML = `
+          <td class="py-3 px-3 text-center">
+            <input type="checkbox"
+                   class="w-4 h-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
+                   ${isChecked ? 'checked' : ''}
+                   onchange="toggleHistoryCompareCheckbox('${item.snapshotId}', this.checked)" />
+          </td>
+          <td class="py-3 px-3 font-mono text-slate-700 whitespace-nowrap">${item.savedAtFormatted || '--'}</td>
+          <td class="py-3 px-3">
+            <div class="font-bold text-slate-900 font-mono">${item.handle}</div>
+            <div class="text-[11px] text-slate-500 font-mono">Window: ${item.dateRangeWindow || '30 Days'}</div>
+          </td>
+          <td class="py-3 px-3 text-right font-mono font-bold text-slate-900">${formatVnCurrency(item.totalGmv)}</td>
+          <td class="py-3 px-3 text-right font-mono text-slate-700">${formatVnCurrency(item.videoGmv)} <span class="text-[10px] text-slate-400">(${item.videoSharePct.toFixed(0)}%)</span></td>
+          <td class="py-3 px-3 text-right font-mono text-slate-700">${formatVnCurrency(item.liveGmv)} <span class="text-[10px] text-slate-400">(${item.liveSharePct.toFixed(0)}%)</span></td>
+          <td class="py-3 px-3 text-right font-mono text-slate-800">${formatVnCurrency(item.aov)}</td>
+          <td class="py-3 px-3 font-mono text-[11px] text-slate-600">${item.specialistSkincareStores} Stores | ${item.skincareSkuCount} SKUs</td>
+          <td class="py-3 px-3 text-center">
+            <span class="px-2 py-0.5 text-[11px] font-mono font-bold rounded border ${scoreBadgeClass}">${item.scorePct || 0}%</span>
+          </td>
+          <td class="py-3 px-3 text-right whitespace-nowrap space-x-1.5">
+            <button onclick="openSnapshotInTracking('${item.snapshotId}')" class="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-semibold cursor-pointer">
+              View Audit
+            </button>
+            <button onclick="deleteSnapshotFromHistory('${item.snapshotId}')" class="px-2 py-1 rounded border border-rose-200 hover:bg-rose-50 text-rose-600 text-[11px] font-semibold cursor-pointer">
+              Delete
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function toggleHistoryCompareCheckbox(snapshotId, checked) {
+      if (checked) {
+        if (!selectedComparisonIds.includes(snapshotId)) {
+          if (selectedComparisonIds.length >= 2) {
+            selectedComparisonIds.shift();
+          }
+          selectedComparisonIds.push(snapshotId);
+        }
+      } else {
+        selectedComparisonIds = selectedComparisonIds.filter(id => id !== snapshotId);
+      }
+      renderHistoryTable();
+    }
+
+    function updateCompareSelectedButtonLabel() {
+      const btnText = document.getElementById('compareSelectedBtnText');
+      if (btnText) {
+        btnText.textContent = `Compare Selected (${selectedComparisonIds.length}/2)`;
+      }
+    }
+
+    function compareSelectedSnapshots() {
+      if (selectedComparisonIds.length < 2) {
+        alert('Please tick 2 snapshots in the table to compare Before vs. After.');
+        return;
+      }
+      switchNavTab('compare');
+    }
+
+    function openSnapshotInTracking(snapshotId) {
+      const history = getSavedHistory();
+      const found = history.find(h => h.snapshotId === snapshotId);
+      if (!found) return;
+      renderDashboard(found);
+      switchNavTab('tracking');
+    }
+
+    function deleteSnapshotFromHistory(snapshotId) {
+      const history = getSavedHistory().filter(h => h.snapshotId !== snapshotId);
+      selectedComparisonIds = selectedComparisonIds.filter(id => id !== snapshotId);
+      saveHistoryArray(history);
+      renderHistoryTable();
+    }
+
+    function clearAllHistory() {
+      if (!confirm('Are you sure you want to clear all saved KOL history snapshots?')) return;
+      selectedComparisonIds = [];
+      saveHistoryArray([]);
+      renderHistoryTable();
+    }
+
+    function exportHistoryJson() {
+      const history = getSavedHistory();
+      const blob = new Blob([JSON.stringify(history, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `kalodata_kol_history_${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importHistoryJson(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const imported = JSON.parse(e.target?.result || '[]');
+          if (Array.isArray(imported)) {
+            const existing = getSavedHistory();
+            const map = new Map();
+            [...imported, ...existing].forEach(item => {
+              if (item && item.snapshotId) map.set(item.snapshotId, item);
+            });
+            saveHistoryArray(Array.from(map.values()).slice(0, 50));
+            renderHistoryTable();
+          }
+        } catch (err) {
+          alert('Invalid JSON backup file.');
+        }
+      };
+      reader.readAsText(file, 'UTF-8');
+    }
+
+    function populateComparisonSelectors() {
+      const history = getSavedHistory();
+      const selA = document.getElementById('compareSelectA');
+      const selB = document.getElementById('compareSelectB');
+      if (!selA || !selB) return;
+
+      selA.innerHTML = '';
+      selB.innerHTML = '';
+
+      if (history.length === 0) {
+        const opt = '<option value="">No saved snapshots available</option>';
+        selA.innerHTML = opt;
+        selB.innerHTML = opt;
+        return;
+      }
+
+      history.forEach((h) => {
+        const label = `${h.handle} — Saved: ${h.savedAtFormatted} | GMV: ${formatVnCurrency(h.totalGmv)} (${h.dateRangeWindow || '30d'})`;
+        selA.add(new Option(label, h.snapshotId));
+        selB.add(new Option(label, h.snapshotId));
+      });
+
+      if (selectedComparisonIds.length === 2) {
+        // Order chronologically so older is A (Baseline) and newer is B (Current)
+        const item0 = history.find(h => h.snapshotId === selectedComparisonIds[0]);
+        const item1 = history.find(h => h.snapshotId === selectedComparisonIds[1]);
+        if (item0 && item1) {
+          const t0 = new Date(item0.savedAtIso || 0).getTime();
+          const t1 = new Date(item1.savedAtIso || 0).getTime();
+          if (t0 <= t1) {
+            selA.value = item0.snapshotId;
+            selB.value = item1.snapshotId;
+          } else {
+            selA.value = item1.snapshotId;
+            selB.value = item0.snapshotId;
+          }
+        }
+      } else if (history.length >= 2) {
+        selA.value = history[1].snapshotId;
+        selB.value = history[0].snapshotId;
+      } else {
+        selA.value = history[0].snapshotId;
+        selB.value = history[0].snapshotId;
+      }
+    }
+
+    function formatDeltaBadge(oldVal, newVal, isCurrency = false, isPercentPoint = false) {
+      const diff = (newVal || 0) - (oldVal || 0);
+      if (Math.abs(diff) < 0.001) {
+        return `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 font-mono text-[11px]">No Change (0)</span>`;
+      }
+      const isPositive = diff > 0;
+      const sign = isPositive ? '+' : '';
+      let pctStr = '';
+      if (!isPercentPoint && oldVal && Math.abs(oldVal) > 0) {
+        const pct = (diff / Math.abs(oldVal)) * 100;
+        pctStr = ` (${sign}${pct.toFixed(1)}%)`;
+      }
+      const formattedDiff = isCurrency
+        ? formatVnCurrency(diff)
+        : (isPercentPoint ? `${sign}${diff.toFixed(1)}%` : `${sign}${formatCompactNumber(diff)}`);
+      const colorCls = isPositive
+        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+        : 'bg-rose-50 text-rose-700 border border-rose-200';
+      return `<span class="px-2 py-0.5 rounded font-mono font-bold text-[11px] ${colorCls}">${isCurrency && isPositive ? '+' : ''}${formattedDiff}${pctStr}</span>`;
+    }
+
+    function renderComparisonView() {
+      const container = document.getElementById('comparisonContent');
+      if (!container) return;
+      const history = getSavedHistory();
+
+      if (history.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center bg-slate-50 rounded-xl border border-slate-200 text-xs font-mono text-slate-500">
+            No history records available to compare. Upload at least two Kalodata HTML files first.
+          </div>
+        `;
+        return;
+      }
+
+      const idA = document.getElementById('compareSelectA')?.value;
+      const idB = document.getElementById('compareSelectB')?.value;
+      const snapA = history.find(h => h.snapshotId === idA) || history[0];
+      const snapB = history.find(h => h.snapshotId === idB) || history[0];
+
+      const rows = [
+        {
+          label: '30-Day Total GMV',
+          valA: formatVnCurrency(snapA.totalGmv),
+          valB: formatVnCurrency(snapB.totalGmv),
+          delta: formatDeltaBadge(snapA.totalGmv, snapB.totalGmv, true, false)
+        },
+        {
+          label: '1. GMV Video (Short-Video Revenue)',
+          valA: `${formatVnCurrency(snapA.videoGmv)} (${snapA.videoSharePct.toFixed(1)}%)`,
+          valB: `${formatVnCurrency(snapB.videoGmv)} (${snapB.videoSharePct.toFixed(1)}%)`,
+          delta: formatDeltaBadge(snapA.videoGmv, snapB.videoGmv, true, false)
+        },
+        {
+          label: '2. GMV Livestream (Live Revenue)',
+          valA: `${formatVnCurrency(snapA.liveGmv)} (${snapA.liveSharePct.toFixed(1)}%)`,
+          valB: `${formatVnCurrency(snapB.liveGmv)} (${snapB.liveSharePct.toFixed(1)}%)`,
+          delta: formatDeltaBadge(snapA.liveGmv, snapB.liveGmv, true, false)
+        },
+        {
+          label: '3. Average Unit Price (AOV)',
+          valA: formatVnCurrency(snapA.aov),
+          valB: formatVnCurrency(snapB.aov),
+          delta: formatDeltaBadge(snapA.aov, snapB.aov, true, false)
+        },
+        {
+          label: 'Total Followers',
+          valA: formatCompactNumber(snapA.followersCount),
+          valB: formatCompactNumber(snapB.followersCount),
+          delta: formatDeltaBadge(snapA.followersCount, snapB.followersCount, false, false)
+        },
+        {
+          label: 'GMV per 1,000 Followers',
+          valA: formatVnCurrency(snapA.gmvPer1kFollowers),
+          valB: formatVnCurrency(snapB.gmvPer1kFollowers),
+          delta: formatDeltaBadge(snapA.gmvPer1kFollowers, snapB.gmvPer1kFollowers, true, false)
+        },
+        {
+          label: '30D Video Views',
+          valA: formatCompactNumber(snapA.videoViews),
+          valB: formatCompactNumber(snapB.videoViews),
+          delta: formatDeltaBadge(snapA.videoViews, snapB.videoViews, false, false)
+        },
+        {
+          label: '4 & 5. Audience Gender & Core Age Group',
+          valA: `${snapA.isFemaleMajority ? 'Female Majority' : 'Mixed'} | Age: ${snapA.ageGroup}`,
+          valB: `${snapB.isFemaleMajority ? 'Female Majority' : 'Mixed'} | Age: ${snapB.ageGroup}`,
+          delta: snapA.ageGroup === snapB.ageGroup
+            ? `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono text-[11px]">Unchanged (${snapB.ageGroup})</span>`
+            : `<span class="px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 font-mono text-[11px]">Shifted: ${snapA.ageGroup} → ${snapB.ageGroup}</span>`
+        },
+        {
+          label: '6. Skincare SKU Depth (Stores | SKUs)',
+          valA: `${snapA.specialistSkincareStores} Skincare Stores | ${snapA.skincareSkuCount} Skincare SKUs`,
+          valB: `${snapB.specialistSkincareStores} Skincare Stores | ${snapB.skincareSkuCount} Skincare SKUs`,
+          delta: formatDeltaBadge(snapA.skincareSkuCount, snapB.skincareSkuCount, false, false)
+        },
+        {
+          label: 'Compatibility Score (%)',
+          valA: `${snapA.scorePct || 0}%`,
+          valB: `${snapB.scorePct || 0}%`,
+          delta: formatDeltaBadge(snapA.scorePct || 0, snapB.scorePct || 0, false, true)
+        }
+      ];
+
+      container.innerHTML = `
+        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-100 border-b border-slate-200 font-mono text-[11px] text-slate-600">
+                <th class="py-3 px-4">Metric / Indicator</th>
+                <th class="py-3 px-4">Snapshot A: ${snapA.handle} (${snapA.savedAtFormatted})</th>
+                <th class="py-3 px-4 bg-sky-50/80 text-sky-900">Snapshot B: ${snapB.handle} (${snapB.savedAtFormatted})</th>
+                <th class="py-3 px-4 text-right">Before → After Delta</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              ${rows.map(r => `
+                <tr class="hover:bg-slate-50">
+                  <td class="py-3 px-4 font-semibold text-slate-800">${r.label}</td>
+                  <td class="py-3 px-4 font-mono text-slate-600">${r.valA}</td>
+                  <td class="py-3 px-4 font-mono font-bold text-slate-900 bg-sky-50/30">${r.valB}</td>
+                  <td class="py-3 px-4 text-right">${r.delta}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
     function toggleRawHtmlDrawer() {
       const drawer = document.getElementById('rawHtmlDrawer');
       const arrow = document.getElementById('drawerArrow');
@@ -1447,16 +2155,13 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
     }
 
     function resetToLanding() {
-      document.getElementById('stageDashboard').classList.add('hidden');
-      document.getElementById('stageLoading').classList.add('hidden');
-      document.getElementById('stageLanding').classList.remove('hidden');
-      document.getElementById('navUploadAnotherBtn').classList.add('hidden');
       document.getElementById('fileInput').value = '';
+      switchNavTab('homepage');
     }
 
     function runStageTransitionAndAudit(htmlString, fileName) {
-      document.getElementById('stageLanding').classList.add('hidden');
-      document.getElementById('stageDashboard').classList.add('hidden');
+      const stages = ['stageLanding', 'stageDashboard', 'stageHistory', 'stageCompare'];
+      stages.forEach(id => document.getElementById(id)?.classList.add('hidden'));
       const loadingSec = document.getElementById('stageLoading');
       loadingSec.classList.remove('hidden');
 
@@ -1471,6 +2176,7 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
       });
 
       const parsedData = parseKalodataHtml(htmlString, fileName);
+      saveAuditSnapshotToHistory(parsedData);
 
       const delays = [180, 420, 680, 920];
       delays.forEach((ms, i) => {
@@ -1484,9 +2190,8 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
 
       setTimeout(() => {
         loadingSec.classList.add('hidden');
-        document.getElementById('stageDashboard').classList.remove('hidden');
-        document.getElementById('navUploadAnotherBtn').classList.remove('hidden');
         renderDashboard(parsedData);
+        switchNavTab('tracking');
       }, 1150);
     }
 
@@ -1516,8 +2221,9 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
       runStageTransitionAndAudit(raw, 'Pasted_Kalodata_Source.html');
     }
 
-    // Initialize Drag & Drop Listeners on Stage 1 DropZone
+    // Initialize Drag & Drop Listeners & History Counter on Startup
     (function _initDropZone() {
+      updateHistoryCountBadge();
       const dz = document.getElementById('dropZone');
       if (!dz) return;
       ['dragenter', 'dragover'].forEach(evtName => {
