@@ -590,6 +590,10 @@
         <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-200 text-xs">
           <div class="flex items-center gap-2 flex-wrap">
             <span class="text-[11px] font-mono text-slate-600 font-semibold" id="historyFilterCountText">Showing 0 of 0 snapshots</span>
+            <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 font-mono text-[10px] border border-emerald-200 font-bold flex items-center gap-1" title="Automatically deduplicates multiple trackings of the same creator on the same calendar day">
+              <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span>Auto-Deduplicated (1 per KOL / Day)</span>
+            </span>
             <div id="historyFilterPills" class="flex items-center gap-1.5 flex-wrap"></div>
           </div>
 
@@ -1816,24 +1820,61 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
     let selectedComparisonIds = [];
     let currentPreviousSnapshotForBanner = null;
 
+    function getLocalDateKey(dateObjOrIso) {
+      if (!dateObjOrIso) return '';
+      const dt = typeof dateObjOrIso === 'string' || typeof dateObjOrIso === 'number'
+        ? new Date(dateObjOrIso)
+        : dateObjOrIso;
+      if (isNaN(dt.getTime())) return '';
+      const y = dt.getFullYear();
+      const m = String(dt.getMonth() + 1).padStart(2, '0');
+      const d = String(dt.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function deduplicateHistoryByDay(list) {
+      if (!Array.isArray(list)) return [];
+      const seen = new Set();
+      const deduped = [];
+      // List is ordered newest first: keep the latest record of each calendar day per creator
+      for (const item of list) {
+        if (!item || !item.handle) continue;
+        const handle = String(item.handle).toLowerCase().trim();
+        const dateKey = getLocalDateKey(item.savedAtIso) || 'unknown_date';
+        const uniqueKey = `${handle}_${dateKey}`;
+        if (!seen.has(uniqueKey)) {
+          seen.add(uniqueKey);
+          deduped.push(item);
+        }
+      }
+      return deduped;
+    }
+
     function getSavedHistory() {
       try {
         const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
         if (!raw) return [];
         const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
+        if (!Array.isArray(parsed)) return [];
+        const deduped = deduplicateHistoryByDay(parsed);
+        if (deduped.length !== parsed.length) {
+          // Auto-clean any existing duplicate same-day entries in localStorage
+          localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(deduped));
+        }
+        return deduped;
       } catch (e) {
         return [];
       }
     }
 
     function saveHistoryArray(arr) {
+      const cleanArr = deduplicateHistoryByDay(arr);
       try {
-        localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(arr));
+        localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(cleanArr));
       } catch (e) {
         console.warn('LocalStorage quota reached, trimming oldest entries');
-        if (arr.length > 15) {
-          localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(arr.slice(0, 15)));
+        if (cleanArr.length > 15) {
+          localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(cleanArr.slice(0, 15)));
         }
       }
       updateHistoryCountBadge();
@@ -1858,8 +1899,10 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
 
     function saveAuditSnapshotToHistory(d) {
       const history = getSavedHistory();
-      const nowIso = new Date().toISOString();
-      const nowFormatted = new Date().toLocaleString('vi-VN', {
+      const now = new Date();
+      const nowIso = now.toISOString();
+      const todayKey = getLocalDateKey(now);
+      const nowFormatted = now.toLocaleString('vi-VN', {
         hour: '2-digit',
         minute: '2-digit',
         day: '2-digit',
@@ -1868,11 +1911,24 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
       });
 
       const scorePct = computeOverallScorePct(d);
-      const snapshotId = `${d.handle}_${Date.now()}`;
+      const handleLower = String(d.handle || '').toLowerCase().trim();
 
-      // Find any previous snapshot of the same KOL handle before saving
-      const prevSameKol = history.find(item => item.handle.toLowerCase() === d.handle.toLowerCase());
-      currentPreviousSnapshotForBanner = prevSameKol || null;
+      // Find previous snapshot of this KOL from an earlier calendar day (for Before/After comparison)
+      const prevDaySnapshot = history.find(item =>
+        String(item.handle || '').toLowerCase().trim() === handleLower &&
+        getLocalDateKey(item.savedAtIso) !== todayKey
+      );
+      currentPreviousSnapshotForBanner = prevDaySnapshot || null;
+
+      // Auto-Deduplication: Check if this creator was ALREADY tracked today
+      const existingTodayIndex = history.findIndex(item =>
+        String(item.handle || '').toLowerCase().trim() === handleLower &&
+        getLocalDateKey(item.savedAtIso) === todayKey
+      );
+
+      const snapshotId = existingTodayIndex !== -1
+        ? history[existingTodayIndex].snapshotId
+        : `${d.handle}_${Date.now()}`;
 
       const snapshotRecord = {
         snapshotId,
@@ -1886,9 +1942,17 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
       d.savedAtFormatted = nowFormatted;
       d.scorePct = scorePct;
 
-      history.unshift(snapshotRecord);
-      // Keep up to 50 snapshots in localStorage
-      saveHistoryArray(history.slice(0, 50));
+      if (existingTodayIndex !== -1) {
+        // Automatically replace today's snapshot with the latest audit data
+        history.splice(existingTodayIndex, 1);
+        history.unshift(snapshotRecord);
+      } else {
+        history.unshift(snapshotRecord);
+      }
+
+      // Deduplicate same-day records and persist up to 50 snapshots
+      const cleanHistory = deduplicateHistoryByDay(history).slice(0, 50);
+      saveHistoryArray(cleanHistory);
     }
 
     function updatePreviousHistoryBanner(d) {
@@ -1897,16 +1961,21 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
       if (!banner || !textEl) return;
 
       const history = getSavedHistory();
-      // Find previous records for this handle excluding the exact current snapshotId
+      const handleLower = String(d.handle || '').toLowerCase().trim();
+      const currentDayKey = getLocalDateKey(d.savedAtIso || new Date());
+
+      // Find older records from previous calendar days (same-day audits are auto-merged)
       const olderSnapshots = history.filter(
-        h => h.handle.toLowerCase() === d.handle.toLowerCase() && h.snapshotId !== d.snapshotId
+        h => String(h.handle || '').toLowerCase().trim() === handleLower &&
+             h.snapshotId !== d.snapshotId &&
+             getLocalDateKey(h.savedAtIso) !== currentDayKey
       );
 
       if (olderSnapshots.length > 0) {
         const latestOld = olderSnapshots[0];
         currentPreviousSnapshotForBanner = latestOld;
         const allDates = olderSnapshots.slice(0, 3).map(s => `${s.savedAtFormatted} (GMV: ${formatVnCurrency(s.totalGmv)})`).join(' | ');
-        textEl.textContent = `Previously tracked (${olderSnapshots.length}x): ${allDates}`;
+        textEl.textContent = `Previously tracked on earlier dates (${olderSnapshots.length}x): ${allDates}`;
         banner.classList.remove('hidden');
       } else {
         currentPreviousSnapshotForBanner = null;
@@ -2250,12 +2319,11 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
           const imported = JSON.parse(e.target?.result || '[]');
           if (Array.isArray(imported)) {
             const existing = getSavedHistory();
-            const map = new Map();
-            [...imported, ...existing].forEach(item => {
-              if (item && item.snapshotId) map.set(item.snapshotId, item);
-            });
-            saveHistoryArray(Array.from(map.values()).slice(0, 50));
+            const combined = [...imported, ...existing];
+            const clean = deduplicateHistoryByDay(combined).slice(0, 50);
+            saveHistoryArray(clean);
             renderHistoryTable();
+            alert(`✓ Backup imported and auto-deduplicated! Now storing ${clean.length} unique daily snapshot(s).`);
           }
         } catch (err) {
           alert('Invalid JSON backup file.');
