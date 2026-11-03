@@ -103,6 +103,7 @@
           <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
           <span>Vault Lock: Encrypted</span>
         </div>
+        <button onclick="openAuthModal()" class="px-3 py-2 rounded-lg border border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-1.5 cursor-pointer"><span>&#128100;</span><span id="navAccountLabel">Login</span></button>
         <button id="navUploadAnotherBtn" onclick="resetToLanding()" class="hidden px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
           Upload HTML
@@ -618,10 +619,23 @@
         </div>
       </div>
 
+      <div class="mb-4 p-3 rounded-xl bg-sky-50/60 border border-sky-200 flex flex-wrap items-center gap-2.5 text-xs">
+        <span class="font-bold text-sky-900">Quick Export</span>
+        <select id="exportFormatSel" class="px-2.5 py-1.5 text-xs bg-white border border-slate-300 rounded-lg cursor-pointer">
+          <option value="MINIMAL">Minimal + Bio</option>
+          <option value="CHECKLIST">Checklist (Ms format)</option>
+        </select>
+        <button onclick="copySelectedExport()" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-semibold cursor-pointer" id="copySelectedExportBtn">Copy Selected Text (0)</button>
+        <button onclick="downloadSelectedExport('txt')" class="px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 font-semibold text-slate-700 cursor-pointer">Export .txt</button>
+        <button onclick="downloadSelectedExport('csv')" class="px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 font-semibold text-slate-700 cursor-pointer">Export .csv</button>
+        <span class="text-[11px] text-slate-500">Tick the Export column, or use per-row Copy. Nothing ticked = all shown rows.</span>
+      </div>
+
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse text-xs">
           <thead>
             <tr class="border-b border-slate-200 text-slate-500 font-mono text-[11px] bg-slate-50">
+              <th class="py-3 px-3 w-10 text-center"><input type="checkbox" id="exportSelectAll" title="Select all shown for export" onchange="toggleExportSelectAll(this.checked)" class="w-4 h-4 cursor-pointer" /><div class="text-[9px]">Export</div></th>
               <th class="py-3 px-3 w-10 text-center">Compare</th>
               <th class="py-3 px-3">Audit Date (Saved)</th>
               <th class="py-3 px-3">KOL Handle & Data Window</th>
@@ -2166,6 +2180,81 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
       return { allHistory, filtered };
     }
 
+    // ===== QUICK EXPORT (MINIMAL + BIO) =====
+    const selectedExportIds = new Set();
+
+    function buildItemText(d, mode) {
+      const handleId = d.handle.startsWith('@') ? d.handle : '@' + d.handle;
+      const name = d.handle.replace(/^@/, '');
+      const link = 'https://www.tiktok.com/' + handleId;
+      const gender = d.isFemaleMajority ? 'Female Majority' : 'Mixed / Male Majority';
+      const sku = `${d.specialistSkincareStores} Skincare Stores | ${d.skincareSkuCount} Skincare SKUs`;
+      if (mode === 'CHECKLIST') {
+        return `Name: ${name}\nHandle ID: ${handleId}\nLink channel: ${link}\n\nCheck list 30days:\n1. GMV Video: ${formatVnCurrency(d.videoGmv)} (${d.videoSharePct.toFixed(1)}%)\n2. GMV Livestream: ${formatVnCurrency(d.liveGmv)} (${d.liveSharePct.toFixed(1)}%)\n3. AOV: ${formatVnCurrency(d.aov)}\n4. Audience Gender: ${gender}\n5. Core Age Group: ${d.ageGroup}\n6. Skincare SKU Depth: ${sku}`;
+      }
+      return `Name: ${name}\nHandle ID: ${handleId}\nLink channel: ${link}\nBio: ${d.bioText || 'N/A'}\nGMV Video: ${formatVnCurrency(d.videoGmv)} (${d.videoSharePct.toFixed(1)}%) | GMV Live: ${formatVnCurrency(d.liveGmv)} (${d.liveSharePct.toFixed(1)}%)\nAOV: ${formatVnCurrency(d.aov)} | ${gender} | Age ${d.ageGroup}\nSkincare: ${sku}`;
+    }
+
+    function getExportItems() {
+      const { filtered } = getFilteredAndSortedHistory();
+      const picked = filtered.filter(i => selectedExportIds.has(i.snapshotId));
+      return picked.length ? picked : filtered;
+    }
+
+    function getExportMode() { return document.getElementById('exportFormatSel')?.value || 'MINIMAL'; }
+
+    async function copyText(text) {
+      try { await navigator.clipboard.writeText(text); }
+      catch (e) {
+        const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+      }
+    }
+
+    async function copyHistoryItem(id) {
+      const item = getSavedHistory().find(h => h.snapshotId === id);
+      if (item) { await copyText(buildItemText(item, getExportMode())); alert('✓ Copied '+item.handle); }
+    }
+
+    async function copySelectedExport() {
+      const items = getExportItems();
+      if (!items.length) return;
+      await copyText(items.map(i => buildItemText(i, getExportMode())).join('\n\n----------\n\n'));
+      alert(`✓ Copied ${items.length} KOL(s) to clipboard`);
+    }
+
+    function downloadSelectedExport(kind) {
+      const items = getExportItems();
+      if (!items.length) return;
+      let content, mime;
+      if (kind === 'csv') {
+        const q = v => '"' + String(v ?? '').replace(/"/g, '""').replace(/\s+/g, ' ') + '"';
+        const rows = [['Name','Handle','Link','Bio','GMV Video','GMV Live','AOV','Gender','Age','Skincare Stores','Skincare SKUs','Score','Saved']];
+        items.forEach(d => rows.push([d.handle.replace(/^@/, ''), d.handle, 'https://www.tiktok.com/' + d.handle, d.bioText, formatVnCurrency(d.videoGmv), formatVnCurrency(d.liveGmv), formatVnCurrency(d.aov), d.isFemaleMajority ? 'Female Majority' : 'Mixed', d.ageGroup, d.specialistSkincareStores, d.skincareSkuCount, (d.scorePct||0)+'%', d.savedAtFormatted]));
+        content = '\uFEFF' + rows.map(r => r.map(q).join(',')).join('\n'); mime = 'text/csv;charset=utf-8';
+      } else {
+        content = items.map(i => buildItemText(i, getExportMode())).join('\n\n----------\n\n'); mime = 'text/plain;charset=utf-8';
+      }
+      const url = URL.createObjectURL(new Blob([content], { type: mime }));
+      const a = document.createElement('a'); a.href = url;
+      a.download = `kol_export_${new Date().toISOString().slice(0,10)}.${kind}`; a.click(); URL.revokeObjectURL(url);
+    }
+
+    function toggleExportRow(id, on) {
+      if (on) selectedExportIds.add(id); else selectedExportIds.delete(id);
+      updateExportBtn();
+    }
+
+    function toggleExportSelectAll(on) {
+      getFilteredAndSortedHistory().filtered.forEach(i => on ? selectedExportIds.add(i.snapshotId) : selectedExportIds.delete(i.snapshotId));
+      renderHistoryTable();
+    }
+
+    function updateExportBtn() {
+      const b = document.getElementById('copySelectedExportBtn');
+      if (b) b.textContent = `Copy Selected Text (${selectedExportIds.size})`;
+    }
+
     function renderHistoryTable() {
       const { allHistory, filtered } = getFilteredAndSortedHistory();
       const tbody = document.getElementById('historyTableBody');
@@ -2173,11 +2262,12 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
       tbody.innerHTML = '';
 
       updateCompareSelectedButtonLabel();
+      updateExportBtn();
 
       if (allHistory.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="10" class="py-10 text-center text-slate-400 font-mono text-xs">
+            <td colspan="11" class="py-10 text-center text-slate-400 font-mono text-xs">
               No saved KOL audits yet. Drag the ⚡ Bookmarklet on Homepage or upload a Kalodata .html file to archive it here.
             </td>
           </tr>
@@ -2188,7 +2278,7 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
       if (filtered.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="10" class="py-10 text-center text-slate-500 font-mono text-xs">
+            <td colspan="11" class="py-10 text-center text-slate-500 font-mono text-xs">
               No snapshots match your current search/filter criteria.
               <button onclick="resetHistoryFilters()" class="text-sky-600 underline font-semibold ml-1 cursor-pointer">Reset Filters</button>
             </td>
@@ -2209,7 +2299,12 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
           ? '<span class="px-1.5 py-0.5 rounded bg-sky-50 text-sky-700 text-[10px] font-mono border border-sky-200 font-semibold">Video</span>'
           : '<span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 text-[10px] font-mono border border-purple-200 font-semibold">Live</span>';
 
+        const isExpSel = selectedExportIds.has(item.snapshotId);
         tr.innerHTML = `
+          <td class="py-3 px-3 text-center">
+            <input type="checkbox" class="w-4 h-4 cursor-pointer" ${isExpSel ? 'checked' : ''}
+                   onchange="toggleExportRow('${item.snapshotId}', this.checked)" />
+          </td>
           <td class="py-3 px-3 text-center">
             <input type="checkbox"
                    class="w-4 h-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
@@ -2238,6 +2333,9 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
           <td class="py-3 px-3 text-right whitespace-nowrap space-x-1.5">
             <button onclick="openSnapshotInTracking('${item.snapshotId}')" class="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-semibold cursor-pointer">
               View Audit
+            </button>
+            <button onclick="copyHistoryItem('${item.snapshotId}')" class="px-2 py-1 rounded border border-sky-300 hover:bg-sky-50 text-sky-700 text-[11px] font-semibold cursor-pointer">
+              Copy
             </button>
             <button onclick="deleteSnapshotFromHistory('${item.snapshotId}')" class="px-2 py-1 rounded border border-rose-200 hover:bg-rose-50 text-rose-600 text-[11px] font-semibold cursor-pointer">
               Delete
@@ -2994,6 +3092,208 @@ ${d.isCategoryAlignedWithSkincare && d.totalGmv >= 150e6
         if (file) readAndAuditFile(file);
       });
     })();
-  </script>
+      // ============================================================================
+    // 12. ACCOUNT + CLOUD SYNC (Firebase Firestore, custom phone/password auth)
+    // ============================================================================
+    const FB_CONFIG_KEY = 'KOL_FIREBASE_CONFIG_V1';
+    const DEFAULT_FB_CONFIG = {
+      apiKey: 'AIzaSyC9tqS9HzB42KdJuncOAbxen9-Oomv8e3E',
+      authDomain: 'luutrukol-tracking.firebaseapp.com',
+      projectId: 'luutrukol-tracking',
+      storageBucket: 'luutrukol-tracking.firebasestorage.app',
+      messagingSenderId: '404739400004',
+      appId: '1:404739400004:web:f2ef96dcd9acd4782d3711'
+    };
+    if (!localStorage.getItem(FB_CONFIG_KEY)) localStorage.setItem(FB_CONFIG_KEY, JSON.stringify(DEFAULT_FB_CONFIG));
+    const SESSION_KEY = 'KOL_SESSION_V1';
+    let fbDb = null;
+    let authMode = 'login';
+
+    function loadScriptOnce(src) {
+      return new Promise((res, rej) => {
+        if (document.querySelector(`script[src="${src}"]`)) return res();
+        const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s);
+      });
+    }
+
+    async function getDb() {
+      if (fbDb) return fbDb;
+      const raw = localStorage.getItem(FB_CONFIG_KEY);
+      if (!raw) throw new Error('Firebase config missing. Open "Cloud setup" and paste it.');
+      await loadScriptOnce('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
+      await loadScriptOnce('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js');
+      if (!firebase.apps.length) firebase.initializeApp(JSON.parse(raw));
+      fbDb = firebase.firestore();
+      return fbDb;
+    }
+
+    function saveFirebaseConfig() {
+      let txt = document.getElementById('fbConfigInput').value.trim();
+      try {
+        txt = txt.replace(/^[^{]*/, '').replace(/;?\s*$/, '');
+        const obj = Function('return (' + txt + ')')();
+        if (!obj.projectId) throw new Error('projectId missing');
+        localStorage.setItem(FB_CONFIG_KEY, JSON.stringify(obj));
+        fbDb = null;
+        setAuthMsg('✓ Config saved.', true);
+      } catch (e) { setAuthMsg('Invalid config: ' + e.message, false); }
+    }
+
+    async function hashPassword(pass, salt) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(salt + ':' + pass));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function normPhone(p) { return String(p || '').replace(/[^\d+]/g, ''); }
+    function getSession() { try { return JSON.parse(localStorage.getItem(SESSION_KEY)); } catch { return null; } }
+    function setAuthMsg(t, ok) {
+      const el = document.getElementById('authMsg'); if (!el) return;
+      el.textContent = t; el.className = 'text-[11px] font-mono ' + (ok ? 'text-emerald-700' : 'text-rose-600');
+    }
+
+    function openAuthModal() {
+      document.getElementById('authModal').classList.remove('hidden');
+      const cfg = localStorage.getItem(FB_CONFIG_KEY);
+      if (cfg) document.getElementById('fbConfigInput').value = cfg;
+      refreshAuthUI();
+    }
+    function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
+
+    function authSwitch(mode) {
+      authMode = mode;
+      const act = 'flex-1 py-1.5 rounded-md cursor-pointer bg-white shadow-sm text-slate-900';
+      const off = 'flex-1 py-1.5 rounded-md cursor-pointer text-slate-500';
+      document.getElementById('authTabLogin').className = mode === 'login' ? act : off;
+      document.getElementById('authTabRegister').className = mode === 'register' ? act : off;
+      document.getElementById('authTabForgot').className = mode === 'forgot' ? act : off;
+      document.getElementById('authName').classList.toggle('hidden', mode !== 'register');
+      document.getElementById('authPass').placeholder = mode === 'forgot' ? 'New password (min 6 chars)' : 'Password (min 6 chars)';
+      document.getElementById('authSubmitBtn').textContent = { login: 'Login', register: 'Create account', forgot: 'Reset password' }[mode];
+      setAuthMsg('', true);
+    }
+
+    function refreshAuthUI() {
+      const s = getSession();
+      document.getElementById('authLoggedIn').classList.toggle('hidden', !s);
+      document.getElementById('authForms').classList.toggle('hidden', !!s);
+      if (s) document.getElementById('authWhoami').textContent = `${s.name || ''} (${s.phone})`;
+      else authSwitch(authMode);
+      const lbl = document.getElementById('navAccountLabel');
+      if (lbl) lbl.textContent = s ? (s.name || s.phone) : 'Login';
+    }
+
+    async function authSubmit() {
+      const phone = normPhone(document.getElementById('authPhone').value);
+      const pass = document.getElementById('authPass').value;
+      const name = document.getElementById('authName').value.trim();
+      if (phone.length < 8) return setAuthMsg('Enter a valid phone number.', false);
+      if (pass.length < 6) return setAuthMsg('Password must be at least 6 characters.', false);
+      try {
+        setAuthMsg('Working...', true);
+        const db = await getDb();
+        const ref = db.collection('users').doc(phone);
+        const snap = await ref.get();
+        if (authMode === 'register') {
+          if (snap.exists) return setAuthMsg('Phone already registered.', false);
+          const salt = crypto.randomUUID();
+          await ref.set({ name: name || phone, phone, salt, hash: await hashPassword(pass, salt), createdAt: Date.now() });
+          localStorage.setItem(SESSION_KEY, JSON.stringify({ phone, name: name || phone }));
+        } else if (authMode === 'forgot') {
+          if (!snap.exists) return setAuthMsg('Phone number not found.', false);
+          const salt = crypto.randomUUID();
+          await ref.update({ salt, hash: await hashPassword(pass, salt), resetAt: Date.now() });
+          localStorage.setItem(SESSION_KEY, JSON.stringify({ phone, name: snap.data().name }));
+        } else {
+          if (!snap.exists) return setAuthMsg('Account not found.', false);
+          const u = snap.data();
+          if (await hashPassword(pass, u.salt) !== u.hash) return setAuthMsg('Wrong password.', false);
+          localStorage.setItem(SESSION_KEY, JSON.stringify({ phone, name: u.name }));
+        }
+        document.getElementById('authPass').value = '';
+        refreshAuthUI();
+        await cloudPull(false);
+        await cloudPushAll(false);
+      } catch (e) { setAuthMsg(e.message, false); }
+    }
+
+    function authLogout() { localStorage.removeItem(SESSION_KEY); refreshAuthUI(); }
+
+    function syncStatus(t) { const el = document.getElementById('authSyncStatus'); if (el) el.textContent = 'Cloud sync: ' + t; }
+
+    async function cloudPushAll(verbose) {
+      const s = getSession(); if (!s) return;
+      try {
+        const db = await getDb();
+        const col = db.collection('users').doc(s.phone).collection('snapshots');
+        const items = getSavedHistory();
+        for (let i = 0; i < items.length; i += 400) {
+          const batch = db.batch();
+          items.slice(i, i + 400).forEach(it => batch.set(col.doc(it.snapshotId.replace(/\//g, '_')), JSON.parse(JSON.stringify(it))));
+          await batch.commit();
+        }
+        syncStatus(`uploaded ${items.length} snapshot(s)`);
+        if (verbose) alert(`✓ Uploaded ${items.length} snapshot(s)`);
+      } catch (e) { syncStatus('error – ' + e.message); }
+    }
+
+    async function cloudPull(verbose) {
+      const s = getSession(); if (!s) return;
+      try {
+        const db = await getDb();
+        const qs = await db.collection('users').doc(s.phone).collection('snapshots').get();
+        const remote = qs.docs.map(d => d.data());
+        const merged = deduplicateHistoryByDay([...remote, ...getSavedHistory()].sort((a, b) => new Date(b.savedAtIso || 0) - new Date(a.savedAtIso || 0))).slice(0, 50);
+        saveHistoryArray(merged);
+        renderHistoryTable();
+        syncStatus(`downloaded ${remote.length}, now ${merged.length} total`);
+        if (verbose) alert(`✓ Merged ${remote.length} cloud snapshot(s)`);
+      } catch (e) { syncStatus('error – ' + e.message); }
+    }
+
+    // Auto-push after every local save when logged in
+    (function () {
+      const orig = saveHistoryArray;
+      saveHistoryArray = function (arr) {
+        orig(arr);
+        if (getSession() && localStorage.getItem(FB_CONFIG_KEY)) cloudPushAll(false);
+      };
+    })();
+
+    refreshAuthUI();
+</script>
+  <!-- ==================== ACCOUNT MODAL (LOGIN / REGISTER / FORGOT / CLOUD SETUP) ==================== -->
+  <div id="authModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4">
+    <div class="office-card w-full max-w-md p-6 bg-white relative">
+      <button onclick="closeAuthModal()" class="absolute top-3 right-4 text-slate-400 hover:text-slate-800 text-lg cursor-pointer">×</button>
+      <div id="authLoggedIn" class="hidden space-y-3">
+        <h3 class="text-base font-bold text-slate-900">Account</h3>
+        <div class="text-xs font-mono text-slate-600">Signed in as <b id="authWhoami">--</b></div>
+        <div id="authSyncStatus" class="text-[11px] font-mono text-slate-500">Cloud sync: idle</div>
+        <div class="flex gap-2 flex-wrap">
+          <button onclick="cloudPull(true)" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold cursor-pointer">Download from cloud</button>
+          <button onclick="cloudPushAll(true)" class="px-3 py-1.5 rounded-lg bg-sky-600 text-white text-xs font-semibold cursor-pointer">Upload local history</button>
+          <button onclick="authLogout()" class="px-3 py-1.5 rounded-lg border border-rose-200 text-rose-600 text-xs font-semibold cursor-pointer">Logout</button>
+        </div>
+      </div>
+      <div id="authForms" class="space-y-3">
+        <div class="flex gap-1 bg-slate-100 rounded-lg p-1 text-xs font-semibold">
+          <button id="authTabLogin" onclick="authSwitch('login')" class="flex-1 py-1.5 rounded-md cursor-pointer">Login</button>
+          <button id="authTabRegister" onclick="authSwitch('register')" class="flex-1 py-1.5 rounded-md cursor-pointer">Register</button>
+          <button id="authTabForgot" onclick="authSwitch('forgot')" class="flex-1 py-1.5 rounded-md cursor-pointer">Forgot password</button>
+        </div>
+        <input id="authName" type="text" placeholder="Display name" class="hidden w-full px-3 py-2 text-xs border border-slate-300 rounded-lg" />
+        <input id="authPhone" type="tel" placeholder="Phone number (login ID)" class="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-lg" />
+        <input id="authPass" type="password" placeholder="Password (min 6 chars)" class="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-lg" />
+        <button id="authSubmitBtn" onclick="authSubmit()" class="w-full py-2.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold rounded-lg cursor-pointer">Login</button>
+        <div id="authMsg" class="text-[11px] font-mono text-slate-500"></div>
+      </div>
+      <details class="mt-4 pt-3 border-t border-slate-200">
+        <summary class="text-[11px] font-semibold text-slate-600 cursor-pointer">Cloud setup (Firebase Firestore config)</summary>
+        <p class="text-[11px] text-slate-500 mt-2">Paste your Firebase web config object (JSON or JS object) then Save.</p>
+        <textarea id="fbConfigInput" rows="5" class="w-full mt-1 p-2 text-[11px] font-mono border border-slate-300 rounded-lg" placeholder='{"apiKey":"...","authDomain":"...","projectId":"..."}'></textarea>
+        <button onclick="saveFirebaseConfig()" class="mt-2 px-3 py-1.5 bg-slate-900 text-white text-xs font-semibold rounded-lg cursor-pointer">Save config</button>
+      </details>
+    </div>
+  </div>
 </body>
 </html>
