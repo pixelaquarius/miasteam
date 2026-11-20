@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>L.ASY Tết 2027 — Đếm Ngược Nghỉ Tết &amp; Gieo Quẻ 3D</title>
-    <meta name="description" content="Đếm ngược lịch nghỉ Tết Nguyên Đán Đinh Mùi 2027 (04/02/2027 - 28 tháng Chạp) cùng L.ASY Studio với mô phỏng lắc ống xăm 3D WebGL, 24 kịch bản quẻ thực tế và đơn xin nghỉ việc tương tác.">
+    <title>L.ASY Tết 2027 — Đi Chùa Bóc Quẻ 3D &amp; Đếm Ngược Nghỉ Tết</title>
+    <meta name="description" content="Đếm ngược lịch nghỉ Tết Nguyên Đán Đinh Mùi 2027 (04/02/2027), trải nghiệm trò chơi đi chùa thắp hương bóc quẻ 3D (tối thiểu 5 lần lắc) và trắc nghiệm độ hợp Cày Cuốc vs Nghỉ Việc.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
@@ -52,7 +52,7 @@
         .top-bar {
             position: relative;
             z-index: 20;
-            max-width: 960px;
+            max-width: 980px;
             width: 100%;
             margin: 0 auto;
             padding: 20px 24px 0;
@@ -133,7 +133,7 @@
             position: absolute;
             bottom: -50px;
             animation: floatUp 22s linear infinite;
-            opacity: 0.4;
+            opacity: 0.36;
             pointer-events: none;
         }
 
@@ -160,7 +160,7 @@
             box-shadow: var(--shadow-card);
             padding: 36px 34px;
             width: 100%;
-            max-width: 760px;
+            max-width: 820px;
             text-align: center;
         }
 
@@ -178,12 +178,12 @@
             font-weight: 700;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         h1 {
             font-family: 'Playfair Display', Georgia, serif;
-            font-size: clamp(2rem, 4.5vw, 2.9rem);
+            font-size: clamp(2rem, 4.5vw, 2.85rem);
             font-weight: 700;
             color: var(--ink-primary);
             line-height: 1.15;
@@ -202,44 +202,39 @@
             margin-bottom: 8px;
         }
 
-        .subtitle strong {
-            color: var(--ink-primary);
-            font-weight: 600;
-        }
-
         .holiday-note {
             display: inline-flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 8px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.74rem;
+            font-size: 0.73rem;
             color: var(--ink-muted);
             background: var(--bg-paper);
             border: 1px solid var(--border-sand);
             border-radius: 999px;
             padding: 5px 14px;
-            margin-bottom: 26px;
+            margin-bottom: 24px;
         }
 
         .countdown-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
-            margin-bottom: 26px;
+            margin-bottom: 24px;
         }
 
         .time-box {
             background: var(--bg-paper);
             border: 1px solid var(--border-sand);
             border-radius: 16px;
-            padding: 16px 10px;
+            padding: 15px 10px;
         }
 
         .time-val {
             display: block;
             font-family: 'JetBrains Mono', monospace;
-            font-size: clamp(1.7rem, 4vw, 2.4rem);
+            font-size: clamp(1.7rem, 4vw, 2.35rem);
             font-weight: 700;
             color: var(--crimson);
             line-height: 1.1;
@@ -255,115 +250,426 @@
             color: var(--ink-muted);
         }
 
+        /* 2 Unified Main Mode Buttons */
         .actions-row {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-bottom: 18px;
         }
 
         .action-btn {
             border: 1px solid transparent;
-            border-radius: 12px;
-            padding: 13px 16px;
+            border-radius: 14px;
+            padding: 15px 18px;
             font-family: 'Be Vietnam Pro', sans-serif;
-            font-size: 0.92rem;
+            font-size: 0.96rem;
             font-weight: 600;
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 9px;
         }
 
         .action-btn:hover { transform: translateY(-2px); }
         .action-btn:active { transform: translateY(0); }
 
-        .btn-motivate {
-            background: var(--gold-soft);
-            color: #7D520A;
-            border-color: rgba(182, 126, 30, 0.35);
-        }
-
-        .btn-motivate:hover {
-            background: #F5E6C8;
-            box-shadow: 0 6px 16px rgba(182, 126, 30, 0.16);
-        }
-
-        .btn-fortune {
+        .btn-temple {
             background: var(--crimson);
             color: #FFFFFF;
+            box-shadow: 0 6px 18px rgba(185, 56, 41, 0.22);
         }
 
-        .btn-fortune:hover {
+        .btn-temple:hover {
             background: var(--crimson-dark);
-            box-shadow: 0 6px 16px rgba(185, 56, 41, 0.24);
+            box-shadow: 0 8px 22px rgba(185, 56, 41, 0.3);
         }
 
-        .btn-quit {
-            background: var(--bg-subtle);
-            color: var(--ink-secondary);
-            border-color: var(--border-sand);
+        .btn-career {
+            background: var(--gold-soft);
+            color: #7D520A;
+            border-color: rgba(182, 126, 30, 0.4);
         }
 
-        .btn-quit:hover {
-            background: #EAE2D5;
-            color: var(--ink-primary);
+        .btn-career:hover {
+            background: #F5E6C8;
+            box-shadow: 0 6px 16px rgba(182, 126, 30, 0.18);
         }
 
         .hidden { display: none !important; }
 
-        .message-box {
-            background: var(--gold-soft);
-            border: 1px dashed rgba(182, 126, 30, 0.45);
-            border-radius: 14px;
-            padding: 16px 20px;
-            color: #6B4408;
-            font-size: 0.96rem;
-            font-weight: 500;
-            font-style: italic;
-            line-height: 1.55;
-        }
-
-        /* ==================== 3D WEBGL FORTUNE CHAMBER ==================== */
-        .fortune-stage {
-            margin-top: 8px;
-            background: linear-gradient(180deg, #F8F3EA 0%, #F2EAE0 100%);
+        /* ==================== TEMPLE PILGRIMAGE MULTIPLAYER GAME ==================== */
+        .temple-game {
+            margin-top: 10px;
+            background: var(--bg-paper);
             border: 1px solid var(--border-sand);
             border-radius: 20px;
-            padding: 24px 20px;
+            padding: 20px;
+            text-align: left;
+        }
+
+        .temple-hud {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .step-pills {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .step-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 999px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-sand);
+            color: var(--ink-muted);
+        }
+
+        .step-pill.active {
+            background: var(--crimson);
+            border-color: var(--crimson);
+            color: #FFFFFF;
+        }
+
+        .step-pill.done {
+            background: var(--sage-soft);
+            border-color: rgba(45, 106, 79, 0.3);
+            color: var(--sage);
+        }
+
+        .online-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 5px 11px;
+            border-radius: 999px;
+            background: var(--sage-soft);
+            color: var(--sage);
+            border: 1px solid rgba(45, 106, 79, 0.25);
+        }
+
+        .online-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #22C55E;
+            animation: pulseDot 1.6s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.45; transform: scale(1.25); }
+        }
+
+        /* Interactive Temple Courtyard Viewport */
+        .temple-viewport {
+            position: relative;
+            width: 100%;
+            height: 360px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-strong);
+            background: linear-gradient(180deg, #F6E6D0 0%, #FBEEDB 48%, #DFCBB0 48%, #CBB393 100%);
+            user-select: none;
+        }
+
+        .temple-world {
+            position: absolute;
+            inset: 0;
+            transition: transform 1.15s cubic-bezier(0.22, 1, 0.36, 1);
+            transform-origin: 50% 48%;
+        }
+
+        .temple-world.zoom-courtyard {
+            transform: scale(1.22) translateY(8px);
+        }
+
+        .temple-world.zoom-hall {
+            transform: scale(1.55) translateY(18px);
+        }
+
+        /* Temple Architecture SVG */
+        .temple-svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* Incense Smoke Particles */
+        .incense-smoke-wrap {
+            position: absolute;
+            left: 50%;
+            top: 46%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: 6;
+        }
+
+        .smoke-puff {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.72);
+            filter: blur(3px);
+            animation: smokeRise 2.4s ease-out infinite;
+        }
+
+        @keyframes smokeRise {
+            0% { transform: translate(0, 0) scale(0.7); opacity: 0.8; }
+            100% { transform: translate(-8px, -65px) scale(2.4); opacity: 0; }
+        }
+
+        /* Online Pilgrims Layer */
+        .pilgrims-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 8;
+        }
+
+        .pilgrim {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: left 3.5s linear, top 3.5s linear;
+        }
+
+        .pilgrim-chat {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid var(--border-sand);
+            border-radius: 10px;
+            padding: 3px 8px;
+            font-size: 0.66rem;
+            color: var(--ink-primary);
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            margin-bottom: 3px;
+        }
+
+        .pilgrim-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 2px solid #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+        }
+
+        .pilgrim-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.62rem;
+            font-weight: 600;
+            color: #1C1917;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 1px 5px;
+            border-radius: 4px;
+            margin-top: 2px;
+        }
+
+        .pilgrim.is-me .pilgrim-avatar {
+            background: var(--crimson);
+            color: #FFFFFF;
+            border-color: #FFD166;
+        }
+
+        /* Guided Action Overlay inside Temple */
+        .temple-guide-bar {
+            position: absolute;
+            left: 14px;
+            right: 14px;
+            bottom: 14px;
+            z-index: 15;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-sand);
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            box-shadow: 0 8px 24px rgba(28, 25, 23, 0.14);
+        }
+
+        .guide-text strong {
+            display: block;
+            font-size: 0.88rem;
+            color: var(--ink-primary);
+        }
+
+        .guide-text span {
+            font-size: 0.78rem;
+            color: var(--ink-secondary);
+        }
+
+        .guide-btn {
+            padding: 10px 18px;
+            border-radius: 10px;
+            border: none;
+            background: var(--crimson);
+            color: #FFFFFF;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            font-size: 0.86rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .guide-btn:hover {
+            background: var(--crimson-dark);
+            transform: translateY(-1px);
+        }
+
+        .guide-arrow-bounce {
+            display: inline-block;
+            animation: arrowBounce 1s ease-in-out infinite;
+        }
+
+        @keyframes arrowBounce {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(5px); }
+        }
+
+        /* ==================== 3D FORTUNE POPUP MODAL ==================== */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            background: rgba(28, 25, 23, 0.72);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .fortune-modal-card {
+            background: var(--bg-paper);
+            border: 1px solid var(--border-strong);
+            border-radius: 22px;
+            padding: 24px;
+            width: 100%;
+            max-width: 660px;
+            max-height: 92vh;
+            overflow-y: auto;
+            box-shadow: 0 28px 70px rgba(0, 0, 0, 0.35);
+            position: relative;
             text-align: center;
+        }
+
+        .modal-top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .modal-close-x {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 1px solid var(--border-sand);
+            background: var(--bg-elevated);
+            color: var(--ink-primary);
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close-x:hover {
+            background: var(--bg-subtle);
         }
 
         .shaker-title {
             font-family: 'Playfair Display', serif;
-            font-size: 1.38rem;
+            font-size: 1.45rem;
             font-weight: 700;
             color: var(--ink-primary);
         }
 
-        .shaker-hint {
-            font-size: 0.84rem;
-            color: var(--ink-muted);
-            margin-top: 4px;
-            margin-bottom: 12px;
+        .shake-progress-box {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-sand);
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin: 10px 0 12px;
+            text-align: left;
+        }
+
+        .shake-progress-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--ink-primary);
+            margin-bottom: 6px;
+        }
+
+        .shake-count-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.74rem;
+            color: var(--crimson);
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--bg-subtle);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--gold-bright), var(--crimson));
+            border-radius: 999px;
+            transition: width 0.25s ease;
         }
 
         .canvas-3d-wrap {
             position: relative;
             width: 100%;
-            height: 310px;
+            height: 290px;
             border-radius: 16px;
             background: radial-gradient(circle at 50% 42%, #FFFDF9 0%, #EFE5D5 70%, #E4D6C1 100%);
             border: 1px solid var(--border-sand);
             overflow: hidden;
-            margin-bottom: 16px;
-            cursor: grab;
+            margin-bottom: 14px;
+            cursor: pointer;
             touch-action: none;
         }
-
-        .canvas-3d-wrap:active { cursor: grabbing; }
 
         #fortune3dCanvas {
             width: 100%;
@@ -373,10 +679,10 @@
 
         .stick-badge-overlay {
             position: absolute;
-            top: 14px;
+            top: 12px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(28, 25, 23, 0.86);
+            background: rgba(28, 25, 23, 0.88);
             color: #FFF5D6;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.78rem;
@@ -385,8 +691,6 @@
             border-radius: 999px;
             border: 1px solid rgba(217, 155, 38, 0.6);
             pointer-events: none;
-            letter-spacing: 0.06em;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
         }
 
         .shaker-controls {
@@ -398,13 +702,13 @@
         }
 
         .shake-cta {
-            padding: 12px 24px;
+            padding: 12px 22px;
             border-radius: 12px;
             border: none;
             background: var(--crimson);
             color: #FFFFFF;
             font-family: 'Be Vietnam Pro', sans-serif;
-            font-size: 0.94rem;
+            font-size: 0.92rem;
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 6px 18px rgba(185, 56, 41, 0.25);
@@ -413,37 +717,46 @@
 
         .shake-cta:hover:not(:disabled) {
             background: var(--crimson-dark);
-            transform: translateY(-2px);
+            transform: translateY(-1px);
         }
 
-        .shake-cta:disabled {
-            opacity: 0.65;
-            cursor: wait;
+        .draw-cta {
+            padding: 12px 22px;
+            border-radius: 12px;
+            border: none;
+            background: var(--sage);
+            color: #FFFFFF;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .draw-cta:disabled {
+            background: #CBD5E1;
+            color: #64748B;
+            cursor: not-allowed;
         }
 
         /* 3D Flip Fortune Slip */
-        .slip-perspective {
-            perspective: 1200px;
-            margin-top: 20px;
-        }
+        .slip-perspective { perspective: 1200px; margin-top: 18px; }
 
         .fortune-slip {
             background: var(--bg-elevated);
             border: 1px solid var(--border-strong);
             border-radius: 18px;
-            padding: 26px 24px;
+            padding: 22px 20px;
             text-align: left;
             box-shadow: 0 12px 32px rgba(28, 25, 23, 0.09);
-            position: relative;
-            transform-style: preserve-3d;
         }
 
         .flip-reveal {
-            animation: flip3dIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            animation: flip3dIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
         @keyframes flip3dIn {
-            0% { transform: rotateX(-38deg) translateY(18px) scale(0.95); opacity: 0; }
+            0% { transform: rotateX(-35deg) translateY(16px) scale(0.95); opacity: 0; }
             100% { transform: rotateX(0deg) translateY(0) scale(1); opacity: 1; }
         }
 
@@ -453,8 +766,8 @@
             align-items: center;
             justify-content: space-between;
             gap: 10px;
-            padding-bottom: 14px;
-            margin-bottom: 16px;
+            padding-bottom: 12px;
+            margin-bottom: 14px;
             border-bottom: 1px solid var(--border-sand);
         }
 
@@ -463,8 +776,6 @@
             font-size: 0.78rem;
             font-weight: 700;
             color: var(--ink-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
         }
 
         .slip-level {
@@ -474,7 +785,6 @@
             padding: 4px 12px;
             border-radius: 999px;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
 
         .level-great { background: #FDF2F0; color: #B93829; border: 1px solid rgba(185, 56, 41, 0.28); }
@@ -492,20 +802,20 @@
 
         .slip-title {
             font-family: 'Playfair Display', serif;
-            font-size: 1.75rem;
+            font-size: 1.6rem;
             font-weight: 700;
             color: var(--ink-primary);
         }
 
         .red-stamp {
-            width: 48px;
-            height: 48px;
+            width: 46px;
+            height: 46px;
             border: 2px solid var(--crimson);
             border-radius: 8px;
             color: var(--crimson);
             font-family: 'Playfair Display', serif;
             font-weight: 700;
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             line-height: 1.1;
             display: flex;
             align-items: center;
@@ -513,61 +823,58 @@
             text-align: center;
             transform: rotate(-8deg);
             flex-shrink: 0;
-            opacity: 0.85;
         }
 
         .slip-poem {
             background: var(--bg-paper);
             border-left: 3px solid var(--crimson);
             border-radius: 0 12px 12px 0;
-            padding: 14px 18px;
+            padding: 12px 16px;
             font-family: 'Playfair Display', serif;
             font-style: italic;
-            font-size: 1.05rem;
-            line-height: 1.7;
+            font-size: 1rem;
+            line-height: 1.65;
             color: var(--ink-primary);
-            margin-bottom: 18px;
+            margin-bottom: 14px;
             white-space: pre-line;
         }
 
         .aspects-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 10px;
+            margin-bottom: 14px;
         }
 
         .aspect-box {
             background: var(--bg-paper);
             border: 1px solid var(--border-sand);
-            border-radius: 12px;
-            padding: 12px 14px;
+            border-radius: 10px;
+            padding: 10px 12px;
         }
 
         .aspect-label {
-            font-size: 0.74rem;
+            font-size: 0.72rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
             color: var(--crimson);
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .aspect-text {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--ink-secondary);
-            line-height: 1.5;
+            line-height: 1.45;
         }
 
         .slip-advice {
             background: var(--gold-soft);
             border: 1px solid rgba(182, 126, 30, 0.25);
-            border-radius: 12px;
-            padding: 13px 16px;
-            font-size: 0.88rem;
+            border-radius: 10px;
+            padding: 11px 14px;
+            font-size: 0.85rem;
             color: #6B4408;
-            line-height: 1.55;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .slip-footer {
@@ -576,24 +883,20 @@
             align-items: center;
             justify-content: space-between;
             gap: 10px;
-            padding-top: 12px;
+            padding-top: 10px;
             border-top: 1px solid var(--border-sand);
         }
 
         .lucky-meta {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.76rem;
+            font-size: 0.74rem;
             color: var(--ink-muted);
         }
 
-        .slip-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
+        .slip-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
         .mini-btn {
-            padding: 7px 13px;
+            padding: 7px 12px;
             border-radius: 8px;
             border: 1px solid var(--border-strong);
             background: var(--bg-elevated);
@@ -602,36 +905,34 @@
             font-size: 0.78rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.15s ease;
         }
 
         .mini-btn:hover { background: var(--bg-subtle); }
 
-        /* ==================== REDESIGNED INTERACTIVE "NGHỈ VIỆC" STAGE ==================== */
-        .quit-stage {
-            margin-top: 8px;
+        /* ==================== INTEGRATED "CÀY CUỐC VS NGHỈ VIỆC" ==================== */
+        .career-stage {
+            margin-top: 10px;
             background: var(--bg-paper);
             border: 1px solid var(--border-sand);
             border-radius: 20px;
-            padding: 26px 24px;
+            padding: 24px;
             text-align: left;
-            position: relative;
-            overflow: hidden;
         }
 
-        .quit-header {
+        .career-header {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
+            gap: 10px;
             padding-bottom: 14px;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
             border-bottom: 1px solid var(--border-sand);
         }
 
-        .quit-title {
+        .career-title {
             font-family: 'Playfair Display', serif;
-            font-size: 1.35rem;
+            font-size: 1.4rem;
             font-weight: 700;
             color: var(--ink-primary);
         }
@@ -647,33 +948,78 @@
             border: 1px solid rgba(185, 56, 41, 0.25);
         }
 
-        .form-field {
-            margin-bottom: 14px;
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 18px;
         }
 
-        .form-label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--ink-secondary);
-            margin-bottom: 6px;
-        }
-
-        .form-select, .form-textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border-radius: 10px;
-            border: 1px solid var(--border-strong);
+        .quiz-card {
             background: var(--bg-elevated);
+            border: 1px solid var(--border-sand);
+            border-radius: 12px;
+            padding: 12px 14px;
+        }
+
+        .quiz-label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--ink-primary);
+            margin-bottom: 8px;
+        }
+
+        .quiz-select {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-strong);
+            background: var(--bg-paper);
             color: var(--ink-primary);
             font-family: 'Be Vietnam Pro', sans-serif;
-            font-size: 0.88rem;
+            font-size: 0.84rem;
         }
 
-        .form-textarea {
-            resize: vertical;
-            min-height: 76px;
-            line-height: 1.5;
+        .compatibility-meter {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-sand);
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin-bottom: 16px;
+        }
+
+        .meter-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .meter-bar {
+            height: 12px;
+            border-radius: 999px;
+            background: var(--crimson-soft);
+            overflow: hidden;
+            border: 1px solid var(--border-sand);
+            margin-bottom: 10px;
+        }
+
+        .meter-work-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--sage), #40916C);
+            transition: width 0.35s ease;
+        }
+
+        .verdict-box {
+            font-size: 0.88rem;
+            color: var(--ink-secondary);
+            line-height: 1.55;
+        }
+
+        .verdict-box strong {
+            color: var(--ink-primary);
         }
 
         .grace-taunt {
@@ -681,7 +1027,7 @@
             border: 1px dashed rgba(182, 126, 30, 0.45);
             border-radius: 12px;
             padding: 10px 14px;
-            font-size: 0.85rem;
+            font-size: 0.84rem;
             color: #6B4408;
             margin-bottom: 14px;
             font-weight: 500;
@@ -689,11 +1035,11 @@
 
         .quit-arena {
             position: relative;
-            min-height: 92px;
+            min-height: 82px;
             background: var(--bg-elevated);
             border: 1px solid var(--border-sand);
             border-radius: 14px;
-            padding: 16px;
+            padding: 14px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -702,25 +1048,23 @@
         }
 
         .stay-btn {
-            padding: 12px 20px;
+            padding: 12px 18px;
             border-radius: 10px;
             border: none;
             background: var(--sage);
             color: #FFFFFF;
             font-family: 'Be Vietnam Pro', sans-serif;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             font-weight: 600;
             cursor: pointer;
             transition: transform 0.2s ease, background-color 0.2s ease;
             z-index: 2;
         }
 
-        .stay-btn:hover {
-            background: #21503B;
-        }
+        .stay-btn:hover { background: #21503B; }
 
         .runaway-btn {
-            padding: 11px 18px;
+            padding: 11px 16px;
             border-radius: 10px;
             border: 1px solid rgba(185, 56, 41, 0.35);
             background: var(--crimson-soft);
@@ -729,7 +1073,7 @@
             font-size: 0.86rem;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.15s ease;
+            transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1);
             z-index: 3;
         }
 
@@ -737,8 +1081,9 @@
             background: var(--bg-elevated);
             border: 2px solid var(--crimson);
             border-radius: 16px;
-            padding: 24px 20px;
+            padding: 22px 18px;
             text-align: center;
+            margin-top: 12px;
         }
 
         .contract-stamp {
@@ -751,23 +1096,7 @@
             padding: 4px 12px;
             border-radius: 6px;
             transform: rotate(-4deg);
-            margin-bottom: 12px;
-            letter-spacing: 0.08em;
-        }
-
-        .contract-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.55rem;
-            font-weight: 700;
-            color: var(--ink-primary);
-            margin-bottom: 8px;
-        }
-
-        .contract-desc {
-            font-size: 0.92rem;
-            color: var(--ink-secondary);
-            line-height: 1.6;
-            margin-bottom: 18px;
+            margin-bottom: 10px;
         }
 
         .animate-pop { animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -778,12 +1107,11 @@
         }
 
         @media (max-width: 640px) {
-            .studio-card { padding: 24px 18px; }
+            .studio-card { padding: 24px 16px; }
             .countdown-grid { gap: 8px; }
-            .time-box { padding: 14px 6px; }
-            .actions-row { grid-template-columns: 1fr; }
-            .aspects-grid { grid-template-columns: 1fr; }
-            .canvas-3d-wrap { height: 270px; }
+            .actions-row, .quiz-grid, .aspects-grid { grid-template-columns: 1fr; }
+            .temple-viewport { height: 320px; }
+            .canvas-3d-wrap { height: 250px; }
         }
     </style>
 </head>
@@ -793,7 +1121,7 @@
     <nav class="top-bar">
         <a href="../index.html" class="back-link">← L.ASY Studio</a>
         <div class="top-right-pills">
-            <button id="soundToggleBtn" class="sound-toggle" type="button" title="Bật/tắt âm thanh lắc thẻ tre">
+            <button id="soundToggleBtn" class="sound-toggle" type="button" title="Bật/tắt âm thanh">
                 🔊 Âm thanh: Bật
             </button>
             <span class="year-pill">ĐINH MÙI • 2027</span>
@@ -834,171 +1162,291 @@
             </div>
 
             <div class="actions-row">
-                <button id="motivationBtn" class="action-btn btn-motivate" type="button">
-                    💪 Cày Cuốc
+                <button id="templeModeBtn" class="action-btn btn-temple" type="button">
+                    🏯 Đi Chùa Bóc Quẻ 3D
                 </button>
-                <button id="fortuneBtn" class="action-btn btn-fortune" type="button">
-                    🎋 Bóc Quẻ 3D
-                </button>
-                <button id="quitBtn" class="action-btn btn-quit" type="button">
-                    🚪 Nghỉ Việc
+                <button id="careerModeBtn" class="action-btn btn-career" type="button">
+                    ⚖️ Cày Cuốc hay Nghỉ Việc?
                 </button>
             </div>
 
-            <div id="messageArea" class="message-box hidden" role="status"></div>
-
-            <!-- ==================== 3D FORTUNE SHAKER STAGE ==================== -->
-            <section id="fortuneStage" class="fortune-stage hidden" aria-label="Mô phỏng lắc ống xăm 3D">
-                <h2 class="shaker-title">Gieo Quẻ Đầu Xuân Đinh Mùi 2027</h2>
-                <p class="shaker-hint" id="shakerHint">
-                    Kéo xoay ống xăm 3D hoặc bấm nút để lắc ống thẻ tre thật
-                </p>
-
-                <div class="canvas-3d-wrap" id="canvas3dWrap">
-                    <canvas id="fortune3dCanvas"></canvas>
-                    <div id="stickBadgeOverlay" class="stick-badge-overlay hidden">THẺ SỐ 01</div>
+            <!-- ==================== 1. TEMPLE PILGRIMAGE GAME ==================== -->
+            <section id="templeGameSection" class="temple-game" aria-label="Trò chơi đi chùa bóc quẻ online">
+                <div class="temple-hud">
+                    <div class="step-pills">
+                        <span id="pillStep1" class="step-pill active">1. Cổng Chùa</span>
+                        <span id="pillStep2" class="step-pill">2. Thắp Hương</span>
+                        <span id="pillStep3" class="step-pill">3. Chính Điện 3D</span>
+                    </div>
+                    <div class="online-badge">
+                        <span class="online-dot"></span>
+                        <span id="onlineCountText">16 người đang đi chùa</span>
+                    </div>
                 </div>
 
-                <div class="shaker-controls">
-                    <button id="shakeStartBtn" class="shake-cta" type="button">
-                        🎋 Lắc Ống Xăm 3D
-                    </button>
-                </div>
+                <div class="temple-viewport">
+                    <div id="templeWorld" class="temple-world">
+                        <!-- Illustrated Vietnamese Temple Gate & Courtyard SVG -->
+                        <svg class="temple-svg" viewBox="0 0 800 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                            <!-- Sky Sun -->
+                            <circle cx="670" cy="68" r="34" fill="#FDE68A" opacity="0.7"/>
+                            <!-- Distant Mountains -->
+                            <path d="M0 175 Q140 115 280 175 T580 175 T800 165 L800 185 L0 185 Z" fill="#E6D2B5"/>
+                            <!-- Stone Pathway -->
+                            <polygon points="310,185 490,185 610,360 190,360" fill="#B89F82"/>
+                            <line x1="335" y1="220" x2="465" y2="220" stroke="#9C8265" stroke-width="2"/>
+                            <line x1="295" y1="265" x2="505" y2="265" stroke="#9C8265" stroke-width="2"/>
+                            <line x1="250" y1="315" x2="550" y2="315" stroke="#9C8265" stroke-width="2"/>
 
-                <div class="slip-perspective">
-                    <article id="fortuneSlip" class="fortune-slip hidden" aria-live="polite">
-                        <div class="slip-top">
-                            <span id="slipNum" class="slip-num">QUẺ SỐ 01</span>
-                            <span id="slipLevel" class="slip-level level-great">ĐẠI CÁT</span>
+                            <!-- Main Temple Hall (Chính Điện) -->
+                            <rect x="275" y="95" width="250" height="90" rx="4" fill="#FFF8EE" stroke="#8C542B" stroke-width="2"/>
+                            <!-- Crimson Pillars -->
+                            <rect x="295" y="102" width="12" height="83" fill="#B93829"/>
+                            <rect x="355" y="102" width="12" height="83" fill="#B93829"/>
+                            <rect x="433" y="102" width="12" height="83" fill="#B93829"/>
+                            <rect x="493" y="102" width="12" height="83" fill="#B93829"/>
+                            <!-- Main Door -->
+                            <rect x="378" y="122" width="44" height="63" rx="3" fill="#4A2511"/>
+                            <!-- Curved Roofs -->
+                            <path d="M235 102 Q400 45 565 102 L540 112 Q400 72 260 112 Z" fill="#9E2A1C"/>
+                            <path d="M265 72 Q400 22 535 72 L515 80 Q400 46 285 80 Z" fill="#B93829"/>
+                            <rect x="362" y="75" width="76" height="18" rx="3" fill="#B67E1E"/>
+                            <text x="400" y="88" text-anchor="middle" fill="#FFFDF9" font-size="10" font-weight="bold">L.ASY TỰ</text>
+
+                            <!-- Red Lanterns -->
+                            <circle cx="315" cy="118" r="7" fill="#DC2626"/>
+                            <circle cx="485" cy="118" r="7" fill="#DC2626"/>
+
+                            <!-- Incense Burner (Lư Hương) in Courtyard -->
+                            <ellipse cx="400" cy="202" rx="22" ry="6" fill="#6B5B4B"/>
+                            <path d="M380 184 Q400 198 420 184 L416 202 L384 202 Z" fill="#B67E1E" stroke="#785012" stroke-width="1.5"/>
+                            <ellipse cx="400" cy="184" rx="20" ry="5" fill="#4A2511"/>
+
+                            <!-- Mai & Dao Blossom Trees -->
+                            <path d="M120 230 Q130 175 110 140" stroke="#5C3419" stroke-width="6" fill="none"/>
+                            <circle cx="105" cy="135" r="24" fill="#FBBF24" opacity="0.85"/>
+                            <circle cx="132" cy="148" r="18" fill="#F59E0B" opacity="0.8"/>
+
+                            <path d="M680 230 Q670 175 690 140" stroke="#5C3419" stroke-width="6" fill="none"/>
+                            <circle cx="695" cy="135" r="24" fill="#FB7185" opacity="0.85"/>
+                            <circle cx="668" cy="148" r="18" fill="#F43F5E" opacity="0.8"/>
+                        </svg>
+
+                        <!-- Animated Incense Sticks & Smoke (visible after lighting incense) -->
+                        <div id="incenseSmokeWrap" class="incense-smoke-wrap hidden">
+                            <div class="smoke-puff" style="animation-delay: 0s;"></div>
+                            <div class="smoke-puff" style="animation-delay: 0.7s; left: 6px;"></div>
+                            <div class="smoke-puff" style="animation-delay: 1.4s; left: -6px;"></div>
                         </div>
-                        <div class="slip-header-row">
-                            <h3 id="slipTitle" class="slip-title">Tên Quẻ</h3>
-                            <div class="red-stamp">ĐINH<br>MÙI<br>2027</div>
+
+                        <!-- Online Pilgrims Layer -->
+                        <div id="pilgrimsLayer" class="pilgrims-layer"></div>
+                    </div>
+
+                    <!-- Guided Step Bar -->
+                    <div class="temple-guide-bar">
+                        <div class="guide-text">
+                            <strong id="guideTitle">Đang đứng ngoài Cổng Tam Quan</strong>
+                            <span id="guideDesc">Bước vào sân chùa cùng mọi người để thắp hương cầu may năm Đinh Mùi 2027.</span>
                         </div>
-                        <div id="slipPoem" class="slip-poem"></div>
-                        <div class="aspects-grid">
-                            <div class="aspect-box">
-                                <div class="aspect-label">Công danh &amp; Sự nghiệp</div>
-                                <div id="aspectWork" class="aspect-text"></div>
-                            </div>
-                            <div class="aspect-box">
-                                <div class="aspect-label">Tài lộc &amp; Chi tiêu</div>
-                                <div id="aspectMoney" class="aspect-text"></div>
-                            </div>
-                            <div class="aspect-box">
-                                <div class="aspect-label">Tình duyên &amp; Gia đạo</div>
-                                <div id="aspectLove" class="aspect-text"></div>
-                            </div>
-                            <div class="aspect-box">
-                                <div class="aspect-label">Sức khỏe &amp; Tinh thần</div>
-                                <div id="aspectHealth" class="aspect-text"></div>
-                            </div>
-                        </div>
-                        <div class="slip-advice">
-                            <strong>Lời khuyên năm Đinh Mùi:</strong> <span id="slipAdvice"></span>
-                        </div>
-                        <div class="slip-footer">
-                            <span id="slipLucky" class="lucky-meta">Số may mắn: -- • Màu hợp: --</span>
-                            <div class="slip-actions">
-                                <button id="copyFortuneBtn" class="mini-btn" type="button">Sao chép quẻ</button>
-                                <button id="reshakeBtn" class="mini-btn" type="button">Lắc lại quẻ khác</button>
-                            </div>
-                        </div>
-                    </article>
+                        <button id="templeNextBtn" class="guide-btn" type="button">
+                            <span>Bước vào sân chùa</span>
+                            <span class="guide-arrow-bounce">→</span>
+                        </button>
+                    </div>
                 </div>
             </section>
 
-            <!-- ==================== REDESIGNED INTERACTIVE "NGHỈ VIỆC" STAGE ==================== -->
-            <section id="quitStage" class="quit-stage hidden" aria-label="Cổng nộp đơn nghỉ việc L.ASY">
-                <div id="quitFormView">
-                    <div class="quit-header">
-                        <h2 class="quit-title">Đơn Xin Nghỉ Việc Online</h2>
-                        <span class="hr-badge">MS GRACE • HR GATEKEEPER</span>
-                    </div>
+            <!-- ==================== 2. INTEGRATED "CÀY CUỐC VS NGHỈ VIỆC" ==================== -->
+            <section id="careerGameSection" class="career-stage hidden" aria-label="Trắc nghiệm độ hợp Cày Cuốc hay Nghỉ Việc">
+                <div class="career-header">
+                    <h2 class="career-title">Bạn Hợp Cày Cuốc Hay Nghỉ Việc?</h2>
+                    <span class="hr-badge">MS GRACE • HR ANALYZER</span>
+                </div>
 
-                    <div class="form-field">
-                        <label class="form-label" for="quitReasonSelect">Lý do xin nghỉ trước Tết 2027:</label>
-                        <select id="quitReasonSelect" class="form-select">
-                            <option value="kpi">Áp lực KPI dí sát nút quá rồi</option>
-                            <option value="vietlott">Trúng độc đắc Vietlott (đang chờ lãnh)</option>
-                            <option value="farm">Về quê nuôi cá, trồng thêm rau</option>
-                            <option value="sleep">Thiếu ngủ trầm trọng, cần ngủ bù tới Mùng 5</option>
+                <div class="quiz-grid">
+                    <div class="quiz-card">
+                        <label class="quiz-label" for="qMoney">1. Tình trạng ví tiền hiện tại?</label>
+                        <select id="qMoney" class="quiz-select">
+                            <option value="work">Đang hẻo, cần lương thưởng Tết 2027 gấp</option>
+                            <option value="mid">Đủ sống, thêm thưởng thì càng vui</option>
+                            <option value="quit">Vừa trúng nhẹ / có quỹ dự phòng rồi</option>
                         </select>
                     </div>
-
-                    <div class="form-field">
-                        <label class="form-label" for="quitNoteInput">Tâm thư gửi Ms Grace:</label>
-                        <textarea id="quitNoteInput" class="form-textarea">Em cảm ơn chị thời gian qua đã tin tưởng giao KPI cho em, nhưng cho em xin nghỉ sớm xíu nha chị...</textarea>
+                    <div class="quiz-card">
+                        <label class="quiz-label" for="qKpi">2. Áp lực KPI tuần này thế nào?</label>
+                        <select id="qKpi" class="quiz-select">
+                            <option value="work">Vẫn cân được, đang vào guồng</option>
+                            <option value="mid">Hơi ngộp nhưng uống trà sữa là qua</option>
+                            <option value="quit">Deadline dí tới chân rồi!</option>
+                        </select>
                     </div>
-
-                    <div id="graceTauntBox" class="grace-taunt">
-                        👀 Hệ thống HR đang theo dõi: Chị Grace vừa nhận thông báo em mở form này!
+                    <div class="quiz-card">
+                        <label class="quiz-label" for="qGoal">3. Mục tiêu lớn nhất trước Tết?</label>
+                        <select id="qGoal" class="quiz-select">
+                            <option value="work">Săn thưởng cuối năm + mua quà xịn</option>
+                            <option value="mid">Hoàn thành tròn vai rồi về quê</option>
+                            <option value="quit">Chỉ muốn ngủ bù tới Mùng 5</option>
+                        </select>
                     </div>
-
-                    <div class="quit-arena" id="quitArena">
-                        <button id="stayBtn" class="stay-btn" type="button">
-                            💪 Thôi Em Ở Lại Cày Tiếp
-                        </button>
-                        <button id="runawayQuitBtn" class="runaway-btn" type="button">
-                            🚪 Nộp Đơn &amp; Nghỉ Ngay
-                        </button>
+                    <div class="quiz-card">
+                        <label class="quiz-label" for="qMood">4. Độ gắn bó với Ms Grace &amp; team?</label>
+                        <select id="qMood" class="quiz-select">
+                            <option value="work">Team vui, chị Grace dễ thương</option>
+                            <option value="mid">Thương chị nhưng cũng thèm nghỉ</option>
+                            <option value="quit">Muốn thử trốn khỏi chị Grace 1 lần</option>
+                        </select>
                     </div>
+                </div>
+
+                <div class="compatibility-meter">
+                    <div class="meter-labels">
+                        <span style="color: var(--sage);" id="workPctLabel">💪 Hợp Cày Cuốc: 75%</span>
+                        <span style="color: var(--crimson);" id="quitPctLabel">🚪 Muốn Nghỉ Việc: 25%</span>
+                    </div>
+                    <div class="meter-bar">
+                        <div id="workMeterFill" class="meter-work-fill" style="width: 75%;"></div>
+                    </div>
+                    <div id="careerVerdictBox" class="verdict-box"></div>
+                </div>
+
+                <div id="graceTauntBox" class="grace-taunt">
+                    👀 Ms Grace: "Kết quả rõ ràng thế này thì ở lại cày KPI cùng chị nhé!"
+                </div>
+
+                <div class="quit-arena" id="quitArena">
+                    <button id="stayBtn" class="stay-btn" type="button">
+                        💪 Chốt Cày Cuốc Nhận Thưởng Tết
+                    </button>
+                    <button id="runawayQuitBtn" class="runaway-btn" type="button">
+                        🚪 Vẫn Nộp Đơn Nghỉ Việc
+                    </button>
                 </div>
 
                 <div id="quitTrapView" class="contract-card hidden">
                     <div class="contract-stamp">ĐÃ ĐÓNG DẤU • VÔ THỜI HẠN</div>
-                    <h3 class="contract-title">Đơn Nghỉ Việc Bị Từ Chối!</h3>
-                    <p class="contract-desc">
+                    <h3 class="contract-title" style="font-family: 'Playfair Display', serif; font-size: 1.45rem; margin-bottom: 8px;">Đơn Nghỉ Việc Bị Từ Chối!</h3>
+                    <p style="font-size: 0.9rem; color: var(--ink-secondary); margin-bottom: 14px; line-height: 1.55;">
                         "Em tưởng bấm được nút đó là thoát khỏi chị à?"<br>
                         <strong>Ms Grace đã tự động gia hạn hợp đồng cày KPI tới Tết 2028</strong> (kèm 01 ly trà sữa full topping để lấy sức).
                     </p>
                     <button id="acceptFateBtn" class="stay-btn" type="button">
-                        Dạ em ký nhận trà sữa &amp; làm tiếp 😭
+                        Dạ em nhận trà sữa &amp; cày tiếp 😭
                     </button>
                 </div>
             </section>
         </div>
     </main>
 
-    <!-- Three.js for true 3D WebGL Fortune Cylinder (with automatic Canvas fallback) -->
+    <!-- ==================== 3D FORTUNE POPUP MODAL (MIN 5 CLICKS) ==================== -->
+    <div id="fortuneModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="fortuneModalTitle">
+        <div class="fortune-modal-card animate-pop">
+            <div class="modal-top-bar">
+                <span class="year-pill">CHÍNH ĐIỆN • LẮC ỐNG XĂM 3D</span>
+                <button id="closeFortuneModalBtn" class="modal-close-x" type="button" aria-label="Đóng popup lắc quẻ">✕</button>
+            </div>
+
+            <h2 id="fortuneModalTitle" class="shaker-title">Gieo Quẻ Đầu Xuân Đinh Mùi 2027</h2>
+
+            <div class="shake-progress-box">
+                <div class="shake-progress-head">
+                    <span id="shakeGuideLabel">Hướng dẫn: Nhấn vào ống xăm 3D ít nhất 5 lần để thành tâm lắc quẻ</span>
+                    <span id="shakeCountText" class="shake-count-pill">0 / 5 lần</span>
+                </div>
+                <div class="progress-track">
+                    <div id="shakeProgressFill" class="progress-fill"></div>
+                </div>
+            </div>
+
+            <div class="canvas-3d-wrap" id="canvas3dWrap" title="Nhấn liên tiếp vào ống xăm để lắc (tối thiểu 5 lần)">
+                <canvas id="fortune3dCanvas"></canvas>
+                <div id="stickBadgeOverlay" class="stick-badge-overlay hidden">THẺ SỐ 01</div>
+            </div>
+
+            <div class="shaker-controls">
+                <button id="shakeClickBtn" class="shake-cta" type="button">
+                    🎋 Lắc Thêm (+1 lần)
+                </button>
+                <button id="drawStickBtn" class="draw-cta" type="button" disabled>
+                    ✨ Rút Quẻ (Cần đủ 5 lần)
+                </button>
+            </div>
+
+            <div class="slip-perspective">
+                <article id="fortuneSlip" class="fortune-slip hidden" aria-live="polite">
+                    <div class="slip-top">
+                        <span id="slipNum" class="slip-num">QUẺ SỐ 01</span>
+                        <span id="slipLevel" class="slip-level level-great">ĐẠI CÁT</span>
+                    </div>
+                    <div class="slip-header-row">
+                        <h3 id="slipTitle" class="slip-title">Tên Quẻ</h3>
+                        <div class="red-stamp">ĐINH<br>MÙI<br>2027</div>
+                    </div>
+                    <div id="slipPoem" class="slip-poem"></div>
+                    <div class="aspects-grid">
+                        <div class="aspect-box">
+                            <div class="aspect-label">Công danh &amp; Sự nghiệp</div>
+                            <div id="aspectWork" class="aspect-text"></div>
+                        </div>
+                        <div class="aspect-box">
+                            <div class="aspect-label">Tài lộc &amp; Chi tiêu</div>
+                            <div id="aspectMoney" class="aspect-text"></div>
+                        </div>
+                        <div class="aspect-box">
+                            <div class="aspect-label">Tình duyên &amp; Gia đạo</div>
+                            <div id="aspectLove" class="aspect-text"></div>
+                        </div>
+                        <div class="aspect-box">
+                            <div class="aspect-label">Sức khỏe &amp; Tinh thần</div>
+                            <div id="aspectHealth" class="aspect-text"></div>
+                        </div>
+                    </div>
+                    <div class="slip-advice">
+                        <strong>Lời khuyên năm Đinh Mùi:</strong> <span id="slipAdvice"></span>
+                    </div>
+                    <div class="slip-footer">
+                        <span id="slipLucky" class="lucky-meta">Số may mắn: -- • Màu hợp: --</span>
+                        <div class="slip-actions">
+                            <button id="copyFortuneBtn" class="mini-btn" type="button">Sao chép quẻ</button>
+                            <button id="reshakeBtn" class="mini-btn" type="button">Lắc lại (reset 5 lần)</button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
     <script>
         // --- Floating Background ---
-        const items = ['💄', '👠', '👜', '👗', '🧧', '🏮', '🌸', '🌼', '🍍', '💰', '📦', '🛒'];
+        const bgItems = ['💄', '👠', '👜', '👗', '🧧', '🏮', '🌸', '🌼', '🍍', '💰'];
         const bgContainer = document.getElementById('background-animation');
-
         function createFloatingItem() {
             const el = document.createElement('div');
-            el.innerText = items[Math.floor(Math.random() * items.length)];
+            el.innerText = bgItems[Math.floor(Math.random() * bgItems.length)];
             el.classList.add('floating-item');
             el.style.left = Math.random() * 92 + 'vw';
             el.style.animationDuration = (Math.random() * 10 + 16) + 's';
-            el.style.fontSize = (Math.random() * 0.9 + 1.3) + 'rem';
+            el.style.fontSize = (Math.random() * 0.9 + 1.2) + 'rem';
             bgContainer.appendChild(el);
             setTimeout(() => el.remove(), 26000);
         }
-        setInterval(createFloatingItem, 2100);
-        for (let i = 0; i < 6; i++) createFloatingItem();
+        setInterval(createFloatingItem, 2200);
+        for (let i = 0; i < 5; i++) createFloatingItem();
 
-        // --- Countdown to Official Vietnam Tết 2027 Holiday (04/02/2027 - 28 tháng Chạp) ---
+        // --- Countdown (04/02/2027) ---
         function updateCountdown() {
             const now = Date.now();
             const holidayStart = new Date("Feb 04, 2027 00:00:00").getTime();
             const distance = holidayStart - now;
-
             if (distance <= 0) {
-                document.getElementById("days").innerText = "00";
-                document.getElementById("hours").innerText = "00";
-                document.getElementById("minutes").innerText = "00";
-                document.getElementById("seconds").innerText = "00";
+                ["days", "hours", "minutes", "seconds"].forEach(id => document.getElementById(id).innerText = "00");
                 return;
             }
-
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
             document.getElementById("days").innerText = days < 10 ? "0" + days : days;
             document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
             document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
@@ -1007,298 +1455,10 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // --- Motivation Quotes ---
-        const motivationQuotes = [
-            "Làm nhiệt tình, cuối năm hình mình lên bảng vàng!",
-            "Deadline dí? Chạy nhanh hơn deadline là được!",
-            "Cố lên em! Túi hiệu đang vẫy gọi!",
-            "Ms Grace tin tưởng em (và KPI của em).",
-            "Đừng để việc hôm nay chảy sang năm sau!",
-            "Khách hàng khó tính là khách hàng... nhiều tiền.",
-            "Tập trung cao độ, tối về ngủ ngon!",
-            "Mỗi đơn hàng là một niềm vui (và hoa hồng).",
-            "Thần thái L.ASY: Tự tin, Chăm chỉ, Sang chảnh.",
-            "Nghèo thì lâu, giàu thì mấy hồi (nếu chăm).",
-            "Sắp nghỉ Tết 2027 rồi, bánh chưng cần có nhân thịt!",
-            "Áp lực tạo nên kim cương (hoặc tạo nên nếp nhăn, nhớ dưỡng da).",
-            "Hãy làm việc như thể bạn là cổ đông lớn nhất.",
-            "Tương lai khóc hay cười phụ thuộc vào độ lười quá khứ.",
-            "Vượt qua KPI, đời em sẽ nở hoa!"
-        ];
-
-        // --- 24 Kịch Bản Quẻ Đầu Xuân Thực Tế (Tết Đinh Mùi 2027) ---
-        const realFortunes = [
-            {
-                number: "01", level: "Đại Cát", levelClass: "level-great",
-                title: "Lý Ngư Hóa Long",
-                poem: "Nước xuân dâng ngập bến sông dài,\nCá chép vượt môn hóa rồng bay.\nBền chí bao ngày nay gặp hội,\nCông thành danh toại rạng tương lai.",
-                work: "Bước ngoặt lớn trong sự nghiệp, dự án ấp ủ lâu nay dễ được duyệt hoặc bứt phá doanh số vượt kỳ vọng.",
-                money: "Nguồn thu chính và phụ đều tăng; có cơ hội nhận thưởng hoặc hợp đồng giá trị cao.",
-                love: "Gia đạo hòa thuận, người độc thân dễ gặp nhân duyên đồng điệu qua công việc.",
-                health: "Tinh thần phấn chấn, thể lực dồi dào; chỉ cần giữ nhịp ngủ nghỉ điều độ.",
-                advice: "Hãy tự tin nắm lấy cơ hội mới vào đầu năm, đừng ngại đảm nhận vai trò dẫn dắt.",
-                luckyNum: "09, 68", luckyColor: "Đỏ son, Vàng kim"
-            },
-            {
-                number: "02", level: "Thượng Cát", levelClass: "level-great",
-                title: "Xuân Phong Đắc Ý",
-                poem: "Gió xuân thổi nhẹ nở ngàn hoa,\nQuý nhân đưa lối bước đường xa.\nMở lòng đón nhận duyên lành tới,\nThuận buồm xuôi gió khắp gần xa.",
-                work: "Có quý nhân (cấp trên hoặc đối tác lớn) nâng đỡ, tháo gỡ nút thắt cũ một cách êm đẹp.",
-                money: "Tiền bạc hanh thông, chi tiêu thoải mái nhưng vẫn dư dả tích lũy.",
-                love: "Tình cảm ấm áp, những hiểu lầm cũ dần được hóa giải nhờ sự chân thành.",
-                health: "Khí huyết lưu thông tốt, thích hợp bắt đầu thói quen vận động nhẹ mỗi sáng.",
-                advice: "Giữ thái độ khiêm tốn và biết ơn những người đã hỗ trợ mình trong giai đoạn khó khăn.",
-                luckyNum: "03, 27", luckyColor: "Xanh ngọc, Trắng kem"
-            },
-            {
-                number: "03", level: "Thượng Cát", levelClass: "level-good",
-                title: "Vân Khai Kiến Nhật",
-                poem: "Mây mù tan biến lộ vầng dương,\nTrăm việc dần thông suốt dặm trường.\nĐừng ngại đường xa nhiều dốc đá,\nQua cơn bĩ cực tới thanh lương.",
-                work: "Những bế tắc cuối năm cũ sẽ dần sáng tỏ từ giữa quý I; kiên trì thêm một nhịp sẽ thấy kết quả.",
-                money: "Thu nhập ổn định trở lại, các khoản nợ hoặc tiền kẹt có dấu hiệu hồi về.",
-                love: "Người thương thấu hiểu áp lực của bạn hơn, tạo chỗ dựa tinh thần vững vàng.",
-                health: "Cần chú ý giải tỏa căng thẳng vai gáy và hạn chế thức khuya sau Tết.",
-                advice: "Đừng vội bỏ cuộc khi chưa thấy kết quả ngay trong tháng Giêng; ánh sáng đang ở ngay phía trước.",
-                luckyNum: "06, 18", luckyColor: "Vàng nhạt, Xanh dương"
-            },
-            {
-                number: "04", level: "Trung Cát", levelClass: "level-good",
-                title: "Tùng Bách Trường Thanh",
-                poem: "Thông reo đỉnh núi vững ngàn năm,\nGió tuyết chẳng lay chí âm thầm.\nChậm rãi từng bước xây nền móng,\nHương lành tự tỏa chẳng cần thăm.",
-                work: "Không bùng nổ chớp nhoáng nhưng cực kỳ bền vững; năng lực chuyên môn được đồng nghiệp nể trọng.",
-                money: "Tích tiểu thành đại, tránh các kênh đầu tư lướt sóng rủi ro cao.",
-                love: "Tình cảm chín muồi theo thời gian, phù hợp tính chuyện gắn bó lâu dài.",
-                health: "Sức đề kháng tốt, nên duy trì ăn uống thanh đạm và uống đủ nước.",
-                advice: "Tập trung nâng cao kỹ năng cốt lõi thay vì chạy theo xu hướng nhất thời.",
-                luckyNum: "04, 15", luckyColor: "Xanh rêu, Nâu gỗ"
-            },
-            {
-                number: "05", level: "Tiểu Cát", levelClass: "level-peace",
-                title: "Mai Hoa Tái Tiếu",
-                poem: "Cành mai hé nụ giữa sương mai,\nNhỏ bé nhưng thơm ngát dặm dài.\nChẳng cần ồn ào khoe sắc thắm,\nNiềm vui bình dị vẫn tròn đầy.",
-                work: "Công việc trôi chảy ở mức vừa phải, hoàn thành tốt KPI mà không bị quá tải.",
-                money: "Có những khoản lộc nhỏ bất ngờ (lì xì, hoa hồng, hoàn tiền) giúp tâm trạng vui vẻ.",
-                love: "Những cử chỉ quan tâm nhỏ hằng ngày mang lại hạnh phúc lớn cho cả hai.",
-                health: "Ngủ ngon giấc hơn, tinh thần nhẹ nhõm nếu biết buông bớt lo âu vặt.",
-                advice: "Trân trọng những niềm vui nhỏ và dành thời gian cho gia đình trong dịp đầu xuân.",
-                luckyNum: "02, 12", luckyColor: "Hồng phấn, Vàng mơ"
-            },
-            {
-                number: "06", level: "Bình An", levelClass: "level-peace",
-                title: "Tĩnh Thủy Lưu Thâm",
-                poem: "Dòng sông lặng lẽ chảy xuôi dòng,\nSâu thẳm bên trong chẳng đục trong.\nGiữ tâm an tĩnh qua năm mới,\nVạn sự bình yên ở trong lòng.",
-                work: "Năm thiên về ổn định và củng cố nội lực hơn là nhảy việc hay thay đổi đột ngột.",
-                money: "Thu chi cân bằng, không thiếu thốn nhưng cần lập quỹ dự phòng rõ ràng.",
-                love: "Bình yên, ít sóng gió; người độc thân nên mở rộng giao lưu nhẹ nhàng.",
-                health: "Tâm an thì thân khỏe; hạn chế tiếp xúc quá nhiều tin tức tiêu cực.",
-                advice: "Chậm lại một nhịp để lắng nghe bản thân muốn gì thực sự trong năm 2027.",
-                luckyNum: "01, 10", luckyColor: "Xanh biển, Bạc"
-            },
-            {
-                number: "07", level: "Cẩn Trọng", levelClass: "level-caution",
-                title: "Phong Ba Tạm Khởi",
-                poem: "Biển lặng đôi khi nổi sóng cồn,\nNgười khôn giữ lái chớ bồn chồn.\nNói năng cẩn trọng từng câu chữ,\nGiữ mình an ổn vượt cơn giông.",
-                work: "Dễ gặp hiểu lầm trong giao tiếp nội bộ hoặc thay đổi yêu cầu đột ngột từ khách hàng.",
-                money: "Tránh cho vay mượn số tiền lớn hoặc ký kết giấy tờ khi chưa đọc kỹ điều khoản.",
-                love: "Tránh tranh cãi vì chuyện nhỏ lúc nóng giận; lùi một bước biển rộng trời cao.",
-                health: "Chú ý hệ tiêu hóa và giữ ấm cơ thể khi thời tiết giao mùa.",
-                advice: "Làm việc có văn bản xác nhận rõ ràng, giữ bình tĩnh trước mọi tình huống phát sinh.",
-                luckyNum: "05, 19", luckyColor: "Trắng ngà, Xám nhạt"
-            },
-            {
-                number: "08", level: "Đại Cát", levelClass: "level-great",
-                title: "Kim Ngọc Mãn Đường",
-                poem: "Ngọc sáng trong nhà rạng ánh vàng,\nLộc trời ban xuống cửa khang trang.\nChăm chỉ gieo mầm từ thuở trước,\nNay mùa quả ngọt nở mênh mang.",
-                work: "Năng suất làm việc đạt đỉnh cao, dễ được giao trọng trách hoặc tăng thu nhập xứng đáng.",
-                money: "Tài vận vượng phát, đặc biệt với người làm kinh doanh, thương mại điện tử và sáng tạo nội dung.",
-                love: "Gia đình có tin vui, không khí sum vầy ấm áp.",
-                health: "Năng lượng tích cực lan tỏa, cần cân bằng giữa làm việc và nghỉ ngơi cuối tuần.",
-                advice: "Khi có lộc, hãy trích một phần nhỏ chia sẻ hoặc làm việc thiện để giữ phúc lâu dài.",
-                luckyNum: "08, 88", luckyColor: "Vàng đồng, Đỏ trầm"
-            },
-            {
-                number: "09", level: "Trung Cát", levelClass: "level-good",
-                title: "Hạc Lập Kê Quần",
-                poem: "Chim hạc vươn cao giữa nắng hồng,\nTài năng tự khắc lộ bên trong.\nGiữ vững lập trường đường mình chọn,\nRồi sẽ vươn xa vượt biển đông.",
-                work: "Ý tưởng cá nhân được đánh giá cao, phù hợp để đề xuất sáng kiến mới.",
-                money: "Thu nhập tăng theo năng lực thực tế, không dựa vào may rủi.",
-                love: "Sự tự tin giúp bạn thu hút ánh nhìn tích cực từ người xung quanh.",
-                health: "Chú ý mỏi mắt do màn hình; áp dụng quy tắc nghỉ mắt mỗi 30 phút.",
-                advice: "Đừng ngại khác biệt nếu bạn đã tính toán kỹ và có số liệu chứng minh.",
-                luckyNum: "07, 21", luckyColor: "Trắng tinh, Xanh coban"
-            },
-            {
-                number: "10", level: "Thượng Cát", levelClass: "level-good",
-                title: "Song Hỷ Lâm Môn",
-                poem: "Đôi chim én lượn báo tin lành,\nHoa thắm đầu hiên nở biếc xanh.\nMột việc thành công kéo việc nữa,\nNiềm vui nối tiếp suốt năm hành.",
-                work: "Vừa hoàn thành tốt mục tiêu cá nhân vừa có thành tích chung xuất sắc cùng đội ngũ.",
-                money: "Có song song hai nguồn thu ổn định, giúp kế hoạch tài chính nhẹ nhàng hơn.",
-                love: "Tin vui về tình cảm, đính ước hoặc sum họp gia đình.",
-                health: "Tinh thần lạc quan giúp cơ thể phục hồi rất nhanh.",
-                advice: "Biết sẻ chia niềm vui với đồng nghiệp và người thân sẽ nhân đôi may mắn.",
-                luckyNum: "02, 22", luckyColor: "Hồng đào, Đỏ tươi"
-            },
-            {
-                number: "11", level: "Tiểu Cát", levelClass: "level-peace",
-                title: "Thảo Mộc Phùng Xuân",
-                poem: "Cỏ cây gặp tiết mưa xuân ấm,\nĐâm chồi nảy lộc khắp non ngàn.\nChẳng cần gấp gáp đòi hoa sớm,\nĐủ nắng đủ sương tự rỡ ràng.",
-                work: "Giai đoạn gieo hạt và học hỏi thêm công cụ mới; quả ngọt sẽ đến từ giữa năm.",
-                money: "Tiền vào đều đặn, đủ chi dùng và có dư một khoản tiết kiệm nhỏ.",
-                love: "Mối quan hệ phát triển tự nhiên, không gượng ép.",
-                health: "Thích hợp thanh lọc cơ thể sau những ngày tiệc tùng Tết.",
-                advice: "Kiên nhẫn đầu tư cho kiến thức và sức khỏe ngay từ tháng Giêng.",
-                luckyNum: "03, 14", luckyColor: "Xanh lá non, Kem"
-            },
-            {
-                number: "12", level: "Cẩn Trọng", levelClass: "level-caution",
-                title: "Thủ Cựu Đãi Thời",
-                poem: "Giữ thành vững chắc đợi thời cơ,\nChớ vội xuất quân lúc mịt mờ.\nTính kỹ trăm đường rồi hãy bước,\nAn toàn trên hết khỏi âu lo.",
-                work: "Chưa phải lúc thích hợp để thay đổi đột ngột; hãy giữ vững vị trí hiện tại và hoàn thiện quy trình.",
-                money: "Kiểm soát mua sắm cảm tính đầu năm, tránh thâm hụt ngân sách.",
-                love: "Dành thời gian lắng nghe nhiều hơn là phán xét.",
-                health: "Ngủ đủ giấc và tránh lạm dụng cà phê khi chạy deadline.",
-                advice: "Chờ thời cơ chín muồi (khoảng quý II) hãy triển khai kế hoạch lớn.",
-                luckyNum: "05, 11", luckyColor: "Nâu đất, Be"
-            },
-            {
-                number: "13", level: "Trung Cát", levelClass: "level-good",
-                title: "Đồng Tâm Hiệp Lực",
-                poem: "Một cây chẳng thể nên non cao,\nNhiều tay góp sức sóng dạt dào.\nChân thành kết nối cùng đồng đội,\nKhó mấy rồi đây cũng vượt qua.",
-                work: "Làm việc nhóm cực kỳ ăn ý, hỗ trợ lẫn nhau giúp tiến độ nhanh gấp đôi.",
-                money: "Lộc đến từ sự hợp tác, chia sẻ dự án hoặc giới thiệu khách hàng.",
-                love: "Bạn bè, người thân luôn sẵn sàng lắng nghe và giúp đỡ khi bạn cần.",
-                health: "Tham gia hoạt động thể thao cùng bạn bè giúp duy trì động lực tốt hơn.",
-                advice: "Chủ động kết nối và giữ hòa khí với mọi người xung quanh.",
-                luckyNum: "06, 24", luckyColor: "Cam đất, Vàng ấm"
-            },
-            {
-                number: "14", level: "Thượng Cát", levelClass: "level-great",
-                title: "Thiên Quan Tứ Phúc",
-                poem: "Trời xanh ban phúc xuống nhân gian,\nĐức dày tự khắc hưởng bình an.\nTâm sáng việc ngay không hổ thẹn,\nĐường đời rộng mở bước thênh thang.",
-                work: "Uy tín cá nhân lên cao, được giao những khách hàng hoặc dự án trọng điểm.",
-                money: "Tài chính vững vàng, ít gặp hao hụt vô cớ.",
-                love: "Gia đạo yên ấm, con cháu hoặc người thân có tin vui học hành, công việc.",
-                health: "Trạng thái cân bằng cả thể chất lẫn tinh thần.",
-                advice: "Giữ vững sự tử tế và minh bạch trong mọi giao dịch.",
-                luckyNum: "09, 16", luckyColor: "Vàng kim, Trắng"
-            },
-            {
-                number: "15", level: "Bình An", levelClass: "level-peace",
-                title: "Thu Nguyệt Chiếu Đình",
-                poem: "Trăng sáng soi hiên gió nhẹ đưa,\nTrong lòng thanh thản chuyện nắng mưa.\nKhông tham quá mức lòng tự nhẹ,\nĐủ đầy hạnh phúc biết thế vừa.",
-                work: "Áp lực giảm bớt so với năm trước, có thời gian sắp xếp lại quy trình gọn gàng hơn.",
-                money: "Không đột biến lớn nhưng đủ đầy, không phải lo nghĩ chuyện cơm áo.",
-                love: "Yêu thương nhẹ nhàng, tôn trọng không gian riêng của nhau.",
-                health: "Tâm trạng thư thái, giấc ngủ sâu.",
-                advice: "Đừng so sánh nhịp đi của mình với người khác; đi đều và vui là thắng.",
-                luckyNum: "07, 17", luckyColor: "Bạc, Xanh pastel"
-            },
-            {
-                number: "16", level: "Tiểu Cát", levelClass: "level-peace",
-                title: "Đông Khứ Xuân Lai",
-                poem: "Giá rét qua rồi nắng ấm lên,\nMọi điều cũ kỹ gửi vào quên.\nMở cửa đón chào trang giấy mới,\nTự tay viết tiếp chặng đường êm.",
-                work: "Khởi đầu mới mẻ, thích hợp dọn dẹp lại bàn làm việc, kế hoạch và mục tiêu năm.",
-                money: "Chi tiêu hợp lý đầu năm giúp giữ được đà tích lũy tốt.",
-                love: "Nếu vừa bước qua chuyện buồn cũ, đây là lúc trái tim sẵn sàng bình yên trở lại.",
-                health: "Nên đi kiểm tra sức khỏe định kỳ đầu năm để yên tâm công tác.",
-                advice: "Khép lại chuyện không vui của năm cũ để bước vào năm Đinh Mùi thật nhẹ nhõm.",
-                luckyNum: "01, 20", luckyColor: "Xanh ngọc, Trắng"
-            },
-            {
-                number: "17", level: "Đại Cát", levelClass: "level-great",
-                title: "Nhật Xuất Đông Phương",
-                poem: "Mặt trời ló dạng phía trời đông,\nRực rỡ muôn tia chiếu sáng trong.\nChí lớn nay đà gặp vận hội,\nMột bước vươn lên rạng núi sông.",
-                work: "Thời cơ vàng để bứt phá, thăng tiến hoặc ra mắt sản phẩm/chiến dịch chủ lực.",
-                money: "Doanh thu và lợi nhuận tăng trưởng rõ rệt.",
-                love: "Rạng rỡ, tràn đầy năng lượng tích cực thu hút nhân duyên tốt.",
-                health: "Tràn trề sinh lực, thích hợp cho những chuyến đi xa hoặc thử thách mới.",
-                advice: "Quyết đoán đúng lúc, đừng để sự do dự làm trôi mất cơ hội tốt.",
-                luckyNum: "01, 09", luckyColor: "Đỏ cam, Vàng rực"
-            },
-            {
-                number: "18", level: "Cẩn Trọng", levelClass: "level-caution",
-                title: "Ẩm Thủy Tư Nguyên",
-                poem: "Uống nước nhớ nguồn chớ vội quên,\nĐi xa vẫn nhớ gốc vững bền.\nLời nói vội vàng dễ sinh chuyện,\nSuy xét kỹ càng mới vững nền.",
-                work: "Cần chú ý kiểm tra kỹ số liệu, hợp đồng và file gửi khách hàng trước khi bấm gửi.",
-                money: "Hạn chế mua sắm trả góp hoặc đầu tư theo lời rủ rê thiếu cơ sở.",
-                love: "Quan tâm hỏi thăm bố mẹ, người lớn tuổi trong nhà nhiều hơn.",
-                health: "Chú ý an toàn giao thông khi đi du xuân, chúc Tết.",
-                advice: "Chậm lại 5 giây trước khi quyết định hoặc phản hồi tin nhắn lúc đang mệt.",
-                luckyNum: "04, 13", luckyColor: "Xanh than, Be"
-            },
-            {
-                number: "19", level: "Trung Cát", levelClass: "level-good",
-                title: "Ngọc Trác Thành Khí",
-                poem: "Ngọc quý không mài chẳng sáng trong,\nNgười tài rèn giũa mới nên công.\nKhó khăn hôm nay là bài học,\nMai sau rạng rỡ giữa đám đông.",
-                work: "Khối lượng việc có thể hơi nhiều lúc đầu năm nhưng giúp bạn lên tay rất nhanh.",
-                money: "Tiền công xứng đáng với mồ hôi công sức bỏ ra.",
-                love: "Cùng nhau vượt qua bận rộn giúp hai người thêm gắn kết.",
-                health: "Nhớ giãn cơ và đứng dậy đi lại sau mỗi giờ ngồi máy tính.",
-                advice: "Xem thử thách là cơ hội nâng cấp bản thân thay vì gánh nặng.",
-                luckyNum: "05, 25", luckyColor: "Trắng ngọc, Xanh dương"
-            },
-            {
-                number: "20", level: "Thượng Cát", levelClass: "level-good",
-                title: "Quý Nhân Tương Trợ",
-                poem: "Đường xa chợt gặp bạn đồng hành,\nChia sẻ gánh nặng bước đường nhanh.\nMở lòng chân thật cùng giao hảo,\nViệc khó rồi đây cũng hóa thành.",
-                work: "Dễ gặp được mentor, đối tác hoặc đồng nghiệp cực kỳ có tâm hỗ trợ.",
-                money: "Có cơ hội hợp tác sinh lời tốt trong nửa đầu năm.",
-                love: "Bạn bè làm mai mối hoặc tạo cơ hội gặp người phù hợp.",
-                health: "Tinh thần vui vẻ, ít ốm vặt.",
-                advice: "Giữ liên lạc với những mối quan hệ chất lượng và luôn sòng phẳng, uy tín.",
-                luckyNum: "06, 28", luckyColor: "Vàng nhạt, Xanh mint"
-            },
-            {
-                number: "21", level: "Tiểu Cát", levelClass: "level-peace",
-                title: "Hòa Khí Sinh Tài",
-                poem: "Một câu nhường nhịn ấm lòng nhau,\nHòa khí trong nhà phúc về sau.\nCười tươi đón khách niềm vui tới,\nLộc nhỏ tự nhiên chảy dạt dào.",
-                work: "Môi trường làm việc thân thiện, khách hàng dễ tính khi bạn giữ thái độ niềm nở.",
-                money: "Bán hàng hoặc giao dịch thuận lợi nhờ sự khéo léo trong giao tiếp.",
-                love: "Không khí gia đình đầm ấm, tiếng cười ngập tràn ngày xuân.",
-                health: "Giảm hẳn căng thẳng đầu óc.",
-                advice: "Nụ cười và sự tử tế là chìa khóa mở mọi cánh cửa trong năm Đinh Mùi.",
-                luckyNum: "02, 16", luckyColor: "Hồng san hô, Kem"
-            },
-            {
-                number: "22", level: "Bình An", levelClass: "level-peace",
-                title: "Hải Yến Hà Thanh",
-                poem: "Biển lặng sông trong sóng êm đềm,\nNgày dài trôi nhẹ giấc ngủ êm.\nChẳng cầu sóng gió hay hư ảo,\nChỉ mong bình dị suốt ngày đêm.",
-                work: "Mọi việc diễn ra theo đúng lịch trình dự kiến, ít biến cố bất ngờ.",
-                money: "Đủ dùng, có thể dành dụm cho một chuyến du lịch nhỏ trong năm.",
-                love: "An toàn, tin tưởng và đồng hành nhẹ nhàng.",
-                health: "Tốt, thích hợp duy trì thói quen đi bộ buổi chiều.",
-                advice: "Đôi khi sự bình thường, không sóng gió chính là phúc phần lớn nhất.",
-                luckyNum: "08, 18", luckyColor: "Xanh da trời, Trắng"
-            },
-            {
-                number: "23", level: "Trung Cát", levelClass: "level-good",
-                title: "Khai Môn Kiến Hỷ",
-                poem: "Mở cửa đầu xuân đón ánh hồng,\nTin vui bay tới khắp non sông.\nViệc cũ khép tròn trang sử đẹp,\nChào đón hành trình mới thành công.",
-                work: "Có tin vui về dự án mới, khách hàng mới hoặc kế hoạch mở rộng đầu năm.",
-                money: "Mở hàng đầu năm suôn sẻ, dòng tiền lưu thông tốt.",
-                love: "Nhận được lời chúc và sự quan tâm chân thành từ những người tưởng đã ít liên lạc.",
-                health: "Khởi sắc rõ rệt khi giữ nhịp sinh hoạt điều độ.",
-                advice: "Hãy chủ động gửi lời chúc đầu năm tới những người bạn trân quý.",
-                luckyNum: "03, 29", luckyColor: "Đỏ rượu, Vàng kem"
-            },
-            {
-                number: "24", level: "Cẩn Trọng", levelClass: "level-caution",
-                title: "Tam Tư Nhi Hậu Hành",
-                poem: "Nghĩ kỹ ba lần trước bước chân,\nChớ nghe lời ngọt vội tin thân.\nGiữ tâm sáng suốt phân hư thực,\nAn nhiên tự tại suốt mùa xuân.",
-                work: "Cẩn thận trước các lời hứa hẹn quá tốt hoặc deadline quá gấp thiếu thực tế.",
-                money: "Bảo mật thông tin tài khoản, tránh click các đường link lạ dịp mua sắm Tết.",
-                love: "Đừng để lời đồn bên ngoài ảnh hưởng tới niềm tin giữa hai người.",
-                health: "Hạn chế đồ ngọt, dầu mỡ quá nhiều trong tuần Tết.",
-                advice: "Cẩn tắc vô áy náy — sự tỉnh táo sẽ giúp bạn tránh được 99% rắc rối không đáng có.",
-                luckyNum: "07, 14", luckyColor: "Xanh đen, Bạc"
-            }
-        ];
-
-        // --- Web Audio API: Bamboo Rattle Synthesizer ---
+        // --- Web Audio Bamboo Rattle ---
         let audioCtx = null;
         let soundEnabled = true;
         const soundToggleBtn = document.getElementById('soundToggleBtn');
-
         soundToggleBtn.addEventListener('click', () => {
             soundEnabled = !soundEnabled;
             soundToggleBtn.textContent = soundEnabled ? '🔊 Âm thanh: Bật' : '🔇 Âm thanh: Tắt';
@@ -1312,80 +1472,238 @@
                     audioCtx = new AudioContext();
                 }
                 if (audioCtx.state === 'suspended') audioCtx.resume();
-
                 const now = audioCtx.currentTime;
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 const filter = audioCtx.createBiquadFilter();
-
                 osc.type = 'triangle';
-                const baseFreq = 580 + Math.random() * 520;
-                osc.frequency.setValueAtTime(baseFreq, now);
+                osc.frequency.setValueAtTime(580 + Math.random() * 520, now);
                 osc.frequency.exponentialRampToValueAtTime(180, now + 0.045);
-
                 filter.type = 'bandpass';
                 filter.frequency.setValueAtTime(1100, now);
                 filter.Q.setValueAtTime(3.5, now);
-
                 gain.gain.setValueAtTime(0.09 * intensity, now);
                 gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-
                 osc.connect(filter);
                 filter.connect(gain);
                 gain.connect(audioCtx.destination);
-
                 osc.start(now);
                 osc.stop(now + 0.055);
             } catch (e) {}
         }
 
-        // --- TRUE 3D WEBGL FORTUNE ENGINE (THREE.JS + CANVAS FALLBACK) ---
+        // --- 24 Kịch Bản Quẻ Đầu Xuân Thực Tế ---
+        const realFortunes = [
+            { number: "01", level: "Đại Cát", levelClass: "level-great", title: "Lý Ngư Hóa Long", poem: "Nước xuân dâng ngập bến sông dài,\nCá chép vượt môn hóa rồng bay.\nBền chí bao ngày nay gặp hội,\nCông thành danh toại rạng tương lai.", work: "Bước ngoặt lớn trong sự nghiệp, dự án ấp ủ lâu nay dễ được duyệt hoặc bứt phá doanh số vượt kỳ vọng.", money: "Nguồn thu chính và phụ đều tăng; có cơ hội nhận thưởng hoặc hợp đồng giá trị cao.", love: "Gia đạo hòa thuận, người độc thân dễ gặp nhân duyên đồng điệu qua công việc.", health: "Tinh thần phấn chấn, thể lực dồi dào; chỉ cần giữ nhịp ngủ nghỉ điều độ.", advice: "Hãy tự tin nắm lấy cơ hội mới vào đầu năm, đừng ngại đảm nhận vai trò dẫn dắt.", luckyNum: "09, 68", luckyColor: "Đỏ son, Vàng kim" },
+            { number: "02", level: "Thượng Cát", levelClass: "level-great", title: "Xuân Phong Đắc Ý", poem: "Gió xuân thổi nhẹ nở ngàn hoa,\nQuý nhân đưa lối bước đường xa.\nMở lòng đón nhận duyên lành tới,\nThuận buồm xuôi gió khắp gần xa.", work: "Có quý nhân (cấp trên hoặc đối tác lớn) nâng đỡ, tháo gỡ nút thắt cũ một cách êm đẹp.", money: "Tiền bạc hanh thông, chi tiêu thoải mái nhưng vẫn dư dả tích lũy.", love: "Tình cảm ấm áp, những hiểu lầm cũ dần được hóa giải nhờ sự chân thành.", health: "Khí huyết lưu thông tốt, thích hợp bắt đầu thói quen vận động nhẹ mỗi sáng.", advice: "Giữ thái độ khiêm tốn và biết ơn những người đã hỗ trợ mình trong giai đoạn khó khăn.", luckyNum: "03, 27", luckyColor: "Xanh ngọc, Trắng kem" },
+            { number: "03", level: "Thượng Cát", levelClass: "level-good", title: "Vân Khai Kiến Nhật", poem: "Mây mù tan biến lộ vầng dương,\nTrăm việc dần thông suốt dặm trường.\nĐừng ngại đường xa nhiều dốc đá,\nQua cơn bĩ cực tới thanh lương.", work: "Những bế tắc cuối năm cũ sẽ dần sáng tỏ từ giữa quý I; kiên trì thêm một nhịp sẽ thấy kết quả.", money: "Thu nhập ổn định trở lại, các khoản nợ hoặc tiền kẹt có dấu hiệu hồi về.", love: "Người thương thấu hiểu áp lực của bạn hơn, tạo chỗ dựa tinh thần vững vàng.", health: "Cần chú ý giải tỏa căng thẳng vai gáy và hạn chế thức khuya sau Tết.", advice: "Đừng vội bỏ cuộc khi chưa thấy kết quả ngay trong tháng Giêng; ánh sáng đang ở ngay phía trước.", luckyNum: "06, 18", luckyColor: "Vàng nhạt, Xanh dương" },
+            { number: "04", level: "Trung Cát", levelClass: "level-good", title: "Tùng Bách Trường Thanh", poem: "Thông reo đỉnh núi vững ngàn năm,\nGió tuyết chẳng lay chí âm thầm.\nChậm rãi từng bước xây nền móng,\nHương lành tự tỏa chẳng cần thăm.", work: "Không bùng nổ chớp nhoáng nhưng cực kỳ bền vững; năng lực chuyên môn được đồng nghiệp nể trọng.", money: "Tích tiểu thành đại, tránh các kênh đầu tư lướt sóng rủi ro cao.", love: "Tình cảm chín muồi theo thời gian, phù hợp tính chuyện gắn bó lâu dài.", health: "Sức đề kháng tốt, nên duy trì ăn uống thanh đạm và uống đủ nước.", advice: "Tập trung nâng cao kỹ năng cốt lõi thay vì chạy theo xu hướng nhất thời.", luckyNum: "04, 15", luckyColor: "Xanh rêu, Nâu gỗ" },
+            { number: "05", level: "Tiểu Cát", levelClass: "level-peace", title: "Mai Hoa Tái Tiếu", poem: "Cành mai hé nụ giữa sương mai,\nNhỏ bé nhưng thơm ngát dặm dài.\nChẳng cần ồn ào khoe sắc thắm,\nNiềm vui bình dị vẫn tròn đầy.", work: "Công việc trôi chảy ở mức vừa phải, hoàn thành tốt KPI mà không bị quá tải.", money: "Có những khoản lộc nhỏ bất ngờ (lì xì, hoa hồng, hoàn tiền) giúp tâm trạng vui vẻ.", love: "Những cử chỉ quan tâm nhỏ hằng ngày mang lại hạnh phúc lớn cho cả hai.", health: "Ngủ ngon giấc hơn, tinh thần nhẹ nhõm nếu biết buông bớt lo âu vặt.", advice: "Trân trọng những niềm vui nhỏ và dành thời gian cho gia đình trong dịp đầu xuân.", luckyNum: "02, 12", luckyColor: "Hồng phấn, Vàng mơ" },
+            { number: "06", level: "Bình An", levelClass: "level-peace", title: "Tĩnh Thủy Lưu Thâm", poem: "Dòng sông lặng lẽ chảy xuôi dòng,\nSâu thẳm bên trong chẳng đục trong.\nGiữ tâm an tĩnh qua năm mới,\nVạn sự bình yên ở trong lòng.", work: "Năm thiên về ổn định và củng cố nội lực hơn là nhảy việc hay thay đổi đột ngột.", money: "Thu chi cân bằng, không thiếu thốn nhưng cần lập quỹ dự phòng rõ ràng.", love: "Bình yên, ít sóng gió; người độc thân nên mở rộng giao lưu nhẹ nhàng.", health: "Tâm an thì thân khỏe; hạn chế tiếp xúc quá nhiều tin tức tiêu cực.", advice: "Chậm lại một nhịp để lắng nghe bản thân muốn gì thực sự trong năm 2027.", luckyNum: "01, 10", luckyColor: "Xanh biển, Bạc" },
+            { number: "07", level: "Cẩn Trọng", levelClass: "level-caution", title: "Phong Ba Tạm Khởi", poem: "Biển lặng đôi khi nổi sóng cồn,\nNgười khôn giữ lái chớ bồn chồn.\nNói năng cẩn trọng từng câu chữ,\nGiữ mình an ổn vượt cơn giông.", work: "Dễ gặp hiểu lầm trong giao tiếp nội bộ hoặc thay đổi yêu cầu đột ngột từ khách hàng.", money: "Tránh cho vay mượn số tiền lớn hoặc ký kết giấy tờ khi chưa đọc kỹ điều khoản.", love: "Tránh tranh cãi vì chuyện nhỏ lúc nóng giận; lùi một bước biển rộng trời cao.", health: "Chú ý hệ tiêu hóa và giữ ấm cơ thể khi thời tiết giao mùa.", advice: "Làm việc có văn bản xác nhận rõ ràng, giữ bình tĩnh trước mọi tình huống phát sinh.", luckyNum: "05, 19", luckyColor: "Trắng ngà, Xám nhạt" },
+            { number: "08", level: "Đại Cát", levelClass: "level-great", title: "Kim Ngọc Mãn Đường", poem: "Ngọc sáng trong nhà rạng ánh vàng,\nLộc trời ban xuống cửa khang trang.\nChăm chỉ gieo mầm từ thuở trước,\nNay mùa quả ngọt nở mênh mang.", work: "Năng suất làm việc đạt đỉnh cao, dễ được giao trọng trách hoặc tăng thu nhập xứng đáng.", money: "Tài vận vượng phát, đặc biệt với người làm kinh doanh, thương mại điện tử và sáng tạo nội dung.", love: "Gia đình có tin vui, không khí sum vầy ấm áp.", health: "Năng lượng tích cực lan tỏa, cần cân bằng giữa làm việc và nghỉ ngơi cuối tuần.", advice: "Khi có lộc, hãy trích một phần nhỏ chia sẻ hoặc làm việc thiện để giữ phúc lâu dài.", luckyNum: "08, 88", luckyColor: "Vàng đồng, Đỏ trầm" },
+            { number: "09", level: "Trung Cát", levelClass: "level-good", title: "Hạc Lập Kê Quần", poem: "Chim hạc vươn cao giữa nắng hồng,\nTài năng tự khắc lộ bên trong.\nGiữ vững lập trường đường mình chọn,\nRồi sẽ vươn xa vượt biển đông.", work: "Ý tưởng cá nhân được đánh giá cao, phù hợp để đề xuất sáng kiến mới.", money: "Thu nhập tăng theo năng lực thực tế, không dựa vào may rủi.", love: "Sự tự tin giúp bạn thu hút ánh nhìn tích cực từ người xung quanh.", health: "Chú ý mỏi mắt do màn hình; áp dụng quy tắc nghỉ mắt mỗi 30 phút.", advice: "Đừng ngại khác biệt nếu bạn đã tính toán kỹ và có số liệu chứng minh.", luckyNum: "07, 21", luckyColor: "Trắng tinh, Xanh coban" },
+            { number: "10", level: "Thượng Cát", levelClass: "level-good", title: "Song Hỷ Lâm Môn", poem: "Đôi chim én lượn báo tin lành,\nHoa thắm đầu hiên nở biếc xanh.\nMột việc thành công kéo việc nữa,\nNiềm vui nối tiếp suốt năm hành.", work: "Vừa hoàn thành tốt mục tiêu cá nhân vừa có thành tích chung xuất sắc cùng đội ngũ.", money: "Có song song hai nguồn thu ổn định, giúp kế hoạch tài chính nhẹ nhàng hơn.", love: "Tin vui về tình cảm, đính ước hoặc sum họp gia đình.", health: "Tinh thần lạc quan giúp cơ thể phục hồi rất nhanh.", advice: "Biết sẻ chia niềm vui với đồng nghiệp và người thân sẽ nhân đôi may mắn.", luckyNum: "02, 22", luckyColor: "Hồng đào, Đỏ tươi" },
+            { number: "11", level: "Tiểu Cát", levelClass: "level-peace", title: "Thảo Mộc Phùng Xuân", poem: "Cỏ cây gặp tiết mưa xuân ấm,\nĐâm chồi nảy lộc khắp non ngàn.\nChẳng cần gấp gáp đòi hoa sớm,\nĐủ nắng đủ sương tự rỡ ràng.", work: "Giai đoạn gieo hạt và học hỏi thêm công cụ mới; quả ngọt sẽ đến từ giữa năm.", money: "Tiền vào đều đặn, đủ chi dùng và có dư một khoản tiết kiệm nhỏ.", love: "Mối quan hệ phát triển tự nhiên, không gượng ép.", health: "Thích hợp thanh lọc cơ thể sau những ngày tiệc tùng Tết.", advice: "Kiên nhẫn đầu tư cho kiến thức và sức khỏe ngay từ tháng Giêng.", luckyNum: "03, 14", luckyColor: "Xanh lá non, Kem" },
+            { number: "12", level: "Cẩn Trọng", levelClass: "level-caution", title: "Thủ Cựu Đãi Thời", poem: "Giữ thành vững chắc đợi thời cơ,\nChớ vội xuất quân lúc mịt mờ.\nTính kỹ trăm đường rồi hãy bước,\nAn toàn trên hết khỏi âu lo.", work: "Chưa phải lúc thích hợp để thay đổi đột ngột; hãy giữ vững vị trí hiện tại và hoàn thiện quy trình.", money: "Kiểm soát mua sắm cảm tính đầu năm, tránh thâm hụt ngân sách.", love: "Dành thời gian lắng nghe nhiều hơn là phán xét.", health: "Ngủ đủ giấc và tránh lạm dụng cà phê khi chạy deadline.", advice: "Chờ thời cơ chín muồi (khoảng quý II) hãy triển khai kế hoạch lớn.", luckyNum: "05, 11", luckyColor: "Nâu đất, Be" },
+            { number: "13", level: "Trung Cát", levelClass: "level-good", title: "Đồng Tâm Hiệp Lực", poem: "Một cây chẳng thể nên non cao,\nNhiều tay góp sức sóng dạt dào.\nChân thành kết nối cùng đồng đội,\nKhó mấy rồi đây cũng vượt qua.", work: "Làm việc nhóm cực kỳ ăn ý, hỗ trợ lẫn nhau giúp tiến độ nhanh gấp đôi.", money: "Lộc đến từ sự hợp tác, chia sẻ dự án hoặc giới thiệu khách hàng.", love: "Bạn bè, người thân luôn sẵn sàng lắng nghe và giúp đỡ khi bạn cần.", health: "Tham gia hoạt động thể thao cùng bạn bè giúp duy trì động lực tốt hơn.", advice: "Chủ động kết nối và giữ hòa khí với mọi người xung quanh.", luckyNum: "06, 24", luckyColor: "Cam đất, Vàng ấm" },
+            { number: "14", level: "Thượng Cát", levelClass: "level-great", title: "Thiên Quan Tứ Phúc", poem: "Trời xanh ban phúc xuống nhân gian,\nĐức dày tự khắc hưởng bình an.\nTâm sáng việc ngay không hổ thẹn,\nĐường đời rộng mở bước thênh thang.", work: "Uy tín cá nhân lên cao, được giao những khách hàng hoặc dự án trọng điểm.", money: "Tài chính vững vàng, ít gặp hao hụt vô cớ.", love: "Gia đạo yên ấm, con cháu hoặc người thân có tin vui học hành, công việc.", health: "Trạng thái cân bằng cả thể chất lẫn tinh thần.", advice: "Giữ vững sự tử tế và minh bạch trong mọi giao dịch.", luckyNum: "09, 16", luckyColor: "Vàng kim, Trắng" },
+            { number: "15", level: "Bình An", levelClass: "level-peace", title: "Thu Nguyệt Chiếu Đình", poem: "Trăng sáng soi hiên gió nhẹ đưa,\nTrong lòng thanh thản chuyện nắng mưa.\nKhông tham quá mức lòng tự nhẹ,\nĐủ đầy hạnh phúc biết thế vừa.", work: "Áp lực giảm bớt so với năm trước, có thời gian sắp xếp lại quy trình gọn gàng hơn.", money: "Không đột biến lớn nhưng đủ đầy, không phải lo nghĩ chuyện cơm áo.", love: "Yêu thương nhẹ nhàng, tôn trọng không gian riêng của nhau.", health: "Tâm trạng thư thái, giấc ngủ sâu.", advice: "Đừng so sánh nhịp đi của mình với người khác; đi đều và vui là thắng.", luckyNum: "07, 17", luckyColor: "Bạc, Xanh pastel" },
+            { number: "16", level: "Tiểu Cát", levelClass: "level-peace", title: "Đông Khứ Xuân Lai", poem: "Giá rét qua rồi nắng ấm lên,\nMọi điều cũ kỹ gửi vào quên.\nMở cửa đón chào trang giấy mới,\nTự tay viết tiếp chặng đường êm.", work: "Khởi đầu mới mẻ, thích hợp dọn dẹp lại bàn làm việc, kế hoạch và mục tiêu năm.", money: "Chi tiêu hợp lý đầu năm giúp giữ được đà tích lũy tốt.", love: "Nếu vừa bước qua chuyện buồn cũ, đây là lúc trái tim sẵn sàng bình yên trở lại.", health: "Nên đi kiểm tra sức khỏe định kỳ đầu năm để yên tâm công tác.", advice: "Khép lại chuyện không vui của năm cũ để bước vào năm Đinh Mùi thật nhẹ nhõm.", luckyNum: "01, 20", luckyColor: "Xanh ngọc, Trắng" },
+            { number: "17", level: "Đại Cát", levelClass: "level-great", title: "Nhật Xuất Đông Phương", poem: "Mặt trời ló dạng phía trời đông,\nRực rỡ muôn tia chiếu sáng trong.\nChí lớn nay đà gặp vận hội,\nMột bước vươn lên rạng núi sông.", work: "Thời cơ vàng để bứt phá, thăng tiến hoặc ra mắt sản phẩm/chiến dịch chủ lực.", money: "Doanh thu và lợi nhuận tăng trưởng rõ rệt.", love: "Rạng rỡ, tràn đầy năng lượng tích cực thu hút nhân duyên tốt.", health: "Tràn trề sinh lực, thích hợp cho những chuyến đi xa hoặc thử thách mới.", advice: "Quyết đoán đúng lúc, đừng để sự do dự làm trôi mất cơ hội tốt.", luckyNum: "01, 09", luckyColor: "Đỏ cam, Vàng rực" },
+            { number: "18", level: "Cẩn Trọng", levelClass: "level-caution", title: "Ẩm Thủy Tư Nguyên", poem: "Uống nước nhớ nguồn chớ vội quên,\nĐi xa vẫn nhớ gốc vững bền.\nLời nói vội vàng dễ sinh chuyện,\nSuy xét kỹ càng mới vững nền.", work: "Cần chú ý kiểm tra kỹ số liệu, hợp đồng và file gửi khách hàng trước khi bấm gửi.", money: "Hạn chế mua sắm trả góp hoặc đầu tư theo lời rủ rê thiếu cơ sở.", love: "Quan tâm hỏi thăm bố mẹ, người lớn tuổi trong nhà nhiều hơn.", health: "Chú ý an toàn giao thông khi đi du xuân, chúc Tết.", advice: "Chậm lại 5 giây trước khi quyết định hoặc phản hồi tin nhắn lúc đang mệt.", luckyNum: "04, 13", luckyColor: "Xanh than, Be" },
+            { number: "19", level: "Trung Cát", levelClass: "level-good", title: "Ngọc Trác Thành Khí", poem: "Ngọc quý không mài chẳng sáng trong,\nNgười tài rèn giũa mới nên công.\nKhó khăn hôm nay là bài học,\nMai sau rạng rỡ giữa đám đông.", work: "Khối lượng việc có thể hơi nhiều lúc đầu năm nhưng giúp bạn lên tay rất nhanh.", money: "Tiền công xứng đáng với mồ hôi công sức bỏ ra.", love: "Cùng nhau vượt qua bận rộn giúp hai người thêm gắn kết.", health: "Nhớ giãn cơ và đứng dậy đi lại sau mỗi giờ ngồi máy tính.", advice: "Xem thử thách là cơ hội nâng cấp bản thân thay vì gánh nặng.", luckyNum: "05, 25", luckyColor: "Trắng ngọc, Xanh dương" },
+            { number: "20", level: "Thượng Cát", levelClass: "level-good", title: "Quý Nhân Tương Trợ", poem: "Đường xa chợt gặp bạn đồng hành,\nChia sẻ gánh nặng bước đường nhanh.\nMở lòng chân thật cùng giao hảo,\nViệc khó rồi đây cũng hóa thành.", work: "Dễ gặp được mentor, đối tác hoặc đồng nghiệp cực kỳ có tâm hỗ trợ.", money: "Có cơ hội hợp tác sinh lời tốt trong nửa đầu năm.", love: "Bạn bè làm mai mối hoặc tạo cơ hội gặp người phù hợp.", health: "Tinh thần vui vẻ, ít ốm vặt.", advice: "Giữ liên lạc với những mối quan hệ chất lượng và luôn sòng phẳng, uy tín.", luckyNum: "06, 28", luckyColor: "Vàng nhạt, Xanh mint" },
+            { number: "21", level: "Tiểu Cát", levelClass: "level-peace", title: "Hòa Khí Sinh Tài", poem: "Một câu nhường nhịn ấm lòng nhau,\nHòa khí trong nhà phúc về sau.\nCười tươi đón khách niềm vui tới,\nLộc nhỏ tự nhiên chảy dạt dào.", work: "Môi trường làm việc thân thiện, khách hàng dễ tính khi bạn giữ thái độ niềm nở.", money: "Bán hàng hoặc giao dịch thuận lợi nhờ sự khéo léo trong giao tiếp.", love: "Không khí gia đình đầm ấm, tiếng cười ngập tràn ngày xuân.", health: "Giảm hẳn căng thẳng đầu óc.", advice: "Nụ cười và sự tử tế là chìa khóa mở mọi cánh cửa trong năm Đinh Mùi.", luckyNum: "02, 16", luckyColor: "Hồng san hô, Kem" },
+            { number: "22", level: "Bình An", levelClass: "level-peace", title: "Hải Yến Hà Thanh", poem: "Biển lặng sông trong sóng êm đềm,\nNgày dài trôi nhẹ giấc ngủ êm.\nChẳng cầu sóng gió hay hư ảo,\nChỉ mong bình dị suốt ngày đêm.", work: "Mọi việc diễn ra theo đúng lịch trình dự kiến, ít biến cố bất ngờ.", money: "Đủ dùng, có thể dành dụm cho một chuyến du lịch nhỏ trong năm.", love: "An toàn, tin tưởng và đồng hành nhẹ nhàng.", health: "Tốt, thích hợp duy trì thói quen đi bộ buổi chiều.", advice: "Đôi khi sự bình thường, không sóng gió chính là phúc phần lớn nhất.", luckyNum: "08, 18", luckyColor: "Xanh da trời, Trắng" },
+            { number: "23", level: "Trung Cát", levelClass: "level-good", title: "Khai Môn Kiến Hỷ", poem: "Mở cửa đầu xuân đón ánh hồng,\nTin vui bay tới khắp non sông.\nViệc cũ khép tròn trang sử đẹp,\nChào đón hành trình mới thành công.", work: "Có tin vui về dự án mới, khách hàng mới hoặc kế hoạch mở rộng đầu năm.", money: "Mở hàng đầu năm suôn sẻ, dòng tiền lưu thông tốt.", love: "Nhận được lời chúc và sự quan tâm chân thành từ những người tưởng đã ít liên lạc.", health: "Khởi sắc rõ rệt khi giữ nhịp sinh hoạt điều độ.", advice: "Hãy chủ động gửi lời chúc đầu năm tới những người bạn trân quý.", luckyNum: "03, 29", luckyColor: "Đỏ rượu, Vàng kem" },
+            { number: "24", level: "Cẩn Trọng", levelClass: "level-caution", title: "Tam Tư Nhi Hậu Hành", poem: "Nghĩ kỹ ba lần trước bước chân,\nChớ nghe lời ngọt vội tin thân.\nGiữ tâm sáng suốt phân hư thực,\nAn nhiên tự tại suốt mùa xuân.", work: "Cẩn thận trước các lời hứa hẹn quá tốt hoặc deadline quá gấp thiếu thực tế.", money: "Bảo mật thông tin tài khoản, tránh click các đường link lạ dịp mua sắm Tết.", love: "Đừng để lời đồn bên ngoài ảnh hưởng tới niềm tin giữa hai người.", health: "Hạn chế đồ ngọt, dầu mỡ quá nhiều trong tuần Tết.", advice: "Cẩn tắc vô áy náy — sự tỉnh táo sẽ giúp bạn tránh được 99% rắc rối không đáng có.", luckyNum: "07, 14", luckyColor: "Xanh đen, Bạc" }
+        ];
+
+        // --- TEMPLE PILGRIMAGE MULTIPLAYER SIMULATION ---
+        const templeWorld = document.getElementById('templeWorld');
+        const pilgrimsLayer = document.getElementById('pilgrimsLayer');
+        const incenseSmokeWrap = document.getElementById('incenseSmokeWrap');
+        const templeNextBtn = document.getElementById('templeNextBtn');
+        const guideTitle = document.getElementById('guideTitle');
+        const guideDesc = document.getElementById('guideDesc');
+        const pillStep1 = document.getElementById('pillStep1');
+        const pillStep2 = document.getElementById('pillStep2');
+        const pillStep3 = document.getElementById('pillStep3');
+        const onlineCountText = document.getElementById('onlineCountText');
+
+        const botPilgrims = [
+            { name: "Minh Anh", emoji: "👩", bg: "#E0F2FE", x: 22, y: 66, msg: "Cầu năm mới nhiều đơn!" },
+            { name: "Tuấn Kiệt", emoji: "🧑", bg: "#FEF3C7", x: 74, y: 68, msg: "Chúc L.ASY phát tài 🧧" },
+            { name: "Bảo Ngọc", emoji: "👧", bg: "#FCE7F3", x: 35, y: 58, msg: "Thắp hương xong rồi nè" },
+            { name: "Ms Grace", emoji: "👑", bg: "#FEE2E2", x: 60, y: 54, msg: "Ai trốn KPI là chị thấy đó!" },
+            { name: "Hoàng Long", emoji: "👨", bg: "#DCFCE7", x: 82, y: 60, msg: "Đang lắc quẻ Đại Cát ✨" }
+        ];
+
+        const mePilgrim = { name: "Bạn", emoji: "🙏", bg: "#B93829", x: 48, y: 78, msg: "Đang đứng ngoài cổng chùa", isMe: true };
+        const pilgrimNodes = [];
+
+        function initPilgrims() {
+            pilgrimsLayer.innerHTML = '';
+            pilgrimNodes.length = 0;
+            [...botPilgrims, mePilgrim].forEach((p) => {
+                const wrap = document.createElement('div');
+                wrap.className = 'pilgrim' + (p.isMe ? ' is-me' : '');
+                wrap.style.left = p.x + '%';
+                wrap.style.top = p.y + '%';
+
+                const chat = document.createElement('div');
+                chat.className = 'pilgrim-chat';
+                chat.textContent = p.msg;
+
+                const av = document.createElement('div');
+                av.className = 'pilgrim-avatar';
+                av.style.background = p.bg;
+                av.textContent = p.emoji;
+
+                const nm = document.createElement('div');
+                nm.className = 'pilgrim-name';
+                nm.textContent = p.name;
+
+                wrap.appendChild(chat);
+                wrap.appendChild(av);
+                wrap.appendChild(nm);
+                pilgrimsLayer.appendChild(wrap);
+                pilgrimNodes.push({ data: p, el: wrap, chatEl: chat });
+            });
+        }
+        initPilgrims();
+
+        // Animate online crowd wandering around temple
+        const randomWishes = [
+            "Cầu sức khỏe & bình an 🌸",
+            "Đinh Mùi 2027 rực rỡ!",
+            "Chúc team vượt KPI 150%",
+            "Xin quẻ Đại Cát đầu năm",
+            "Thắp hương thơm quá 🙏"
+        ];
+        setInterval(() => {
+            pilgrimNodes.forEach((node) => {
+                if (node.data.isMe) return;
+                const nx = 18 + Math.random() * 64;
+                const ny = 52 + Math.random() * 24;
+                node.el.style.left = nx.toFixed(1) + '%';
+                node.el.style.top = ny.toFixed(1) + '%';
+                if (Math.random() < 0.35) {
+                    node.chatEl.textContent = randomWishes[Math.floor(Math.random() * randomWishes.length)];
+                }
+            });
+            const count = 14 + Math.floor(Math.random() * 7);
+            onlineCountText.textContent = `${count} người đang đi chùa`;
+        }, 3800);
+
+        let templeStep = 1; // 1: outside gate, 2: courtyard (light incense), 3: inside hall (open 3D popup)
+
+        function setTempleStep(step) {
+            templeStep = step;
+            const meNode = pilgrimNodes.find(n => n.data.isMe);
+
+            if (step === 1) {
+                templeWorld.className = 'temple-world';
+                incenseSmokeWrap.classList.add('hidden');
+                if (meNode) {
+                    meNode.el.style.left = '48%';
+                    meNode.el.style.top = '78%';
+                    meNode.chatEl.textContent = 'Đang đứng ngoài cổng chùa';
+                }
+                pillStep1.className = 'step-pill active';
+                pillStep2.className = 'step-pill';
+                pillStep3.className = 'step-pill';
+                guideTitle.textContent = 'Bước 1: Đang đứng ngoài Cổng Tam Quan';
+                guideDesc.textContent = 'Tiến vào sân chùa cùng mọi người để thắp hương cầu may năm Đinh Mùi 2027.';
+                templeNextBtn.innerHTML = '<span>Bước vào sân chùa</span><span class="guide-arrow-bounce">→</span>';
+            } else if (step === 2) {
+                templeWorld.className = 'temple-world zoom-courtyard';
+                if (meNode) {
+                    meNode.el.style.left = '48%';
+                    meNode.el.style.top = '58%';
+                    meNode.chatEl.textContent = 'Tới Lư Hương rồi 🙏';
+                }
+                pillStep1.className = 'step-pill done';
+                pillStep2.className = 'step-pill active';
+                pillStep3.className = 'step-pill';
+                guideTitle.textContent = 'Bước 2: Thắp hương tại Lư Hương';
+                guideDesc.textContent = 'Nhấn nút để thắp nén hương thơm trước khi vào chính điện xin quẻ.';
+                templeNextBtn.innerHTML = '<span>🕯️ Thắp Hương Thành Tâm</span>';
+            } else if (step === 3) {
+                templeWorld.className = 'temple-world zoom-hall';
+                incenseSmokeWrap.classList.remove('hidden');
+                if (meNode) {
+                    meNode.el.style.left = '48%';
+                    meNode.el.style.top = '48%';
+                    meNode.chatEl.textContent = 'Đã thắp hương ✨ Vào lắc quẻ!';
+                }
+                pillStep1.className = 'step-pill done';
+                pillStep2.className = 'step-pill done';
+                pillStep3.className = 'step-pill active';
+                guideTitle.textContent = 'Bước 3: Vào Chính Điện Lắc Quẻ 3D';
+                guideDesc.textContent = 'Mũi tên chỉ đường vào chính điện! Nhấn để mở ống xăm 3D.';
+                templeNextBtn.innerHTML = '<span class="guide-arrow-bounce">➔</span><span>Vào Trong Lắc Quẻ 3D</span>';
+            }
+        }
+
+        templeNextBtn.addEventListener('click', () => {
+            playBambooClick(0.9);
+            if (templeStep === 1) {
+                setTempleStep(2);
+            } else if (templeStep === 2) {
+                setTempleStep(3);
+            } else {
+                openFortuneModal();
+            }
+        });
+
+        // --- 3D FORTUNE POPUP MODAL (MIN 5 CLICKS TO SHAKE) ---
+        const fortuneModal = document.getElementById('fortuneModal');
+        const closeFortuneModalBtn = document.getElementById('closeFortuneModalBtn');
         const canvas3dWrap = document.getElementById('canvas3dWrap');
         const canvasEl = document.getElementById('fortune3dCanvas');
         const stickBadgeOverlay = document.getElementById('stickBadgeOverlay');
-        const shakeStartBtn = document.getElementById('shakeStartBtn');
-        const shakerHint = document.getElementById('shakerHint');
+        const shakeClickBtn = document.getElementById('shakeClickBtn');
+        const drawStickBtn = document.getElementById('drawStickBtn');
+        const shakeCountText = document.getElementById('shakeCountText');
+        const shakeProgressFill = document.getElementById('shakeProgressFill');
+        const shakeGuideLabel = document.getElementById('shakeGuideLabel');
         const fortuneSlip = document.getElementById('fortuneSlip');
 
-        let isShaking = false;
+        const MIN_SHAKES = 5;
+        let shakeClicks = 0;
         let currentFortune = null;
         let threeReady = false;
         let scene, camera, renderer, tubeGroup, stickMeshes = [], chosenMesh = null;
-        let userRotY = 0, userRotX = 0.25, isDragging = false, prevPointer = { x: 0, y: 0 };
-        let shakeState = { active: false, start: 0, duration: 1750, ejecting: false, ejectStart: 0 };
-        let lastSoundTime = 0;
+        let impulseVel = 0, ejecting = false, ejectStart = 0, lastShakeImpulseTime = 0;
 
         function initThreeScene() {
             if (typeof THREE === 'undefined') return false;
             try {
-                const w = canvas3dWrap.clientWidth || 600;
-                const h = canvas3dWrap.clientHeight || 310;
-
+                const w = canvas3dWrap.clientWidth || 580;
+                const h = canvas3dWrap.clientHeight || 290;
                 scene = new THREE.Scene();
                 camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 100);
-                camera.position.set(0, 1.5, 6.2);
+                camera.position.set(0, 1.5, 6.1);
                 camera.lookAt(0, 0.2, 0);
 
                 renderer = new THREE.WebGLRenderer({ canvas: canvasEl, antialias: true, alpha: true });
                 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
                 renderer.setSize(w, h, false);
 
-                // Warm studio lighting
-                const ambient = new THREE.AmbientLight(0xfff5e4, 0.75);
-                scene.add(ambient);
-
+                scene.add(new THREE.AmbientLight(0xfff5e4, 0.8));
                 const keyLight = new THREE.DirectionalLight(0xfff8ed, 1.15);
                 keyLight.position.set(4, 7, 5);
                 scene.add(keyLight);
-
                 const rimLight = new THREE.DirectionalLight(0xffd28a, 0.55);
                 rimLight.position.set(-5, 3, -4);
                 scene.add(rimLight);
 
-                // Ground shadow disc
-                const shadowGeo = new THREE.CircleGeometry(1.35, 32);
-                const shadowMat = new THREE.MeshBasicMaterial({ color: 0x3b2a1a, transparent: true, opacity: 0.16 });
-                const shadowDisc = new THREE.Mesh(shadowGeo, shadowMat);
+                const shadowDisc = new THREE.Mesh(
+                    new THREE.CircleGeometry(1.35, 32),
+                    new THREE.MeshBasicMaterial({ color: 0x3b2a1a, transparent: true, opacity: 0.16 })
+                );
                 shadowDisc.rotation.x = -Math.PI / 2;
                 shadowDisc.position.y = -1.45;
                 scene.add(shadowDisc);
@@ -1393,57 +1711,42 @@
                 tubeGroup = new THREE.Group();
                 scene.add(tubeGroup);
 
-                // Bamboo Outer Cylinder (open-ended look with inner dark cavity)
-                const bodyGeo = new THREE.CylinderGeometry(0.88, 0.82, 2.35, 36, 1, false);
-                const bodyMat = new THREE.MeshStandardMaterial({
-                    color: 0x8b4f24,
-                    roughness: 0.48,
-                    metalness: 0.08
-                });
-                const bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
+                const bodyMesh = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.88, 0.82, 2.35, 36),
+                    new THREE.MeshStandardMaterial({ color: 0x8b4f24, roughness: 0.48, metalness: 0.08 })
+                );
                 bodyMesh.position.y = -0.15;
                 tubeGroup.add(bodyMesh);
 
-                // Dark inner cavity at top
-                const cavityGeo = new THREE.CylinderGeometry(0.76, 0.76, 0.08, 32);
-                const cavityMat = new THREE.MeshBasicMaterial({ color: 0x1e1108 });
-                const cavityMesh = new THREE.Mesh(cavityGeo, cavityMat);
+                const cavityMesh = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.76, 0.76, 0.08, 32),
+                    new THREE.MeshBasicMaterial({ color: 0x1e1108 })
+                );
                 cavityMesh.position.y = 1.01;
                 tubeGroup.add(cavityMesh);
 
-                // Gold decorative rings
                 const ringMat = new THREE.MeshStandardMaterial({ color: 0xd99b26, roughness: 0.28, metalness: 0.65 });
                 [0.98, 0.62, -0.95].forEach((yPos, idx) => {
                     const r = idx === 0 ? 0.90 : idx === 1 ? 0.885 : 0.84;
-                    const ringGeo = new THREE.TorusGeometry(r, 0.032, 12, 36);
-                    const ring = new THREE.Mesh(ringGeo, ringMat);
+                    const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.032, 12, 36), ringMat);
                     ring.rotation.x = Math.PI / 2;
                     ring.position.y = yPos;
                     tubeGroup.add(ring);
                 });
 
-                // Crimson front plaque ("L.ASY")
-                const plaqueGeo = new THREE.BoxGeometry(0.68, 1.02, 0.06);
-                const plaqueMat = new THREE.MeshStandardMaterial({ color: 0xb93829, roughness: 0.4 });
-                const plaque = new THREE.Mesh(plaqueGeo, plaqueMat);
+                const plaque = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.68, 1.02, 0.06),
+                    new THREE.MeshStandardMaterial({ color: 0xb93829, roughness: 0.4 })
+                );
                 plaque.position.set(0, -0.12, 0.85);
                 tubeGroup.add(plaque);
 
-                const plaqueBorderGeo = new THREE.BoxGeometry(0.74, 1.08, 0.04);
-                const plaqueBorder = new THREE.Mesh(plaqueBorderGeo, ringMat);
-                plaqueBorder.position.set(0, -0.12, 0.84);
-                tubeGroup.add(plaqueBorder);
-
-                // 20 Real 3D Fortune Sticks inside cylinder
                 const stickGeo = new THREE.BoxGeometry(0.085, 2.05, 0.035);
                 const tipGeo = new THREE.BoxGeometry(0.088, 0.28, 0.038);
                 const stickWoodMat = new THREE.MeshStandardMaterial({ color: 0xe6c48c, roughness: 0.55 });
                 const stickTipMat = new THREE.MeshStandardMaterial({ color: 0xc43424, roughness: 0.4 });
                 const chosenMat = new THREE.MeshStandardMaterial({
-                    color: 0xffdf7a,
-                    emissive: 0xd99b26,
-                    emissiveIntensity: 0.45,
-                    roughness: 0.25
+                    color: 0xffdf7a, emissive: 0xd99b26, emissiveIntensity: 0.5, roughness: 0.25
                 });
 
                 stickMeshes = [];
@@ -1466,7 +1769,6 @@
                     sGroup.position.set(bx, by, bz);
                     sGroup.rotation.set(rx, angle, rz);
                     sGroup.userData = { bx, by, bz, rx, ry: angle, rz, phase: i * 1.13, shaft, stickWoodMat, chosenMat };
-
                     tubeGroup.add(sGroup);
                     stickMeshes.push(sGroup);
                 }
@@ -1474,16 +1776,15 @@
                 threeReady = true;
                 startRenderLoop();
                 return true;
-            } catch (err) {
-                console.warn("WebGL init failed, using Canvas fallback:", err);
+            } catch (e) {
                 return false;
             }
         }
 
         function resizeThree() {
             if (!threeReady || !renderer || !camera) return;
-            const w = canvas3dWrap.clientWidth || 600;
-            const h = canvas3dWrap.clientHeight || 310;
+            const w = canvas3dWrap.clientWidth || 580;
+            const h = canvas3dWrap.clientHeight || 290;
             camera.aspect = w / h;
             camera.updateProjectionMatrix();
             renderer.setSize(w, h, false);
@@ -1495,76 +1796,34 @@
                 requestAnimationFrame(tick);
                 if (!threeReady) return;
 
-                if (shakeState.active) {
-                    const elapsed = now - shakeState.start;
-                    const t = Math.min(elapsed / shakeState.duration, 1);
-                    const env = Math.sin(t * Math.PI) * (1 - t * 0.2);
-
-                    tubeGroup.rotation.z = Math.sin(elapsed * 0.032) * 0.36 * env;
-                    tubeGroup.rotation.x = userRotX + Math.cos(elapsed * 0.025) * 0.22 * env;
-                    tubeGroup.rotation.y = userRotY + Math.sin(elapsed * 0.018) * 0.28 * env;
-                    tubeGroup.position.y = Math.abs(Math.sin(elapsed * 0.032)) * 0.36 * env;
-                    tubeGroup.position.x = Math.sin(elapsed * 0.045) * 0.18 * env;
-
+                if (impulseVel > 0.01) {
+                    const t = now - lastShakeImpulseTime;
+                    tubeGroup.rotation.z = Math.sin(t * 0.036) * 0.35 * impulseVel;
+                    tubeGroup.rotation.x = 0.22 + Math.cos(t * 0.028) * 0.2 * impulseVel;
+                    tubeGroup.position.y = Math.abs(Math.sin(t * 0.036)) * 0.32 * impulseVel;
                     stickMeshes.forEach((s) => {
                         const d = s.userData;
-                        const jy = Math.abs(Math.sin(elapsed * 0.05 + d.phase)) * 0.35 * env;
-                        const jrz = Math.sin(elapsed * 0.048 + d.phase) * 0.16 * env;
-                        const jrx = Math.cos(elapsed * 0.042 + d.phase) * 0.12 * env;
-                        s.position.y = d.by + jy;
-                        s.rotation.z = d.rz + jrz;
-                        s.rotation.x = d.rx + jrx;
+                        s.position.y = d.by + Math.abs(Math.sin(t * 0.05 + d.phase)) * 0.35 * impulseVel;
+                        s.rotation.z = d.rz + Math.sin(t * 0.05 + d.phase) * 0.18 * impulseVel;
                     });
+                    impulseVel *= 0.935;
+                } else {
+                    tubeGroup.rotation.z *= 0.85;
+                    tubeGroup.rotation.x += (0.24 - tubeGroup.rotation.x) * 0.1;
+                    tubeGroup.position.y *= 0.85;
+                    tubeGroup.rotation.y += 0.004;
+                }
 
-                    if (now - lastSoundTime > 90 + Math.random() * 55 && t < 0.9) {
-                        playBambooClick(0.6 + env * 0.5);
-                        lastSoundTime = now;
-                    }
-
-                    if (t >= 1) {
-                        shakeState.active = false;
-                        shakeState.ejecting = true;
-                        shakeState.ejectStart = now;
-                        tubeGroup.position.set(0, 0, 0);
-                        tubeGroup.rotation.set(userRotX, userRotY, 0);
-
-                        chosenMesh = stickMeshes[Math.floor(Math.random() * stickMeshes.length)];
-                        chosenMesh.userData.shaft.material = chosenMesh.userData.chosenMat;
-                        playBambooClick(1.25);
-
-                        currentFortune = realFortunes[Math.floor(Math.random() * realFortunes.length)];
-                        stickBadgeOverlay.textContent = `THẺ SỐ ${currentFortune.number}`;
-                        stickBadgeOverlay.classList.remove('hidden');
-                    }
-                } else if (shakeState.ejecting && chosenMesh) {
-                    const eElapsed = now - shakeState.ejectStart;
-                    const p = Math.min(eElapsed / 650, 1);
+                if (ejecting && chosenMesh) {
+                    const p = Math.min((now - ejectStart) / 650, 1);
                     const ease = 1 - Math.pow(1 - p, 3);
                     const d = chosenMesh.userData;
-
-                    chosenMesh.position.set(
-                        d.bx * (1 - ease),
-                        d.by + ease * 1.45,
-                        d.bz + ease * 0.75
-                    );
-                    chosenMesh.rotation.set(
-                        d.rx * (1 - ease) + ease * 0.25,
-                        d.ry + ease * Math.PI * 2,
-                        d.rz * (1 - ease)
-                    );
-
+                    chosenMesh.position.set(d.bx * (1 - ease), d.by + ease * 1.48, d.bz + ease * 0.78);
+                    chosenMesh.rotation.set(d.rx * (1 - ease) + ease * 0.25, d.ry + ease * Math.PI * 2, d.rz * (1 - ease));
                     if (p >= 1) {
-                        shakeState.ejecting = false;
-                        completeDrawReveal();
+                        ejecting = false;
+                        renderFortuneSlip(currentFortune);
                     }
-                } else {
-                    // Gentle idle float + pointer drag orientation
-                    if (!isDragging) {
-                        userRotY += 0.004;
-                    }
-                    tubeGroup.rotation.x += (userRotX - tubeGroup.rotation.x) * 0.12;
-                    tubeGroup.rotation.y += (userRotY - tubeGroup.rotation.y) * 0.12;
-                    tubeGroup.rotation.z *= 0.85;
                 }
 
                 renderer.render(scene, camera);
@@ -1572,43 +1831,65 @@
             requestAnimationFrame(tick);
         }
 
-        function reset3DSticks() {
+        function resetShakeSession() {
+            shakeClicks = 0;
+            ejecting = false;
+            currentFortune = null;
+            fortuneSlip.classList.add('hidden');
             stickBadgeOverlay.classList.add('hidden');
-            stickMeshes.forEach((s) => {
-                const d = s.userData;
-                d.shaft.material = d.stickWoodMat;
-                s.position.set(d.bx, d.by, d.bz);
-                s.rotation.set(d.rx, d.ry, d.rz);
-            });
-            chosenMesh = null;
+            if (threeReady) {
+                stickMeshes.forEach((s) => {
+                    const d = s.userData;
+                    d.shaft.material = d.stickWoodMat;
+                    s.position.set(d.bx, d.by, d.bz);
+                    s.rotation.set(d.rx, d.ry, d.rz);
+                });
+                chosenMesh = null;
+            }
+            updateShakeUI();
         }
 
-        function trigger3DShake() {
-            if (isShaking) return;
-            isShaking = true;
-            shakeStartBtn.disabled = true;
-            shakeStartBtn.textContent = '⏳ Đang lắc ống xăm 3D...';
-            shakerHint.textContent = 'Thành tâm khấn nguyện năm mới Đinh Mùi 2027...';
-            fortuneSlip.classList.add('hidden');
+        function updateShakeUI() {
+            const pct = Math.min((shakeClicks / MIN_SHAKES) * 100, 100);
+            shakeProgressFill.style.width = pct + '%';
+            shakeCountText.textContent = `${shakeClicks} / ${MIN_SHAKES} lần`;
 
-            if (threeReady) {
-                reset3DSticks();
-                shakeState.active = true;
-                shakeState.start = performance.now();
+            if (shakeClicks < MIN_SHAKES) {
+                const remain = MIN_SHAKES - shakeClicks;
+                shakeGuideLabel.textContent = `Nhấn vào ống xăm 3D thêm ít nhất ${remain} lần nữa để mở quẻ`;
+                drawStickBtn.disabled = true;
+                drawStickBtn.textContent = `✨ Rút Quẻ (Còn ${remain} lần)`;
             } else {
-                // Graceful fallback if WebGL unavailable
-                playBambooClick(1.1);
-                currentFortune = realFortunes[Math.floor(Math.random() * realFortunes.length)];
-                setTimeout(completeDrawReveal, 700);
+                shakeGuideLabel.textContent = `Đã đủ ${shakeClicks} lần lắc! Có thể lắc thêm hoặc bấm Rút Quẻ`;
+                drawStickBtn.disabled = false;
+                drawStickBtn.textContent = `✨ Rút Quẻ Ngay`;
             }
         }
 
-        function completeDrawReveal() {
-            renderFortuneSlip(currentFortune);
-            isShaking = false;
-            shakeStartBtn.disabled = false;
-            shakeStartBtn.textContent = '🎋 Lắc Lại Quẻ Khác';
-            shakerHint.textContent = `Đã rút được Quẻ Số ${currentFortune.number} — ${currentFortune.title}`;
+        function handleShakeClick() {
+            if (ejecting) return;
+            shakeClicks++;
+            impulseVel = 1.05;
+            lastShakeImpulseTime = performance.now();
+            playBambooClick(0.85 + Math.min(shakeClicks, 6) * 0.06);
+            updateShakeUI();
+        }
+
+        function handleDrawStick() {
+            if (shakeClicks < MIN_SHAKES || ejecting) return;
+            currentFortune = realFortunes[Math.floor(Math.random() * realFortunes.length)];
+            stickBadgeOverlay.textContent = `THẺ SỐ ${currentFortune.number}`;
+            stickBadgeOverlay.classList.remove('hidden');
+            playBambooClick(1.3);
+
+            if (threeReady && stickMeshes.length > 0) {
+                chosenMesh = stickMeshes[Math.floor(Math.random() * stickMeshes.length)];
+                chosenMesh.userData.shaft.material = chosenMesh.userData.chosenMat;
+                ejecting = true;
+                ejectStart = performance.now();
+            } else {
+                renderFortuneSlip(currentFortune);
+            }
         }
 
         function renderFortuneSlip(f) {
@@ -1616,7 +1897,6 @@
             const levelEl = document.getElementById('slipLevel');
             levelEl.textContent = f.level;
             levelEl.className = `slip-level ${f.levelClass}`;
-
             document.getElementById('slipTitle').textContent = f.title;
             document.getElementById('slipPoem').textContent = f.poem;
             document.getElementById('aspectWork').textContent = f.work;
@@ -1632,33 +1912,21 @@
             fortuneSlip.classList.add('flip-reveal');
         }
 
-        // Pointer drag to rotate 3D cylinder + click to shake
-        let dragMoved = false;
-        canvas3dWrap.addEventListener('pointerdown', (e) => {
-            isDragging = true;
-            dragMoved = false;
-            prevPointer = { x: e.clientX, y: e.clientY };
-        });
-
-        window.addEventListener('pointermove', (e) => {
-            if (!isDragging) return;
-            const dx = e.clientX - prevPointer.x;
-            const dy = e.clientY - prevPointer.y;
-            if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragMoved = true;
-            userRotY += dx * 0.012;
-            userRotX = Math.max(-0.4, Math.min(0.65, userRotX + dy * 0.008));
-            prevPointer = { x: e.clientX, y: e.clientY };
-        });
-
-        window.addEventListener('pointerup', () => {
-            if (isDragging && !dragMoved && !fortuneStage.classList.contains('hidden')) {
-                trigger3DShake();
+        function openFortuneModal() {
+            fortuneModal.classList.remove('hidden');
+            if (!threeReady) {
+                initThreeScene();
+            } else {
+                resizeThree();
             }
-            isDragging = false;
-        });
+            resetShakeSession();
+        }
 
-        shakeStartBtn.addEventListener('click', trigger3DShake);
-        document.getElementById('reshakeBtn').addEventListener('click', trigger3DShake);
+        closeFortuneModalBtn.addEventListener('click', () => fortuneModal.classList.add('hidden'));
+        canvas3dWrap.addEventListener('click', handleShakeClick);
+        shakeClickBtn.addEventListener('click', handleShakeClick);
+        drawStickBtn.addEventListener('click', handleDrawStick);
+        document.getElementById('reshakeBtn').addEventListener('click', resetShakeSession);
 
         const copyFortuneBtn = document.getElementById('copyFortuneBtn');
         copyFortuneBtn.addEventListener('click', () => {
@@ -1666,30 +1934,62 @@
             const f = currentFortune;
             const text =
                 `🎋 L.ASY TẾT ĐINH MÙI 2027 — QUẺ SỐ ${f.number} (${f.level})\n` +
-                `✨ ${f.title}\n\n` +
-                `${f.poem}\n\n` +
-                `• Công danh: ${f.work}\n` +
-                `• Tài lộc: ${f.money}\n` +
-                `• Tình duyên: ${f.love}\n` +
-                `• Sức khỏe: ${f.health}\n` +
-                `• Lời khuyên: ${f.advice}\n` +
-                `🍀 Số may mắn: ${f.luckyNum} | Màu hợp: ${f.luckyColor}`;
-
+                `✨ ${f.title}\n\n${f.poem}\n\n` +
+                `• Công danh: ${f.work}\n• Tài lộc: ${f.money}\n• Tình duyên: ${f.love}\n• Sức khỏe: ${f.health}\n` +
+                `• Lời khuyên: ${f.advice}\n🍀 Số may mắn: ${f.luckyNum} | Màu hợp: ${f.luckyColor}`;
             navigator.clipboard.writeText(text).then(() => {
                 copyFortuneBtn.textContent = '✓ Đã sao chép';
                 setTimeout(() => { copyFortuneBtn.textContent = 'Sao chép quẻ'; }, 1800);
             });
         });
 
-        // --- Redesigned Interactive "Nghỉ Việc" Logic ---
-        const quitStage = document.getElementById('quitStage');
-        const quitFormView = document.getElementById('quitFormView');
-        const quitTrapView = document.getElementById('quitTrapView');
+        // --- INTEGRATED "CÀY CUỐC VS NGHỈ VIỆC" COMPATIBILITY ---
+        const qMoney = document.getElementById('qMoney');
+        const qKpi = document.getElementById('qKpi');
+        const qGoal = document.getElementById('qGoal');
+        const qMood = document.getElementById('qMood');
+        const workPctLabel = document.getElementById('workPctLabel');
+        const quitPctLabel = document.getElementById('quitPctLabel');
+        const workMeterFill = document.getElementById('workMeterFill');
+        const careerVerdictBox = document.getElementById('careerVerdictBox');
+        const graceTauntBox = document.getElementById('graceTauntBox');
         const runawayQuitBtn = document.getElementById('runawayQuitBtn');
         const stayBtn = document.getElementById('stayBtn');
-        const acceptFateBtn = document.getElementById('acceptFateBtn');
-        const graceTauntBox = document.getElementById('graceTauntBox');
         const quitArena = document.getElementById('quitArena');
+        const quitTrapView = document.getElementById('quitTrapView');
+        const acceptFateBtn = document.getElementById('acceptFateBtn');
+
+        let dodgeCount = 0;
+
+        function computeCareerCompatibility() {
+            const selects = [qMoney, qKpi, qGoal, qMood];
+            let workScore = 0;
+            selects.forEach((s) => {
+                if (s.value === 'work') workScore += 25;
+                else if (s.value === 'mid') workScore += 14;
+                else workScore += 4;
+            });
+            const workPct = Math.min(96, Math.max(12, workScore));
+            const quitPct = 100 - workPct;
+
+            workPctLabel.textContent = `💪 Hợp Cày Cuốc: ${workPct}%`;
+            quitPctLabel.textContent = `🚪 Muốn Nghỉ Việc: ${quitPct}%`;
+            workMeterFill.style.width = workPct + '%';
+
+            if (workPct >= 70) {
+                careerVerdictBox.innerHTML = `<strong>Kết luận: Chiến thần KPI L.ASY (${workPct}% hợp Cày Cuốc)!</strong> Ví tiền và mục tiêu Tết 2027 đang gọi tên bạn. Cày hết mình để cuối năm hình lên bảng vàng nhé!`;
+                graceTauntBox.textContent = `💖 Ms Grace: "Chị biết ngay mà! Em sinh ra để cày KPI cùng L.ASY!"`;
+            } else if (workPct >= 45) {
+                careerVerdictBox.innerHTML = `<strong>Kết luận: Nửa muốn nghỉ, nửa thèm thưởng Tết (${workPct}% Cày Cuốc / ${quitPct}% Nghỉ).</strong> Uống ngay một ly trà sữa rồi chốt nốt KPI tuần này là nhẹ đầu ngay!`;
+                graceTauntBox.textContent = `🧋 Ms Grace: "Đừng dao động em ơi, thưởng Tết Đinh Mùi đang chờ phía trước!"`;
+            } else {
+                careerVerdictBox.innerHTML = `<strong>Kết luận: Tín hiệu muốn "bay màu" (${quitPct}% muốn Nghỉ Việc)!</strong> Nhưng tiếc là cổng HR vẫn do Ms Grace kiểm soát... thử bấm nút Nộp Đơn xem!`;
+                graceTauntBox.textContent = `😤 Ms Grace: "Em định bỏ chị thật hả? Thử bấm nút Nộp Đơn bên dưới xem được không!"`;
+            }
+        }
+
+        [qMoney, qKpi, qGoal, qMood].forEach((sel) => sel.addEventListener('change', computeCareerCompatibility));
+        computeCareerCompatibility();
 
         const taunts = [
             "😤 Ms Grace: 'Chị chưa duyệt đâu nhé! Định bỏ chị đi đâu?'",
@@ -1697,22 +1997,12 @@
             "🧋 Ms Grace: 'Nghỉ làm gì, ở lại chị bao trà sữa!'",
             "🔒 Hệ thống HR: 'Nút nộp đơn đã bị Ms Grace khóa tọa độ!'"
         ];
-        let dodgeCount = 0;
-
-        function resetQuitStage() {
-            dodgeCount = 0;
-            quitFormView.classList.remove('hidden');
-            quitTrapView.classList.add('hidden');
-            runawayQuitBtn.style.transform = 'translate(0, 0)';
-            stayBtn.style.transform = 'scale(1)';
-            graceTauntBox.textContent = "👀 Hệ thống HR đang theo dõi: Chị Grace vừa nhận thông báo em mở form này!";
-        }
 
         function dodgeQuitButton() {
             if (dodgeCount < 4) {
                 const maxX = Math.min(130, (quitArena.clientWidth || 320) * 0.28);
                 const dx = (Math.random() > 0.5 ? 1 : -1) * (35 + Math.random() * maxX);
-                const dy = (Math.random() > 0.5 ? 1 : -1) * (10 + Math.random() * 24);
+                const dy = (Math.random() > 0.5 ? 1 : -1) * (10 + Math.random() * 22);
                 runawayQuitBtn.style.transform = `translate(${dx.toFixed(0)}px, ${dy.toFixed(0)}px)`;
                 stayBtn.style.transform = `scale(${1 + (dodgeCount + 1) * 0.04})`;
                 graceTauntBox.textContent = taunts[dodgeCount % taunts.length];
@@ -1726,72 +2016,44 @@
             if (dodgeCount < 3) {
                 dodgeQuitButton();
             } else {
-                quitFormView.classList.add('hidden');
+                quitArena.classList.add('hidden');
                 quitTrapView.classList.remove('hidden');
                 quitTrapView.classList.add('animate-pop');
             }
         });
 
-        function returnToWork(msg) {
-            hideAllAreas();
-            messageArea.innerText = msg;
-            messageArea.classList.remove('hidden');
-            messageArea.classList.remove('animate-pop');
-            void messageArea.offsetWidth;
-            messageArea.classList.add('animate-pop');
-        }
-
-        stayBtn.addEventListener('click', () => returnToWork("✨ Quyết định sáng suốt! Quay lại cày KPI cùng Ms Grace nhé 💪"));
-        acceptFateBtn.addEventListener('click', () => returnToWork("🧋 Đã nhận 01 ly trà sữa & gia hạn hợp đồng thành công! Chiến tiếp thôi nào 👋"));
-
-        // --- Main Navigation Buttons ---
-        const motivationBtn = document.getElementById('motivationBtn');
-        const fortuneBtn = document.getElementById('fortuneBtn');
-        const quitBtn = document.getElementById('quitBtn');
-        const messageArea = document.getElementById('messageArea');
-        const fortuneStage = document.getElementById('fortuneStage');
-
-        function hideAllAreas() {
-            messageArea.classList.add('hidden');
-            fortuneStage.classList.add('hidden');
-            quitStage.classList.add('hidden');
-        }
-
-        motivationBtn.addEventListener('click', () => {
-            hideAllAreas();
-            const randomQuote = motivationQuotes[Math.floor(Math.random() * motivationQuotes.length)];
-            messageArea.innerText = `✨ "${randomQuote}"`;
-            messageArea.classList.remove('hidden');
-            messageArea.classList.remove('animate-pop');
-            void messageArea.offsetWidth;
-            messageArea.classList.add('animate-pop');
+        stayBtn.addEventListener('click', () => {
+            graceTauntBox.textContent = "✨ Quyết định quá chuẩn! Chúc bạn bứt phá KPI rực rỡ đón Tết Đinh Mùi 2027!";
+            runawayQuitBtn.style.transform = 'translate(0, 0)';
+            stayBtn.style.transform = 'scale(1)';
+            dodgeCount = 0;
         });
 
-        fortuneBtn.addEventListener('click', () => {
-            hideAllAreas();
-            fortuneStage.classList.remove('hidden');
-            fortuneStage.classList.remove('animate-pop');
-            void fortuneStage.offsetWidth;
-            fortuneStage.classList.add('animate-pop');
-
-            if (!threeReady) {
-                initThreeScene();
-            } else {
-                resizeThree();
-            }
-
-            if (!currentFortune) {
-                setTimeout(trigger3DShake, 260);
-            }
+        acceptFateBtn.addEventListener('click', () => {
+            quitTrapView.classList.add('hidden');
+            quitArena.classList.remove('hidden');
+            runawayQuitBtn.style.transform = 'translate(0, 0)';
+            stayBtn.style.transform = 'scale(1)';
+            dodgeCount = 0;
+            graceTauntBox.textContent = "🧋 Đã chốt 01 ly trà sữa & gia hạn hợp đồng cày KPI! Chiến tiếp thôi nào!";
         });
 
-        quitBtn.addEventListener('click', () => {
-            hideAllAreas();
-            resetQuitStage();
-            quitStage.classList.remove('hidden');
-            quitStage.classList.remove('animate-pop');
-            void quitStage.offsetWidth;
-            quitStage.classList.add('animate-pop');
+        // --- Mode Switchers ---
+        const templeModeBtn = document.getElementById('templeModeBtn');
+        const careerModeBtn = document.getElementById('careerModeBtn');
+        const templeGameSection = document.getElementById('templeGameSection');
+        const careerGameSection = document.getElementById('careerGameSection');
+
+        templeModeBtn.addEventListener('click', () => {
+            careerGameSection.classList.add('hidden');
+            templeGameSection.classList.remove('hidden');
+            templeGameSection.classList.add('animate-pop');
+        });
+
+        careerModeBtn.addEventListener('click', () => {
+            templeGameSection.classList.add('hidden');
+            careerGameSection.classList.remove('hidden');
+            careerGameSection.classList.add('animate-pop');
         });
     </script>
 </body>
