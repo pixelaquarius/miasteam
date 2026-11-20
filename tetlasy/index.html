@@ -478,6 +478,21 @@
             .quest-banner { top: 56px; font-size: 0.7rem; }
             .stick-engraved-text { font-size: 1rem; }
         }
+        /* ===== Character customizer v2 ===== */
+        .cust-row { text-align: left; margin-bottom: 12px; }
+        .cust-name-wrap { display: flex; gap: 6px; }
+        .cust-name-wrap input { flex: 1; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border-strong); font-family: 'Be Vietnam Pro', sans-serif; }
+        .dice-btn { padding: 0 12px; border-radius: 10px; border: 1px solid var(--border-strong); background: var(--gold-soft); cursor: pointer; font-size: 1.05rem; }
+        .seg-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+        .seg-btn { padding: 9px; border-radius: 10px; border: 1px solid var(--border-sand); background: var(--bg-elevated); cursor: pointer; font-family: 'Be Vietnam Pro', sans-serif; font-weight: 600; font-size: 0.86rem; }
+        .seg-btn.active { border-color: var(--crimson); background: var(--crimson-soft); color: var(--crimson); }
+        .swatch-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+        .swatch { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px var(--border-strong); cursor: pointer; }
+        .swatch.active { box-shadow: 0 0 0 2px var(--crimson); transform: scale(1.1); }
+        #custPreviewCanvas { width: 100%; height: 190px; display: block; border-radius: 14px; background: radial-gradient(circle at 50% 35%, #fff8ec, #ead9bf); margin-bottom: 12px; }
+        .incense-pill { font-family: 'JetBrains Mono', monospace; }
+        .incense-pill.full { background: var(--crimson-soft); color: var(--crimson); border-color: var(--crimson); }
+
     </style>
 </head>
 <body>
@@ -487,7 +502,6 @@
     <!-- Top HUD -->
     <div class="hud-top">
         <div class="hud-group">
-            <a href="../index.html" class="hud-pill">← Studio</a>
             <button id="openCustomBtn" class="hud-pill" type="button">👘 Nhân vật</button>
             <button id="openCareerBtn" class="hud-pill" type="button">⚖️ Cày Cuốc / Nghỉ Việc</button>
         </div>
@@ -502,6 +516,7 @@
                 <span class="online-dot"></span>
                 <span id="onlineCounter">Đang kết nối...</span>
             </div>
+            <div class="hud-pill incense-pill" id="incensePill" title="Trên 15 nén Tiểu Sư sẽ hốt vác vai đem hóa">🕯️ Lư hương: 0/15</div>
             <button id="soundToggleBtn" class="hud-pill" type="button">🔊 Âm thanh</button>
         </div>
     </div>
@@ -509,7 +524,7 @@
     <!-- Quest Banner -->
     <div class="quest-banner" id="questBanner">
         <span class="quest-step-tag" id="questStepTag">BƯỚC 1/3</span>
-        <span id="questBannerText">Ngoài Cổng Tam Quan • Đi vào sân chùa thắp hương, lại gần bàn xin quẻ popup AR tự mở</span>
+        <span id="questBannerText">Ngoài Cổng Tam Quan • Đi qua cổng vào Lư Hương thắp nhang, lên Chính Điện lắc quẻ 3D</span>
     </div>
 
     <!-- Interact Prompt -->
@@ -548,7 +563,7 @@
 
             <div class="shake-progress-box">
                 <div class="shake-progress-head">
-                    <span id="shakeGuideLabel">Chạm hoặc kéo lắc ống xăm 3D (ít nhất 5 lần) rồi xoay úp ngược để đổ quẻ</span>
+                    <span id="shakeGuideLabel">Bấm / Lắc ống xăm 3D (≥5 lần dừng tay quẻ tự ra) • Kéo úp ngược để đổ hết quẻ</span>
                     <span id="shakeCountText" class="shake-count-pill">0 / 5</span>
                 </div>
                 <div class="progress-track"><div id="shakeProgressFill" class="progress-fill"></div></div>
@@ -557,7 +572,7 @@
             <div class="canvas-3d-wrap" id="canvas3dWrap">
                 <canvas id="fortune3dCanvas"></canvas>
                 <div id="stickBadgeOverlay" class="stick-badge-overlay hidden">THẺ SỐ 01</div>
-                <div class="ar-hint-badge" id="arHintBadge">Chạm / Kéo xoay ống xăm 3D trực tiếp • Đủ 5 nhịp kéo úp ngược xuống để đổ quẻ</div>
+                <div class="ar-hint-badge" id="arHintBadge">Bấm lắc ≥5 nhịp (dừng tay quẻ tự ra) • Kéo úp ngược xuống để đổ hết quẻ</div>
             </div>
 
             <div class="slip-perspective">
@@ -610,7 +625,7 @@
     <div id="careerModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
         <div class="modal-card">
             <div class="modal-top-bar">
-                <span class="year-pill">MS GRACE • HR ANALYZER</span>
+                <span class="year-pill">SẾP • HR ANALYZER</span>
                 <button id="closeCareerModalBtn" class="modal-close-x" type="button">✕</button>
             </div>
             <h2 class="shaker-title">Bạn Hợp Cày Cuốc Hay Nghỉ Việc?</h2>
@@ -641,11 +656,11 @@
                     </select>
                 </div>
                 <div class="quiz-card">
-                    <label class="quiz-label" for="qMood">4. Độ gắn bó với Ms Grace &amp; team?</label>
+                    <label class="quiz-label" for="qMood">4. Độ gắn bó với Sếp &amp; team?</label>
                     <select id="qMood" class="quiz-select">
-                        <option value="work">Team vui, chị Grace dễ thương</option>
-                        <option value="mid">Thương chị nhưng cũng thèm nghỉ</option>
-                        <option value="quit">Muốn thử trốn khỏi chị Grace 1 lần</option>
+                        <option value="work">Team vui, Sếp dễ thương</option>
+                        <option value="mid">Quý Sếp nhưng cũng thèm nghỉ</option>
+                        <option value="quit">Muốn thử trốn khỏi Sếp 1 lần</option>
                     </select>
                 </div>
             </div>
@@ -659,7 +674,7 @@
                 <div id="careerVerdictBox" class="verdict-box"></div>
             </div>
 
-            <div id="graceTauntBox" class="grace-taunt">👀 Ms Grace: "Kết quả rõ ràng thế này thì ở lại cày KPI cùng chị nhé!"</div>
+            <div id="graceTauntBox" class="grace-taunt">👀 Sếp: "Kết quả rõ ràng thế này thì ở lại cày KPI cùng team nhé!"</div>
 
             <div class="quit-arena" id="quitArena">
                 <button id="stayBtn" class="stay-btn" type="button">💪 Chốt Cày Cuốc Nhận Thưởng Tết</button>
@@ -670,33 +685,57 @@
                 <div class="contract-stamp">ĐÃ ĐÓNG DẤU • VÔ THỜI HẠN</div>
                 <h3 style="font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 8px;">Đơn Nghỉ Việc Bị Từ Chối!</h3>
                 <p style="font-size: 0.88rem; color: var(--ink-secondary); margin-bottom: 14px; line-height: 1.55;">
-                    "Em tưởng bấm được nút đó là thoát khỏi chị à?"<br>
-                    <strong>Ms Grace đã tự động gia hạn hợp đồng cày KPI tới Tết 2028</strong> (kèm 01 ly trà sữa full topping).
+                    "Em tưởng bấm được nút đó là thoát khỏi Sếp à?"<br>
+                    <strong>Sếp đã tự động gia hạn hợp đồng cày KPI tới Tết 2028</strong> (kèm 01 ly trà sữa full topping).
                 </p>
                 <button id="acceptFateBtn" class="stay-btn" type="button">Dạ em nhận trà sữa &amp; cày tiếp 😭</button>
             </div>
         </div>
     </div>
 
-    <!-- ==================== MODAL 3: CUSTOMIZE CHARACTER ==================== -->
+    <!-- ==================== MODAL 3: CUSTOMIZE CHARACTER (NAME • GENDER • OUTFIT • COLOR) ==================== -->
     <div id="customModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
-        <div class="modal-card" style="max-width: 420px;">
+        <div class="modal-card" style="max-width: 440px;">
             <div class="modal-top-bar">
                 <span class="year-pill">NHÂN VẬT 3D</span>
                 <button id="closeCustomModalBtn" class="modal-close-x" type="button">✕</button>
             </div>
-            <h2 class="shaker-title" style="margin-bottom: 12px;">Tùy Chỉnh Nhân Vật</h2>
-            <div style="text-align: left; margin-bottom: 12px;">
-                <label class="quiz-label" for="playerNameInput">Tên hiển thị của bạn:</label>
-                <input id="playerNameInput" type="text" maxlength="16" value="Bạn (L.ASY)" style="width: 100%; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border-strong); font-family: 'Be Vietnam Pro', sans-serif;">
+            <h2 class="shaker-title" style="margin-bottom: 10px;">Tùy Chỉnh Nhân Vật</h2>
+            <canvas id="custPreviewCanvas"></canvas>
+            <div class="cust-row">
+                <label class="quiz-label" for="playerNameInput">Tên hiển thị:</label>
+                <div class="cust-name-wrap">
+                    <input id="playerNameInput" type="text" maxlength="18" value="">
+                    <button id="randomNameBtn" class="dice-btn" type="button" title="Tên ngẫu nhiên">🎲</button>
+                </div>
             </div>
-            <div style="text-align: left;">
-                <span class="quiz-label">Chọn trang phục du xuân:</span>
-                <div class="outfit-grid">
-                    <button class="outfit-btn active" data-color="#B93829" type="button">🧧 Áo dài Đỏ</button>
-                    <button class="outfit-btn" data-color="#D99B26" type="button">🌼 Áo dài Vàng</button>
-                    <button class="outfit-btn" data-color="#2D6A4F" type="button">🌿 Áo dài Ngọc</button>
-                    <button class="outfit-btn" data-color="#1E293B" type="button">💼 Vest L.ASY</button>
+            <div class="cust-row">
+                <span class="quiz-label">Giới tính:</span>
+                <div class="seg-toggle" id="genderToggle">
+                    <button class="seg-btn active" data-gender="male" type="button">👨 Nam</button>
+                    <button class="seg-btn" data-gender="female" type="button">👩 Nữ</button>
+                </div>
+            </div>
+            <div class="cust-row">
+                <span class="quiz-label">Trang phục:</span>
+                <div class="outfit-grid" style="margin: 6px 0 0;">
+                    <button class="outfit-btn active" data-outfit="aodai" type="button">👘 Áo dài</button>
+                    <button class="outfit-btn" data-outfit="lam" type="button">🙏 Đồ lam đi chùa</button>
+                    <button class="outfit-btn" data-outfit="baba" type="button">🌾 Áo bà ba</button>
+                    <button class="outfit-btn" data-outfit="vest" type="button">💼 Vest công sở</button>
+                </div>
+            </div>
+            <div class="cust-row">
+                <span class="quiz-label">Màu áo:</span>
+                <div class="swatch-row" id="swatchRow">
+                    <button class="swatch active" data-color="#B93829" style="background:#B93829" type="button" title="Đỏ son"></button>
+                    <button class="swatch" data-color="#D99B26" style="background:#D99B26" type="button" title="Vàng kim"></button>
+                    <button class="swatch" data-color="#2D6A4F" style="background:#2D6A4F" type="button" title="Xanh ngọc"></button>
+                    <button class="swatch" data-color="#D9668A" style="background:#D9668A" type="button" title="Hồng đào"></button>
+                    <button class="swatch" data-color="#2563EB" style="background:#2563EB" type="button" title="Xanh lam"></button>
+                    <button class="swatch" data-color="#F3EEE4" style="background:#F3EEE4" type="button" title="Trắng ngà"></button>
+                    <button class="swatch" data-color="#7A6F64" style="background:#7A6F64" type="button" title="Nâu lam"></button>
+                    <button class="swatch" data-color="#1E293B" style="background:#1E293B" type="button" title="Đen than"></button>
                 </div>
             </div>
             <button id="saveCustomBtn" class="shake-cta" style="width: 100%;" type="button">Lưu &amp; Tiếp Tục Đi Chùa</button>
@@ -747,152 +786,360 @@
             } catch (e) {}
         }
 
-        // ==================== 3. PROCEDURAL REALISTIC TEXTURES ====================
-        function makeStoneTexture() {
-            const c = document.createElement("canvas"); c.width = 512; c.height = 512;
-            const g = c.getContext("2d");
-            g.fillStyle = "#C7B8A3"; g.fillRect(0, 0, 512, 512);
-            for (let y = 0; y < 512; y += 64) {
-                for (let x = 0; x < 512; x += 64) {
-                    const v = 182 + Math.floor(Math.random() * 24);
-                    g.fillStyle = `rgb(${v}, ${v - 12}, ${v - 26})`;
-                    g.fillRect(x + 2, y + 2, 60, 60);
-                    for (let k = 0; k < 25; k++) {
-                        g.fillStyle = `rgba(90,75,60,${Math.random() * 0.14})`;
-                        g.fillRect(x + Math.random() * 60, y + Math.random() * 60, 3, 3);
-                    }
-                }
-            }
+        // ==================== 3. HIGH-RES SMOOTH PROCEDURAL TEXTURES (ANTI-PIXEL) ====================
+        const TEX_SIZE = 1024;
+        function prepTex(c, rx = 1, ry = 1, srgb = true) {
             const tex = new THREE.CanvasTexture(c);
-            tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(16, 16);
+            tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+            tex.repeat.set(rx, ry);
+            tex.anisotropy = 8;
+            tex.minFilter = THREE.LinearMipmapLinearFilter;
+            tex.magFilter = THREE.LinearFilter;
+            tex.generateMipmaps = true;
+            if (srgb && THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;
             return tex;
         }
+        function newCanvas(w = TEX_SIZE, h = TEX_SIZE) {
+            const c = document.createElement("canvas"); c.width = w; c.height = h;
+            return [c, c.getContext("2d")];
+        }
+        // Soft organic noise using many blurred translucent blobs
+        function paintNoise(g, w, h, count, rgb, aMax, rMin, rMax) {
+            for (let i = 0; i < count; i++) {
+                const x = Math.random() * w, y = Math.random() * h, r = rMin + Math.random() * (rMax - rMin);
+                const grad = g.createRadialGradient(x, y, 0, x, y, r);
+                grad.addColorStop(0, `rgba(${rgb},${Math.random() * aMax})`);
+                grad.addColorStop(1, `rgba(${rgb},0)`);
+                g.fillStyle = grad; g.fillRect(x - r, y - r, r * 2, r * 2);
+            }
+        }
 
-        function makeRoofTileTexture() {
-            const c = document.createElement("canvas"); c.width = 256; c.height = 256;
-            const g = c.getContext("2d");
-            g.fillStyle = "#8C2318"; g.fillRect(0, 0, 256, 256);
-            for (let y = 0; y < 256; y += 24) {
-                for (let x = 0; x < 256; x += 16) {
-                    g.fillStyle = (x / 16) % 2 === 0 ? "#A32D20" : "#7A1D13";
-                    g.fillRect(x, y, 14, 22);
-                    g.fillStyle = "rgba(255,210,160,0.12)";
-                    g.fillRect(x, y, 14, 4);
+        // Large flagstone courtyard (irregular stones, soft mortar, weathering)
+        function makeStoneTexture(rx = 10, ry = 14) {
+            const [c, g] = newCanvas();
+            g.fillStyle = "#9C9287"; g.fillRect(0, 0, TEX_SIZE, TEX_SIZE);
+            const rows = 6, rowH = TEX_SIZE / rows;
+            for (let r = 0; r < rows; r++) {
+                let x = -Math.random() * 80;
+                while (x < TEX_SIZE) {
+                    const w = 130 + Math.random() * 120;
+                    const v = 176 + Math.floor(Math.random() * 30);
+                    const grad = g.createLinearGradient(x, r * rowH, x + w, (r + 1) * rowH);
+                    grad.addColorStop(0, `rgb(${v},${v - 8},${v - 20})`);
+                    grad.addColorStop(1, `rgb(${v - 16},${v - 22},${v - 32})`);
+                    g.fillStyle = grad;
+                    g.beginPath();
+                    if (g.roundRect) g.roundRect(x + 4, r * rowH + 4, w - 8, rowH - 8, 10); else g.rect(x + 4, r * rowH + 4, w - 8, rowH - 8);
+                    g.fill();
+                    x += w;
                 }
             }
-            const tex = new THREE.CanvasTexture(c);
-            tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(6, 3);
-            return tex;
+            paintNoise(g, TEX_SIZE, TEX_SIZE, 900, "70,60,50", 0.10, 6, 40);
+            paintNoise(g, TEX_SIZE, TEX_SIZE, 300, "255,250,240", 0.07, 10, 60);
+            paintNoise(g, TEX_SIZE, TEX_SIZE, 120, "70,90,50", 0.10, 8, 30); // moss
+            return prepTex(c, rx, ry);
+        }
+
+        // Herringbone-like red clay brick paving for walkways
+        function makeBrickTexture(rx = 2, ry = 10) {
+            const [c, g] = newCanvas(512, 1024);
+            g.fillStyle = "#6b4a3a"; g.fillRect(0, 0, 512, 1024);
+            const bw = 128, bh = 54;
+            for (let y = 0, row = 0; y < 1024; y += bh, row++) {
+                for (let x = (row % 2) * -bw / 2; x < 512; x += bw) {
+                    const v = Math.random() * 30;
+                    const grad = g.createLinearGradient(x, y, x, y + bh);
+                    grad.addColorStop(0, `rgb(${168 + v},${82 + v * 0.6},${58 + v * 0.4})`);
+                    grad.addColorStop(1, `rgb(${138 + v},${64 + v * 0.5},${46 + v * 0.3})`);
+                    g.fillStyle = grad;
+                    g.fillRect(x + 4, y + 4, bw - 8, bh - 8);
+                }
+            }
+            paintNoise(g, 512, 1024, 500, "40,25,15", 0.12, 4, 24);
+            paintNoise(g, 512, 1024, 160, "255,230,200", 0.08, 6, 30);
+            return prepTex(c, rx, ry);
+        }
+
+        // Lush grass for outside garden
+        function makeGrassTexture(rep = 40) {
+            const [c, g] = newCanvas(512, 512);
+            g.fillStyle = "#5f7d3a"; g.fillRect(0, 0, 512, 512);
+            paintNoise(g, 512, 512, 500, "120,150,70", 0.35, 10, 50);
+            paintNoise(g, 512, 512, 400, "45,70,30", 0.35, 8, 40);
+            for (let i = 0; i < 5000; i++) {
+                g.strokeStyle = `rgba(${90 + Math.random() * 70},${130 + Math.random() * 60},${50 + Math.random() * 30},0.5)`;
+                g.lineWidth = 1; const x = Math.random() * 512, y = Math.random() * 512;
+                g.beginPath(); g.moveTo(x, y); g.lineTo(x + (Math.random() - 0.5) * 4, y - 4 - Math.random() * 6); g.stroke();
+            }
+            return prepTex(c, rep, rep);
+        }
+
+        // Weathered lime-plaster wall (ochre/cream), typical for Vietnamese pagodas
+        function makePlasterTexture(base = "#EAD5A5", rx = 4, ry = 1) {
+            const [c, g] = newCanvas(1024, 512);
+            g.fillStyle = base; g.fillRect(0, 0, 1024, 512);
+            paintNoise(g, 1024, 512, 750, "170,130,80", 0.08, 18, 95);
+            paintNoise(g, 1024, 512, 420, "255,250,238", 0.09, 16, 85);
+            const damp = g.createLinearGradient(0, 340, 0, 512);
+            damp.addColorStop(0, "rgba(85,72,54,0)"); damp.addColorStop(1, "rgba(85,72,54,0.22)");
+            g.fillStyle = damp; g.fillRect(0, 340, 1024, 172);
+            return prepTex(c, rx, ry);
+        }
+
+        // Curved yin-yang clay roof tiles (ngói âm dương) with soft shading
+        function makeRoofTileTexture(rx = 6, ry = 3) {
+            const [c, g] = newCanvas(512, 512);
+            g.fillStyle = "#5a1d14"; g.fillRect(0, 0, 512, 512);
+            const cw = 32;
+            for (let x = 0; x < 512; x += cw) {
+                const grad = g.createLinearGradient(x, 0, x + cw, 0);
+                grad.addColorStop(0, "#5c1f15"); grad.addColorStop(0.35, "#a8442c");
+                grad.addColorStop(0.6, "#8e3422"); grad.addColorStop(1, "#4d1810");
+                g.fillStyle = grad; g.fillRect(x, 0, cw, 512);
+            }
+            for (let y = 0; y < 512; y += 42) {
+                g.fillStyle = "rgba(30,8,4,0.35)"; g.fillRect(0, y, 512, 4);
+                g.fillStyle = "rgba(255,200,160,0.08)"; g.fillRect(0, y + 4, 512, 6);
+            }
+            paintNoise(g, 512, 512, 300, "60,70,40", 0.12, 6, 30); // moss on old tiles
+            return prepTex(c, rx, ry);
         }
 
         function makeWoodTexture(baseHex = "#6E3B1E", darkHex = "#4A2410") {
-            const c = document.createElement("canvas"); c.width = 256; c.height = 256;
-            const g = c.getContext("2d");
-            g.fillStyle = baseHex; g.fillRect(0, 0, 256, 256);
-            for (let i = 0; i < 65; i++) {
+            const [c, g] = newCanvas(512, 512);
+            g.fillStyle = baseHex; g.fillRect(0, 0, 512, 512);
+            for (let i = 0; i < 140; i++) {
                 g.strokeStyle = darkHex;
-                g.globalAlpha = 0.18 + Math.random() * 0.22;
-                g.lineWidth = 1 + Math.random() * 3;
+                g.globalAlpha = 0.12 + Math.random() * 0.2;
+                g.lineWidth = 0.8 + Math.random() * 2.6;
                 g.beginPath();
-                const x = Math.random() * 256;
+                const x = Math.random() * 512;
                 g.moveTo(x, 0);
-                g.bezierCurveTo(x + 8, 85, x - 8, 170, x, 256);
+                g.bezierCurveTo(x + 14, 170, x - 14, 340, x, 512);
                 g.stroke();
             }
-            return new THREE.CanvasTexture(c);
+            g.globalAlpha = 1;
+            return prepTex(c);
         }
 
         function makeBambooTexture() {
-            const c = document.createElement("canvas"); c.width = 256; c.height = 256;
-            const g = c.getContext("2d");
-            const grad = g.createLinearGradient(0, 0, 256, 0);
-            grad.addColorStop(0, "#7C4A21"); grad.addColorStop(0.5, "#B87A42"); grad.addColorStop(1, "#6E3F1A");
-            g.fillStyle = grad; g.fillRect(0, 0, 256, 256);
-            for (let i = 0; i < 90; i++) {
-                g.fillStyle = `rgba(55, 28, 10, ${Math.random() * 0.22})`;
-                g.fillRect(Math.random() * 256, 0, 1.5, 256);
+            const [c, g] = newCanvas(512, 512);
+            const grad = g.createLinearGradient(0, 0, 512, 0);
+            grad.addColorStop(0, "#7C4A21"); grad.addColorStop(0.5, "#C08850"); grad.addColorStop(1, "#6E3F1A");
+            g.fillStyle = grad; g.fillRect(0, 0, 512, 512);
+            for (let i = 0; i < 160; i++) {
+                g.fillStyle = `rgba(55, 28, 10, ${Math.random() * 0.16})`;
+                g.fillRect(Math.random() * 512, 0, 1.2, 512);
             }
-            [64, 192].forEach(ny => {
-                g.fillStyle = "rgba(45, 22, 8, 0.55)"; g.fillRect(0, ny, 256, 5);
-                g.fillStyle = "rgba(240, 200, 140, 0.35)"; g.fillRect(0, ny + 5, 256, 2);
+            [128, 384].forEach(ny => {
+                const ng = g.createLinearGradient(0, ny - 6, 0, ny + 10);
+                ng.addColorStop(0, "rgba(45,22,8,0)"); ng.addColorStop(0.45, "rgba(45,22,8,0.6)"); ng.addColorStop(0.7, "rgba(240,200,140,0.35)"); ng.addColorStop(1, "rgba(240,200,140,0)");
+                g.fillStyle = ng; g.fillRect(0, ny - 6, 512, 16);
             });
+            return prepTex(c);
+        }
+
+        // Text panel (signboards, couplets) rendered at high resolution
+        function makeTextPanel(lines, { w = 1024, h = 256, bg = "#8E1B12", fg = "#F5C76A", border = "#D99B26", vertical = false, font = "700 120px 'Playfair Display', serif" } = {}) {
+            const [c, g] = newCanvas(w, h);
+            const grad = g.createLinearGradient(0, 0, 0, h);
+            grad.addColorStop(0, bg); grad.addColorStop(1, "#5e110b");
+            g.fillStyle = grad; g.fillRect(0, 0, w, h);
+            g.strokeStyle = border; g.lineWidth = Math.min(w, h) * 0.05; g.strokeRect(g.lineWidth, g.lineWidth, w - g.lineWidth * 2, h - g.lineWidth * 2);
+            g.fillStyle = fg; g.font = font; g.textAlign = "center"; g.textBaseline = "middle";
+            g.shadowColor = "rgba(0,0,0,0.45)"; g.shadowBlur = 8;
+            if (vertical) {
+                const chars = lines;
+                const step = h / (chars.length + 1);
+                chars.forEach((ch, i) => g.fillText(ch, w / 2, step * (i + 1)));
+            } else {
+                const step = h / (lines.length + 1);
+                lines.forEach((ln, i) => g.fillText(ln, w / 2, step * (i + 1)));
+            }
+            return prepTex(c);
+        }
+
+        // Soft fluffy cloud / smoke sprite
+        function makeCloudTexture() {
+            const [c, g] = newCanvas(512, 512);
+            for (let i = 0; i < 26; i++) {
+                const x = 140 + Math.random() * 232, y = 200 + Math.random() * 120, r = 60 + Math.random() * 90;
+                const grad = g.createRadialGradient(x, y, 0, x, y, r);
+                const shade = y > 270 ? 232 : 255;
+                grad.addColorStop(0, `rgba(${shade},${shade},${shade + (255 - shade)},0.55)`);
+                grad.addColorStop(0.6, `rgba(${shade},${shade},255,0.22)`);
+                grad.addColorStop(1, "rgba(255,255,255,0)");
+                g.fillStyle = grad; g.fillRect(0, 0, 512, 512);
+            }
+            const tex = new THREE.CanvasTexture(c);
+            if (THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;
+            return tex;
+        }
+        function makeSmokeTexture() {
+            const [c, g] = newCanvas(256, 256);
+            const grad = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+            grad.addColorStop(0, "rgba(255,255,255,0.75)");
+            grad.addColorStop(0.5, "rgba(235,235,235,0.3)");
+            grad.addColorStop(1, "rgba(255,255,255,0)");
+            g.fillStyle = grad; g.fillRect(0, 0, 256, 256);
             return new THREE.CanvasTexture(c);
         }
 
-        // ==================== 4. ARTICULATED REALISTIC 3D CHARACTERS ====================
-        function createArticulatedCharacter({ robeColor, isMonk = false, hasHat = false, hasBroom = false, hairColor = 0x1f1916 }) {
+        // ==================== 4. ARTICULATED 3D CHARACTERS (GENDER + OUTFIT) ====================
+        // gender: "male" | "female"; outfit: "aodai" | "lam" | "baba" | "vest" | "monk"
+        function createArticulatedCharacter({ robeColor = "#B93829", isMonk = false, hasHat = false, hasBroom = false, hairColor = 0x1f1916, gender = "male", outfit = "aodai" }) {
+            if (isMonk) outfit = "monk";
+            const female = gender === "female";
             const group = new THREE.Group();
-            const robeMat = new THREE.MeshStandardMaterial({ color: robeColor, roughness: 0.72 });
-            const skinMat = new THREE.MeshStandardMaterial({ color: 0xf5cfb0, roughness: 0.65 });
+            const S = 24; // smooth segment count
+            const mainMat = new THREE.MeshStandardMaterial({ color: robeColor, roughness: outfit === "vest" ? 0.55 : 0.62, metalness: outfit === "aodai" ? 0.05 : 0 });
+            const skinMat = new THREE.MeshStandardMaterial({ color: 0xf2c9a6, roughness: 0.55 });
+            const hairMat = new THREE.MeshStandardMaterial({ color: hairColor, roughness: 0.45, metalness: 0.1 });
+            let pantsColor = 0xf5f1ea;
+            if (outfit === "baba" || outfit === "vest") pantsColor = 0x1c1c22;
+            if (outfit === "lam" || outfit === "monk") pantsColor = new THREE.Color(robeColor).multiplyScalar(0.8).getHex();
+            const pantsMat = new THREE.MeshStandardMaterial({ color: pantsColor, roughness: 0.7 });
+            const shoeMat = new THREE.MeshStandardMaterial({ color: 0x2a1d16, roughness: 0.6 });
+            const shoulderW = female ? 0.22 : 0.27;
+            const waistR = female ? 0.15 : 0.2;
 
-            // Robe Skirt + Torso
-            const skirt = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.38, 0.75, 16), robeMat);
-            skirt.position.y = 0.55; skirt.castShadow = true; group.add(skirt);
+            // --- Legs (pivot at hip) ---
+            const makeLeg = (side) => {
+                const pivot = new THREE.Group(); pivot.position.set(side * (female ? 0.09 : 0.11), 0.82, 0);
+                const leg = new THREE.Mesh(new THREE.CylinderGeometry(female ? 0.075 : 0.085, 0.065, 0.78, 16), pantsMat);
+                leg.position.y = -0.39; leg.castShadow = true; pivot.add(leg);
+                const shoe = new THREE.Mesh(new THREE.SphereGeometry(0.085, 16, 12), shoeMat);
+                shoe.scale.set(1, 0.6, 1.7); shoe.position.set(0, -0.79, 0.05); pivot.add(shoe);
+                group.add(pivot); return pivot;
+            };
+            const legL = makeLeg(-1), legR = makeLeg(1);
 
-            const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.24, 0.52, 16), robeMat);
-            torso.position.y = 1.15; torso.castShadow = true; group.add(torso);
+            // --- Torso (smooth lathe silhouette) ---
+            const torsoPts = [
+                new THREE.Vector2(waistR + 0.03, 0), new THREE.Vector2(waistR, 0.18),
+                new THREE.Vector2(female ? 0.2 : 0.23, 0.36), new THREE.Vector2(shoulderW, 0.5),
+                new THREE.Vector2(shoulderW * 0.75, 0.6), new THREE.Vector2(0.08, 0.66)
+            ];
+            const torso = new THREE.Mesh(new THREE.LatheGeometry(torsoPts, S), mainMat);
+            torso.position.y = 0.86; torso.castShadow = true; group.add(torso);
 
-            // Collar / Sash
-            const collar = new THREE.Mesh(
-                new THREE.TorusGeometry(0.2, 0.045, 8, 16),
-                new THREE.MeshStandardMaterial({ color: isMonk ? 0x9a3412 : 0xd99b26, roughness: 0.5 })
-            );
-            collar.rotation.x = Math.PI / 2; collar.position.y = 1.4; group.add(collar);
+            const skirtMeshes = [];
+            if (outfit === "aodai") {
+                // Long front & back flaps (tà áo) flowing to the shins
+                const flapShape = new THREE.Shape();
+                flapShape.moveTo(-0.17, 0); flapShape.lineTo(0.17, 0);
+                flapShape.quadraticCurveTo(0.2, -0.4, female ? 0.2 : 0.18, -0.68);
+                flapShape.lineTo(female ? -0.2 : -0.18, -0.68);
+                flapShape.quadraticCurveTo(-0.2, -0.4, -0.17, 0);
+                const flapGeo = new THREE.ExtrudeGeometry(flapShape, { depth: 0.02, bevelEnabled: false, curveSegments: 12 });
+                const flapF = new THREE.Mesh(flapGeo, mainMat); flapF.position.set(0, 0.92, waistR + 0.01); flapF.castShadow = true;
+                const flapB = new THREE.Mesh(flapGeo, mainMat); flapB.position.set(0, 0.92, -waistR - 0.03); flapB.castShadow = true;
+                group.add(flapF, flapB); skirtMeshes.push(flapF, flapB);
+                // Standing mandarin collar
+                const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.095, 0.09, S, 1, true), mainMat);
+                collar.position.y = 1.55; group.add(collar);
+                // Gold brocade trim
+                const trim = new THREE.Mesh(new THREE.TorusGeometry(0.095, 0.012, 8, S), new THREE.MeshStandardMaterial({ color: 0xd99b26, metalness: 0.6, roughness: 0.3 }));
+                trim.rotation.x = Math.PI / 2; trim.position.y = 1.595; group.add(trim);
+            } else if (outfit === "lam" || outfit === "monk") {
+                // Loose ankle-length robe
+                const robe = new THREE.Mesh(new THREE.CylinderGeometry(waistR + 0.04, 0.36, 0.86, S, 1, true), mainMat);
+                robe.position.y = 0.5; robe.castShadow = true; group.add(robe); skirtMeshes.push(robe);
+                if (outfit === "monk") {
+                    // Kasaya sash over left shoulder
+                    const sash = new THREE.Mesh(new THREE.TorusGeometry(0.25, 0.045, 10, 32, Math.PI * 1.15), new THREE.MeshStandardMaterial({ color: robeColor === "#C2410C" ? 0x8a2a0a : 0x8d6e4c, roughness: 0.7 }));
+                    sash.rotation.set(0.25, Math.PI / 2, 0.85); sash.position.set(0, 1.18, 0); group.add(sash);
+                }
+            } else if (outfit === "baba") {
+                const hem = new THREE.Mesh(new THREE.CylinderGeometry(waistR + 0.02, waistR + 0.07, 0.2, S, 1, true), mainMat);
+                hem.position.y = 0.78; group.add(hem); skirtMeshes.push(hem);
+                [0.05, -0.05, -0.15].forEach(by => {
+                    const btn = new THREE.Mesh(new THREE.SphereGeometry(0.014, 8, 8), new THREE.MeshStandardMaterial({ color: 0xf5f1ea }));
+                    btn.position.set(0, 1.2 + by, (female ? 0.2 : 0.225)); group.add(btn);
+                });
+            } else if (outfit === "vest") {
+                const shirt = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 0.28), new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
+                shirt.position.set(0, 1.33, shoulderW - 0.015); group.add(shirt);
+                const tie = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.24, 4), new THREE.MeshStandardMaterial({ color: female ? 0xd99b26 : 0xb93829 }));
+                tie.rotation.x = Math.PI; tie.position.set(0, 1.3, shoulderW + 0.0); group.add(tie);
+                if (female) {
+                    const skirt = new THREE.Mesh(new THREE.CylinderGeometry(waistR + 0.02, 0.24, 0.42, S), new THREE.MeshStandardMaterial({ color: 0x1c1c22, roughness: 0.6 }));
+                    skirt.position.y = 0.66; group.add(skirt); skirtMeshes.push(skirt);
+                }
+            }
 
-            // Legs
-            const legGeo = new THREE.CylinderGeometry(0.08, 0.07, 0.45, 10);
-            const legMat = new THREE.MeshStandardMaterial({ color: 0x292524, roughness: 0.8 });
-            const legL = new THREE.Mesh(legGeo, legMat); legL.position.set(-0.11, 0.22, 0);
-            const legR = new THREE.Mesh(legGeo, legMat); legR.position.set(0.11, 0.22, 0);
-            group.add(legL, legR);
+            // --- Arms (rounded shoulder cap + pivot cleanly tucked to torso) ---
+            const makeArm = (side) => {
+                const pivot = new THREE.Group(); pivot.position.set(side * (shoulderW + 0.01), 1.4, 0);
+                const sleeveR = outfit === "lam" || outfit === "monk" ? 0.095 : 0.062;
+                const cap = new THREE.Mesh(new THREE.SphereGeometry(sleeveR * 0.95, 14, 12), mainMat);
+                cap.position.set(0, -0.02, 0); cap.castShadow = true; pivot.add(cap);
+                const arm = new THREE.Mesh(new THREE.CylinderGeometry(sleeveR * 0.92, sleeveR, 0.56, 16), mainMat);
+                arm.position.y = -0.3; arm.castShadow = true; pivot.add(arm);
+                const hand = new THREE.Mesh(new THREE.SphereGeometry(0.055, 16, 12), skinMat);
+                hand.position.y = -0.62; pivot.add(hand);
+                group.add(pivot); return pivot;
+            };
+            const armL = makeArm(-1), armR = makeArm(1);
 
-            // Articulated Arms
-            const armGeo = new THREE.CylinderGeometry(0.07, 0.06, 0.52, 10);
-            const armL = new THREE.Mesh(armGeo, robeMat); armL.position.set(-0.32, 1.12, 0); armL.castShadow = true;
-            const armR = new THREE.Mesh(armGeo, robeMat); armR.position.set(0.32, 1.12, 0); armR.castShadow = true;
-            group.add(armL, armR);
-
-            // Optional Bamboo Broom for Sweeping Novice
             if (hasBroom) {
                 const broomGroup = new THREE.Group();
-                const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 1.3, 8), new THREE.MeshStandardMaterial({ color: 0x8b5a2b }));
-                handle.position.y = -0.3;
-                const bristles = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.35, 10), new THREE.MeshStandardMaterial({ color: 0xd6b370, roughness: 0.9 }));
-                bristles.position.y = -0.95;
+                const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 1.4, 10), new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: 0.6 }));
+                handle.position.y = -0.1;
+                const bristles = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.42, 18, 1, true), new THREE.MeshStandardMaterial({ color: 0xc9a25f, roughness: 0.9, side: THREE.DoubleSide }));
+                bristles.position.y = -0.95; bristles.rotation.x = Math.PI;
                 broomGroup.add(handle, bristles);
-                broomGroup.position.set(0, -0.15, 0.22);
-                broomGroup.rotation.x = 0.55;
+                broomGroup.position.set(0, -0.6, 0.12); broomGroup.rotation.x = 0.5;
                 armR.add(broomGroup);
             }
 
-            // Head & Hair
-            const head = new THREE.Mesh(new THREE.SphereGeometry(0.24, 18, 18), skinMat);
-            head.position.y = 1.66; head.castShadow = true; group.add(head);
-
-            if (!isMonk) {
-                const hair = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.255, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.58),
-                    new THREE.MeshStandardMaterial({ color: hairColor, roughness: 0.85 })
-                );
-                hair.position.y = 1.68; hair.rotation.x = -0.18; group.add(hair);
-            }
-
-            if (hasHat) {
-                const hat = new THREE.Mesh(
-                    new THREE.ConeGeometry(0.46, 0.22, 20),
-                    new THREE.MeshStandardMaterial({ color: 0xe7c888, roughness: 0.85 })
-                );
-                hat.position.y = 1.88; group.add(hat);
-            }
-
-            // Eyes
-            const eyeMat = new THREE.MeshBasicMaterial({ color: 0x1c1917 });
-            const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 8), eyeMat);
+            // --- Neck, Head, Face ---
+            const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.12, 16), skinMat);
+            neck.position.y = 1.58; group.add(neck);
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.2, 32, 24), skinMat);
+            head.scale.set(female ? 0.95 : 1, 1.1, 1); head.position.y = 1.82; head.castShadow = true; group.add(head);
+            const nose = new THREE.Mesh(new THREE.SphereGeometry(0.025, 10, 8), skinMat);
+            nose.scale.set(0.9, 1, 1.2); nose.position.set(0, 1.8, 0.2); group.add(nose);
+            const eyeMat = new THREE.MeshStandardMaterial({ color: 0x14100e, roughness: 0.2 });
+            const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.022, 12, 10), eyeMat);
             const eyeR = eyeL.clone();
-            eyeL.position.set(-0.08, 1.68, 0.21); eyeR.position.set(0.08, 1.68, 0.21);
+            eyeL.position.set(-0.07, 1.85, 0.18); eyeR.position.set(0.07, 1.85, 0.18);
             group.add(eyeL, eyeR);
+            const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.03, 0.007, 6, 16, Math.PI), new THREE.MeshStandardMaterial({ color: 0xa8443a }));
+            mouth.rotation.z = Math.PI; mouth.position.set(0, 1.74, 0.19); group.add(mouth);
+            if (female) {
+                const blushMat = new THREE.MeshBasicMaterial({ color: 0xf29a8e, transparent: true, opacity: 0.45 });
+                [-1, 1].forEach(sx => { const b = new THREE.Mesh(new THREE.CircleGeometry(0.03, 16), blushMat); b.position.set(sx * 0.11, 1.78, 0.172); b.rotation.y = sx * 0.5; group.add(b); });
+            }
 
-            group.userData = { torso, skirt, armL, armR, legL, legR };
+            // --- Hair by gender ---
+            if (outfit !== "monk") {
+                const cap = new THREE.Mesh(new THREE.SphereGeometry(0.212, 32, 20, 0, Math.PI * 2, 0, Math.PI * 0.55), hairMat);
+                cap.scale.set(female ? 0.97 : 1.02, 1.12, 1.03); cap.position.y = 1.83; cap.rotation.x = -0.25; group.add(cap);
+                if (female) {
+                    const longHair = new THREE.Mesh(new THREE.CapsuleGeometry(0.15, 0.55, 8, 20), hairMat);
+                    longHair.scale.set(1.15, 1, 0.55); longHair.position.set(0, 1.5, -0.19); longHair.castShadow = true; group.add(longHair);
+                    const bang = new THREE.Mesh(new THREE.SphereGeometry(0.2, 24, 12, Math.PI * 0.15, Math.PI * 0.7, 0, Math.PI * 0.32), hairMat);
+                    bang.position.set(0, 1.86, 0.015); group.add(bang);
+                    const flower = new THREE.Mesh(new THREE.SphereGeometry(0.04, 12, 10), new THREE.MeshStandardMaterial({ color: 0xffc94d, emissive: 0x6b4500, emissiveIntensity: 0.2 }));
+                    flower.position.set(0.16, 1.95, 0.04); group.add(flower);
+                } else if (outfit === "aodai") {
+                    // Khăn đóng (traditional male headwrap)
+                    const khan = new THREE.Mesh(new THREE.TorusGeometry(0.19, 0.055, 14, 32), new THREE.MeshStandardMaterial({ color: robeColor, roughness: 0.5 }));
+                    khan.rotation.x = Math.PI / 2; khan.position.y = 1.93; group.add(khan);
+                    const top = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.19, 0.08, S), new THREE.MeshStandardMaterial({ color: robeColor, roughness: 0.5 }));
+                    top.position.y = 1.98; group.add(top);
+                }
+            }
+            if (hasHat) {
+                const hat = new THREE.Mesh(new THREE.ConeGeometry(0.45, 0.24, 40, 1, true), new THREE.MeshStandardMaterial({ color: 0xe7c888, roughness: 0.8, side: THREE.DoubleSide }));
+                hat.position.y = 2.07; group.add(hat);
+            }
+
+            // Shoulder carry anchor (for incense bundle)
+            const shoulderAnchor = new THREE.Group(); shoulderAnchor.position.set(0.24, 1.62, 0); group.add(shoulderAnchor);
+
+            group.userData = { torso, skirtMeshes, armL, armR, legL, legR, mainMat, shoulderAnchor };
             return group;
         }
 
@@ -903,17 +1150,61 @@
         const questStepTag = document.getElementById("questStepTag");
         const questBannerText = document.getElementById("questBannerText");
         const onlineCounter = document.getElementById("onlineCounter");
+        const incensePill = document.getElementById("incensePill");
+
+        // Random auspicious pilgrim names
+        const NAME_FIRST = ["An", "Bình", "Khang", "Phúc", "Lộc", "Thịnh", "Minh", "Ngọc", "Mai", "Đào", "Lan", "Cúc", "Tâm", "Hạnh", "Vy", "Huy", "Long", "Phát", "Tài", "Quý", "Như", "Gia"];
+        const NAME_SECOND = ["Xuân", "Cát Tường", "Như Ý", "Phát Tài", "An Khang", "May Mắn", "Đinh Mùi", "Hưng Thịnh", "Bình An"];
+        function randomPilgrimName() {
+            const a = NAME_FIRST[Math.floor(Math.random() * NAME_FIRST.length)];
+            const b = NAME_SECOND[Math.floor(Math.random() * NAME_SECOND.length)];
+            return `${a} ${b} ${10 + Math.floor(Math.random() * 90)}`;
+        }
 
         const myId = "p_" + Math.random().toString(36).slice(2, 9);
+        let savedProfile = null;
+        try { savedProfile = JSON.parse(localStorage.getItem("lasy_temple_profile") || "null"); } catch (e) {}
         const player = {
-            id: myId, x: 0, z: 22.5, rotY: Math.PI, speed: 0.16,
-            name: "Bạn (L.ASY)", color: "#B93829",
+            id: myId, x: 0, z: 29, rotY: Math.PI, speed: 0.15,
+            name: (savedProfile && savedProfile.name) || randomPilgrimName(),
+            color: (savedProfile && savedProfile.color) || "#B93829",
+            gender: (savedProfile && savedProfile.gender) || (Math.random() < 0.5 ? "male" : "female"),
+            outfit: (savedProfile && savedProfile.outfit) || "aodai",
             chat: "Mới tới cổng chùa 🏯", chatTimer: 260, walkPhase: 0
         };
 
-        let hasLitIncense = false, nearTarget = null, modalOpenedByProximity = false, suppressedAutoModal = false;
-        let wScene, wCamera, wRenderer, playerMesh;
-        const smokePuffs = [], guideArrows = [], petals = [];
+        let hasLitIncense = false, nearTarget = null, suppressedAutoModal = false;
+        let wScene, wCamera, wRenderer, playerMesh, smokeTex, cloudSprites = [], furnaceLight, furnaceGlowMat;
+        const smokePuffs = [], guideArrows = [], petals = [], swayLanterns = [];
+
+        // ---------- Ground heights (hall platform + steps) & collisions ----------
+        const HALL = { x: 8.5, zFront: -6.0, zBack: -18.0, h: 0.6 };
+        function onPlatform(x, z) { return Math.abs(x) < HALL.x && z < HALL.zFront && z > HALL.zBack; }
+        function onSteps(x, z) { return Math.abs(x) < 3.3 && z <= -4.4 && z >= -6.1; }
+        function groundHeight(x, z) {
+            if (onPlatform(x, z)) return HALL.h;
+            if (onSteps(x, z)) return Math.max(0, Math.min(1, (-4.5 - z) / 1.5)) * HALL.h;
+            return 0;
+        }
+        const colliders = [];
+        const addCircleCol = (x, z, r) => colliders.push({ t: "c", x, z, r });
+        const addBoxCol = (x1, x2, z1, z2) => colliders.push({ t: "b", x1: Math.min(x1, x2), x2: Math.max(x1, x2), z1: Math.min(z1, z2), z2: Math.max(z1, z2) });
+        const addEllipseCol = (x, z, rx, rz) => colliders.push({ t: "e", x, z, rx, rz });
+        function isBlocked(x, z) {
+            if (x < -28 || x > 28 || z < -28 || z > 36) return true;
+            for (const c of colliders) {
+                if (c.t === "c" && Math.hypot(x - c.x, z - c.z) < c.r) return true;
+                if (c.t === "b" && x > c.x1 && x < c.x2 && z > c.z1 && z < c.z2) return true;
+                if (c.t === "e" && ((x - c.x) / c.rx) ** 2 + ((z - c.z) / c.rz) ** 2 < 1) return true;
+            }
+            return false;
+        }
+        function canMove(fx, fz, tx, tz) {
+            if (isBlocked(tx, tz)) return false;
+            // Can only climb onto the hall platform via the front steps
+            if (onPlatform(tx, tz) && !onPlatform(fx, fz) && !onSteps(fx, fz)) return false;
+            return true;
+        }
 
         function createLabelEl(id, name, isMe = false) {
             const el = document.createElement("div");
@@ -926,196 +1217,753 @@
             return { el, bubble, nm };
         }
 
+        // ---------- Architectural builders ----------
+        // Vietnamese curved roof: concave slopes + upturned corner "đao" + ridge dragons facing a flaming pearl
+        function buildTempleRoof({ w, d, h, roofMat, trimMat, goldMat, gableMat, dragons = true, dragonMat }) {
+            const g = new THREE.Group();
+            const D = d / 2, t = 0.24;
+            const shape = new THREE.Shape();
+            shape.moveTo(-D, 0);
+            shape.quadraticCurveTo(-D * 0.42, h * 0.16, 0, h);
+            shape.quadraticCurveTo(D * 0.42, h * 0.16, D, 0);
+            shape.lineTo(D - 0.06, -t);
+            shape.quadraticCurveTo(D * 0.42 - 0.06, h * 0.16 - t, 0, h - t);
+            shape.quadraticCurveTo(-D * 0.42 + 0.06, h * 0.16 - t, -D + 0.06, -t);
+            shape.closePath();
+            const geo = new THREE.ExtrudeGeometry(shape, { depth: w, bevelEnabled: false, curveSegments: 28 });
+            geo.translate(0, 0, -w / 2); geo.rotateY(Math.PI / 2);
+            const roof = new THREE.Mesh(geo, roofMat); roof.castShadow = true; roof.receiveShadow = true; g.add(roof);
+
+            // Gable end infill
+            const gs = new THREE.Shape();
+            gs.moveTo(-D * 0.78, -0.02);
+            gs.quadraticCurveTo(-D * 0.36, h * 0.2, 0, h - t - 0.04);
+            gs.quadraticCurveTo(D * 0.36, h * 0.2, D * 0.78, -0.02);
+            gs.closePath();
+            const gGeo = new THREE.ShapeGeometry(gs, 20); gGeo.rotateY(Math.PI / 2);
+            [-1, 1].forEach(sx => {
+                const gm = new THREE.Mesh(gGeo, gableMat); gm.position.x = sx * (w / 2 - 0.35); g.add(gm);
+            });
+
+            // Verge trims following the curved gable profile
+            const profPts = [];
+            for (let i = 0; i <= 20; i++) {
+                const u = i / 20, zz = -D + u * d;
+                const k = Math.abs(zz) / D;
+                profPts.push(new THREE.Vector3(0, h * Math.pow(1 - k, 1.8) * 0.98 + 0.06, zz));
+            }
+            const profCurve = new THREE.CatmullRomCurve3(profPts);
+            const vergeGeo = new THREE.TubeGeometry(profCurve, 40, 0.09, 8, false);
+            [-1, 1].forEach(sx => { const v = new THREE.Mesh(vergeGeo, trimMat); v.position.x = sx * w / 2; g.add(v); });
+
+            // Upturned eave corners (đao cong)
+            [-1, 1].forEach(sx => [-1, 1].forEach(sz => {
+                const curve = new THREE.CatmullRomCurve3([
+                    new THREE.Vector3(sx * (w / 2 - 0.6), 0.05, sz * (D - 0.3)),
+                    new THREE.Vector3(sx * (w / 2), 0.1, sz * D),
+                    new THREE.Vector3(sx * (w / 2 + 0.35), 0.45, sz * (D + 0.3)),
+                    new THREE.Vector3(sx * (w / 2 + 0.42), 0.95, sz * (D + 0.36)),
+                    new THREE.Vector3(sx * (w / 2 + 0.28), 1.2, sz * (D + 0.24))
+                ]);
+                const horn = new THREE.Mesh(new THREE.TubeGeometry(curve, 24, 0.075, 8, false), trimMat);
+                horn.castShadow = true; g.add(horn);
+                const tip = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 10), goldMat);
+                tip.position.set(sx * (w / 2 + 0.28), 1.22, sz * (D + 0.24)); g.add(tip);
+            }));
+
+            // Ridge beam + curled ridge ends
+            const ridge = new THREE.Mesh(new THREE.BoxGeometry(w + 0.2, 0.3, 0.32), trimMat);
+            ridge.position.y = h + 0.02; ridge.castShadow = true; g.add(ridge);
+            [-1, 1].forEach(sx => {
+                const c = new THREE.CatmullRomCurve3([
+                    new THREE.Vector3(sx * (w / 2 - 0.2), h + 0.1, 0),
+                    new THREE.Vector3(sx * (w / 2 + 0.25), h + 0.4, 0),
+                    new THREE.Vector3(sx * (w / 2 + 0.15), h + 0.85, 0),
+                    new THREE.Vector3(sx * (w / 2 - 0.2), h + 0.9, 0)
+                ]);
+                g.add(new THREE.Mesh(new THREE.TubeGeometry(c, 20, 0.11, 10, false), goldMat));
+            });
+
+            if (dragons) {
+                // Flaming pearl (Lưỡng long chầu nguyệt)
+                const pearl = new THREE.Mesh(new THREE.SphereGeometry(0.24, 24, 18), new THREE.MeshStandardMaterial({ color: 0xffd36b, emissive: 0xc77a10, emissiveIntensity: 0.6, roughness: 0.3, metalness: 0.4 }));
+                pearl.position.y = h + 0.5; g.add(pearl);
+                const flame = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.42, 16), new THREE.MeshStandardMaterial({ color: 0xff8a2a, emissive: 0xff5a10, emissiveIntensity: 0.7 }));
+                flame.position.y = h + 0.88; g.add(flame);
+                [-1, 1].forEach(sx => {
+                    const pts = [];
+                    const L = Math.min(w * 0.36, 3.2);
+                    for (let i = 0; i <= 10; i++) {
+                        const u = i / 10;
+                        pts.push(new THREE.Vector3(sx * (0.45 + u * L), h + 0.25 + Math.sin(u * Math.PI * 2.2) * 0.22 + (1 - u) * 0.18, Math.cos(u * Math.PI * 2) * 0.05));
+                    }
+                    const body = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 48, 0.09, 10, false), dragonMat);
+                    g.add(body);
+                    const head = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 12), dragonMat);
+                    head.scale.set(1.4, 0.9, 0.9); head.position.set(sx * 0.48, h + 0.48, 0); g.add(head);
+                });
+            }
+            return g;
+        }
+
+        function makeLantern(color = 0xd42a1a, scale = 1) {
+            const g = new THREE.Group();
+            const pts = [];
+            for (let i = 0; i <= 16; i++) { const u = i / 16; pts.push(new THREE.Vector2(0.07 + Math.sin(u * Math.PI) * 0.27, u * 0.58 - 0.29)); }
+            const body = new THREE.Mesh(new THREE.LatheGeometry(pts, 32), new THREE.MeshStandardMaterial({ color, emissive: 0xff3a12, emissiveIntensity: 0.65, roughness: 0.55, side: THREE.DoubleSide }));
+            g.add(body);
+            const gold = new THREE.MeshStandardMaterial({ color: 0xd9a032, metalness: 0.6, roughness: 0.3 });
+            const capT = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.13, 0.06, 20), gold); capT.position.y = 0.31; g.add(capT);
+            const capB = capT.clone(); capB.position.y = -0.31; g.add(capB);
+            for (let i = 0; i < 6; i++) {
+                const rib = new THREE.Mesh(new THREE.TorusGeometry(0.29, 0.006, 4, 32, Math.PI), gold);
+                rib.rotation.set(0, (i / 6) * Math.PI, Math.PI / 2); rib.scale.set(1, 1.0, 1); g.add(rib);
+            }
+            const tassel = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.05, 0.32, 10), new THREE.MeshStandardMaterial({ color: 0xc41e1e }));
+            tassel.position.y = -0.5; g.add(tassel);
+            const string = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.6, 6), new THREE.MeshStandardMaterial({ color: 0x2a1a10 }));
+            string.position.y = 0.62; g.add(string);
+            g.scale.setScalar(scale);
+            return g;
+        }
+
+        function makeStoneLantern(stoneMat) {
+            const g = new THREE.Group();
+            const base = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.38, 0.25, 6), stoneMat); base.position.y = 0.125; g.add(base);
+            const col = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.14, 0.9, 16), stoneMat); col.position.y = 0.7; g.add(col);
+            const tray = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.22, 0.12, 6), stoneMat); tray.position.y = 1.2; g.add(tray);
+            const light = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.34, 0.34), new THREE.MeshStandardMaterial({ color: 0xffd58a, emissive: 0xffa53a, emissiveIntensity: 1.1 }));
+            light.position.y = 1.43; g.add(light);
+            [[0.18, 0.18], [-0.18, 0.18], [0.18, -0.18], [-0.18, -0.18]].forEach(([px, pz]) => {
+                const p = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.36, 0.06), stoneMat); p.position.set(px, 1.43, pz); g.add(p);
+            });
+            const cap = new THREE.Mesh(new THREE.ConeGeometry(0.42, 0.32, 6), stoneMat); cap.position.y = 1.78; g.add(cap);
+            const bud = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 10), stoneMat); bud.position.y = 1.98; g.add(bud);
+            g.traverse(m => { if (m.isMesh) m.castShadow = true; });
+            return g;
+        }
+
+        function makeGuardianLion(stoneMat) {
+            const g = new THREE.Group();
+            const ped = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.8, 1.2), stoneMat); ped.position.y = 0.4; g.add(ped);
+            const pedTop = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.1, 1.3), stoneMat); pedTop.position.y = 0.85; g.add(pedTop);
+            const haunch = new THREE.Mesh(new THREE.SphereGeometry(0.4, 24, 18), stoneMat); haunch.scale.set(1, 0.8, 1.1); haunch.position.set(0, 1.18, -0.2); g.add(haunch);
+            const chest = new THREE.Mesh(new THREE.SphereGeometry(0.33, 24, 18), stoneMat); chest.scale.set(1, 1.3, 0.9); chest.position.set(0, 1.5, 0.15); g.add(chest);
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.3, 24, 18), stoneMat); head.position.set(0, 2.0, 0.28); g.add(head);
+            const mane = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.1, 12, 24), stoneMat); mane.position.set(0, 2.0, 0.2); g.add(mane);
+            const snout = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 12), stoneMat); snout.scale.set(1.2, 0.8, 1); snout.position.set(0, 1.92, 0.55); g.add(snout);
+            [-0.16, 0.16].forEach(px => {
+                const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.55, 12), stoneMat); leg.position.set(px, 1.15, 0.38); g.add(leg);
+                const eye = new THREE.Mesh(new THREE.SphereGeometry(0.04, 10, 8), new THREE.MeshStandardMaterial({ color: 0x3a3530 })); eye.position.set(px * 0.7, 2.08, 0.54); g.add(eye);
+            });
+            const ball = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 12), stoneMat); ball.position.set(0.28, 0.98, 0.45); g.add(ball);
+            g.traverse(m => { if (m.isMesh) m.castShadow = true; });
+            return g;
+        }
+
+        function buildPerimeterWall(x1, z1, x2, z2, mats) {
+            const len = Math.hypot(x2 - x1, z2 - z1), ang = Math.atan2(z2 - z1, x2 - x1);
+            const g = new THREE.Group();
+            const H = 2.7, T = 0.5;
+            const tex = mats.plasterTex.clone(); tex.needsUpdate = true; tex.repeat.set(len / 5, 1);
+            const plaster = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.9 });
+            const base = new THREE.Mesh(new THREE.BoxGeometry(len, 0.55, T + 0.18), mats.stone); base.position.y = 0.275; base.receiveShadow = true; g.add(base);
+            const body = new THREE.Mesh(new THREE.BoxGeometry(len, H - 0.55, T), plaster); body.position.y = 0.55 + (H - 0.55) / 2; body.castShadow = true; body.receiveShadow = true; g.add(body);
+            // Tile coping
+            const cs = new THREE.Shape();
+            cs.moveTo(-0.55, 0); cs.quadraticCurveTo(-0.16, 0.06, 0, 0.34); cs.quadraticCurveTo(0.16, 0.06, 0.55, 0); cs.lineTo(0.5, -0.08); cs.lineTo(-0.5, -0.08); cs.closePath();
+            const cGeo = new THREE.ExtrudeGeometry(cs, { depth: len + 0.4, bevelEnabled: false, curveSegments: 12 });
+            cGeo.translate(0, 0, -(len + 0.4) / 2); cGeo.rotateY(Math.PI / 2);
+            const coping = new THREE.Mesh(cGeo, mats.roof); coping.position.y = H + 0.04; coping.castShadow = true; g.add(coping);
+            // Pillars + round lattice windows
+            const bays = Math.max(1, Math.round(len / 4.2));
+            for (let i = 0; i <= bays; i++) {
+                const px = -len / 2 + (i / bays) * len;
+                const pil = new THREE.Mesh(mats.pillarGeo, mats.stone); pil.position.set(px, (H + 0.4) / 2, 0); pil.castShadow = true; g.add(pil);
+                const cap = new THREE.Mesh(mats.capGeo, mats.roof); cap.position.set(px, H + 0.55, 0); cap.rotation.y = Math.PI / 4; g.add(cap);
+                if (i < bays) {
+                    const wx = px + len / bays / 2;
+                    [-1, 1].forEach(side => {
+                        const win = new THREE.Mesh(mats.winGeo, mats.winMat); win.position.set(wx, 1.65, side * (T / 2 + 0.005)); win.rotation.y = side < 0 ? Math.PI : 0; g.add(win);
+                        const ring = new THREE.Mesh(mats.ringGeo, mats.gold); ring.position.set(wx, 1.65, side * (T / 2 + 0.01)); g.add(ring);
+                    });
+                }
+            }
+            g.position.set((x1 + x2) / 2, 0, (z1 + z2) / 2); g.rotation.y = -ang;
+            wScene.add(g);
+        }
+
+        function makeBlossomTree(x, z, color, woodMat, scale = 1) {
+            const g = new THREE.Group();
+            const trunkCurve = new THREE.CatmullRomCurve3([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.15, 0.9, 0.05), new THREE.Vector3(-0.1, 1.8, -0.05), new THREE.Vector3(0.05, 2.5, 0)]);
+            const trunk = new THREE.Mesh(new THREE.TubeGeometry(trunkCurve, 24, 0.2, 12, false), woodMat); trunk.castShadow = true; g.add(trunk);
+            const ends = [];
+            for (let b = 0; b < 6; b++) {
+                const a = (b / 6) * Math.PI * 2 + Math.random() * 0.4;
+                const len = 1.0 + Math.random() * 0.7;
+                const end = new THREE.Vector3(Math.cos(a) * len, 3.0 + Math.random() * 0.8, Math.sin(a) * len);
+                const c = new THREE.CatmullRomCurve3([new THREE.Vector3(0, 2.2 + Math.random() * 0.3, 0), new THREE.Vector3(end.x * 0.5, end.y - 0.2, end.z * 0.5), end]);
+                const br = new THREE.Mesh(new THREE.TubeGeometry(c, 12, 0.07, 8, false), woodMat); br.castShadow = true; g.add(br);
+                ends.push(end);
+            }
+            const count = 240;
+            const blossom = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.11, 2), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.55 }), count);
+            const m = new THREE.Matrix4(), q = new THREE.Quaternion(), s = new THREE.Vector3(), p = new THREE.Vector3(), col = new THREE.Color();
+            for (let i = 0; i < count; i++) {
+                const e = ends[i % ends.length];
+                p.set(e.x + (Math.random() - 0.5) * 1.45, e.y + (Math.random() - 0.4) * 1.0, e.z + (Math.random() - 0.5) * 1.45);
+                const sc = 0.55 + Math.random() * 0.75; s.set(sc * 1.15, sc * 0.75, sc);
+                q.setFromEuler(new THREE.Euler(Math.random() * 3, Math.random() * 3, 0));
+                m.compose(p, q, s); blossom.setMatrixAt(i, m);
+                col.set(color).offsetHSL((Math.random() - 0.5) * 0.03, 0, (Math.random() - 0.5) * 0.12);
+                blossom.setColorAt(i, col);
+            }
+            blossom.castShadow = true; g.add(blossom);
+            g.position.set(x, 0, z); g.scale.setScalar(scale);
+            wScene.add(g);
+            addCircleCol(x, z, 0.45 * scale);
+        }
+
+        function buildSkyAndScenery() {
+            // Physically-inspired gradient sky dome with sun glow
+            const sunDir = new THREE.Vector3(0.35, 0.42, -0.84).normalize();
+            const skyMat = new THREE.ShaderMaterial({
+                side: THREE.BackSide, depthWrite: false, fog: false, toneMapped: false,
+                uniforms: {
+                    topColor: { value: new THREE.Color(0x2f6fc4) },
+                    midColor: { value: new THREE.Color(0x8cbbe6) },
+                    horizonColor: { value: new THREE.Color(0xf3e3c8) },
+                    sunDir: { value: sunDir }
+                },
+                vertexShader: `varying vec3 vDir; void main(){ vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+                fragmentShader: `uniform vec3 topColor; uniform vec3 midColor; uniform vec3 horizonColor; uniform vec3 sunDir; varying vec3 vDir;
+                    void main(){
+                        float h = vDir.y;
+                        vec3 col = mix(horizonColor, midColor, smoothstep(0.0, 0.18, h));
+                        col = mix(col, topColor, smoothstep(0.18, 0.75, h));
+                        if (h < 0.0) col = mix(horizonColor, vec3(0.62,0.66,0.6), smoothstep(0.0, -0.2, h));
+                        float sd = max(dot(normalize(vDir), sunDir), 0.0);
+                        col += vec3(1.0,0.86,0.6) * pow(sd, 6.0) * 0.35;
+                        col += vec3(1.0,0.95,0.85) * pow(sd, 90.0) * 0.8;
+                        col += vec3(1.0,1.0,0.95) * smoothstep(0.9994, 0.9998, sd);
+                        gl_FragColor = vec4(col, 1.0);
+                    }`
+            });
+            wScene.add(new THREE.Mesh(new THREE.SphereGeometry(520, 64, 32), skyMat));
+
+            // Layered volumetric-looking drifting clouds (soft sprites)
+            const cloudTex = makeCloudTexture();
+            for (let c = 0; c < 26; c++) {
+                const ang = Math.random() * Math.PI * 2, rad = 200 + Math.random() * 180;
+                const cx = Math.cos(ang) * rad, cz = Math.sin(ang) * rad - 40, cy = 28 + Math.random() * 55;
+                const puffs = 5 + Math.floor(Math.random() * 5);
+                for (let i = 0; i < puffs; i++) {
+                    const mat = new THREE.SpriteMaterial({ map: cloudTex, transparent: true, depthWrite: false, fog: false, opacity: 0.75 + Math.random() * 0.25, color: i % 3 === 0 ? 0xf2f4f8 : 0xffffff });
+                    const sp = new THREE.Sprite(mat);
+                    const sc = 40 + Math.random() * 50;
+                    sp.scale.set(sc * 1.6, sc, 1);
+                    sp.position.set(cx + (Math.random() - 0.5) * 70, cy + (Math.random() - 0.5) * 12, cz + (Math.random() - 0.5) * 40);
+                    wScene.add(sp); cloudSprites.push({ sp, speed: 0.02 + Math.random() * 0.03 });
+                }
+            }
+
+            // Distant hazy mountains & hills (aerial perspective)
+            const farMat = new THREE.MeshLambertMaterial({ color: 0x8ea7b8, fog: false });
+            const midMat = new THREE.MeshLambertMaterial({ color: 0x6f8f78, fog: false });
+            for (let i = 0; i < 14; i++) {
+                const a = (i / 14) * Math.PI * 2 + Math.random() * 0.2;
+                const m = new THREE.Mesh(new THREE.SphereGeometry(1, 40, 20), farMat);
+                m.scale.set(70 + Math.random() * 50, 30 + Math.random() * 35, 45);
+                m.position.set(Math.cos(a) * 330, -6, Math.sin(a) * 330); m.lookAt(0, -6, 0); wScene.add(m);
+            }
+            for (let i = 0; i < 16; i++) {
+                const a = (i / 16) * Math.PI * 2 + Math.random() * 0.3;
+                const m = new THREE.Mesh(new THREE.SphereGeometry(1, 36, 18), midMat);
+                m.scale.set(40 + Math.random() * 30, 12 + Math.random() * 12, 30);
+                m.position.set(Math.cos(a) * 200, -4, Math.sin(a) * 200); m.lookAt(0, -4, 0); wScene.add(m);
+            }
+
+            // Pine / cypress groves outside the walls (instanced)
+            const pinePos = [];
+            for (let i = 0; i < 70; i++) {
+                const a = Math.random() * Math.PI * 2, r = 34 + Math.random() * 60;
+                const x = Math.cos(a) * r, z = Math.sin(a) * r;
+                if (Math.abs(x) < 7 && z > 15) continue; // keep the approach road clear
+                pinePos.push([x, z, 0.8 + Math.random() * 0.8]);
+            }
+            [[-21, 4], [-22, -10], [21, 6], [22, -12], [-20, 22], [20, 24], [-12, -24], [8, -24], [-24, 14], [24, 15]].forEach(([x, z]) => pinePos.push([x, z, 0.9 + Math.random() * 0.4]));
+            const pineMat = new THREE.MeshStandardMaterial({ color: 0x2f5233, roughness: 0.85 });
+            const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5a3d26, roughness: 0.9 });
+            const layers = [[1.6, 2.2, 2.0], [1.25, 2.0, 3.3], [0.85, 1.8, 4.5]];
+            const layerMeshes = layers.map(([r, h]) => new THREE.InstancedMesh(new THREE.ConeGeometry(r, h, 24), pineMat, pinePos.length));
+            const trunkInst = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.15, 0.22, 2, 10), trunkMat, pinePos.length);
+            const m4 = new THREE.Matrix4(), q4 = new THREE.Quaternion(), s4 = new THREE.Vector3();
+            pinePos.forEach(([x, z, sc], i) => {
+                s4.set(sc, sc, sc);
+                layers.forEach(([, , y], li) => { m4.compose(new THREE.Vector3(x, y * sc, z), q4, s4); layerMeshes[li].setMatrixAt(i, m4); });
+                m4.compose(new THREE.Vector3(x, 1 * sc, z), q4, s4); trunkInst.setMatrixAt(i, m4);
+                if (Math.abs(x) < 28 && z > -28 && z < 36) addCircleCol(x, z, 0.5 * sc);
+            });
+            layerMeshes.forEach(lm => { lm.castShadow = true; wScene.add(lm); });
+            wScene.add(trunkInst);
+        }
+
         function init3DWorld() {
             wScene = new THREE.Scene();
-            wScene.background = new THREE.Color(0xf5dfc3);
-            wScene.fog = new THREE.FogExp2(0xf5dfc3, 0.015);
+            wScene.background = new THREE.Color(0xd8e4ec);
+            wScene.fog = new THREE.FogExp2(0xe6e2d6, 0.0105);
 
-            wCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 140);
-            wRenderer = new THREE.WebGLRenderer({ canvas: worldCanvas, antialias: true });
-            wRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+            wCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 700);
+            wCamera.position.set(0, 3.45, player.z + 6.9);
+            wRenderer = new THREE.WebGLRenderer({ canvas: worldCanvas, antialias: true, powerPreference: "high-performance" });
+            wRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2.5));
             wRenderer.setSize(window.innerWidth, window.innerHeight);
             wRenderer.shadowMap.enabled = true;
             wRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
             wRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-            wRenderer.toneMappingExposure = 1.05;
+            wRenderer.toneMappingExposure = 1.1;
+            if (THREE.SRGBColorSpace) wRenderer.outputColorSpace = THREE.SRGBColorSpace;
 
-            // Golden-Hour Temple Lighting
-            wScene.add(new THREE.HemisphereLight(0xfff8eb, 0x8b6b4a, 0.72));
-            const sun = new THREE.DirectionalLight(0xfff1d6, 1.35);
-            sun.position.set(18, 28, 16);
+            // Natural daylight
+            wScene.add(new THREE.HemisphereLight(0xcfe3ff, 0x8a7a5a, 0.85));
+            const sun = new THREE.DirectionalLight(0xfff0d8, 2.0);
+            sun.position.set(18, 30, 16);
             sun.castShadow = true;
             sun.shadow.mapSize.set(2048, 2048);
-            sun.shadow.camera.near = 2; sun.shadow.camera.far = 85;
-            sun.shadow.camera.left = -28; sun.shadow.camera.right = 28;
-            sun.shadow.camera.top = 28; sun.shadow.camera.bottom = -28;
+            sun.shadow.camera.near = 2; sun.shadow.camera.far = 100;
+            sun.shadow.camera.left = -34; sun.shadow.camera.right = 34;
+            sun.shadow.camera.top = 34; sun.shadow.camera.bottom = -34;
+            sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.02;
             wScene.add(sun);
 
-            const stoneTex = makeStoneTexture();
-            const roofTex = makeRoofTileTexture();
+            buildSkyAndScenery();
+            smokeTex = makeSmokeTexture();
+
+            const stoneTex = makeStoneTexture(8, 9);
+            const roofTex = makeRoofTileTexture(3, 3);
             const woodTex = makeWoodTexture();
+            const brickTex = makeBrickTexture(1, 6);
+            const plasterTex = makePlasterTexture();
 
-            // Stone Courtyard & Garden Ground
-            const garden = new THREE.Mesh(
-                new THREE.PlaneGeometry(110, 110),
-                new THREE.MeshStandardMaterial({ color: 0x7b8c5a, roughness: 0.95 })
-            );
-            garden.rotation.x = -Math.PI / 2; garden.receiveShadow = true;
-            wScene.add(garden);
+            const stoneMat = new THREE.MeshStandardMaterial({ color: 0xbdb5aa, roughness: 0.88 });
+            const flagMat = new THREE.MeshStandardMaterial({ map: stoneTex, bumpMap: stoneTex, bumpScale: 0.6, roughness: 0.85 });
+            const woodMat = new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.6 });
+            const roofMat = new THREE.MeshStandardMaterial({ map: roofTex, bumpMap: roofTex, bumpScale: 0.8, roughness: 0.6 });
+            const trimMat = new THREE.MeshStandardMaterial({ color: 0x3e2a22, roughness: 0.6 });
+            const goldMat = new THREE.MeshStandardMaterial({ color: 0xd9a032, roughness: 0.32, metalness: 0.55 });
+            const dragonMat = new THREE.MeshStandardMaterial({ color: 0x3f7a5a, roughness: 0.4, metalness: 0.3 });
+            const redLacquerMat = new THREE.MeshStandardMaterial({ color: 0x8f1d14, roughness: 0.35 });
+            const gableMat = new THREE.MeshStandardMaterial({ map: plasterTex, roughness: 0.9, side: THREE.DoubleSide });
+            const plasterMat = new THREE.MeshStandardMaterial({ map: plasterTex, roughness: 0.9 });
+            const brickMat = new THREE.MeshStandardMaterial({ map: brickTex, bumpMap: brickTex, bumpScale: 0.5, roughness: 0.82 });
+            const curbMat = new THREE.MeshStandardMaterial({ color: 0x9a948a, roughness: 0.8 });
+            const roofArgs = { roofMat, trimMat, goldMat, gableMat, dragonMat };
 
-            const courtyard = new THREE.Mesh(
-                new THREE.BoxGeometry(28, 0.12, 44),
-                new THREE.MeshStandardMaterial({ map: stoneTex, bumpMap: stoneTex, bumpScale: 0.05, roughness: 0.85 })
-            );
-            courtyard.position.set(0, 0.06, 4); courtyard.receiveShadow = true;
-            wScene.add(courtyard);
+            // ---- Ground: grass outside, flagstone courtyard inside ----
+            const grass = new THREE.Mesh(new THREE.PlaneGeometry(600, 600), new THREE.MeshStandardMaterial({ map: makeGrassTexture(120), roughness: 0.95 }));
+            grass.rotation.x = -Math.PI / 2; grass.receiveShadow = true; wScene.add(grass);
+            const courtyard = new THREE.Mesh(new THREE.BoxGeometry(32, 0.08, 35), flagMat);
+            courtyard.position.set(0, 0.04, -1.5); courtyard.receiveShadow = true; wScene.add(courtyard);
 
-            const woodMat = new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.65 });
-            const roofMat = new THREE.MeshStandardMaterial({ map: roofTex, roughness: 0.55 });
-            const goldMat = new THREE.MeshStandardMaterial({ color: 0xd99b26, roughness: 0.3, metalness: 0.6 });
-            const redLacquerMat = new THREE.MeshStandardMaterial({ color: 0x9e2418, roughness: 0.42 });
+            // ---- Brick walkways with raised stone curbs ----
+            const addPath = (x, z, w, len) => {
+                const t = brickTex.clone(); t.needsUpdate = true; t.repeat.set(w / 4, len / 4);
+                const p = new THREE.Mesh(new THREE.BoxGeometry(w, 0.06, len), new THREE.MeshStandardMaterial({ map: t, bumpMap: t, bumpScale: 0.5, roughness: 0.82 }));
+                p.position.set(x, 0.1, z); p.receiveShadow = true; wScene.add(p);
+            };
+            const addCurb = (x, z, w, len) => {
+                const c = new THREE.Mesh(new THREE.BoxGeometry(w, 0.2, len), curbMat);
+                c.position.set(x, 0.12, z); c.castShadow = true; c.receiveShadow = true; wScene.add(c);
+            };
+            addPath(0, 25.2, 4.2, 18.4);      // outside approach road (16 → 34.4)
+            addPath(0, 11.5, 4.2, 9);         // gate → plaza
+            addPath(0, -1.75, 4.2, 5.5);      // plaza → hall steps
+            addPath(5.4, 4, 4.4, 2.2);        // side path → Sếp desk (rotated via dims)
+            [-2.2, 2.2].forEach(cx => { addCurb(cx, 25.2, 0.26, 18.4); addCurb(cx, 11.5, 0.26, 9); addCurb(cx, -1.75, 0.26, 5.5); });
+            const plaza = new THREE.Mesh(new THREE.CircleGeometry(3.05, 64), brickMat);
+            plaza.rotation.x = -Math.PI / 2; plaza.position.set(0, 0.135, 4); plaza.receiveShadow = true; wScene.add(plaza);
+            const curbArc = (cx, cz, r, a1, a2) => {
+                const geo = new THREE.TorusGeometry(r, 0.12, 10, 48, a2 - a1); geo.rotateZ(a1); geo.rotateX(Math.PI / 2);
+                const m = new THREE.Mesh(geo, curbMat); m.position.set(cx, 0.13, cz); m.castShadow = true; wScene.add(m);
+            };
+            curbArc(0, 4, 3.1, 0.36, 0.76); curbArc(0, 4, 3.1, -0.76, -0.36); curbArc(0, 4, 3.1, Math.PI - 0.76, Math.PI + 0.76);
 
-            // 1. Cổng Tam Quan (Detailed 3D Gate at z = 16)
-            [-4.2, -2.1, 2.1, 4.2].forEach((px, idx) => {
-                const h = idx === 1 || idx === 2 ? 5.0 : 3.9;
-                const col = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.34, h, 16), redLacquerMat);
-                col.position.set(px, h / 2, 16); col.castShadow = true; wScene.add(col);
-                const plinth = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.35, 0.9), new THREE.MeshStandardMaterial({ map: stoneTex }));
-                plinth.position.set(px, 0.18, 16); wScene.add(plinth);
+            // ---- Perimeter citadel wall (tường bao) ----
+            const wallMats = {
+                plasterTex: makePlasterTexture("#E3C98F"), stone: stoneMat, roof: roofMat, gold: goldMat,
+                pillarGeo: new THREE.BoxGeometry(0.78, 3.1, 0.78), capGeo: new THREE.ConeGeometry(0.62, 0.42, 4),
+                winGeo: new THREE.CircleGeometry(0.42, 40), winMat: new THREE.MeshStandardMaterial({ color: 0x3a2a1e, roughness: 0.8 }),
+                ringGeo: new THREE.TorusGeometry(0.44, 0.05, 8, 40)
+            };
+            buildPerimeterWall(-16, 16, -4.6, 16, wallMats);
+            buildPerimeterWall(4.6, 16, 16, 16, wallMats);
+            buildPerimeterWall(-16, -19, -16, 16, wallMats);
+            buildPerimeterWall(16, -19, 16, 16, wallMats);
+            buildPerimeterWall(-16, -19, 16, -19, wallMats);
+            addBoxCol(-16.5, -4.0, 15.6, 16.45); addBoxCol(4.0, 16.5, 15.6, 16.45);
+            addBoxCol(-16.5, -15.55, -19.5, 16.45); addBoxCol(15.55, 16.5, -19.5, 16.45);
+            addBoxCol(-16.5, 16.5, -19.5, -18.55);
+
+            // ---- Cổng Tam Quan (3-door gate) ----
+            const gate = new THREE.Group(); gate.position.set(0, 0, 16);
+            [[-4.2, 4.4], [-2.1, 5.8], [2.1, 5.8], [4.2, 4.4]].forEach(([px, h]) => {
+                const col = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.34, h, 24), redLacquerMat);
+                col.position.set(px, h / 2, 0); col.castShadow = true; gate.add(col);
+                const plinth = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.55, 0.38, 24), stoneMat);
+                plinth.position.set(px, 0.19, 0); gate.add(plinth);
+                addCircleCol(px, 16, 0.48);
             });
-            const gateMainRoof = new THREE.Mesh(new THREE.ConeGeometry(4.6, 1.8, 4), roofMat);
-            gateMainRoof.rotation.y = Math.PI / 4; gateMainRoof.scale.set(1.5, 1, 0.65);
-            gateMainRoof.position.set(0, 5.7, 16); gateMainRoof.castShadow = true; wScene.add(gateMainRoof);
+            // Center lintel + prominent red-gold signboard clearly below eaves
+            const lintelC = new THREE.Mesh(new THREE.BoxGeometry(4.6, 1.1, 0.7), plasterMat); lintelC.position.set(0, 5.05, 0); lintelC.castShadow = true; gate.add(lintelC);
+            const sign = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 0.82), new THREE.MeshStandardMaterial({ map: makeTextPanel(["CHÙA L.ASY"], { w: 1024, h: 264, font: "700 140px 'Playfair Display', serif" }), roughness: 0.45 }));
+            sign.position.set(0, 5.02, 0.37); gate.add(sign);
+            const signBack = sign.clone(); signBack.rotation.y = Math.PI; signBack.position.z = -0.37; gate.add(signBack);
+            // Side lintels
+            [-1, 1].forEach(sx => {
+                const l = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.8, 0.6), plasterMat); l.position.set(sx * 3.15, 3.6, 0); l.castShadow = true; gate.add(l);
+                const filler = new THREE.Mesh(new THREE.BoxGeometry(0.5, 3.2, 0.6), plasterMat); filler.position.set(sx * 4.4, 1.6, 0); gate.add(filler);
+                const sr = buildTempleRoof({ w: 2.9, d: 2.6, h: 1.0, ...roofArgs, dragons: false }); sr.position.set(sx * 3.15, 4.0, 0); gate.add(sr);
+            });
+            const cr = buildTempleRoof({ w: 5.8, d: 3.4, h: 1.45, ...roofArgs, dragons: false }); cr.position.set(0, 5.85, 0); gate.add(cr);
+            const crWall = new THREE.Mesh(new THREE.BoxGeometry(3.1, 0.55, 1.3), redLacquerMat); crWall.position.set(0, 7.25, 0); gate.add(crWall);
+            const cr2 = buildTempleRoof({ w: 4.3, d: 2.5, h: 1.15, ...roofArgs, dragons: true }); cr2.position.set(0, 7.55, 0); gate.add(cr2);
+            // Couplets (câu đối) on the center pillars
+            const coupletL = makeTextPanel(["AN", "KHANG", "THỊNH", "VƯỢNG"], { w: 256, h: 1024, vertical: true, font: "700 62px 'Playfair Display', serif" });
+            const coupletR = makeTextPanel(["VẠN", "SỰ", "NHƯ", "Ý"], { w: 256, h: 1024, vertical: true, font: "700 70px 'Playfair Display', serif" });
+            [[-2.1, coupletL], [2.1, coupletR]].forEach(([px, tex]) => {
+                const cp = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 2.6), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.5 }));
+                cp.position.set(px, 2.5, 0.36); gate.add(cp);
+            });
+            // Hanging lanterns under the gate
+            [-1.05, 1.05].forEach(px => { const ln = makeLantern(0xd42a1a, 1.05); ln.position.set(px, 4.1, 0.55); gate.add(ln); swayLanterns.push(ln); });
+            [-3.15, 3.15].forEach(px => { const ln = makeLantern(0xd42a1a, 0.85); ln.position.set(px, 2.75, 0.45); gate.add(ln); swayLanterns.push(ln); });
+            wScene.add(gate);
+            const gateLight = new THREE.PointLight(0xff9a50, 1.4, 9, 2); gateLight.position.set(0, 3.2, 17); wScene.add(gateLight);
 
-            const gateSign = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.72, 0.25), woodMat);
-            gateSign.position.set(0, 4.35, 16.2); wScene.add(gateSign);
+            // Trụ biểu (ceremonial pillars) + guardian lions outside the gate
+            [-6.3, 6.3].forEach(px => {
+                const tg = new THREE.Group();
+                const shaft = new THREE.Mesh(new THREE.BoxGeometry(0.7, 5.4, 0.7), plasterMat); shaft.position.y = 2.7; shaft.castShadow = true; tg.add(shaft);
+                const lamp = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.7, 0.9), stoneMat); lamp.position.y = 5.75; tg.add(lamp);
+                const bud = new THREE.Mesh(new THREE.SphereGeometry(0.32, 20, 16), new THREE.MeshStandardMaterial({ color: 0xe8b04a, roughness: 0.4, metalness: 0.3 })); bud.scale.y = 1.4; bud.position.y = 6.45; tg.add(bud);
+                const phoenix = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.5, 12), goldMat); phoenix.position.y = 7.0; tg.add(phoenix);
+                const cp = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 3.6), new THREE.MeshStandardMaterial({ map: px < 0 ? coupletL : coupletR, roughness: 0.5 }));
+                cp.position.set(0, 2.9, 0.36); tg.add(cp);
+                tg.position.set(px, 0, 18.2); wScene.add(tg);
+                addBoxCol(px - 0.45, px + 0.45, 17.75, 18.65);
+            });
+            [-4.95, 4.95].forEach(px => {
+                const lion = makeGuardianLion(stoneMat); lion.position.set(px, 0, 17.4); wScene.add(lion);
+                addBoxCol(px - 0.6, px + 0.6, 16.7, 18.1);
+            });
 
-            // 2. Bronze Lư Hương (Incense Cauldron at z = 4)
-            const burnerBase = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.35, 0.45, 24), new THREE.MeshStandardMaterial({ map: stoneTex }));
-            burnerBase.position.set(0, 0.26, 4); burnerBase.receiveShadow = true; wScene.add(burnerBase);
-            const bronzeMat = new THREE.MeshStandardMaterial({ color: 0x8f6118, roughness: 0.32, metalness: 0.75 });
-            const cauldron = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.62, 0.95, 24), bronzeMat);
-            cauldron.position.set(0, 0.95, 4); cauldron.castShadow = true; wScene.add(cauldron);
-            const cauldronRim = new THREE.Mesh(new THREE.TorusGeometry(0.84, 0.08, 12, 24), bronzeMat);
-            cauldronRim.rotation.x = Math.PI / 2; cauldronRim.position.set(0, 1.42, 4); wScene.add(cauldronRim);
-            const ashBed = new THREE.Mesh(new THREE.CylinderGeometry(0.76, 0.76, 0.06, 20), new THREE.MeshStandardMaterial({ color: 0x3b2f2a, roughness: 0.95 }));
-            ashBed.position.set(0, 1.4, 4); wScene.add(ashBed);
+            // Stone lanterns & bonsai pots along the walkways
+            [[19.5], [9.5], [-0.8]].forEach(([lz]) => [-2.95, 2.95].forEach(lx => {
+                const sl = makeStoneLantern(stoneMat); sl.position.set(lx, 0, lz); wScene.add(sl); addCircleCol(lx, lz, 0.38);
+            }));
+            const potMat = new THREE.MeshStandardMaterial({ color: 0x2f5d8a, roughness: 0.25, metalness: 0.1 });
+            const foliageMat = new THREE.MeshStandardMaterial({ color: 0x3f6e2f, roughness: 0.8 });
+            const kumquatMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.35, emissive: 0x5a2c00, emissiveIntensity: 0.15 });
+            const potPts = [new THREE.Vector2(0, 0), new THREE.Vector2(0.3, 0), new THREE.Vector2(0.45, 0.35), new THREE.Vector2(0.5, 0.6), new THREE.Vector2(0.46, 0.66)];
+            [[-3.3, 13.2], [3.3, 13.2], [-3.3, -3.2], [3.3, -3.2]].forEach(([bx, bz]) => {
+                const pot = new THREE.Mesh(new THREE.LatheGeometry(potPts, 32), potMat); pot.position.set(bx, 0.05, bz); pot.castShadow = true; wScene.add(pot);
+                const fol = new THREE.Mesh(new THREE.IcosahedronGeometry(0.62, 3), foliageMat); fol.position.set(bx, 1.25, bz); fol.castShadow = true; wScene.add(fol);
+                for (let k = 0; k < 14; k++) {
+                    const f = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), kumquatMat);
+                    const a = Math.random() * Math.PI * 2, e = (Math.random() - 0.3) * 1.2;
+                    f.position.set(bx + Math.cos(a) * Math.cos(e) * 0.62, 1.25 + Math.sin(e) * 0.62, bz + Math.sin(a) * Math.cos(e) * 0.62); wScene.add(f);
+                }
+                addCircleCol(bx, bz, 0.55);
+            });
 
-            // 3. Chính Điện (Grand Temple Hall at z = -12)
-            const hallPlatform = new THREE.Mesh(new THREE.BoxGeometry(17, 0.6, 12), new THREE.MeshStandardMaterial({ map: stoneTex }));
-            hallPlatform.position.set(0, 0.3, -12); hallPlatform.receiveShadow = true; wScene.add(hallPlatform);
-
-            // Steps
-            for (let s = 0; s < 3; s++) {
-                const step = new THREE.Mesh(new THREE.BoxGeometry(6.5, 0.2, 0.7), new THREE.MeshStandardMaterial({ map: stoneTex }));
-                step.position.set(0, 0.1 + s * 0.2, -5.6 - s * 0.65); step.receiveShadow = true; wScene.add(step);
+            // ---- Bronze Lư Hương (incense cauldron, plaza center z = 4) ----
+            const bronzeMat = new THREE.MeshStandardMaterial({ color: 0x7a5420, roughness: 0.35, metalness: 0.7 });
+            const ped = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.3, 0.5, 8), stoneMat); ped.position.set(0, 0.38, 4); ped.castShadow = true; wScene.add(ped);
+            const bellyPts = [new THREE.Vector2(0.45, 0), new THREE.Vector2(0.8, 0.15), new THREE.Vector2(0.92, 0.45), new THREE.Vector2(0.85, 0.75), new THREE.Vector2(0.9, 0.82), new THREE.Vector2(0.86, 0.86)];
+            const belly = new THREE.Mesh(new THREE.LatheGeometry(bellyPts, 48), bronzeMat); belly.position.set(0, 0.63, 4); belly.castShadow = true; wScene.add(belly);
+            for (let i = 0; i < 3; i++) {
+                const a = (i / 3) * Math.PI * 2;
+                const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.13, 0.35, 12), bronzeMat); leg.position.set(Math.cos(a) * 0.55, 0.7, 4 + Math.sin(a) * 0.55); wScene.add(leg);
             }
-
-            [-7.2, -3.2, 3.2, 7.2].forEach(px => {
-                const col = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.36, 5.4, 16), redLacquerMat);
-                col.position.set(px, 3.2, -6.8); col.castShadow = true; wScene.add(col);
+            [-1, 1].forEach(sx => {
+                const ear = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.05, 12, 24), bronzeMat); ear.position.set(sx * 0.98, 1.55, 4); ear.rotation.y = Math.PI / 2; wScene.add(ear);
             });
-            const hallBackWall = new THREE.Mesh(new THREE.BoxGeometry(16, 5.4, 0.6), new THREE.MeshStandardMaterial({ color: 0xf7e7ce, roughness: 0.8 }));
-            hallBackWall.position.set(0, 3.2, -17.5); wScene.add(hallBackWall);
+            const ashBed = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.05, 40), new THREE.MeshStandardMaterial({ color: 0x8a8278, roughness: 1 }));
+            ashBed.position.set(0, 1.42, 4); wScene.add(ashBed);
+            addCircleCol(0, 4, 1.45);
 
-            // Double-tiered curved roof
-            const lowerRoof = new THREE.Mesh(new THREE.ConeGeometry(13.5, 2.4, 4), roofMat);
-            lowerRoof.rotation.y = Math.PI / 4; lowerRoof.scale.set(1.1, 1, 0.82);
-            lowerRoof.position.set(0, 6.8, -12); lowerRoof.castShadow = true; wScene.add(lowerRoof);
+            // ---- Chính Điện (main hall, z = -12) ----
+            const hallPlatform = new THREE.Mesh(new THREE.BoxGeometry(17, 0.6, 12), flagMat);
+            hallPlatform.position.set(0, 0.3, -12); hallPlatform.receiveShadow = true; hallPlatform.castShadow = true; wScene.add(hallPlatform);
+            const platformEdge = new THREE.Mesh(new THREE.BoxGeometry(17.3, 0.14, 12.3), stoneMat); platformEdge.position.set(0, 0.6, -12); wScene.add(platformEdge);
+            for (let s = 0; s < 3; s++) {
+                const step = new THREE.Mesh(new THREE.BoxGeometry(6.4, (s + 1) * 0.2, 0.5), stoneMat);
+                step.position.set(0, (s + 1) * 0.1, -4.75 - s * 0.5); step.receiveShadow = true; step.castShadow = true; wScene.add(step);
+            }
+            // Dragon balustrades along the steps
+            [-1, 1].forEach(sx => {
+                const c = new THREE.CatmullRomCurve3([
+                    new THREE.Vector3(sx * 3.35, 0.55, -4.1), new THREE.Vector3(sx * 3.35, 0.75, -4.8),
+                    new THREE.Vector3(sx * 3.35, 0.95, -5.5), new THREE.Vector3(sx * 3.35, 1.25, -6.3)
+                ]);
+                wScene.add(new THREE.Mesh(new THREE.TubeGeometry(c, 30, 0.17, 12, false), stoneMat));
+                const head = new THREE.Mesh(new THREE.SphereGeometry(0.28, 20, 16), stoneMat); head.scale.set(0.9, 1, 1.3); head.position.set(sx * 3.35, 0.6, -3.95); head.castShadow = true; wScene.add(head);
+                const curl = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.07, 10, 20, Math.PI * 1.4), stoneMat); curl.position.set(sx * 3.35, 0.95, -3.9); curl.rotation.y = Math.PI / 2; wScene.add(curl);
+                addBoxCol(sx * 3.35 - 0.25, sx * 3.35 + 0.25, -6.3, -3.7);
+            });
+            // Columns
+            [-7.4, -4.4, -1.6, 1.6, 4.4, 7.4].forEach(px => {
+                const col = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.34, 4.9, 24), redLacquerMat);
+                col.position.set(px, 0.6 + 2.45, -6.8); col.castShadow = true; wScene.add(col);
+                const base = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.5, 0.25, 24), stoneMat); base.position.set(px, 0.72, -6.8); wScene.add(base);
+                addCircleCol(px, -6.8, 0.45);
+            });
+            const lintel = new THREE.Mesh(new THREE.BoxGeometry(16.4, 0.4, 0.5), woodMat); lintel.position.set(0, 5.55, -6.8); lintel.castShadow = true; wScene.add(lintel);
+            const hallSign = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 0.9), new THREE.MeshStandardMaterial({ map: makeTextPanel(["ĐẠI HÙNG BẢO ĐIỆN"], { w: 1024, h: 220, font: "700 104px 'Playfair Display', serif" }), roughness: 0.5 }));
+            hallSign.position.set(0, 4.9, -6.5); wScene.add(hallSign);
+            [[-1.6, coupletL], [1.6, coupletR]].forEach(([px, tex]) => {
+                const cp = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 2.8), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.5 }));
+                cp.position.set(px, 2.9, -6.45); wScene.add(cp);
+            });
+            // Walls
+            const sideWallGeo = new THREE.BoxGeometry(0.5, 4.9, 10.5);
+            [-8.2, 8.2].forEach(px => {
+                const wl = new THREE.Mesh(sideWallGeo, plasterMat); wl.position.set(px, 3.05, -12.6); wl.castShadow = true; wl.receiveShadow = true; wScene.add(wl);
+                addBoxCol(px - 0.35, px + 0.35, -17.9, -7.3);
+            });
+            const hallBackWall = new THREE.Mesh(new THREE.BoxGeometry(16.9, 4.9, 0.5), plasterMat);
+            hallBackWall.position.set(0, 3.05, -17.6); hallBackWall.receiveShadow = true; wScene.add(hallBackWall);
+            addBoxCol(-8.5, 8.5, -18.0, -17.3);
+            const carpet = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 6.0), new THREE.MeshStandardMaterial({ color: 0x8e1b12, roughness: 0.9 }));
+            carpet.rotation.x = -Math.PI / 2; carpet.position.set(0, 0.615, -9.6); carpet.receiveShadow = true; wScene.add(carpet);
+            // Two-tier curved roof with ridge dragons
+            const lowerRoof = buildTempleRoof({ w: 19, d: 14, h: 2.5, ...roofArgs, dragons: false }); lowerRoof.position.set(0, 5.75, -12); wScene.add(lowerRoof);
+            const coDiem = new THREE.Mesh(new THREE.BoxGeometry(11, 1.3, 6.5), plasterMat); coDiem.position.set(0, 7.6, -12); wScene.add(coDiem);
+            const upperRoof = buildTempleRoof({ w: 12.5, d: 8.6, h: 2.1, ...roofArgs, dragons: true }); upperRoof.position.set(0, 8.1, -12); wScene.add(upperRoof);
+            // Eave lanterns
+            [-6, -3, 3, 6].forEach(px => { const ln = makeLantern(0xd42a1a, 1.0); ln.position.set(px, 4.4, -6.2); wScene.add(ln); swayLanterns.push(ln); });
 
-            const upperRoof = new THREE.Mesh(new THREE.ConeGeometry(9.5, 2.2, 4), roofMat);
-            upperRoof.rotation.y = Math.PI / 4; upperRoof.scale.set(1.1, 1, 0.82);
-            upperRoof.position.set(0, 8.3, -12); upperRoof.castShadow = true; wScene.add(upperRoof);
+            // Interior: Buddha statue on lotus throne with golden halo
+            const buddhaGold = new THREE.MeshStandardMaterial({ color: 0xd8a640, roughness: 0.3, metalness: 0.5, emissive: 0x3a2400, emissiveIntensity: 0.35 });
+            const pedestal = new THREE.Mesh(new THREE.CylinderGeometry(1.25, 1.4, 1.0, 8), redLacquerMat); pedestal.position.set(0, 1.1, -16.4); wScene.add(pedestal);
+            for (let i = 0; i < 14; i++) {
+                const a = (i / 14) * Math.PI * 2;
+                const petal = new THREE.Mesh(new THREE.SphereGeometry(0.32, 16, 12), new THREE.MeshStandardMaterial({ color: 0xf2a7b5, roughness: 0.5 }));
+                petal.scale.set(0.55, 0.9, 0.3); petal.position.set(Math.cos(a) * 1.0, 1.8, -16.4 + Math.sin(a) * 1.0); petal.lookAt(0, 3.2, -16.4); wScene.add(petal);
+            }
+            const bodyPts = [new THREE.Vector2(0, 0), new THREE.Vector2(1.0, 0.05), new THREE.Vector2(1.05, 0.3), new THREE.Vector2(0.75, 0.45), new THREE.Vector2(0.6, 0.8), new THREE.Vector2(0.62, 1.3), new THREE.Vector2(0.45, 1.6), new THREE.Vector2(0.18, 1.7), new THREE.Vector2(0, 1.72)];
+            const buddhaBody = new THREE.Mesh(new THREE.LatheGeometry(bodyPts, 48), buddhaGold); buddhaBody.position.set(0, 1.62, -16.5); buddhaBody.castShadow = true; wScene.add(buddhaBody);
+            const bHead = new THREE.Mesh(new THREE.SphereGeometry(0.36, 32, 24), buddhaGold); bHead.scale.set(1, 1.12, 1); bHead.position.set(0, 3.68, -16.5); wScene.add(bHead);
+            const ushnisha = new THREE.Mesh(new THREE.SphereGeometry(0.17, 20, 16), buddhaGold); ushnisha.position.set(0, 4.08, -16.5); wScene.add(ushnisha);
+            const halo = new THREE.Mesh(new THREE.TorusGeometry(0.85, 0.05, 12, 64), new THREE.MeshStandardMaterial({ color: 0xffd36b, emissive: 0xe0a020, emissiveIntensity: 0.8 }));
+            halo.position.set(0, 3.7, -16.95); wScene.add(halo);
+            const haloDisc = new THREE.Mesh(new THREE.CircleGeometry(0.82, 64), new THREE.MeshBasicMaterial({ color: 0xffe2a0, transparent: true, opacity: 0.55 }));
+            haloDisc.position.set(0, 3.7, -16.98); wScene.add(haloDisc);
+            addCircleCol(0, -16.4, 1.5);
+            const buddhaLight = new THREE.PointLight(0xffc070, 2.2, 11, 2); buddhaLight.position.set(0, 3.4, -14.2); wScene.add(buddhaLight);
+            // Hanging banners (phướn)
+            [-3.4, 3.4, -5.8, 5.8].forEach((px, i) => {
+                const bTex = makeTextPanel(i % 2 ? ["NAM", "MÔ", "A DI", "ĐÀ", "PHẬT"] : ["PHÁP", "LUÂN", "THƯỜNG", "CHUYỂN"], { w: 256, h: 1024, vertical: true, bg: i < 2 ? "#C7861E" : "#9E2418", fg: "#FFF3D6", font: "700 54px 'Playfair Display', serif" });
+                const bn = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 2.6), new THREE.MeshStandardMaterial({ map: bTex, side: THREE.DoubleSide, roughness: 0.7 }));
+                bn.position.set(px, 3.6, -14.8); wScene.add(bn);
+            });
 
-            // Fortune Altar Table inside Chính Điện (z = -13.5)
+            // Fortune Altar Table (z = -13.5)
             const altar = new THREE.Mesh(new THREE.BoxGeometry(3.8, 1.05, 1.5), woodMat);
-            altar.position.set(0, 1.1, -13.5); altar.castShadow = true; wScene.add(altar);
-            const altarCloth = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.7, 1.54), redLacquerMat);
-            altarCloth.position.set(0, 1.15, -13.5); wScene.add(altarCloth);
+            altar.position.set(0, 1.12, -13.5); altar.castShadow = true; wScene.add(altar);
+            const altarCloth = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.75, 1.54), redLacquerMat);
+            altarCloth.position.set(0, 1.12, -13.5); wScene.add(altarCloth);
+            const altarTrim = new THREE.Mesh(new THREE.BoxGeometry(3.42, 0.08, 1.56), goldMat); altarTrim.position.set(0, 1.5, -13.5); wScene.add(altarTrim);
+            const altarTube = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.21, 0.68, 32), new THREE.MeshStandardMaterial({ map: makeBambooTexture(), roughness: 0.45 }));
+            altarTube.position.set(0, 1.99, -13.5); wScene.add(altarTube);
+            [-1.45, 1.45].forEach(cx => {
+                const holder = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.16, 0.5, 20), goldMat); holder.position.set(cx, 1.9, -13.6); wScene.add(holder);
+                const candle = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.35, 16), new THREE.MeshStandardMaterial({ color: 0xc81e1e })); candle.position.set(cx, 2.32, -13.6); wScene.add(candle);
+                const flame = new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 10), new THREE.MeshBasicMaterial({ color: 0xffd27a })); flame.scale.y = 1.8; flame.position.set(cx, 2.56, -13.6); wScene.add(flame);
+            });
+            const plate = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.3, 0.1, 32), goldMat); plate.position.set(-0.75, 1.7, -13.45); wScene.add(plate);
+            [0xf59e0b, 0x16a34a, 0xdc2626, 0xfacc15, 0x65a30d].forEach((c, i) => {
+                const fr = new THREE.Mesh(new THREE.SphereGeometry(0.13, 16, 12), new THREE.MeshStandardMaterial({ color: c, roughness: 0.45 }));
+                const a = (i / 5) * Math.PI * 2; fr.position.set(-0.75 + Math.cos(a) * 0.18, 1.86 + (i === 0 ? 0.12 : 0), -13.45 + Math.sin(a) * 0.18); wScene.add(fr);
+            });
+            addBoxCol(-2.05, 2.05, -14.35, -12.7);
 
-            const altarTube = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.21, 0.68, 16), new THREE.MeshStandardMaterial({ map: makeBambooTexture(), roughness: 0.45 }));
-            altarTube.position.set(0, 1.95, -13.5); wScene.add(altarTube);
-
-            // 4. Ms Grace HR Desk (x = 9, z = 4)
+            // ---- Sếp HR Desk (x = 9, z = 4) ----
             const graceDesk = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.95, 1.3), woodMat);
             graceDesk.position.set(9, 0.55, 4); graceDesk.castShadow = true; wScene.add(graceDesk);
+            const laptop = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.04, 0.5), new THREE.MeshStandardMaterial({ color: 0x9ca3af, metalness: 0.7, roughness: 0.3 })); laptop.position.set(9, 1.05, 3.9); wScene.add(laptop);
+            const screen = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.45, 0.03), new THREE.MeshStandardMaterial({ color: 0x1e3a8a, emissive: 0x2563eb, emissiveIntensity: 0.6 })); screen.position.set(9, 1.28, 4.15); screen.rotation.x = -0.2; wScene.add(screen);
+            const hrSign = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 0.8), new THREE.MeshStandardMaterial({ map: makeTextPanel(["SẾP • HR", "Cày Cuốc hay Nghỉ Việc?"], { w: 1024, h: 340, bg: "#1E293B", fg: "#FBD38D", border: "#D99B26", font: "700 84px 'Be Vietnam Pro', sans-serif" }), roughness: 0.5 }));
+            hrSign.position.set(9, 2.3, 4.72); wScene.add(hrSign);
+            [7.9, 10.1].forEach(px => { const post = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.6, 10), goldMat); post.position.set(px, 1.3, 4.7); wScene.add(post); });
+            addBoxCol(7.5, 10.5, 3.25, 4.8);
 
-            // 5. Guided Glowing Floor Arrows
+            // ---- Lò hóa vàng (incense disposal furnace, x = 12.5, z = -9) ----
+            const furnace = new THREE.Group();
+            const fBody = new THREE.Mesh(new THREE.BoxGeometry(1.7, 2.1, 1.7), brickMat); fBody.position.y = 1.05; fBody.castShadow = true; furnace.add(fBody);
+            furnaceGlowMat = new THREE.MeshBasicMaterial({ color: 0xff7a22 });
+            const mouth = new THREE.Mesh(new THREE.CircleGeometry(0.38, 32, 0, Math.PI), furnaceGlowMat); mouth.position.set(-0.86, 0.7, 0); mouth.rotation.y = -Math.PI / 2; furnace.add(mouth);
+            const mouthBase = new THREE.Mesh(new THREE.PlaneGeometry(0.76, 0.05), furnaceGlowMat); mouthBase.position.set(-0.861, 0.69, 0); mouthBase.rotation.y = -Math.PI / 2; furnace.add(mouthBase);
+            const chimney = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.36, 2.0, 20), brickMat); chimney.position.y = 3.0; furnace.add(chimney);
+            const fRoof = buildTempleRoof({ w: 2.0, d: 2.0, h: 0.6, ...roofArgs, dragons: false }); fRoof.position.y = 2.15; furnace.add(fRoof);
+            furnace.position.set(12.5, 0, -9); wScene.add(furnace);
+            furnaceLight = new THREE.PointLight(0xff7a22, 0.8, 5, 2); furnaceLight.position.set(11.2, 0.9, -9); wScene.add(furnaceLight);
+            addBoxCol(11.55, 13.45, -9.95, -8.05);
+
+            // ---- Lotus ponds ----
+            const waterMat = new THREE.MeshStandardMaterial({ color: 0x2c6873, roughness: 0.08, metalness: 0.35, transparent: true, opacity: 0.92 });
+            const padMat = new THREE.MeshStandardMaterial({ color: 0x3f7d3a, roughness: 0.6, side: THREE.DoubleSide });
+            const lotusMat = new THREE.MeshStandardMaterial({ color: 0xf3a1b9, roughness: 0.5 });
+            [-8, 8].forEach(px => {
+                const water = new THREE.Mesh(new THREE.CircleGeometry(1, 64), waterMat);
+                water.rotation.x = -Math.PI / 2; water.scale.set(2.2, 1.5, 1); water.position.set(px, 0.1, 10.5); wScene.add(water);
+                const rim = new THREE.Mesh(new THREE.TorusGeometry(1, 0.07, 10, 80), stoneMat);
+                rim.rotation.x = Math.PI / 2; rim.scale.set(2.2, 1.5, 1.4); rim.position.set(px, 0.14, 10.5); wScene.add(rim);
+                for (let k = 0; k < 9; k++) {
+                    const a = Math.random() * Math.PI * 2, r = Math.random() * 0.8;
+                    const pad = new THREE.Mesh(new THREE.CircleGeometry(0.22 + Math.random() * 0.12, 24, 0.3, Math.PI * 1.8), padMat);
+                    pad.rotation.x = -Math.PI / 2; pad.rotation.z = Math.random() * 6; pad.position.set(px + Math.cos(a) * r * 2.0, 0.12, 10.5 + Math.sin(a) * r * 1.3); wScene.add(pad);
+                    if (k % 3 === 0) {
+                        const fl = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.22, 8, 1, true), lotusMat); fl.rotation.x = Math.PI; fl.position.set(pad.position.x, 0.25, pad.position.z); wScene.add(fl);
+                    }
+                }
+                addEllipseCol(px, 10.5, 2.35, 1.65);
+            });
+
+            // ---- Blossom trees (Mai vàng & Đào hồng) ----
+            makeBlossomTree(-12.5, 12, 0xfbbf24, woodMat);
+            makeBlossomTree(12.5, 12, 0xfb7185, woodMat);
+            makeBlossomTree(-12.5, -2, 0xf59e0b, woodMat, 1.1);
+            makeBlossomTree(12.5, -2.5, 0xf472b6, woodMat, 1.05);
+            makeBlossomTree(-10, 21, 0xfbbf24, woodMat, 0.9);
+            makeBlossomTree(10, 22, 0xfb7185, woodMat, 0.9);
+
+            // ---- Guided glowing floor arrows ----
             [-1.5, -4.2, 10].forEach((az, i) => {
                 const arrow = new THREE.Mesh(
                     new THREE.ConeGeometry(0.55, 1.25, 3),
                     new THREE.MeshBasicMaterial({ color: i === 2 ? 0xb93829 : 0x2d6a4f, transparent: true, opacity: 0.85 })
                 );
-                arrow.rotation.x = -Math.PI / 2; arrow.position.set(0, 0.16, az);
+                arrow.rotation.x = -Math.PI / 2; arrow.position.set(0, 0.2, az);
                 wScene.add(arrow);
                 guideArrows.push({ mesh: arrow, isHall: i < 2 });
             });
 
-            // 6. Realistic Blossom Trees (Mai Vàng & Đào Hồng)
-            const treePositions = [
-                { x: -10.5, z: 11, c: 0xfbbf24 }, { x: -11, z: -1, c: 0xf59e0b },
-                { x: 10.5, z: 12, c: 0xfb7185 }, { x: 11.5, z: -2, c: 0xf43f5e }
-            ];
-            treePositions.forEach(t => {
-                const tGroup = new THREE.Group();
-                const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.34, 2.8, 10), woodMat);
-                trunk.position.y = 1.4; trunk.castShadow = true; tGroup.add(trunk);
-                const blossomMat = new THREE.MeshStandardMaterial({ color: t.c, roughness: 0.75 });
-                [[-0.7, 2.9, 0.3, 1.05], [0.8, 3.1, -0.2, 1.15], [0, 3.6, 0.1, 1.25], [0.2, 2.6, 0.8, 0.9]].forEach(([bx, by, bz, br]) => {
-                    const puff = new THREE.Mesh(new THREE.DodecahedronGeometry(br, 1), blossomMat);
-                    puff.position.set(bx, by, bz); puff.castShadow = true; tGroup.add(puff);
-                });
-                tGroup.position.set(t.x, 0, t.z);
-                wScene.add(tGroup);
-            });
-
             // Falling petals
-            for (let i = 0; i < 36; i++) {
+            for (let i = 0; i < 46; i++) {
                 const pet = new THREE.Mesh(
-                    new THREE.PlaneGeometry(0.14, 0.14),
-                    new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0xfbbf24 : 0xfb7185, side: THREE.DoubleSide })
+                    new THREE.CircleGeometry(0.07, 8),
+                    new THREE.MeshStandardMaterial({ color: i % 2 === 0 ? 0xfbbf24 : 0xfb7185, side: THREE.DoubleSide, roughness: 0.6 })
                 );
-                pet.position.set((Math.random() - 0.5) * 26, 2 + Math.random() * 6, (Math.random() - 0.5) * 32);
+                pet.position.set((Math.random() - 0.5) * 30, 2 + Math.random() * 6, (Math.random() - 0.5) * 36);
                 wScene.add(pet);
-                petals.push({ mesh: pet, speed: 0.015 + Math.random() * 0.02, sway: Math.random() * 6 });
+                petals.push({ mesh: pet, speed: 0.012 + Math.random() * 0.018, sway: Math.random() * 6 });
             }
 
             // Player 3D Mesh
-            playerMesh = createArticulatedCharacter({ robeColor: player.color });
+            playerMesh = createArticulatedCharacter({ robeColor: player.color, gender: player.gender, outfit: player.outfit });
             playerMesh.position.set(player.x, 0, player.z);
             wScene.add(playerMesh);
             player.labelObj = createLabelEl("me", player.name, true);
         }
 
-        // ==================== 6. PURPOSEFUL TEMPLE NPCS (1 SƯ THẦY + 3 ĐỒ ĐỆ + MS GRACE) ====================
+        function rebuildPlayerMesh() {
+            const pos = playerMesh.position.clone(), rot = playerMesh.rotation.y;
+            wScene.remove(playerMesh);
+            playerMesh = createArticulatedCharacter({ robeColor: player.color, gender: player.gender, outfit: player.outfit });
+            playerMesh.position.copy(pos); playerMesh.rotation.y = rot;
+            wScene.add(playerMesh);
+        }
+
+        // ==================== 5b. INCENSE STICKS (NHANG) + NOVICE CLEAN-UP ====================
+        const INCENSE_MAX = 15;
+        const incenseSticks = [];
+        const incenseShaftMat = new THREE.MeshStandardMaterial({ color: 0x6b2a1a, roughness: 0.85 });
+        const incenseHandleMat = new THREE.MeshStandardMaterial({ color: 0xc8161d, roughness: 0.5 });
+        const incenseAshMat = new THREE.MeshStandardMaterial({ color: 0x9a948c, roughness: 1 });
+        function makeIncenseStick() {
+            const g = new THREE.Group();
+            const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.7, 12), incenseHandleMat); handle.position.y = 0.35; g.add(handle);
+            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 1.15, 14), incenseShaftMat); body.position.y = 0.7 + 0.575; g.add(body);
+            const ash = new THREE.Mesh(new THREE.CylinderGeometry(0.048, 0.05, 0.08, 12), incenseAshMat); ash.position.y = 1.89; g.add(ash);
+            const emberMat = new THREE.MeshStandardMaterial({ color: 0xff5a1a, emissive: 0xff3a00, emissiveIntensity: 2.2 });
+            const ember = new THREE.Mesh(new THREE.SphereGeometry(0.055, 14, 10), emberMat); ember.position.y = 1.95; g.add(ember);
+            g.userData = { ember, emberMat, phase: Math.random() * 10 };
+            g.traverse(m => { if (m.isMesh) m.castShadow = true; });
+            return g;
+        }
+        function updateIncensePill() {
+            if (!incensePill) return;
+            incensePill.textContent = `🕯️ Lư hương: ${incenseSticks.length}/${INCENSE_MAX}`;
+            incensePill.classList.toggle("full", incenseSticks.length > INCENSE_MAX);
+        }
+        function plantIncense(byName, broadcast = false) {
+            if (!wScene) return;
+            const st = makeIncenseStick();
+            const a = Math.random() * Math.PI * 2, r = 0.12 + Math.random() * 0.5;
+            st.position.set(Math.cos(a) * r, 1.42 - 0.35, 4 + Math.sin(a) * r);
+            st.rotation.set((Math.random() - 0.5) * 0.22, 0, (Math.random() - 0.5) * 0.22);
+            st.scale.setScalar(0.01);
+            st.userData.grow = 0;
+            wScene.add(st); incenseSticks.push(st);
+            updateIncensePill();
+            if (broadcast) publishEvent({ type: "incense", id: myId, name: byName });
+        }
+        function makeIncenseBundle(count) {
+            const g = new THREE.Group();
+            const n = Math.max(6, count);
+            for (let i = 0; i < n; i++) {
+                const a = (i / n) * Math.PI * 2 * 2.3, r = 0.03 + (i % 3) * 0.035;
+                const s = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.7, 8), i % 2 ? incenseHandleMat : incenseShaftMat);
+                s.position.set(Math.cos(a) * r, (Math.random() - 0.5) * 0.12, Math.sin(a) * r); g.add(s);
+            }
+            const tie = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.025, 8, 20), new THREE.MeshStandardMaterial({ color: 0xd99b26, metalness: 0.4 }));
+            tie.rotation.x = Math.PI / 2; g.add(tie);
+            g.rotation.set(0.25, 0, 1.15);
+            return g;
+        }
+
+        // ==================== 6. PURPOSEFUL TEMPLE NPCS (1 SƯ THẦY + 3 ĐỒ ĐỆ + 2 KHÁCH + SẾP) ====================
         const templeNpcs = [
             {
                 id: "master", name: "Sư Thầy Trụ Trì", robeColor: "#C2410C", isMonk: true,
-                x: -3.2, z: -8.5, role: "master",
+                x: -3.0, z: -9.5, role: "master",
                 chat: "Nam Mô A Di Đà Phật 🙏 Chúc thí chủ tâm an năm Đinh Mùi",
-                waypoints: [{ x: -3.2, z: -8.5 }, { x: -2.5, z: -4.5 }, { x: -3.2, z: -8.5 }]
+                waypoints: [{ x: -3.0, z: -9.5 }, { x: -2.8, z: -3.5 }, { x: -3.0, z: -9.5 }]
             },
             {
-                id: "novice1", name: "Tiểu Minh (Quét Sân)", robeColor: "#64748B", isMonk: true, hasBroom: true,
+                id: "novice1", name: "Tiểu Minh (Quét Sân)", robeColor: "#8D7A66", isMonk: true, hasBroom: true,
                 x: -4.5, z: 6.0, role: "sweeper",
                 chat: "Quét sạch lá vàng đón khách đi chùa 🧹",
-                waypoints: [{ x: -4.5, z: 6.0 }, { x: -2.2, z: 9.0 }, { x: 2.4, z: 8.5 }, { x: -3.8, z: 3.0 }]
+                waypoints: [{ x: -4.5, z: 6.0 }, { x: -4.0, z: 13.5 }, { x: 4.6, z: 13.0 }, { x: -4.2, z: 2.0 }]
             },
             {
-                id: "novice2", name: "Tiểu Tâm (Hương Đăng)", robeColor: "#64748B", isMonk: true,
-                x: 2.2, z: 4.5, role: "incense",
-                chat: "Mời thí chủ thắp nén hương thơm tại Lư Hương 🕯️",
-                waypoints: [{ x: 2.2, z: 4.5 }, { x: 1.6, z: 2.5 }, { x: 2.2, z: 4.5 }]
+                id: "novice2", name: "Tiểu Tâm (Hương Đăng)", robeColor: "#8D7A66", isMonk: true,
+                x: 2.4, z: 6.6, role: "incense",
+                chat: "Lư hương đầy quá 15 nén là con dọn ngay ạ 🕯️",
+                waypoints: [{ x: 2.4, z: 6.6 }, { x: 2.2, z: 1.6 }, { x: 2.4, z: 6.6 }]
             },
             {
-                id: "novice3", name: "Tiểu An (Chăm Cây)", robeColor: "#64748B", isMonk: true, hasHat: true,
-                x: -8.5, z: 9.5, role: "gardener",
+                id: "novice3", name: "Tiểu An (Chăm Cây)", robeColor: "#8D7A66", isMonk: true, hasHat: true,
+                x: -13.2, z: 9.5, role: "gardener",
                 chat: "Hoa mai năm nay nở rộ đúng Tết 2027 🌸",
-                waypoints: [{ x: -8.5, z: 9.5 }, { x: -8.5, z: 0.5 }, { x: -8.5, z: 9.5 }]
+                waypoints: [{ x: -13.2, z: 9.5 }, { x: -13.4, z: 0.5 }, { x: -13.2, z: 9.5 }]
             },
             {
-                id: "grace", name: "Ms Grace 👑", robeColor: "#991B1B", isBoss: true,
-                x: 9.0, z: 2.7, role: "boss",
+                id: "pilgrim1", name: "Cô Lan (Khách)", robeColor: "#D9668A", gender: "female", outfit: "aodai",
+                x: -1.0, z: 27, role: "pilgrim",
+                chat: "Đầu năm đi chùa cầu bình an 🙏",
+                waypoints: [{ x: -1.0, z: 27 }, { x: -1.0, z: 8.5 }, { x: -1.3, z: 6.1, act: "incense" }, { x: -2.6, z: 1.0 }, { x: -0.6, z: -4.6 }, { x: -0.6, z: -11.0, act: "pray" }, { x: -0.6, z: -4.6 }, { x: -1.0, z: 8.5 }, { x: 1.0, z: 27 }]
+            },
+            {
+                id: "pilgrim2", name: "Bác Tư (Khách)", robeColor: "#7A6F64", gender: "male", outfit: "lam",
+                x: 1.0, z: 10, role: "pilgrim", startIdx: 4,
+                chat: "Thắp nén nhang thơm cho gia đạo an khang",
+                waypoints: [{ x: 1.0, z: 27 }, { x: 1.0, z: 8.5 }, { x: 1.4, z: 6.1, act: "incense" }, { x: 2.6, z: 1.0 }, { x: 0.6, z: -4.6 }, { x: 0.6, z: -11.0, act: "pray" }, { x: 0.6, z: -4.6 }, { x: 1.0, z: 8.5 }, { x: -1.0, z: 27 }]
+            },
+            {
+                id: "grace", name: "Sếp 👑", robeColor: "#7F1D1D", isBoss: true, gender: "female", outfit: "vest",
+                x: 9.0, z: 2.6, role: "boss",
                 chat: "Ai muốn xem hợp Cày Cuốc hay Nghỉ Việc qua đây!"
             }
         ];
@@ -1124,13 +1972,14 @@
         function initTempleNpcs() {
             templeNpcs.forEach(cfg => {
                 const mesh = createArticulatedCharacter({
-                    robeColor: cfg.robeColor, isMonk: !!cfg.isMonk, hasHat: !!cfg.hasHat, hasBroom: !!cfg.hasBroom
+                    robeColor: cfg.robeColor, isMonk: !!cfg.isMonk, hasHat: !!cfg.hasHat, hasBroom: !!cfg.hasBroom,
+                    gender: cfg.gender || "male", outfit: cfg.outfit || "aodai", hairColor: cfg.role === "pilgrim" && cfg.gender === "male" ? 0x8a8a8a : 0x1f1916
                 });
-                mesh.position.set(cfg.x, 0, cfg.z);
+                mesh.position.set(cfg.x, groundHeight(cfg.x, cfg.z), cfg.z);
                 wScene.add(mesh);
                 npcInstances.push({
                     ...cfg, mesh, labelObj: createLabelEl(cfg.id, cfg.name, false),
-                    wpIdx: 0, wait: 60 + Math.random() * 100, walkPhase: 0, chatTimer: 260
+                    wpIdx: cfg.startIdx || 0, wait: 60 + Math.random() * 100, walkPhase: 0, chatTimer: cfg.id === 'pilgrim1' ? 140 : 0, nextChatAt: 160 + Math.floor(Math.random() * 400), task: null
                 });
             });
         }
@@ -1140,10 +1989,12 @@
             npcInstances.forEach((n, idx) => {
                 setTimeout(() => {
                     if (n.role === "master") {
-                        n.chat = low.includes("quẻ") ? "Thí chủ thành tâm lắc ≥5 nhịp rồi úp ngược ống xăm nhé 🙏" : "Chúc thí chủ năm Đinh Mùi 2027 vạn sự cát tường!";
+                        n.chat = low.includes("quẻ") ? "Thí chủ lắc ≥5 nhịp, dừng tay là quẻ tự rơi 🙏" : "Chúc thí chủ năm Đinh Mùi 2027 vạn sự cát tường!";
                         n.chatTimer = 260;
                     } else if (n.role === "sweeper" && (low.includes("quét") || low.includes("chào"))) {
                         n.chat = "Dạ con đang quét sân cho sạch đón Tết ạ 🧹"; n.chatTimer = 220;
+                    } else if (n.role === "incense" && (low.includes("nhang") || low.includes("hương"))) {
+                        n.chat = `Lư hương đang có ${incenseSticks.length} nén ạ 🕯️`; n.chatTimer = 220;
                     } else if (n.role === "boss" && (low.includes("nghỉ") || low.includes("kpi") || low.includes("lương"))) {
                         n.chat = "Đừng hòng trốn KPI nhé em! 😤"; n.chatTimer = 240;
                     }
@@ -1151,48 +2002,75 @@
             });
         }
 
-        // ==================== 7. MULTIPLAYER (MQTT + BROADCAST) ====================
+        // ==================== 7. MULTIPLAYER (MQTT + BROADCAST + EVENTS) ====================
         const remotePlayers = new Map();
-        let mqttClient = null, onlineConnected = false;
-        const MQTT_TOPIC = "lasy/tet2027/temple3d/v2";
+        let mqttClient = null, onlineConnected = false, bcChannel = null;
+        const MQTT_TOPIC = "lasy/tet2027/temple3d/v3";
+        const seenEventIds = new Set();
+
+        function publishEvent(evt) {
+            const payload = { ...evt, eid: myId + "_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6) };
+            seenEventIds.add(payload.eid);
+            try { if (bcChannel) bcChannel.postMessage(payload); } catch (e) {}
+            try { if (mqttClient && mqttClient.connected) mqttClient.publish(MQTT_TOPIC, JSON.stringify(payload)); } catch (e) {}
+        }
+
+        function handleIncomingMsg(data) {
+            if (!data) return;
+            if (data.type === "incense") {
+                if (data.id === myId || (data.eid && seenEventIds.has(data.eid))) return;
+                if (data.eid) seenEventIds.add(data.eid);
+                plantIncense(data.name || "Khách", false);
+                return;
+            }
+            upsertRemotePlayer(data);
+        }
 
         function upsertRemotePlayer(data) {
-            if (!data || !data.id || data.id === myId) return;
+            if (!data || !data.id || data.id === myId || data.type) return;
             let rp = remotePlayers.get(data.id);
+            const g = data.gender || "male", o = data.outfit || "aodai", col = data.color || "#0284C7";
             if (!rp) {
-                const mesh = createArticulatedCharacter({ robeColor: data.color || "#0284C7" });
-                mesh.position.set(data.x || 0, 0, data.z || 22);
+                const mesh = createArticulatedCharacter({ robeColor: col, gender: g, outfit: o });
+                mesh.position.set(data.x || 0, groundHeight(data.x || 0, data.z || 28), data.z || 28);
                 wScene.add(mesh);
-                rp = { ...data, mesh, labelObj: createLabelEl(data.id, data.name || "Khách", false), lastSeen: Date.now() };
+                rp = { ...data, gender: g, outfit: o, color: col, mesh, labelObj: createLabelEl(data.id, data.name || "Khách", false), walkPhase: 0, lastSeen: Date.now() };
                 remotePlayers.set(data.id, rp);
+            } else if (rp.gender !== g || rp.outfit !== o || rp.color !== col) {
+                wScene.remove(rp.mesh);
+                rp.mesh = createArticulatedCharacter({ robeColor: col, gender: g, outfit: o });
+                rp.mesh.position.set(rp.tx || data.x || 0, groundHeight(rp.tx || 0, rp.tz || 28), rp.tz || data.z || 28);
+                wScene.add(rp.mesh);
+                rp.gender = g; rp.outfit = o; rp.color = col;
             }
             rp.tx = data.x; rp.tz = data.z; rp.rotY = data.rotY || 0;
             rp.name = data.name || rp.name; rp.chat = data.chat || ""; rp.lastSeen = Date.now();
         }
 
+        function myStatePayload() {
+            return {
+                id: myId, x: Number(player.x.toFixed(2)), z: Number(player.z.toFixed(2)),
+                rotY: Number(player.rotY.toFixed(2)), name: player.name, color: player.color,
+                gender: player.gender, outfit: player.outfit,
+                chat: player.chatTimer > 0 ? player.chat : ""
+            };
+        }
+
         function initMultiplayer() {
             try {
-                const bc = new BroadcastChannel(MQTT_TOPIC);
-                bc.onmessage = (e) => upsertRemotePlayer(e.data);
-                setInterval(() => {
-                    bc.postMessage({ id: myId, x: player.x, z: player.z, rotY: player.rotY, name: player.name, color: player.color, chat: player.chatTimer > 0 ? player.chat : "" });
-                }, 200);
+                bcChannel = new BroadcastChannel(MQTT_TOPIC);
+                bcChannel.onmessage = (e) => handleIncomingMsg(e.data);
+                setInterval(() => { bcChannel.postMessage(myStatePayload()); }, 220);
             } catch (e) {}
 
             if (typeof mqtt !== "undefined") {
                 try {
                     mqttClient = mqtt.connect("wss://broker.emqx.io:8084/mqtt", { clientId: "lasy_" + myId, clean: true, connectTimeout: 5000 });
                     mqttClient.on("connect", () => { onlineConnected = true; mqttClient.subscribe(MQTT_TOPIC); });
-                    mqttClient.on("message", (_, payload) => { try { upsertRemotePlayer(JSON.parse(payload.toString())); } catch (e) {} });
+                    mqttClient.on("message", (_, payload) => { try { handleIncomingMsg(JSON.parse(payload.toString())); } catch (e) {} });
                     setInterval(() => {
-                        if (mqttClient && mqttClient.connected) {
-                            mqttClient.publish(MQTT_TOPIC, JSON.stringify({
-                                id: myId, x: Number(player.x.toFixed(2)), z: Number(player.z.toFixed(2)),
-                                rotY: Number(player.rotY.toFixed(2)), name: player.name, color: player.color,
-                                chat: player.chatTimer > 0 ? player.chat : ""
-                            }));
-                        }
-                    }, 220);
+                        if (mqttClient && mqttClient.connected) mqttClient.publish(MQTT_TOPIC, JSON.stringify(myStatePayload()));
+                    }, 240);
                 } catch (e) {}
             }
 
@@ -1259,10 +2137,11 @@
         function triggerNearInteract() {
             if (nearTarget === "incense") {
                 hasLitIncense = true;
-                player.chat = "Đã thắp hương thành tâm 🙏"; player.chatTimer = 220;
+                plantIncense(player.name, true);
+                player.chat = `Vừa thắp nén hương thơm (#${incenseSticks.length}) 🙏`; player.chatTimer = 220;
                 playBambooClick(1.15);
                 questStepTag.textContent = "BƯỚC 2/3";
-                questBannerText.textContent = "Đã thắp hương! Đi thẳng vào bàn Chính Điện, popup quẻ AR 3D sẽ tự mở";
+                questBannerText.textContent = `Đã thắp hương (${incenseSticks.length}/${INCENSE_MAX} cây)! Lên bậc thềm Chính Điện để gieo quẻ AR 3D`;
             } else if (nearTarget === "altar") {
                 openFortuneModal();
             } else if (nearTarget === "grace") {
@@ -1280,8 +2159,10 @@
             inp.value = ""; inp.blur();
         });
 
-        function projectLabel(pos3d, labelObj, nameText, chatText) {
-            const v = pos3d.clone(); v.y += 2.3; v.project(wCamera);
+        function projectLabel(pos3d, labelObj, nameText, chatText, isMe = false) {
+            const camDist = pos3d.distanceTo(wCamera.position);
+            if (!isMe && camDist > 21) { labelObj.el.classList.add("hidden"); return; }
+            const v = pos3d.clone(); v.y += 2.35; v.project(wCamera);
             if (v.z > 1) { labelObj.el.classList.add("hidden"); return; }
             labelObj.el.classList.remove("hidden");
             labelObj.el.style.left = ((v.x * 0.5 + 0.5) * window.innerWidth) + "px";
@@ -1291,24 +2172,48 @@
             else labelObj.bubble.classList.add("hidden");
         }
 
-        function animateArticulated(mesh, phase, isSweeping = false) {
+        function animateArticulated(mesh, phase, mode = "walk") {
             const { armL, armR, legL, legR } = mesh.userData;
-            if (isSweeping) {
-                armR.rotation.x = -0.45 + Math.sin(Date.now() * 0.008) * 0.35;
+            if (mode === "carry") {
+                const swing = Math.sin(phase) * 0.45;
+                armL.rotation.x = swing * 0.4;
+                armR.rotation.x = -2.25; armR.rotation.z = -0.25;
+                legL.rotation.x = -swing; legR.rotation.x = swing;
+            } else if (mode === "sweep") {
+                armR.rotation.x = -0.5 + Math.sin(Date.now() * 0.008) * 0.35;
                 armR.rotation.z = Math.cos(Date.now() * 0.008) * 0.2;
                 armL.rotation.x = -0.2;
                 legL.rotation.x = Math.sin(phase) * 0.35;
                 legR.rotation.x = -Math.sin(phase) * 0.35;
             } else {
                 const swing = Math.sin(phase) * 0.45;
-                armL.rotation.x = swing; armR.rotation.x = -swing;
+                armL.rotation.x = swing; armR.rotation.x = -swing; armR.rotation.z = 0;
                 legL.rotation.x = -swing; legR.rotation.x = swing;
             }
         }
 
+        function stepNpcToward(n, tx, tz, speed, mode = "walk") {
+            const dx = tx - n.x, dz = tz - n.z, d = Math.hypot(dx, dz);
+            if (d > 0.28) {
+                n.x += (dx / d) * speed; n.z += (dz / d) * speed;
+                n.mesh.rotation.y = Math.atan2(dx, dz);
+                n.walkPhase += speed * 3.0;
+                animateArticulated(n.mesh, n.walkPhase, mode);
+                return false;
+            }
+            animateArticulated(n.mesh, 0, mode);
+            return true;
+        }
+
+        function anyModalOpen() {
+            return !fortuneModal.classList.contains("hidden") || !careerModal.classList.contains("hidden") || !customModal.classList.contains("hidden");
+        }
         function animate3DWorld() {
             requestAnimationFrame(animate3DWorld);
+            if (anyModalOpen()) return;
+            const nowT = Date.now();
 
+            // Player Movement with Collision + Platform height
             let mx = joyVec.x, mz = joyVec.y;
             if (keys["KeyA"] || keys["a"] || keys["ArrowLeft"] || keys["arrowleft"] || dpadState.left) mx -= 1;
             if (keys["KeyD"] || keys["d"] || keys["ArrowRight"] || keys["arrowright"] || dpadState.right) mx += 1;
@@ -1317,9 +2222,9 @@
 
             const mag = Math.hypot(mx, mz);
             if (mag > 0.1) {
-                const nx = mx / Math.max(1, mag), nz = mz / Math.max(1, mag);
-                player.x = Math.max(-18, Math.min(18, player.x + nx * player.speed));
-                player.z = Math.max(-15.5, Math.min(26, player.z + nz * player.speed));
+                const nx = (mx / Math.max(1, mag)) * player.speed, nz = (mz / Math.max(1, mag)) * player.speed;
+                if (canMove(player.x, player.z, player.x + nx, player.z)) player.x += nx;
+                if (canMove(player.x, player.z, player.x, player.z + nz)) player.z += nz;
                 player.rotY = Math.atan2(nx, nz);
                 player.walkPhase += 0.22;
                 animateArticulated(playerMesh, player.walkPhase);
@@ -1328,88 +2233,173 @@
             }
             if (player.chatTimer > 0) player.chatTimer--;
 
-            playerMesh.position.set(player.x, 0, player.z);
+            const py = groundHeight(player.x, player.z);
+            playerMesh.position.set(player.x, py, player.z);
             playerMesh.rotation.y = player.rotY;
 
-            // Smooth 3rd-person follow camera
-            wCamera.position.x += (player.x * 0.7 - wCamera.position.x) * 0.1;
-            wCamera.position.y += (5.8 - wCamera.position.y) * 0.1;
-            wCamera.position.z += (player.z + 9.2 - wCamera.position.z) * 0.1;
-            wCamera.lookAt(player.x, 1.4, player.z - 2.5);
+            // Smooth 3rd-person follow camera (passes smoothly beneath Cổng Tam Quan eaves)
+            wCamera.position.x += (player.x * 0.78 - wCamera.position.x) * 0.1;
+            wCamera.position.y += (py + 3.45 - wCamera.position.y) * 0.1;
+            wCamera.position.z += (player.z + 6.9 - wCamera.position.z) * 0.1;
+            wCamera.lookAt(player.x, py + 1.55, player.z - 3.2);
+
+            // Drifting clouds & swaying lanterns
+            cloudSprites.forEach(c => {
+                c.sp.position.x += c.speed;
+                if (c.sp.position.x > 360) c.sp.position.x = -360;
+            });
+            swayLanterns.forEach((ln, i) => {
+                ln.rotation.z = Math.sin(nowT * 0.002 + i) * 0.06;
+                ln.rotation.x = Math.cos(nowT * 0.0017 + i) * 0.04;
+            });
+            if (furnaceLight) {
+                const fl = 0.8 + Math.sin(nowT * 0.015) * 0.25;
+                furnaceLight.intensity = fl;
+                furnaceGlowMat.color.setRGB(1, 0.35 + fl * 0.15, 0.1);
+            }
 
             // Guide Arrows
-            const pulse = 0.55 + Math.sin(Date.now() * 0.006) * 0.4;
+            const pulse = 0.55 + Math.sin(nowT * 0.006) * 0.4;
             guideArrows.forEach(a => { a.mesh.visible = a.isHall ? hasLitIncense : !hasLitIncense; a.mesh.material.opacity = pulse; });
 
             // Falling Petals
             petals.forEach(p => {
                 p.mesh.position.y -= p.speed;
-                p.mesh.position.x += Math.sin(Date.now() * 0.002 + p.sway) * 0.015;
-                p.mesh.rotation.z += 0.03;
-                if (p.mesh.position.y < 0.1) p.mesh.position.y = 6.5;
+                p.mesh.position.x += Math.sin(nowT * 0.002 + p.sway) * 0.014;
+                p.mesh.rotation.x += 0.02; p.mesh.rotation.z += 0.03;
+                if (p.mesh.position.y < 0.15) p.mesh.position.y = 6.5;
             });
 
-            // 3D Smoke Puffs at Lư Hương
-            if (hasLitIncense && Math.random() < 0.28) {
-                const puff = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.16, 8, 8),
-                    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.65 })
-                );
-                puff.position.set((Math.random() - 0.5) * 0.35, 1.5, 4 + (Math.random() - 0.5) * 0.35);
-                wScene.add(puff); smokePuffs.push(puff);
+            // Grow & flicker incense sticks + soft rising smoke
+            for (let i = 0; i < incenseSticks.length; i++) {
+                const st = incenseSticks[i];
+                if (st.userData.grow < 1) {
+                    st.userData.grow = Math.min(1, st.userData.grow + 0.08);
+                    st.scale.setScalar(st.userData.grow);
+                }
+                const f = 1.6 + Math.sin(nowT * 0.015 + st.userData.phase) * 0.6;
+                st.userData.emberMat.emissiveIntensity = f;
+                if (Math.random() < 0.18 && smokePuffs.length < 70) {
+                    const sm = new THREE.Sprite(new THREE.SpriteMaterial({ map: smokeTex, transparent: true, opacity: 0.45, depthWrite: false, color: 0xf4f4f6 }));
+                    sm.position.set(st.position.x + Math.sin(st.rotation.z) * -1.4, st.position.y + 1.95, st.position.z + Math.sin(st.rotation.x) * 1.4);
+                    sm.scale.setScalar(0.28);
+                    wScene.add(sm); smokePuffs.push({ sp: sm, vx: (Math.random() - 0.5) * 0.006 });
+                }
             }
             for (let i = smokePuffs.length - 1; i >= 0; i--) {
-                const sp = smokePuffs[i]; sp.position.y += 0.03; sp.scale.multiplyScalar(1.015); sp.material.opacity -= 0.008;
-                if (sp.material.opacity <= 0) { wScene.remove(sp); smokePuffs.splice(i, 1); }
+                const p = smokePuffs[i];
+                p.sp.position.y += 0.025; p.sp.position.x += p.vx + Math.sin(nowT * 0.003 + i) * 0.004;
+                p.sp.scale.addScalar(0.01); p.sp.material.opacity -= 0.0055;
+                if (p.sp.material.opacity <= 0) { wScene.remove(p.sp); p.sp.material.dispose(); smokePuffs.splice(i, 1); }
             }
 
-            // Update Purposeful NPCs (1 Master + 3 Novices + Ms Grace)
+            // Update Purposeful NPCs + Incense Cleanup State Machine (> 15 sticks -> Chú Tiểu collects & carries on shoulder)
             npcInstances.forEach(n => {
+                if (n.role === "incense") {
+                    if (!n.task && incenseSticks.length > INCENSE_MAX) {
+                        n.task = "to_burner";
+                        n.chat = "Hương đầy quá 15 cây rồi, để con hốt đem hóa 🙏"; n.chatTimer = 260;
+                    }
+                    if (n.task === "to_burner") {
+                        if (stepNpcToward(n, 1.45, 4.0, 0.075, "walk")) {
+                            const bundleCount = incenseSticks.length;
+                            while (incenseSticks.length > 0) wScene.remove(incenseSticks.pop());
+                            updateIncensePill();
+                            const bundle = makeIncenseBundle(bundleCount);
+                            n.mesh.userData.shoulderAnchor.add(bundle);
+                            n.carryBundle = bundle;
+                            n.task = "to_furnace";
+                            n.chat = `Đang vác ${bundleCount} chân hương đi hóa... 🧺`; n.chatTimer = 260;
+                        }
+                        n.mesh.position.set(n.x, 0, n.z);
+                        if (n.chatTimer > 0) n.chatTimer--;
+                        projectLabel(n.mesh.position, n.labelObj, n.name, n.chatTimer > 0 ? n.chat : "");
+                        return;
+                    } else if (n.task === "to_furnace") {
+                        if (stepNpcToward(n, 10.6, -9.0, 0.075, "carry")) {
+                            if (n.carryBundle) { n.mesh.userData.shoulderAnchor.remove(n.carryBundle); n.carryBundle = null; }
+                            n.task = "returning";
+                            n.chat = "Đã hóa sạch chân hương tại lò! ✨"; n.chatTimer = 220;
+                            if (furnaceLight) furnaceLight.intensity = 3.0;
+                        }
+                        n.mesh.position.set(n.x, 0, n.z);
+                        if (n.chatTimer > 0) n.chatTimer--;
+                        projectLabel(n.mesh.position, n.labelObj, n.name, n.chatTimer > 0 ? n.chat : "");
+                        return;
+                    } else if (n.task === "returning") {
+                        if (stepNpcToward(n, 2.4, 6.6, 0.06, "walk")) n.task = null;
+                        n.mesh.position.set(n.x, 0, n.z);
+                        if (n.chatTimer > 0) n.chatTimer--;
+                        projectLabel(n.mesh.position, n.labelObj, n.name, n.chatTimer > 0 ? n.chat : "");
+                        return;
+                    }
+                }
+
                 if (n.waypoints) {
                     const wp = n.waypoints[n.wpIdx];
-                    const dx = wp.x - n.x, dz = wp.z - n.z, d = Math.hypot(dx, dz);
-                    if (d > 0.3) {
-                        n.x += (dx / d) * 0.04; n.z += (dz / d) * 0.04;
-                        n.mesh.rotation.y = Math.atan2(dx, dz); n.walkPhase += 0.12;
-                        animateArticulated(n.mesh, n.walkPhase, n.role === "sweeper");
+                    if (!stepNpcToward(n, wp.x, wp.z, n.role === "pilgrim" ? 0.048 : 0.04, n.role === "sweeper" ? "sweep" : "walk")) {
+                        // moving
                     } else {
-                        animateArticulated(n.mesh, 0, n.role === "sweeper");
+                        if (!n.acted) {
+                            n.acted = true;
+                            if (wp.act === "incense" && incenseSticks.length <= INCENSE_MAX + 2) {
+                                plantIncense(n.name, false);
+                                n.chat = "Thắp nén nhang cầu bình an 🙏"; n.chatTimer = 180;
+                            } else if (wp.act === "pray") {
+                                n.chat = "Cầu năm mới Đinh Mùi vạn sự như ý ✨"; n.chatTimer = 180;
+                            }
+                        }
                         n.wait--;
-                        if (n.wait <= 0) { n.wpIdx = (n.wpIdx + 1) % n.waypoints.length; n.wait = 100 + Math.random() * 140; }
+                        if (n.wait <= 0) {
+                            n.wpIdx = (n.wpIdx + 1) % n.waypoints.length;
+                            n.wait = wp.act ? 150 : 90 + Math.random() * 120;
+                            n.acted = false;
+                        }
                     }
-                    n.mesh.position.set(n.x, 0, n.z);
+                    n.mesh.position.set(n.x, groundHeight(n.x, n.z), n.z);
                 } else if (n.isBoss) {
                     const dMe = Math.hypot(player.x - n.x, player.z - n.z);
                     if (dMe < 6) n.mesh.rotation.y = Math.atan2(player.x - n.x, player.z - n.z);
                 }
                 if (n.chatTimer > 0) n.chatTimer--;
+                else if (n.nextChatAt !== undefined) {
+                    n.nextChatAt--;
+                    if (n.nextChatAt <= 0) {
+                        n.chatTimer = 170;
+                        n.nextChatAt = 480 + Math.floor(Math.random() * 520);
+                    }
+                }
                 projectLabel(n.mesh.position, n.labelObj, n.name, n.chatTimer > 0 ? n.chat : "");
             });
 
             remotePlayers.forEach(rp => {
-                rp.mesh.position.x += ((rp.tx || 0) - rp.mesh.position.x) * 0.18;
-                rp.mesh.position.z += ((rp.tz || 0) - rp.mesh.position.z) * 0.18;
+                const dx = (rp.tx || 0) - rp.mesh.position.x, dz = (rp.tz || 0) - rp.mesh.position.z;
+                const d = Math.hypot(dx, dz);
+                rp.mesh.position.x += dx * 0.2;
+                rp.mesh.position.z += dz * 0.2;
+                rp.mesh.position.y = groundHeight(rp.mesh.position.x, rp.mesh.position.z);
                 rp.mesh.rotation.y = rp.rotY || 0;
+                if (d > 0.02) { rp.walkPhase = (rp.walkPhase || 0) + 0.2; animateArticulated(rp.mesh, rp.walkPhase); }
+                else animateArticulated(rp.mesh, 0);
                 projectLabel(rp.mesh.position, rp.labelObj, rp.name, rp.chat);
             });
 
-            projectLabel(playerMesh.position, player.labelObj, player.name, player.chatTimer > 0 ? player.chat : "");
+            projectLabel(playerMesh.position, player.labelObj, player.name, player.chatTimer > 0 ? player.chat : "", true);
 
-            // Proximity Checks + AUTO-OPEN AR POPUP NEAR ALTAR TABLE!
+            // Proximity Checks + AUTO-OPEN AR POPUP NEAR ALTAR TABLE
             const dIncense = Math.hypot(player.x - 0, player.z - 4);
             const dAltar = Math.hypot(player.x - 0, player.z - (-13.5));
             const dGrace = Math.hypot(player.x - 9.0, player.z - 4);
 
             if (dAltar > 5.0) suppressedAutoModal = false;
-
             if (dAltar < 4.0 && !suppressedAutoModal && fortuneModal.classList.contains("hidden")) {
                 openFortuneModal();
             }
 
             nearTarget = null;
-            if (dIncense < 3.0 && !hasLitIncense) {
+            if (dIncense < 3.2) {
                 nearTarget = "incense";
-                interactPrompt.textContent = "🕯️ Thắp Hương Thành Tâm [E]";
+                interactPrompt.textContent = `🕯️ Thắp Hương (${incenseSticks.length}/${INCENSE_MAX}) [E]`;
                 interactPrompt.classList.remove("hidden");
             } else if (dAltar < 4.0) {
                 nearTarget = "altar";
@@ -1417,7 +2407,7 @@
                 interactPrompt.classList.remove("hidden");
             } else if (dGrace < 3.2) {
                 nearTarget = "grace";
-                interactPrompt.textContent = "⚖️ Gặp Ms Grace: Cày Cuốc hay Nghỉ Việc? [E]";
+                interactPrompt.textContent = "⚖️ Gặp Sếp: Cày Cuốc hay Nghỉ Việc? [E]";
                 interactPrompt.classList.remove("hidden");
             } else {
                 interactPrompt.classList.add("hidden");
@@ -1433,12 +2423,7 @@
             wRenderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        init3DWorld();
-        initTempleNpcs();
-        initMultiplayer();
-        animate3DWorld();
-
-        // ==================== 9. AR 3D FORTUNE POPUP (ORBIT + SHAKE >=5 + INVERT POUR) ====================
+        // ==================== 9. AR 3D FORTUNE POPUP (5+ CLICK AUTO-DROP & INVERT POUR-ALL RESET) ====================
         const realFortunes = [
             { number: "01", level: "Đại Cát", levelClass: "level-great", title: "Lý Ngư Hóa Long", poem: "Nước xuân dâng ngập bến sông dài,\nCá chép vượt môn hóa rồng bay.\nBền chí bao ngày nay gặp hội,\nCông thành danh toại rạng tương lai.", work: "Bước ngoặt lớn trong sự nghiệp, dự án ấp ủ lâu nay dễ được duyệt hoặc bứt phá doanh số vượt kỳ vọng.", money: "Nguồn thu chính và phụ đều tăng; có cơ hội nhận thưởng hoặc hợp đồng giá trị cao.", love: "Gia đạo hòa thuận, người độc thân dễ gặp nhân duyên đồng điệu qua công việc.", health: "Tinh thần phấn chấn, thể lực dồi dào.", advice: "Hãy tự tin nắm lấy cơ hội mới vào đầu năm.", luckyNum: "09, 68", luckyColor: "Đỏ son, Vàng kim" },
             { number: "02", level: "Thượng Cát", levelClass: "level-great", title: "Xuân Phong Đắc Ý", poem: "Gió xuân thổi nhẹ nở ngàn hoa,\nQuý nhân đưa lối bước đường xa.\nMở lòng đón nhận duyên lành tới,\nThuận buồm xuôi gió khắp gần xa.", work: "Có quý nhân nâng đỡ, tháo gỡ nút thắt cũ êm đẹp.", money: "Tiền bạc hanh thông, chi tiêu thoải mái.", love: "Tình cảm ấm áp, hiểu lầm cũ dần hóa giải.", health: "Khí huyết lưu thông tốt.", advice: "Giữ thái độ khiêm tốn và biết ơn.", luckyNum: "03, 27", luckyColor: "Xanh ngọc, Trắng kem" },
@@ -1465,39 +2450,41 @@
         let mScene, mCamera, mRenderer, tubeGroup, stickMeshes = [], chosenMesh = null;
         let arRotX = 0.25, arRotY = 0, arDrag = false, arPrev = { x: 0, y: 0 }, arDragDist = 0, arShakeAccum = 0;
         let impulseVel = 0, lastShakeImpulseTime = 0, pouringOut = false, pourStart = 0;
+        let pouringAll = false, pourAllStart = 0, pourAllRespawned = false;
+        let autoEjectTimer = null, pendingAutoDrop = false;
 
         function initModalThree() {
             if (typeof THREE === "undefined") return;
             const w = canvas3dWrap.clientWidth || 580, h = canvas3dWrap.clientHeight || 290;
             mScene = new THREE.Scene();
             mCamera = new THREE.PerspectiveCamera(40, w / h, 0.1, 100);
-            mCamera.position.set(0, 0.8, 6.4);
+            mCamera.position.set(0, 0.45, 7.4);
             mCamera.lookAt(0, 0, 0);
             mRenderer = new THREE.WebGLRenderer({ canvas: canvasEl, antialias: true, alpha: true });
-            mRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+            mRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2.5));
             mRenderer.setSize(w, h, false);
 
             mScene.add(new THREE.AmbientLight(0xfff5e4, 0.85));
-            const kl = new THREE.DirectionalLight(0xfff8ed, 1.2); kl.position.set(4, 7, 5); mScene.add(kl);
-            const rl = new THREE.DirectionalLight(0xffd28a, 0.5); rl.position.set(-4, -3, 3); mScene.add(rl);
+            const kl = new THREE.DirectionalLight(0xfff8ed, 1.25); kl.position.set(4, 7, 5); mScene.add(kl);
+            const rl = new THREE.DirectionalLight(0xffd28a, 0.55); rl.position.set(-4, -3, 3); mScene.add(rl);
 
             tubeGroup = new THREE.Group();
             mScene.add(tubeGroup);
 
             const bambooTex = makeBambooTexture();
             const bodyMesh = new THREE.Mesh(
-                new THREE.CylinderGeometry(0.88, 0.82, 2.35, 36),
+                new THREE.CylinderGeometry(0.88, 0.82, 2.35, 48),
                 new THREE.MeshStandardMaterial({ map: bambooTex, roughness: 0.45 })
             );
             bodyMesh.position.y = -0.15; tubeGroup.add(bodyMesh);
 
-            const cav = new THREE.Mesh(new THREE.CylinderGeometry(0.76, 0.76, 0.08, 32), new THREE.MeshBasicMaterial({ color: 0x1e1108 }));
+            const cav = new THREE.Mesh(new THREE.CylinderGeometry(0.76, 0.76, 0.08, 40), new THREE.MeshBasicMaterial({ color: 0x1e1108 }));
             cav.position.y = 1.01; tubeGroup.add(cav);
 
             const ringMat = new THREE.MeshStandardMaterial({ color: 0xd99b26, roughness: 0.25, metalness: 0.7 });
             [0.98, 0.62, -0.95].forEach((yPos, idx) => {
                 const r = idx === 0 ? 0.90 : idx === 1 ? 0.885 : 0.84;
-                const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.032, 12, 36), ringMat);
+                const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.032, 16, 48), ringMat);
                 ring.rotation.x = Math.PI / 2; ring.position.y = yPos; tubeGroup.add(ring);
             });
             const plaque = new THREE.Mesh(new THREE.BoxGeometry(0.68, 1.02, 0.06), new THREE.MeshStandardMaterial({ color: 0xb93829, roughness: 0.4 }));
@@ -1506,7 +2493,7 @@
             const stickGeo = new THREE.BoxGeometry(0.085, 2.05, 0.035), tipGeo = new THREE.BoxGeometry(0.088, 0.28, 0.038);
             const stickWoodMat = new THREE.MeshStandardMaterial({ color: 0xe6c48c, roughness: 0.55 });
             const stickTipMat = new THREE.MeshStandardMaterial({ color: 0xc43424, roughness: 0.4 });
-            const chosenMat = new THREE.MeshStandardMaterial({ color: 0xffdf7a, emissive: 0xd99b26, emissiveIntensity: 0.55 });
+            const chosenMat = new THREE.MeshStandardMaterial({ color: 0xffdf7a, emissive: 0xd99b26, emissiveIntensity: 0.65 });
 
             stickMeshes = [];
             for (let i = 0; i < 20; i++) {
@@ -1517,7 +2504,12 @@
                 const bx = Math.cos(angle) * radius, bz = Math.sin(angle) * radius, by = 0.92 + (Math.random() - 0.5) * 0.18;
                 const rx = (Math.random() - 0.5) * 0.18, rz = (Math.random() - 0.5) * 0.18;
                 sGroup.position.set(bx, by, bz); sGroup.rotation.set(rx, angle, rz);
-                sGroup.userData = { bx, by, bz, rx, ry: angle, rz, phase: i * 1.13, shaft, stickWoodMat, chosenMat };
+                sGroup.userData = {
+                    bx, by, bz, rx, ry: angle, rz, phase: i * 1.13, shaft, stickWoodMat, chosenMat,
+                    vx: (Math.random() - 0.5) * 1.6, vz: (Math.random() - 0.5) * 1.6,
+                    spinX: (Math.random() - 0.5) * 5.0, spinZ: (Math.random() - 0.5) * 5.0,
+                    fallDelay: (i % 5) * 0.06
+                };
                 tubeGroup.add(sGroup); stickMeshes.push(sGroup);
             }
 
@@ -1526,22 +2518,71 @@
                 requestAnimationFrame(tick);
                 if (!modalThreeReady || fortuneModal.classList.contains("hidden")) return;
 
-                if (pouringOut && chosenMesh) {
-                    arRotX += (2.45 - arRotX) * 0.12;
+                if (pouringAll) {
+                    const el = now - pourAllStart;
+                    if (el < 1400) {
+                        // Raise tube gently & invert so ALL 20 tumbling sticks visibly spill out inside viewport
+                        arRotX += (2.72 - arRotX) * 0.15;
+                        tubeGroup.rotation.set(arRotX, arRotY, 0);
+                        tubeGroup.position.y += (0.85 - tubeGroup.position.y) * 0.12;
+                        tubeGroup.scale.setScalar(1);
+                        stickMeshes.forEach(s => {
+                            const d = s.userData;
+                            const u = Math.max(0, Math.min(1, (el / 1200) - d.fallDelay * 0.8));
+                            const g = u * u * 3.8;
+                            s.position.set(d.bx + d.vx * u, d.by + g, d.bz + d.vz * u);
+                            s.rotation.set(d.rx + d.spinX * u, d.ry, d.rz + d.spinZ * u);
+                            s.visible = g < 4.5;
+                        });
+                    } else if (el < 1750) {
+                        const p = (el - 1400) / 350;
+                        tubeGroup.scale.setScalar(Math.max(0.001, 1 - p));
+                        stickMeshes.forEach(s => { s.visible = false; });
+                    } else if (el < 2300) {
+                        // Reappear upright cleanly back to original state with all 20 sticks inside
+                        if (!pourAllRespawned) {
+                            pourAllRespawned = true;
+                            arRotX = 0.25; arRotY = 0; impulseVel = 0; shakeClicks = 0; currentFortune = null;
+                            tubeGroup.rotation.set(arRotX, 0, 0);
+                            tubeGroup.position.set(0, 0, 0);
+                            stickMeshes.forEach(s => {
+                                const d = s.userData; d.shaft.material = d.stickWoodMat; d.shaft.visible = true;
+                                s.visible = true;
+                                s.position.set(d.bx, d.by, d.bz); s.rotation.set(d.rx, d.ry, d.rz);
+                            });
+                            chosenMesh = null;
+                            fortuneSlip.classList.add("hidden");
+                            stickBadgeOverlay.classList.add("hidden");
+                        }
+                        const p = (el - 1750) / 550;
+                        // Slight elastic pop-in
+                        const easeOut = 1 - Math.pow(1 - p, 3);
+                        tubeGroup.scale.setScalar(0.05 + easeOut * 0.95);
+                        tubeGroup.rotation.y = (1 - easeOut) * Math.PI * 0.5;
+                    } else {
+                        pouringAll = false; pourAllRespawned = false;
+                        tubeGroup.scale.setScalar(1);
+                        tubeGroup.rotation.set(0.25, 0, 0);
+                        updateShakeUI();
+                    }
+                } else if (pouringOut && chosenMesh) {
+                    // Gently tilt slightly forward so the chosen stick ejects naturally upward & toward user
+                    arRotX += (0.48 - arRotX) * 0.14;
                     tubeGroup.rotation.x = arRotX;
                     tubeGroup.rotation.y = arRotY;
+                    tubeGroup.scale.setScalar(1);
 
-                    const p = Math.min((now - pourStart) / 900, 1);
+                    const p = Math.min((now - pourStart) / 850, 1);
                     const ease = 1 - Math.pow(1 - p, 3);
 
                     stickMeshes.forEach(s => {
                         if (s === chosenMesh) return;
                         const d = s.userData;
-                        s.position.y = d.by - ease * 0.72;
+                        s.position.y = d.by - ease * 0.25;
                     });
 
                     const d = chosenMesh.userData;
-                    chosenMesh.position.set(d.bx * (1 - ease), d.by + ease * 1.95, d.bz + ease * 0.45);
+                    chosenMesh.position.set(d.bx * (1 - ease), d.by + ease * 1.05, d.bz + ease * 0.3);
                     chosenMesh.rotation.set(d.rx, d.ry + ease * Math.PI * 1.5, d.rz);
 
                     if (p >= 1) {
@@ -1549,16 +2590,17 @@
                         renderFortuneSlip(currentFortune);
                     }
                 } else {
+                    tubeGroup.scale.setScalar(1);
                     if (impulseVel > 0.01) {
                         const t = now - lastShakeImpulseTime;
-                        tubeGroup.rotation.z = Math.sin(t * 0.036) * 0.35 * impulseVel;
-                        tubeGroup.rotation.x = arRotX + Math.cos(t * 0.028) * 0.2 * impulseVel;
+                        tubeGroup.rotation.z = Math.sin(t * 0.036) * 0.36 * impulseVel;
+                        tubeGroup.rotation.x = arRotX + Math.cos(t * 0.028) * 0.22 * impulseVel;
                         tubeGroup.rotation.y = arRotY;
                         tubeGroup.position.y = Math.abs(Math.sin(t * 0.036)) * 0.28 * impulseVel;
                         stickMeshes.forEach(s => {
                             const d = s.userData;
-                            s.position.y = d.by + Math.abs(Math.sin(t * 0.05 + d.phase)) * 0.35 * impulseVel;
-                            s.rotation.z = d.rz + Math.sin(t * 0.05 + d.phase) * 0.18 * impulseVel;
+                            s.position.y = d.by + Math.abs(Math.sin(t * 0.05 + d.phase)) * 0.38 * impulseVel;
+                            s.rotation.z = d.rz + Math.sin(t * 0.05 + d.phase) * 0.2 * impulseVel;
                         });
                         impulseVel *= 0.935;
                     } else {
@@ -1574,12 +2616,17 @@
         }
 
         function resetShakeSession() {
-            shakeClicks = 0; pouringOut = false; currentFortune = null;
-            arRotX = 0.25; arRotY = 0; arShakeAccum = 0;
+            if (autoEjectTimer) { clearTimeout(autoEjectTimer); autoEjectTimer = null; }
+            shakeClicks = 0; pouringOut = false; pouringAll = false; pourAllRespawned = false;
+            pendingAutoDrop = false; currentFortune = null;
+            arRotX = 0.25; arRotY = 0; arShakeAccum = 0; impulseVel = 0;
             fortuneSlip.classList.add("hidden"); stickBadgeOverlay.classList.add("hidden");
             if (modalThreeReady) {
+                tubeGroup.scale.setScalar(1);
+                tubeGroup.rotation.set(0.25, 0, 0);
+                tubeGroup.position.set(0, 0, 0);
                 stickMeshes.forEach(s => {
-                    const d = s.userData; d.shaft.material = d.stickWoodMat;
+                    const d = s.userData; d.shaft.material = d.stickWoodMat; s.visible = true;
                     s.position.set(d.bx, d.by, d.bz); s.rotation.set(d.rx, d.ry, d.rz);
                 });
                 chosenMesh = null;
@@ -1590,25 +2637,41 @@
         function updateShakeUI() {
             shakeProgressFill.style.width = Math.min((shakeClicks / MIN_SHAKES) * 100, 100) + "%";
             shakeCountText.textContent = `${shakeClicks} / ${MIN_SHAKES}`;
-            if (shakeClicks < MIN_SHAKES) {
+            if (pouringAll) {
+                shakeGuideLabel.textContent = "🔄 Đang đổ hết quẻ xuống & tự khôi phục bình như cũ...";
+                arHintBadge.textContent = "Đang đổ hết 20 thẻ xăm ra ngoài — ống xăm sẽ tự hiện lại";
+            } else if (shakeClicks < MIN_SHAKES) {
                 const remain = MIN_SHAKES - shakeClicks;
-                shakeGuideLabel.textContent = `Chạm hoặc kéo lắc ống xăm thêm ${remain} lần nữa`;
-                arHintBadge.textContent = `Chạm / Kéo lắc trực tiếp ống xăm 3D (${shakeClicks}/5)`;
+                shakeGuideLabel.textContent = `Bấm / Lắc ống xăm thêm ${remain} lần (≥5 lần dừng tay quẻ tự ra)`;
+                arHintBadge.textContent = `Bấm lắc trực tiếp (${shakeClicks}/5) • Hoặc kéo xoay úp ngược để đổ hết quẻ`;
             } else {
-                shakeGuideLabel.textContent = `Đã đủ ${shakeClicks} nhịp! Kéo xoay úp ngược ống xăm xuống (hoặc chạm) để đổ quẻ!`;
-                arHintBadge.textContent = `✨ Đã đủ 5 nhịp! Kéo xoay úp ngược xuống hoặc chạm để đổ thẻ quẻ ra`;
+                shakeGuideLabel.textContent = `Đã lắc ${shakeClicks} nhịp! Tiếp tục bấm nếu muốn lắc thêm, hoặc dừng tay để quẻ tự ra!`;
+                arHintBadge.textContent = `✨ Đủ ${shakeClicks} nhịp! Dừng tay 1 chút quẻ tự ra • Kéo úp ngược để đổ hết & làm mới`;
             }
         }
 
-        function registerShakeImpulse() {
-            if (pouringOut || currentFortune) return;
-            shakeClicks++; impulseVel = 1.05; lastShakeImpulseTime = performance.now();
-            playBambooClick(0.85 + Math.min(shakeClicks, 6) * 0.06);
-            updateShakeUI();
+        function scheduleAutoDrop() {
+            if (autoEjectTimer) clearTimeout(autoEjectTimer);
+            autoEjectTimer = setTimeout(() => {
+                if (!pouringOut && !pouringAll && !currentFortune && !fortuneModal.classList.contains("hidden")) {
+                    if (arDrag) { pendingAutoDrop = true; }
+                    else { triggerAutoDrop(); }
+                }
+            }, 720);
         }
 
-        function triggerInvertPour() {
-            if (shakeClicks < MIN_SHAKES || pouringOut || currentFortune) return;
+        function registerShakeImpulse() {
+            if (pouringOut || pouringAll || currentFortune) return;
+            shakeClicks++; impulseVel = 1.05; lastShakeImpulseTime = performance.now();
+            playBambooClick(0.85 + Math.min(shakeClicks, 8) * 0.05);
+            updateShakeUI();
+            if (shakeClicks >= MIN_SHAKES) scheduleAutoDrop();
+        }
+
+        function triggerAutoDrop() {
+            if (shakeClicks < MIN_SHAKES || pouringOut || pouringAll || currentFortune) return;
+            if (autoEjectTimer) { clearTimeout(autoEjectTimer); autoEjectTimer = null; }
+            pendingAutoDrop = false;
             currentFortune = realFortunes[Math.floor(Math.random() * realFortunes.length)];
             stickBadgeOverlay.textContent = `ĐỆ ${currentFortune.number} QUẺ`;
             stickBadgeOverlay.classList.remove("hidden");
@@ -1623,12 +2686,25 @@
             } else renderFortuneSlip(currentFortune);
         }
 
-        // Direct AR 3D Orbit + Drag-Shake + Upside-Down Pour
+        function triggerPourAllReset() {
+            if (pouringAll || pouringOut) return;
+            if (autoEjectTimer) { clearTimeout(autoEjectTimer); autoEjectTimer = null; }
+            pendingAutoDrop = false;
+            pouringAll = true; pourAllStart = performance.now(); pourAllRespawned = false;
+            updateShakeUI();
+            playBambooClick(1.2);
+            setTimeout(() => playBambooClick(0.95), 140);
+            setTimeout(() => playBambooClick(1.1), 280);
+            setTimeout(() => playBambooClick(0.8), 440);
+        }
+
+        // Direct AR 3D Orbit + Click/Drag-Shake (>=5 auto-drop) + Upside-Down Pour-All & Reset
         canvas3dWrap.addEventListener("pointerdown", (e) => {
+            if (pouringAll || pouringOut) return;
             arDrag = true; arDragDist = 0; arPrev = { x: e.clientX, y: e.clientY };
         });
         window.addEventListener("pointermove", (e) => {
-            if (!arDrag || fortuneModal.classList.contains("hidden") || pouringOut) return;
+            if (!arDrag || fortuneModal.classList.contains("hidden") || pouringOut || pouringAll) return;
             const dx = e.clientX - arPrev.x, dy = e.clientY - arPrev.y;
             arDragDist += Math.hypot(dx, dy);
             arShakeAccum += Math.hypot(dx, dy);
@@ -1636,21 +2712,21 @@
             arRotX = Math.max(-0.5, Math.min(2.8, arRotX + dy * 0.015));
             arPrev = { x: e.clientX, y: e.clientY };
 
-            if (arShakeAccum > 90) {
+            if (arShakeAccum > 90 && !currentFortune) {
                 arShakeAccum = 0;
                 registerShakeImpulse();
             }
-            if (arRotX > 1.85 && shakeClicks >= MIN_SHAKES && !currentFortune) {
+            if (arRotX > 1.85) {
                 arDrag = false;
-                triggerInvertPour();
+                triggerPourAllReset();
             }
         });
         window.addEventListener("pointerup", () => {
-            if (arDrag && arDragDist < 10 && !fortuneModal.classList.contains("hidden")) {
-                if (shakeClicks >= MIN_SHAKES && !currentFortune) {
-                    triggerInvertPour();
-                } else {
+            if (arDrag && !fortuneModal.classList.contains("hidden") && !pouringAll && !pouringOut) {
+                if (arDragDist < 10 && !currentFortune) {
                     registerShakeImpulse();
+                } else if (pendingAutoDrop && shakeClicks >= MIN_SHAKES && !currentFortune) {
+                    triggerAutoDrop();
                 }
             }
             arDrag = false;
@@ -1670,6 +2746,7 @@
             document.getElementById("slipLucky").textContent = `Số cát tường: ${f.luckyNum} • Sắc hợp: ${f.luckyColor}`;
             fortuneSlip.classList.remove("hidden"); fortuneSlip.classList.remove("flip-reveal");
             void fortuneSlip.offsetWidth; fortuneSlip.classList.add("flip-reveal");
+            shakeGuideLabel.textContent = `🎋 Đã xuất Đệ ${f.number} Quẻ! Kéo xoay úp ngược ống xăm để đổ hết & làm mới, hoặc bấm "Xin quẻ khác"`;
         }
 
         function openFortuneModal() {
@@ -1678,11 +2755,12 @@
             if (!modalThreeReady) initModalThree();
             resetShakeSession();
             questStepTag.textContent = "BƯỚC 3/3";
-            questBannerText.textContent = "Đã tới Chính Điện! Xoay lắc ống xăm 3D ≥5 lần rồi úp ngược để đổ quẻ";
+            questBannerText.textContent = "Đã tới Chính Điện! Bấm lắc ≥5 lần rồi dừng tay quẻ tự ra, hoặc xoay úp ngược để đổ hết quẻ";
         }
 
         function closeFortuneModal() {
             suppressedAutoModal = true;
+            if (autoEjectTimer) { clearTimeout(autoEjectTimer); autoEjectTimer = null; }
             fortuneModal.classList.remove("show");
             setTimeout(() => fortuneModal.classList.add("hidden"), 350);
         }
@@ -1698,7 +2776,7 @@
             });
         });
 
-        // ==================== 10. CAREER & CUSTOMIZE MODALS ====================
+        // ==================== 10. CAREER (SẾP) & CUSTOMIZE MODALS ====================
         const careerModal = document.getElementById("careerModal");
         const qMoney = document.getElementById("qMoney"), qKpi = document.getElementById("qKpi"), qGoal = document.getElementById("qGoal"), qMood = document.getElementById("qMood");
         const workPctLabel = document.getElementById("workPctLabel"), quitPctLabel = document.getElementById("quitPctLabel");
@@ -1716,13 +2794,13 @@
             workMeterFill.style.width = workPct + "%";
             if (workPct >= 70) {
                 careerVerdictBox.innerHTML = `<strong>Kết luận: Chiến thần KPI L.ASY (${workPct}% hợp Cày Cuốc)!</strong> Ví tiền và mục tiêu Tết 2027 đang gọi tên bạn.`;
-                graceTauntBox.textContent = `💖 Ms Grace: "Chị biết ngay mà! Em sinh ra để cày KPI cùng L.ASY!"`;
+                graceTauntBox.textContent = `💖 Sếp: "Sếp biết ngay mà! Em sinh ra để cày KPI cùng L.ASY!"`;
             } else if (workPct >= 45) {
                 careerVerdictBox.innerHTML = `<strong>Kết luận: Nửa muốn nghỉ, nửa thèm thưởng (${workPct}% / ${quitPct}%).</strong> Uống ly trà sữa rồi chốt nốt KPI nhé!`;
-                graceTauntBox.textContent = `🧋 Ms Grace: "Đừng dao động em ơi, thưởng Tết Đinh Mùi đang chờ!"`;
+                graceTauntBox.textContent = `🧋 Sếp: "Đừng dao động em ơi, thưởng Tết Đinh Mùi đang chờ!"`;
             } else {
-                careerVerdictBox.innerHTML = `<strong>Kết luận: Tín hiệu muốn nghỉ (${quitPct}%)!</strong> Nhưng cổng HR vẫn do Ms Grace giữ... thử bấm Nộp Đơn xem!`;
-                graceTauntBox.textContent = `😤 Ms Grace: "Em định bỏ chị thật hả? Thử bấm nút bên dưới xem!"`;
+                careerVerdictBox.innerHTML = `<strong>Kết luận: Tín hiệu muốn nghỉ (${quitPct}%)!</strong> Nhưng cổng HR vẫn do Sếp giữ... thử bấm Nộp Đơn xem!`;
+                graceTauntBox.textContent = `😤 Sếp: "Em định nghỉ thật hả? Thử bấm nút bên dưới xem!"`;
             }
         }
         [qMoney, qKpi, qGoal, qMood].forEach(s => s.addEventListener("change", computeCareerCompatibility));
@@ -1741,7 +2819,7 @@
         document.getElementById("openCareerBtn").addEventListener("click", openCareerModal);
         document.getElementById("closeCareerModalBtn").addEventListener("click", closeCareerModal);
 
-        const taunts = ["😤 Ms Grace: 'Chị chưa duyệt đâu nhé!'", "⚡ Ms Grace: 'KPI tháng này ai gánh thay em?'", "🧋 Ms Grace: 'Ở lại chị bao trà sữa!'", "🔒 HR: 'Nút nộp đơn đã bị khóa tọa độ!'"];
+        const taunts = ["😤 Sếp: 'Chưa duyệt đơn đâu nhé!'", "⚡ Sếp: 'KPI tháng này ai gánh thay em?'", "🧋 Sếp: 'Ở lại Sếp bao trà sữa full topping!'", "🔒 HR: 'Nút nộp đơn đã bị khóa tọa độ!'"];
         function dodgeQuitButton() {
             if (dodgeCount < 4) {
                 const dx = (Math.random() > 0.5 ? 1 : -1) * (35 + Math.random() * 110);
@@ -1757,31 +2835,104 @@
             if (dodgeCount < 3) dodgeQuitButton();
             else { quitArena.classList.add("hidden"); quitTrapView.classList.remove("hidden"); }
         });
-        stayBtn.addEventListener("click", () => { closeCareerModal(); player.chat = "Chốt cày KPI nhận thưởng Tết 2027! 💪"; player.chatTimer = 240; });
-        document.getElementById("acceptFateBtn").addEventListener("click", () => { closeCareerModal(); player.chat = "Đã nhận trà sữa & ở lại với Ms Grace 🧋"; player.chatTimer = 240; });
+        stayBtn.addEventListener("click", () => { closeCareerModal(); player.chat = "Chốt cày KPI nhận thưởng Tết 2027 cùng Sếp! 💪"; player.chatTimer = 240; });
+        document.getElementById("acceptFateBtn").addEventListener("click", () => { closeCareerModal(); player.chat = "Đã nhận trà sữa & ở lại cày cùng Sếp 🧋"; player.chatTimer = 240; });
 
+        // ==================== CUSTOMIZER WITH 3D LIVE PREVIEW ====================
         const customModal = document.getElementById("customModal");
-        let selectedColor = player.color;
+        const playerNameInput = document.getElementById("playerNameInput");
+        const custCanvas = document.getElementById("custPreviewCanvas");
+        let draftGender = player.gender, draftOutfit = player.outfit, draftColor = player.color;
+        let cpScene, cpCamera, cpRenderer, cpMesh, cpReady = false;
+
+        function refreshCustPreviewMesh() {
+            if (!cpReady) return;
+            if (cpMesh) cpScene.remove(cpMesh);
+            cpMesh = createArticulatedCharacter({ robeColor: draftColor, gender: draftGender, outfit: draftOutfit });
+            cpMesh.position.y = -1.0;
+            cpScene.add(cpMesh);
+        }
+
+        function initCustPreview() {
+            if (cpReady || typeof THREE === "undefined") return;
+            const w = custCanvas.clientWidth || 380, h = 190;
+            cpScene = new THREE.Scene();
+            cpCamera = new THREE.PerspectiveCamera(36, w / h, 0.1, 30);
+            cpCamera.position.set(0, 0.25, 3.6);
+            cpCamera.lookAt(0, 0.05, 0);
+            cpRenderer = new THREE.WebGLRenderer({ canvas: custCanvas, antialias: true, alpha: true });
+            cpRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+            cpRenderer.setSize(w, h, false);
+            cpScene.add(new THREE.HemisphereLight(0xfff5e4, 0x8b6b4a, 0.9));
+            const dl = new THREE.DirectionalLight(0xffffff, 1.3); dl.position.set(2, 4, 3); cpScene.add(dl);
+            cpReady = true;
+            refreshCustPreviewMesh();
+            (function loop() {
+                requestAnimationFrame(loop);
+                if (!cpReady || customModal.classList.contains("hidden")) return;
+                if (cpMesh) cpMesh.rotation.y += 0.015;
+                cpRenderer.render(cpScene, cpCamera);
+            })();
+        }
+
+        function syncCustomUI() {
+            playerNameInput.value = player.name;
+            draftGender = player.gender; draftOutfit = player.outfit; draftColor = player.color;
+            document.querySelectorAll("#genderToggle .seg-btn").forEach(b => b.classList.toggle("active", b.dataset.gender === draftGender));
+            document.querySelectorAll(".outfit-btn").forEach(b => b.classList.toggle("active", b.dataset.outfit === draftOutfit));
+            document.querySelectorAll("#swatchRow .swatch").forEach(b => b.classList.toggle("active", b.dataset.color.toUpperCase() === draftColor.toUpperCase()));
+        }
+
         document.getElementById("openCustomBtn").addEventListener("click", () => {
-            customModal.classList.remove("hidden"); requestAnimationFrame(() => customModal.classList.add("show"));
+            syncCustomUI();
+            customModal.classList.remove("hidden");
+            requestAnimationFrame(() => customModal.classList.add("show"));
+            initCustPreview();
+            refreshCustPreviewMesh();
         });
         document.getElementById("closeCustomModalBtn").addEventListener("click", () => {
             customModal.classList.remove("show"); setTimeout(() => customModal.classList.add("hidden"), 350);
         });
+        document.getElementById("randomNameBtn").addEventListener("click", () => {
+            playerNameInput.value = randomPilgrimName();
+        });
+        document.querySelectorAll("#genderToggle .seg-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll("#genderToggle .seg-btn").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active"); draftGender = btn.dataset.gender; refreshCustPreviewMesh();
+            });
+        });
         document.querySelectorAll(".outfit-btn").forEach(btn => {
             btn.addEventListener("click", () => {
                 document.querySelectorAll(".outfit-btn").forEach(b => b.classList.remove("active"));
-                btn.classList.add("active"); selectedColor = btn.dataset.color;
+                btn.classList.add("active"); draftOutfit = btn.dataset.outfit; refreshCustPreviewMesh();
+            });
+        });
+        document.querySelectorAll("#swatchRow .swatch").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll("#swatchRow .swatch").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active"); draftColor = btn.dataset.color; refreshCustPreviewMesh();
             });
         });
         document.getElementById("saveCustomBtn").addEventListener("click", () => {
-            const nm = document.getElementById("playerNameInput").value.trim();
+            const nm = playerNameInput.value.trim();
             if (nm) player.name = nm;
-            player.color = selectedColor;
-            playerMesh.userData.torso.material.color.set(selectedColor);
-            playerMesh.userData.skirt.material.color.set(selectedColor);
+            player.gender = draftGender; player.outfit = draftOutfit; player.color = draftColor;
+            try {
+                localStorage.setItem("lasy_temple_profile", JSON.stringify({
+                    name: player.name, gender: player.gender, outfit: player.outfit, color: player.color
+                }));
+            } catch (e) {}
+            rebuildPlayerMesh();
             customModal.classList.remove("show"); setTimeout(() => customModal.classList.add("hidden"), 350);
         });
+
+        init3DWorld();
+        initTempleNpcs();
+        initMultiplayer();
+        for (let k = 0; k < 3; k++) plantIncense("Chùa L.ASY", false);
+        updateIncensePill();
+        animate3DWorld();
     </script>
 </body>
 </html>
