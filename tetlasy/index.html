@@ -2,12 +2,12 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>L.ASY Tết 2027 — Đi Chùa Bóc Quẻ 3D &amp; Đếm Ngược Nghỉ Tết</title>
-    <meta name="description" content="Đếm ngược lịch nghỉ Tết Nguyên Đán Đinh Mùi 2027 (04/02/2027), trải nghiệm trò chơi đi chùa thắp hương bóc quẻ 3D (tối thiểu 5 lần lắc) và trắc nghiệm độ hợp Cày Cuốc vs Nghỉ Việc.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chùa L.ASY 2027 — Đi Chùa Bóc Quẻ 3D &amp; Đếm Ngược Nghỉ Tết</title>
+    <meta name="description" content="Trò chơi đi chùa online L.ASY Tết Đinh Mùi 2027: Điều khiển nhân vật từ ngoài cổng chùa vào thắp hương, theo mũi tên vào chính điện lắc quẻ 3D (tối thiểu 5 lần) và xem độ hợp Cày Cuốc vs Nghỉ Việc.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-paper: #FAF7F2;
@@ -26,7 +26,6 @@
             --gold-soft: #FBF5E8;
             --sage: #2D6A4F;
             --sage-soft: #EEF6F2;
-            --shadow-card: 0 2px 4px rgba(28, 25, 23, 0.04), 0 16px 40px rgba(28, 25, 23, 0.07);
         }
 
         *, *::before, *::after {
@@ -35,337 +34,99 @@
             padding: 0;
         }
 
-        body {
-            font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-paper);
-            background-image:
-                radial-gradient(ellipse 75% 50% at 50% 0%, rgba(185, 56, 41, 0.08), transparent),
-                radial-gradient(ellipse 50% 40% at 100% 100%, rgba(182, 126, 30, 0.07), transparent);
-            color: var(--ink-primary);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        .top-bar {
-            position: relative;
-            z-index: 20;
-            max-width: 980px;
+        html, body {
             width: 100%;
-            margin: 0 auto;
-            padding: 20px 24px 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #2C221A;
+            color: var(--ink-primary);
+            user-select: none;
         }
 
-        .back-link {
-            display: inline-flex;
+        /* Full-Screen Game World Canvas */
+        #gameCanvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        /* Floating Top HUD */
+        .hud-top {
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            z-index: 20;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .hud-group {
+            display: flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 14px;
+            flex-wrap: wrap;
+            pointer-events: auto;
+        }
+
+        .hud-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 13px;
             border-radius: 999px;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-sand);
+            background: rgba(250, 247, 242, 0.94);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-strong);
             color: var(--ink-primary);
             text-decoration: none;
-            font-size: 0.82rem;
+            font-size: 0.78rem;
             font-weight: 600;
-            transition: all 0.2s ease;
-            box-shadow: 0 1px 3px rgba(28, 25, 23, 0.05);
-        }
-
-        .back-link:hover {
-            border-color: var(--ink-primary);
-            transform: translateX(-2px);
-        }
-
-        .top-right-pills {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .sound-toggle {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            border-radius: 999px;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-sand);
-            color: var(--ink-secondary);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.72rem;
-            font-weight: 600;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: transform 0.15s ease, background-color 0.15s ease;
         }
 
-        .sound-toggle:hover {
-            border-color: var(--ink-primary);
-            color: var(--ink-primary);
+        .hud-pill:hover {
+            transform: translateY(-1px);
+            background: #FFFFFF;
         }
 
-        .year-pill {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.74rem;
-            font-weight: 600;
-            padding: 6px 12px;
-            border-radius: 999px;
-            background: var(--crimson-soft);
-            color: var(--crimson);
-            border: 1px solid rgba(185, 56, 41, 0.22);
-        }
-
-        #background-animation {
-            position: fixed;
-            inset: 0;
-            overflow: hidden;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .floating-item {
-            position: absolute;
-            bottom: -50px;
-            animation: floatUp 22s linear infinite;
-            opacity: 0.36;
-            pointer-events: none;
-        }
-
-        @keyframes floatUp {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(-115vh) rotate(320deg); }
-        }
-
-        .stage {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px 20px 56px;
-            position: relative;
-            z-index: 10;
-        }
-
-        .studio-card {
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border-sand);
-            border-radius: 24px;
-            box-shadow: var(--shadow-card);
-            padding: 36px 34px;
-            width: 100%;
-            max-width: 820px;
-            text-align: center;
-        }
-
-        .brand-crest {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 6px 16px;
-            border-radius: 999px;
-            background: var(--gold-soft);
-            border: 1px solid rgba(182, 126, 30, 0.25);
-            color: var(--gold);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.74rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            margin-bottom: 14px;
-        }
-
-        h1 {
-            font-family: 'Playfair Display', Georgia, serif;
-            font-size: clamp(2rem, 4.5vw, 2.85rem);
-            font-weight: 700;
-            color: var(--ink-primary);
-            line-height: 1.15;
-            margin-bottom: 10px;
-            letter-spacing: -0.02em;
-        }
-
-        h1 span {
-            color: var(--crimson);
-            font-style: italic;
-        }
-
-        .subtitle {
-            font-size: 0.95rem;
-            color: var(--ink-secondary);
-            margin-bottom: 8px;
-        }
-
-        .holiday-note {
-            display: inline-flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.73rem;
-            color: var(--ink-muted);
-            background: var(--bg-paper);
-            border: 1px solid var(--border-sand);
-            border-radius: 999px;
-            padding: 5px 14px;
-            margin-bottom: 24px;
-        }
-
-        .countdown-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .time-box {
-            background: var(--bg-paper);
-            border: 1px solid var(--border-sand);
-            border-radius: 16px;
-            padding: 15px 10px;
-        }
-
-        .time-val {
-            display: block;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: clamp(1.7rem, 4vw, 2.35rem);
-            font-weight: 700;
-            color: var(--crimson);
-            line-height: 1.1;
-        }
-
-        .time-label {
-            display: block;
-            margin-top: 6px;
-            font-size: 0.72rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--ink-muted);
-        }
-
-        /* 2 Unified Main Mode Buttons */
-        .actions-row {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-            margin-bottom: 18px;
-        }
-
-        .action-btn {
-            border: 1px solid transparent;
+        .hud-countdown {
+            background: rgba(28, 25, 23, 0.9);
+            color: #FFFDF9;
+            border: 1px solid rgba(217, 155, 38, 0.55);
             border-radius: 14px;
-            padding: 15px 18px;
-            font-family: 'Be Vietnam Pro', sans-serif;
-            font-size: 0.96rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 9px;
+            padding: 7px 14px;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            pointer-events: auto;
         }
 
-        .action-btn:hover { transform: translateY(-2px); }
-        .action-btn:active { transform: translateY(0); }
-
-        .btn-temple {
-            background: var(--crimson);
-            color: #FFFFFF;
-            box-shadow: 0 6px 18px rgba(185, 56, 41, 0.22);
-        }
-
-        .btn-temple:hover {
-            background: var(--crimson-dark);
-            box-shadow: 0 8px 22px rgba(185, 56, 41, 0.3);
-        }
-
-        .btn-career {
-            background: var(--gold-soft);
-            color: #7D520A;
-            border-color: rgba(182, 126, 30, 0.4);
-        }
-
-        .btn-career:hover {
-            background: #F5E6C8;
-            box-shadow: 0 6px 16px rgba(182, 126, 30, 0.18);
-        }
-
-        .hidden { display: none !important; }
-
-        /* ==================== TEMPLE PILGRIMAGE MULTIPLAYER GAME ==================== */
-        .temple-game {
-            margin-top: 10px;
-            background: var(--bg-paper);
-            border: 1px solid var(--border-sand);
-            border-radius: 20px;
-            padding: 20px;
-            text-align: left;
-        }
-
-        .temple-hud {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 14px;
-        }
-
-        .step-pills {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-
-        .step-pill {
+        .hud-cd-title {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 5px 10px;
-            border-radius: 999px;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-sand);
-            color: var(--ink-muted);
+            font-size: 0.64rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #FCD34D;
         }
 
-        .step-pill.active {
-            background: var(--crimson);
-            border-color: var(--crimson);
-            color: #FFFFFF;
-        }
-
-        .step-pill.done {
-            background: var(--sage-soft);
-            border-color: rgba(45, 106, 79, 0.3);
-            color: var(--sage);
-        }
-
-        .online-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+        .hud-cd-time {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.72rem;
-            font-weight: 600;
-            padding: 5px 11px;
-            border-radius: 999px;
-            background: var(--sage-soft);
-            color: var(--sage);
-            border: 1px solid rgba(45, 106, 79, 0.25);
+            font-size: 0.92rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
         }
 
         .online-dot {
-            width: 7px;
-            height: 7px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: #22C55E;
             animation: pulseDot 1.6s infinite;
@@ -376,192 +137,134 @@
             50% { opacity: 0.45; transform: scale(1.25); }
         }
 
-        /* Interactive Temple Courtyard Viewport */
-        .temple-viewport {
-            position: relative;
-            width: 100%;
-            height: 360px;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid var(--border-strong);
-            background: linear-gradient(180deg, #F6E6D0 0%, #FBEEDB 48%, #DFCBB0 48%, #CBB393 100%);
-            user-select: none;
-        }
-
-        .temple-world {
-            position: absolute;
-            inset: 0;
-            transition: transform 1.15s cubic-bezier(0.22, 1, 0.36, 1);
-            transform-origin: 50% 48%;
-        }
-
-        .temple-world.zoom-courtyard {
-            transform: scale(1.22) translateY(8px);
-        }
-
-        .temple-world.zoom-hall {
-            transform: scale(1.55) translateY(18px);
-        }
-
-        /* Temple Architecture SVG */
-        .temple-svg {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        /* Incense Smoke Particles */
-        .incense-smoke-wrap {
-            position: absolute;
+        /* Quest / Guide Banner */
+        .quest-banner {
+            position: fixed;
+            top: 66px;
             left: 50%;
-            top: 46%;
             transform: translateX(-50%);
-            pointer-events: none;
-            z-index: 6;
-        }
-
-        .smoke-puff {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.72);
-            filter: blur(3px);
-            animation: smokeRise 2.4s ease-out infinite;
-        }
-
-        @keyframes smokeRise {
-            0% { transform: translate(0, 0) scale(0.7); opacity: 0.8; }
-            100% { transform: translate(-8px, -65px) scale(2.4); opacity: 0; }
-        }
-
-        /* Online Pilgrims Layer */
-        .pilgrims-layer {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            z-index: 8;
-        }
-
-        .pilgrim {
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: left 3.5s linear, top 3.5s linear;
-        }
-
-        .pilgrim-chat {
-            background: rgba(255, 255, 255, 0.95);
-            border: 1px solid var(--border-sand);
-            border-radius: 10px;
-            padding: 3px 8px;
-            font-size: 0.66rem;
-            color: var(--ink-primary);
-            white-space: nowrap;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-            margin-bottom: 3px;
-        }
-
-        .pilgrim-avatar {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            border: 2px solid #FFFFFF;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.18);
-        }
-
-        .pilgrim-name {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.62rem;
-            font-weight: 600;
-            color: #1C1917;
-            background: rgba(255, 255, 255, 0.85);
-            padding: 1px 5px;
-            border-radius: 4px;
-            margin-top: 2px;
-        }
-
-        .pilgrim.is-me .pilgrim-avatar {
-            background: var(--crimson);
-            color: #FFFFFF;
-            border-color: #FFD166;
-        }
-
-        /* Guided Action Overlay inside Temple */
-        .temple-guide-bar {
-            position: absolute;
-            left: 14px;
-            right: 14px;
-            bottom: 14px;
-            z-index: 15;
+            z-index: 19;
             background: rgba(255, 255, 255, 0.94);
             backdrop-filter: blur(8px);
-            border: 1px solid var(--border-sand);
-            border-radius: 14px;
-            padding: 12px 16px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            box-shadow: 0 8px 24px rgba(28, 25, 23, 0.14);
-        }
-
-        .guide-text strong {
-            display: block;
-            font-size: 0.88rem;
-            color: var(--ink-primary);
-        }
-
-        .guide-text span {
+            border: 1px solid var(--border-strong);
+            border-radius: 999px;
+            padding: 6px 16px;
             font-size: 0.78rem;
-            color: var(--ink-secondary);
+            font-weight: 600;
+            color: var(--ink-primary);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            max-width: 92vw;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .guide-btn {
-            padding: 10px 18px;
-            border-radius: 10px;
-            border: none;
+        .quest-step-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: var(--crimson);
+            color: #FFFFFF;
+        }
+
+        /* Context Interact Prompt (Near Lư Hương / Bàn Quẻ / Bàn Ms Grace) */
+        .interact-prompt {
+            position: fixed;
+            bottom: 84px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 25;
+            padding: 11px 22px;
+            border-radius: 999px;
+            border: 2px solid #FCD34D;
             background: var(--crimson);
             color: #FFFFFF;
             font-family: 'Be Vietnam Pro', sans-serif;
-            font-size: 0.86rem;
-            font-weight: 600;
+            font-size: 0.9rem;
+            font-weight: 700;
             cursor: pointer;
-            display: inline-flex;
+            box-shadow: 0 8px 24px rgba(185, 56, 41, 0.45);
+            animation: floatBtn 1.4s ease-in-out infinite;
+        }
+
+        @keyframes floatBtn {
+            0%, 100% { transform: translate(-50%, 0); }
+            50% { transform: translate(-50%, -4px); }
+        }
+
+        /* Bottom Chat & Controls Bar */
+        .hud-bottom {
+            position: fixed;
+            bottom: 14px;
+            left: 14px;
+            right: 14px;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            pointer-events: none;
+        }
+
+        .chat-bar {
+            display: flex;
             align-items: center;
             gap: 6px;
-            transition: all 0.2s ease;
+            background: rgba(250, 247, 242, 0.95);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-strong);
+            border-radius: 999px;
+            padding: 5px 6px 5px 14px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            pointer-events: auto;
+            width: 100%;
+            max-width: 390px;
         }
 
-        .guide-btn:hover {
-            background: var(--crimson-dark);
-            transform: translateY(-1px);
+        .chat-bar input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            outline: none;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            font-size: 0.82rem;
+            color: var(--ink-primary);
+            min-width: 0;
         }
 
-        .guide-arrow-bounce {
-            display: inline-block;
-            animation: arrowBounce 1s ease-in-out infinite;
+        .chat-send-btn {
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: none;
+            background: var(--ink-primary);
+            color: #FFFFFF;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
         }
 
-        @keyframes arrowBounce {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(5px); }
+        .controls-hint {
+            background: rgba(28, 25, 23, 0.82);
+            color: #F3EDE3;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 7px 12px;
+            border-radius: 999px;
+            pointer-events: auto;
         }
 
-        /* ==================== 3D FORTUNE POPUP MODAL ==================== */
+        .hidden { display: none !important; }
+
+        /* ==================== MODALS (3D FORTUNE + CAREER + CUSTOMIZE) ==================== */
         .modal-backdrop {
             position: fixed;
             inset: 0;
             z-index: 60;
-            background: rgba(28, 25, 23, 0.72);
+            background: rgba(28, 25, 23, 0.74);
             backdrop-filter: blur(6px);
             display: flex;
             align-items: center;
@@ -570,7 +273,7 @@
             overflow-y: auto;
         }
 
-        .fortune-modal-card {
+        .modal-card {
             background: var(--bg-paper);
             border: 1px solid var(--border-strong);
             border-radius: 22px;
@@ -582,6 +285,12 @@
             box-shadow: 0 28px 70px rgba(0, 0, 0, 0.35);
             position: relative;
             text-align: center;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.94) translateY(8px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
         }
 
         .modal-top-bar {
@@ -590,6 +299,17 @@
             justify-content: space-between;
             gap: 10px;
             margin-bottom: 10px;
+        }
+
+        .year-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 999px;
+            background: var(--crimson-soft);
+            color: var(--crimson);
+            border: 1px solid rgba(185, 56, 41, 0.22);
         }
 
         .modal-close-x {
@@ -606,9 +326,7 @@
             justify-content: center;
         }
 
-        .modal-close-x:hover {
-            background: var(--bg-subtle);
-        }
+        .modal-close-x:hover { background: var(--bg-subtle); }
 
         .shaker-title {
             font-family: 'Playfair Display', serif;
@@ -630,6 +348,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 8px;
             font-size: 0.8rem;
             font-weight: 600;
             color: var(--ink-primary);
@@ -640,6 +359,7 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.74rem;
             color: var(--crimson);
+            flex-shrink: 0;
         }
 
         .progress-track {
@@ -661,7 +381,7 @@
         .canvas-3d-wrap {
             position: relative;
             width: 100%;
-            height: 290px;
+            height: 270px;
             border-radius: 16px;
             background: radial-gradient(circle at 50% 42%, #FFFDF9 0%, #EFE5D5 70%, #E4D6C1 100%);
             border: 1px solid var(--border-sand);
@@ -671,11 +391,7 @@
             touch-action: none;
         }
 
-        #fortune3dCanvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
+        #fortune3dCanvas { width: 100%; height: 100%; display: block; }
 
         .stick-badge-overlay {
             position: absolute;
@@ -712,13 +428,9 @@
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 6px 18px rgba(185, 56, 41, 0.25);
-            transition: all 0.2s ease;
         }
 
-        .shake-cta:hover:not(:disabled) {
-            background: var(--crimson-dark);
-            transform: translateY(-1px);
-        }
+        .shake-cta:hover { background: var(--crimson-dark); }
 
         .draw-cta {
             padding: 12px 22px;
@@ -730,7 +442,6 @@
             font-size: 0.92rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
         }
 
         .draw-cta:disabled {
@@ -739,14 +450,14 @@
             cursor: not-allowed;
         }
 
-        /* 3D Flip Fortune Slip */
+        /* Fortune Slip */
         .slip-perspective { perspective: 1200px; margin-top: 18px; }
 
         .fortune-slip {
             background: var(--bg-elevated);
             border: 1px solid var(--border-strong);
             border-radius: 18px;
-            padding: 22px 20px;
+            padding: 20px;
             text-align: left;
             box-shadow: 0 12px 32px rgba(28, 25, 23, 0.09);
         }
@@ -762,25 +473,18 @@
 
         .slip-top {
             display: flex;
-            flex-wrap: wrap;
-            align-items: center;
             justify-content: space-between;
-            gap: 10px;
-            padding-bottom: 12px;
-            margin-bottom: 14px;
+            align-items: center;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
             border-bottom: 1px solid var(--border-sand);
         }
 
-        .slip-num {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: var(--ink-muted);
-        }
+        .slip-num { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 700; color: var(--ink-muted); }
 
         .slip-level {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.74rem;
+            font-size: 0.72rem;
             font-weight: 700;
             padding: 4px 12px;
             border-radius: 999px;
@@ -797,25 +501,20 @@
             align-items: center;
             justify-content: space-between;
             gap: 12px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
-        .slip-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--ink-primary);
-        }
+        .slip-title { font-family: 'Playfair Display', serif; font-size: 1.55rem; font-weight: 700; }
 
         .red-stamp {
-            width: 46px;
-            height: 46px;
+            width: 44px;
+            height: 44px;
             border: 2px solid var(--crimson);
             border-radius: 8px;
             color: var(--crimson);
             font-family: 'Playfair Display', serif;
             font-weight: 700;
-            font-size: 0.68rem;
+            font-size: 0.66rem;
             line-height: 1.1;
             display: flex;
             align-items: center;
@@ -832,10 +531,9 @@
             padding: 12px 16px;
             font-family: 'Playfair Display', serif;
             font-style: italic;
-            font-size: 1rem;
+            font-size: 0.98rem;
             line-height: 1.65;
-            color: var(--ink-primary);
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             white-space: pre-line;
         }
 
@@ -843,7 +541,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
         .aspect-box {
@@ -853,28 +551,17 @@
             padding: 10px 12px;
         }
 
-        .aspect-label {
-            font-size: 0.72rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--crimson);
-            margin-bottom: 3px;
-        }
-
-        .aspect-text {
-            font-size: 0.82rem;
-            color: var(--ink-secondary);
-            line-height: 1.45;
-        }
+        .aspect-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--crimson); margin-bottom: 3px; }
+        .aspect-text { font-size: 0.82rem; color: var(--ink-secondary); line-height: 1.45; }
 
         .slip-advice {
             background: var(--gold-soft);
             border: 1px solid rgba(182, 126, 30, 0.25);
             border-radius: 10px;
-            padding: 11px 14px;
-            font-size: 0.85rem;
+            padding: 10px 14px;
+            font-size: 0.84rem;
             color: #6B4408;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
         .slip-footer {
@@ -887,12 +574,7 @@
             border-top: 1px solid var(--border-sand);
         }
 
-        .lucky-meta {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.74rem;
-            color: var(--ink-muted);
-        }
-
+        .lucky-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.73rem; color: var(--ink-muted); }
         .slip-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
         .mini-btn {
@@ -907,446 +589,95 @@
             cursor: pointer;
         }
 
-        .mini-btn:hover { background: var(--bg-subtle); }
+        /* Career Modal */
+        .quiz-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 14px 0; text-align: left; }
+        .quiz-card { background: var(--bg-elevated); border: 1px solid var(--border-sand); border-radius: 12px; padding: 10px 12px; }
+        .quiz-label { display: block; font-size: 0.76rem; font-weight: 700; margin-bottom: 6px; }
+        .quiz-select { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--bg-paper); font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.82rem; }
 
-        /* ==================== INTEGRATED "CÀY CUỐC VS NGHỈ VIỆC" ==================== */
-        .career-stage {
-            margin-top: 10px;
-            background: var(--bg-paper);
-            border: 1px solid var(--border-sand);
-            border-radius: 20px;
-            padding: 24px;
-            text-align: left;
-        }
+        .compatibility-meter { background: var(--bg-elevated); border: 1px solid var(--border-sand); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; text-align: left; }
+        .meter-labels { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; margin-bottom: 8px; }
+        .meter-bar { height: 11px; border-radius: 999px; background: var(--crimson-soft); overflow: hidden; border: 1px solid var(--border-sand); margin-bottom: 8px; }
+        .meter-work-fill { height: 100%; background: linear-gradient(90deg, var(--sage), #40916C); transition: width 0.35s ease; }
+        .verdict-box { font-size: 0.84rem; color: var(--ink-secondary); line-height: 1.5; }
 
-        .career-header {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            padding-bottom: 14px;
-            margin-bottom: 18px;
-            border-bottom: 1px solid var(--border-sand);
-        }
+        .grace-taunt { background: var(--gold-soft); border: 1px dashed rgba(182, 126, 30, 0.45); border-radius: 12px; padding: 10px 14px; font-size: 0.82rem; color: #6B4408; margin-bottom: 12px; font-weight: 500; text-align: left; }
 
-        .career-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--ink-primary);
-        }
+        .quit-arena { position: relative; min-height: 76px; background: var(--bg-elevated); border: 1px solid var(--border-sand); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+        .stay-btn { padding: 11px 16px; border-radius: 10px; border: none; background: var(--sage); color: #FFFFFF; font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.86rem; font-weight: 600; cursor: pointer; z-index: 2; }
+        .runaway-btn { padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(185, 56, 41, 0.35); background: var(--crimson-soft); color: var(--crimson); font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.84rem; font-weight: 600; cursor: pointer; transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1); z-index: 3; }
 
-        .hr-badge {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 999px;
-            background: var(--crimson-soft);
-            color: var(--crimson);
-            border: 1px solid rgba(185, 56, 41, 0.25);
-        }
+        .contract-card { background: var(--bg-elevated); border: 2px solid var(--crimson); border-radius: 16px; padding: 20px; text-align: center; margin-top: 10px; }
+        .contract-stamp { display: inline-block; border: 2px solid var(--crimson); color: var(--crimson); font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; transform: rotate(-4deg); margin-bottom: 8px; }
 
-        .quiz-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 18px;
-        }
-
-        .quiz-card {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-sand);
-            border-radius: 12px;
-            padding: 12px 14px;
-        }
-
-        .quiz-label {
-            display: block;
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: var(--ink-primary);
-            margin-bottom: 8px;
-        }
-
-        .quiz-select {
-            width: 100%;
-            padding: 8px 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border-strong);
-            background: var(--bg-paper);
-            color: var(--ink-primary);
-            font-family: 'Be Vietnam Pro', sans-serif;
-            font-size: 0.84rem;
-        }
-
-        .compatibility-meter {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-sand);
-            border-radius: 14px;
-            padding: 16px 18px;
-            margin-bottom: 16px;
-        }
-
-        .meter-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.82rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .meter-bar {
-            height: 12px;
-            border-radius: 999px;
-            background: var(--crimson-soft);
-            overflow: hidden;
-            border: 1px solid var(--border-sand);
-            margin-bottom: 10px;
-        }
-
-        .meter-work-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--sage), #40916C);
-            transition: width 0.35s ease;
-        }
-
-        .verdict-box {
-            font-size: 0.88rem;
-            color: var(--ink-secondary);
-            line-height: 1.55;
-        }
-
-        .verdict-box strong {
-            color: var(--ink-primary);
-        }
-
-        .grace-taunt {
-            background: var(--gold-soft);
-            border: 1px dashed rgba(182, 126, 30, 0.45);
-            border-radius: 12px;
-            padding: 10px 14px;
-            font-size: 0.84rem;
-            color: #6B4408;
-            margin-bottom: 14px;
-            font-weight: 500;
-        }
-
-        .quit-arena {
-            position: relative;
-            min-height: 82px;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-sand);
-            border-radius: 14px;
-            padding: 14px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .stay-btn {
-            padding: 12px 18px;
-            border-radius: 10px;
-            border: none;
-            background: var(--sage);
-            color: #FFFFFF;
-            font-family: 'Be Vietnam Pro', sans-serif;
-            font-size: 0.88rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s ease, background-color 0.2s ease;
-            z-index: 2;
-        }
-
-        .stay-btn:hover { background: #21503B; }
-
-        .runaway-btn {
-            padding: 11px 16px;
-            border-radius: 10px;
-            border: 1px solid rgba(185, 56, 41, 0.35);
-            background: var(--crimson-soft);
-            color: var(--crimson);
-            font-family: 'Be Vietnam Pro', sans-serif;
-            font-size: 0.86rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1);
-            z-index: 3;
-        }
-
-        .contract-card {
-            background: var(--bg-elevated);
-            border: 2px solid var(--crimson);
-            border-radius: 16px;
-            padding: 22px 18px;
-            text-align: center;
-            margin-top: 12px;
-        }
-
-        .contract-stamp {
-            display: inline-block;
-            border: 2px solid var(--crimson);
-            color: var(--crimson);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.72rem;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 6px;
-            transform: rotate(-4deg);
-            margin-bottom: 10px;
-        }
-
-        .animate-pop { animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-
-        @keyframes popIn {
-            0% { transform: scale(0.95) translateY(6px); opacity: 0; }
-            100% { transform: scale(1) translateY(0); opacity: 1; }
-        }
+        /* Customize Modal */
+        .outfit-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 12px 0 16px; }
+        .outfit-btn { padding: 10px; border-radius: 10px; border: 1px solid var(--border-sand); background: var(--bg-elevated); cursor: pointer; font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.84rem; font-weight: 600; }
+        .outfit-btn.active { border-color: var(--crimson); background: var(--crimson-soft); color: var(--crimson); }
 
         @media (max-width: 640px) {
-            .studio-card { padding: 24px 16px; }
-            .countdown-grid { gap: 8px; }
-            .actions-row, .quiz-grid, .aspects-grid { grid-template-columns: 1fr; }
-            .temple-viewport { height: 320px; }
-            .canvas-3d-wrap { height: 250px; }
+            .controls-hint { display: none; }
+            .quiz-grid, .aspects-grid { grid-template-columns: 1fr; }
+            .quest-banner { top: 62px; font-size: 0.72rem; }
         }
     </style>
 </head>
 <body>
-    <div id="background-animation" aria-hidden="true"></div>
+    <!-- Full-Screen Interactive Temple World -->
+    <canvas id="gameCanvas"></canvas>
 
-    <nav class="top-bar">
-        <a href="../index.html" class="back-link">← L.ASY Studio</a>
-        <div class="top-right-pills">
-            <button id="soundToggleBtn" class="sound-toggle" type="button" title="Bật/tắt âm thanh">
-                🔊 Âm thanh: Bật
-            </button>
-            <span class="year-pill">ĐINH MÙI • 2027</span>
+    <!-- Top HUD -->
+    <div class="hud-top">
+        <div class="hud-group">
+            <a href="../index.html" class="hud-pill">← Studio</a>
+            <button id="openCustomBtn" class="hud-pill" type="button">👘 Nhân vật</button>
+            <button id="openCareerBtn" class="hud-pill" type="button">⚖️ Cày Cuốc / Nghỉ Việc</button>
         </div>
-    </nav>
 
-    <main class="stage">
-        <div class="studio-card">
-            <div class="brand-crest">L.ASY • NGHỈ TẾT NHÀ NƯỚC 2027</div>
-
-            <h1>Đếm Ngược <span>Nghỉ Tết 2027</span></h1>
-            <p class="subtitle">
-                Chính thức bước vào kỳ nghỉ Tết từ <strong>04/02/2027</strong> (28 tháng Chạp)
-            </p>
-            <div class="holiday-note">
-                <span>Kỳ nghỉ Nhà nước: 04/02 – 10/02/2027 (7 ngày)</span>
-                <span>•</span>
-                <span>Mùng 1 Tết: 06/02/2027</span>
-            </div>
-
-            <div class="countdown-grid" aria-label="Bộ đếm ngược tới ngày nghỉ Tết 04/02/2027">
-                <div class="time-box">
-                    <span id="days" class="time-val">00</span>
-                    <span class="time-label">Ngày</span>
-                </div>
-                <div class="time-box">
-                    <span id="hours" class="time-val">00</span>
-                    <span class="time-label">Giờ</span>
-                </div>
-                <div class="time-box">
-                    <span id="minutes" class="time-val">00</span>
-                    <span class="time-label">Phút</span>
-                </div>
-                <div class="time-box">
-                    <span id="seconds" class="time-val">00</span>
-                    <span class="time-label">Giây</span>
-                </div>
-            </div>
-
-            <div class="actions-row">
-                <button id="templeModeBtn" class="action-btn btn-temple" type="button">
-                    🏯 Đi Chùa Bóc Quẻ 3D
-                </button>
-                <button id="careerModeBtn" class="action-btn btn-career" type="button">
-                    ⚖️ Cày Cuốc hay Nghỉ Việc?
-                </button>
-            </div>
-
-            <!-- ==================== 1. TEMPLE PILGRIMAGE GAME ==================== -->
-            <section id="templeGameSection" class="temple-game" aria-label="Trò chơi đi chùa bóc quẻ online">
-                <div class="temple-hud">
-                    <div class="step-pills">
-                        <span id="pillStep1" class="step-pill active">1. Cổng Chùa</span>
-                        <span id="pillStep2" class="step-pill">2. Thắp Hương</span>
-                        <span id="pillStep3" class="step-pill">3. Chính Điện 3D</span>
-                    </div>
-                    <div class="online-badge">
-                        <span class="online-dot"></span>
-                        <span id="onlineCountText">16 người đang đi chùa</span>
-                    </div>
-                </div>
-
-                <div class="temple-viewport">
-                    <div id="templeWorld" class="temple-world">
-                        <!-- Illustrated Vietnamese Temple Gate & Courtyard SVG -->
-                        <svg class="temple-svg" viewBox="0 0 800 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-                            <!-- Sky Sun -->
-                            <circle cx="670" cy="68" r="34" fill="#FDE68A" opacity="0.7"/>
-                            <!-- Distant Mountains -->
-                            <path d="M0 175 Q140 115 280 175 T580 175 T800 165 L800 185 L0 185 Z" fill="#E6D2B5"/>
-                            <!-- Stone Pathway -->
-                            <polygon points="310,185 490,185 610,360 190,360" fill="#B89F82"/>
-                            <line x1="335" y1="220" x2="465" y2="220" stroke="#9C8265" stroke-width="2"/>
-                            <line x1="295" y1="265" x2="505" y2="265" stroke="#9C8265" stroke-width="2"/>
-                            <line x1="250" y1="315" x2="550" y2="315" stroke="#9C8265" stroke-width="2"/>
-
-                            <!-- Main Temple Hall (Chính Điện) -->
-                            <rect x="275" y="95" width="250" height="90" rx="4" fill="#FFF8EE" stroke="#8C542B" stroke-width="2"/>
-                            <!-- Crimson Pillars -->
-                            <rect x="295" y="102" width="12" height="83" fill="#B93829"/>
-                            <rect x="355" y="102" width="12" height="83" fill="#B93829"/>
-                            <rect x="433" y="102" width="12" height="83" fill="#B93829"/>
-                            <rect x="493" y="102" width="12" height="83" fill="#B93829"/>
-                            <!-- Main Door -->
-                            <rect x="378" y="122" width="44" height="63" rx="3" fill="#4A2511"/>
-                            <!-- Curved Roofs -->
-                            <path d="M235 102 Q400 45 565 102 L540 112 Q400 72 260 112 Z" fill="#9E2A1C"/>
-                            <path d="M265 72 Q400 22 535 72 L515 80 Q400 46 285 80 Z" fill="#B93829"/>
-                            <rect x="362" y="75" width="76" height="18" rx="3" fill="#B67E1E"/>
-                            <text x="400" y="88" text-anchor="middle" fill="#FFFDF9" font-size="10" font-weight="bold">L.ASY TỰ</text>
-
-                            <!-- Red Lanterns -->
-                            <circle cx="315" cy="118" r="7" fill="#DC2626"/>
-                            <circle cx="485" cy="118" r="7" fill="#DC2626"/>
-
-                            <!-- Incense Burner (Lư Hương) in Courtyard -->
-                            <ellipse cx="400" cy="202" rx="22" ry="6" fill="#6B5B4B"/>
-                            <path d="M380 184 Q400 198 420 184 L416 202 L384 202 Z" fill="#B67E1E" stroke="#785012" stroke-width="1.5"/>
-                            <ellipse cx="400" cy="184" rx="20" ry="5" fill="#4A2511"/>
-
-                            <!-- Mai & Dao Blossom Trees -->
-                            <path d="M120 230 Q130 175 110 140" stroke="#5C3419" stroke-width="6" fill="none"/>
-                            <circle cx="105" cy="135" r="24" fill="#FBBF24" opacity="0.85"/>
-                            <circle cx="132" cy="148" r="18" fill="#F59E0B" opacity="0.8"/>
-
-                            <path d="M680 230 Q670 175 690 140" stroke="#5C3419" stroke-width="6" fill="none"/>
-                            <circle cx="695" cy="135" r="24" fill="#FB7185" opacity="0.85"/>
-                            <circle cx="668" cy="148" r="18" fill="#F43F5E" opacity="0.8"/>
-                        </svg>
-
-                        <!-- Animated Incense Sticks & Smoke (visible after lighting incense) -->
-                        <div id="incenseSmokeWrap" class="incense-smoke-wrap hidden">
-                            <div class="smoke-puff" style="animation-delay: 0s;"></div>
-                            <div class="smoke-puff" style="animation-delay: 0.7s; left: 6px;"></div>
-                            <div class="smoke-puff" style="animation-delay: 1.4s; left: -6px;"></div>
-                        </div>
-
-                        <!-- Online Pilgrims Layer -->
-                        <div id="pilgrimsLayer" class="pilgrims-layer"></div>
-                    </div>
-
-                    <!-- Guided Step Bar -->
-                    <div class="temple-guide-bar">
-                        <div class="guide-text">
-                            <strong id="guideTitle">Đang đứng ngoài Cổng Tam Quan</strong>
-                            <span id="guideDesc">Bước vào sân chùa cùng mọi người để thắp hương cầu may năm Đinh Mùi 2027.</span>
-                        </div>
-                        <button id="templeNextBtn" class="guide-btn" type="button">
-                            <span>Bước vào sân chùa</span>
-                            <span class="guide-arrow-bounce">→</span>
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ==================== 2. INTEGRATED "CÀY CUỐC VS NGHỈ VIỆC" ==================== -->
-            <section id="careerGameSection" class="career-stage hidden" aria-label="Trắc nghiệm độ hợp Cày Cuốc hay Nghỉ Việc">
-                <div class="career-header">
-                    <h2 class="career-title">Bạn Hợp Cày Cuốc Hay Nghỉ Việc?</h2>
-                    <span class="hr-badge">MS GRACE • HR ANALYZER</span>
-                </div>
-
-                <div class="quiz-grid">
-                    <div class="quiz-card">
-                        <label class="quiz-label" for="qMoney">1. Tình trạng ví tiền hiện tại?</label>
-                        <select id="qMoney" class="quiz-select">
-                            <option value="work">Đang hẻo, cần lương thưởng Tết 2027 gấp</option>
-                            <option value="mid">Đủ sống, thêm thưởng thì càng vui</option>
-                            <option value="quit">Vừa trúng nhẹ / có quỹ dự phòng rồi</option>
-                        </select>
-                    </div>
-                    <div class="quiz-card">
-                        <label class="quiz-label" for="qKpi">2. Áp lực KPI tuần này thế nào?</label>
-                        <select id="qKpi" class="quiz-select">
-                            <option value="work">Vẫn cân được, đang vào guồng</option>
-                            <option value="mid">Hơi ngộp nhưng uống trà sữa là qua</option>
-                            <option value="quit">Deadline dí tới chân rồi!</option>
-                        </select>
-                    </div>
-                    <div class="quiz-card">
-                        <label class="quiz-label" for="qGoal">3. Mục tiêu lớn nhất trước Tết?</label>
-                        <select id="qGoal" class="quiz-select">
-                            <option value="work">Săn thưởng cuối năm + mua quà xịn</option>
-                            <option value="mid">Hoàn thành tròn vai rồi về quê</option>
-                            <option value="quit">Chỉ muốn ngủ bù tới Mùng 5</option>
-                        </select>
-                    </div>
-                    <div class="quiz-card">
-                        <label class="quiz-label" for="qMood">4. Độ gắn bó với Ms Grace &amp; team?</label>
-                        <select id="qMood" class="quiz-select">
-                            <option value="work">Team vui, chị Grace dễ thương</option>
-                            <option value="mid">Thương chị nhưng cũng thèm nghỉ</option>
-                            <option value="quit">Muốn thử trốn khỏi chị Grace 1 lần</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="compatibility-meter">
-                    <div class="meter-labels">
-                        <span style="color: var(--sage);" id="workPctLabel">💪 Hợp Cày Cuốc: 75%</span>
-                        <span style="color: var(--crimson);" id="quitPctLabel">🚪 Muốn Nghỉ Việc: 25%</span>
-                    </div>
-                    <div class="meter-bar">
-                        <div id="workMeterFill" class="meter-work-fill" style="width: 75%;"></div>
-                    </div>
-                    <div id="careerVerdictBox" class="verdict-box"></div>
-                </div>
-
-                <div id="graceTauntBox" class="grace-taunt">
-                    👀 Ms Grace: "Kết quả rõ ràng thế này thì ở lại cày KPI cùng chị nhé!"
-                </div>
-
-                <div class="quit-arena" id="quitArena">
-                    <button id="stayBtn" class="stay-btn" type="button">
-                        💪 Chốt Cày Cuốc Nhận Thưởng Tết
-                    </button>
-                    <button id="runawayQuitBtn" class="runaway-btn" type="button">
-                        🚪 Vẫn Nộp Đơn Nghỉ Việc
-                    </button>
-                </div>
-
-                <div id="quitTrapView" class="contract-card hidden">
-                    <div class="contract-stamp">ĐÃ ĐÓNG DẤU • VÔ THỜI HẠN</div>
-                    <h3 class="contract-title" style="font-family: 'Playfair Display', serif; font-size: 1.45rem; margin-bottom: 8px;">Đơn Nghỉ Việc Bị Từ Chối!</h3>
-                    <p style="font-size: 0.9rem; color: var(--ink-secondary); margin-bottom: 14px; line-height: 1.55;">
-                        "Em tưởng bấm được nút đó là thoát khỏi chị à?"<br>
-                        <strong>Ms Grace đã tự động gia hạn hợp đồng cày KPI tới Tết 2028</strong> (kèm 01 ly trà sữa full topping để lấy sức).
-                    </p>
-                    <button id="acceptFateBtn" class="stay-btn" type="button">
-                        Dạ em nhận trà sữa &amp; cày tiếp 😭
-                    </button>
-                </div>
-            </section>
+        <div class="hud-countdown">
+            <div class="hud-cd-title">Nghỉ Tết 2027 (04/02)</div>
+            <div class="hud-cd-time" id="hudCountdown">-- ngày --:--:--</div>
         </div>
-    </main>
 
-    <!-- ==================== 3D FORTUNE POPUP MODAL (MIN 5 CLICKS) ==================== -->
-    <div id="fortuneModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="fortuneModalTitle">
-        <div class="fortune-modal-card animate-pop">
+        <div class="hud-group">
+            <div class="hud-pill" style="cursor: default;">
+                <span class="online-dot"></span>
+                <span id="onlineCounter">18 đang đi chùa</span>
+            </div>
+            <button id="soundToggleBtn" class="hud-pill" type="button">🔊 Âm thanh</button>
+        </div>
+    </div>
+
+    <!-- Quest Guidance Banner -->
+    <div class="quest-banner" id="questBanner">
+        <span class="quest-step-tag" id="questStepTag">BƯỚC 1/3</span>
+        <span id="questBannerText">Bạn đang ngoài cổng chùa • Đi bộ vào sân tới Lư Hương để thắp hương</span>
+    </div>
+
+    <!-- Context Interact Button -->
+    <button id="interactPrompt" class="interact-prompt hidden" type="button">
+        🕯️ Thắp Hương Thành Tâm [E]
+    </button>
+
+    <!-- Bottom Chat & Controls -->
+    <div class="hud-bottom">
+        <form id="chatForm" class="chat-bar">
+            <input id="chatInput" type="text" maxlength="60" placeholder="Nhắn lời chúc đầu xuân (hiện trên đầu nhân vật)..." autocomplete="off">
+            <button class="chat-send-btn" type="submit">Gửi</button>
+        </form>
+        <div class="controls-hint">
+            WASD / Mũi tên hoặc Click bản đồ để đi • Phím E tương tác
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 1: 3D FORTUNE POPUP (MIN 5 CLICKS) ==================== -->
+    <div id="fortuneModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+        <div class="modal-card">
             <div class="modal-top-bar">
                 <span class="year-pill">CHÍNH ĐIỆN • LẮC ỐNG XĂM 3D</span>
-                <button id="closeFortuneModalBtn" class="modal-close-x" type="button" aria-label="Đóng popup lắc quẻ">✕</button>
+                <button id="closeFortuneModalBtn" class="modal-close-x" type="button">✕</button>
             </div>
-
-            <h2 id="fortuneModalTitle" class="shaker-title">Gieo Quẻ Đầu Xuân Đinh Mùi 2027</h2>
+            <h2 class="shaker-title">Gieo Quẻ Đầu Xuân Đinh Mùi 2027</h2>
 
             <div class="shake-progress-box">
                 <div class="shake-progress-head">
@@ -1358,22 +689,18 @@
                 </div>
             </div>
 
-            <div class="canvas-3d-wrap" id="canvas3dWrap" title="Nhấn liên tiếp vào ống xăm để lắc (tối thiểu 5 lần)">
+            <div class="canvas-3d-wrap" id="canvas3dWrap">
                 <canvas id="fortune3dCanvas"></canvas>
                 <div id="stickBadgeOverlay" class="stick-badge-overlay hidden">THẺ SỐ 01</div>
             </div>
 
             <div class="shaker-controls">
-                <button id="shakeClickBtn" class="shake-cta" type="button">
-                    🎋 Lắc Thêm (+1 lần)
-                </button>
-                <button id="drawStickBtn" class="draw-cta" type="button" disabled>
-                    ✨ Rút Quẻ (Cần đủ 5 lần)
-                </button>
+                <button id="shakeClickBtn" class="shake-cta" type="button">🎋 Lắc Thêm (+1 lần)</button>
+                <button id="drawStickBtn" class="draw-cta" type="button" disabled>✨ Rút Quẻ (Còn 5 lần)</button>
             </div>
 
             <div class="slip-perspective">
-                <article id="fortuneSlip" class="fortune-slip hidden" aria-live="polite">
+                <article id="fortuneSlip" class="fortune-slip hidden">
                     <div class="slip-top">
                         <span id="slipNum" class="slip-num">QUẺ SỐ 01</span>
                         <span id="slipLevel" class="slip-level level-great">ĐẠI CÁT</span>
@@ -1384,26 +711,12 @@
                     </div>
                     <div id="slipPoem" class="slip-poem"></div>
                     <div class="aspects-grid">
-                        <div class="aspect-box">
-                            <div class="aspect-label">Công danh &amp; Sự nghiệp</div>
-                            <div id="aspectWork" class="aspect-text"></div>
-                        </div>
-                        <div class="aspect-box">
-                            <div class="aspect-label">Tài lộc &amp; Chi tiêu</div>
-                            <div id="aspectMoney" class="aspect-text"></div>
-                        </div>
-                        <div class="aspect-box">
-                            <div class="aspect-label">Tình duyên &amp; Gia đạo</div>
-                            <div id="aspectLove" class="aspect-text"></div>
-                        </div>
-                        <div class="aspect-box">
-                            <div class="aspect-label">Sức khỏe &amp; Tinh thần</div>
-                            <div id="aspectHealth" class="aspect-text"></div>
-                        </div>
+                        <div class="aspect-box"><div class="aspect-label">Công danh &amp; Sự nghiệp</div><div id="aspectWork" class="aspect-text"></div></div>
+                        <div class="aspect-box"><div class="aspect-label">Tài lộc &amp; Chi tiêu</div><div id="aspectMoney" class="aspect-text"></div></div>
+                        <div class="aspect-box"><div class="aspect-label">Tình duyên &amp; Gia đạo</div><div id="aspectLove" class="aspect-text"></div></div>
+                        <div class="aspect-box"><div class="aspect-label">Sức khỏe &amp; Tinh thần</div><div id="aspectHealth" class="aspect-text"></div></div>
                     </div>
-                    <div class="slip-advice">
-                        <strong>Lời khuyên năm Đinh Mùi:</strong> <span id="slipAdvice"></span>
-                    </div>
+                    <div class="slip-advice"><strong>Lời khuyên năm Đinh Mùi:</strong> <span id="slipAdvice"></span></div>
                     <div class="slip-footer">
                         <span id="slipLucky" class="lucky-meta">Số may mắn: -- • Màu hợp: --</span>
                         <div class="slip-actions">
@@ -1416,72 +729,144 @@
         </div>
     </div>
 
+    <!-- ==================== MODAL 2: INTEGRATED CÀY CUỐC VS NGHỈ VIỆC ==================== -->
+    <div id="careerModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <div class="modal-top-bar">
+                <span class="year-pill">MS GRACE • HR ANALYZER</span>
+                <button id="closeCareerModalBtn" class="modal-close-x" type="button">✕</button>
+            </div>
+            <h2 class="shaker-title">Bạn Hợp Cày Cuốc Hay Nghỉ Việc?</h2>
+
+            <div class="quiz-grid">
+                <div class="quiz-card">
+                    <label class="quiz-label" for="qMoney">1. Tình trạng ví tiền hiện tại?</label>
+                    <select id="qMoney" class="quiz-select">
+                        <option value="work">Đang hẻo, cần lương thưởng Tết 2027 gấp</option>
+                        <option value="mid">Đủ sống, thêm thưởng thì càng vui</option>
+                        <option value="quit">Vừa trúng nhẹ / có quỹ dự phòng rồi</option>
+                    </select>
+                </div>
+                <div class="quiz-card">
+                    <label class="quiz-label" for="qKpi">2. Áp lực KPI tuần này?</label>
+                    <select id="qKpi" class="quiz-select">
+                        <option value="work">Vẫn cân được, đang vào guồng</option>
+                        <option value="mid">Hơi ngộp nhưng uống trà sữa là qua</option>
+                        <option value="quit">Deadline dí tới chân rồi!</option>
+                    </select>
+                </div>
+                <div class="quiz-card">
+                    <label class="quiz-label" for="qGoal">3. Mục tiêu trước Tết 2027?</label>
+                    <select id="qGoal" class="quiz-select">
+                        <option value="work">Săn thưởng cuối năm + mua quà xịn</option>
+                        <option value="mid">Hoàn thành tròn vai rồi về quê</option>
+                        <option value="quit">Chỉ muốn ngủ bù tới Mùng 5</option>
+                    </select>
+                </div>
+                <div class="quiz-card">
+                    <label class="quiz-label" for="qMood">4. Độ gắn bó với Ms Grace &amp; team?</label>
+                    <select id="qMood" class="quiz-select">
+                        <option value="work">Team vui, chị Grace dễ thương</option>
+                        <option value="mid">Thương chị nhưng cũng thèm nghỉ</option>
+                        <option value="quit">Muốn thử trốn khỏi chị Grace 1 lần</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="compatibility-meter">
+                <div class="meter-labels">
+                    <span style="color: var(--sage);" id="workPctLabel">💪 Hợp Cày Cuốc: 75%</span>
+                    <span style="color: var(--crimson);" id="quitPctLabel">🚪 Muốn Nghỉ Việc: 25%</span>
+                </div>
+                <div class="meter-bar"><div id="workMeterFill" class="meter-work-fill" style="width: 75%;"></div></div>
+                <div id="careerVerdictBox" class="verdict-box"></div>
+            </div>
+
+            <div id="graceTauntBox" class="grace-taunt">👀 Ms Grace: "Kết quả rõ ràng thế này thì ở lại cày KPI cùng chị nhé!"</div>
+
+            <div class="quit-arena" id="quitArena">
+                <button id="stayBtn" class="stay-btn" type="button">💪 Chốt Cày Cuốc Nhận Thưởng Tết</button>
+                <button id="runawayQuitBtn" class="runaway-btn" type="button">🚪 Vẫn Nộp Đơn Nghỉ Việc</button>
+            </div>
+
+            <div id="quitTrapView" class="contract-card hidden">
+                <div class="contract-stamp">ĐÃ ĐÓNG DẤU • VÔ THỜI HẠN</div>
+                <h3 style="font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 8px;">Đơn Nghỉ Việc Bị Từ Chối!</h3>
+                <p style="font-size: 0.88rem; color: var(--ink-secondary); margin-bottom: 14px; line-height: 1.55;">
+                    "Em tưởng bấm được nút đó là thoát khỏi chị à?"<br>
+                    <strong>Ms Grace đã tự động gia hạn hợp đồng cày KPI tới Tết 2028</strong> (kèm 01 ly trà sữa full topping).
+                </p>
+                <button id="acceptFateBtn" class="stay-btn" type="button">Dạ em nhận trà sữa &amp; cày tiếp 😭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 3: CUSTOMIZE CHARACTER ==================== -->
+    <div id="customModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+        <div class="modal-card" style="max-width: 420px;">
+            <div class="modal-top-bar">
+                <span class="year-pill">NHÂN VẬT ĐI CHÙA</span>
+                <button id="closeCustomModalBtn" class="modal-close-x" type="button">✕</button>
+            </div>
+            <h2 class="shaker-title" style="margin-bottom: 12px;">Tùy Chỉnh Nhân Vật</h2>
+            <div style="text-align: left; margin-bottom: 12px;">
+                <label class="quiz-label" for="playerNameInput">Tên hiển thị của bạn:</label>
+                <input id="playerNameInput" type="text" maxlength="16" value="Bạn (L.ASY)" style="width: 100%; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border-strong); font-family: 'Be Vietnam Pro', sans-serif;">
+            </div>
+            <div style="text-align: left;">
+                <span class="quiz-label">Chọn trang phục du xuân:</span>
+                <div class="outfit-grid">
+                    <button class="outfit-btn active" data-color="#B93829" type="button">🧧 Áo dài Đỏ</button>
+                    <button class="outfit-btn" data-color="#D99B26" type="button">🌼 Áo dài Vàng</button>
+                    <button class="outfit-btn" data-color="#2D6A4F" type="button">🌿 Áo dài Ngọc</button>
+                    <button class="outfit-btn" data-color="#1E293B" type="button">💼 Vest L.ASY</button>
+                </div>
+            </div>
+            <button id="saveCustomBtn" class="shake-cta" style="width: 100%;" type="button">Lưu &amp; Tiếp Tục Đi Chùa</button>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
     <script>
-        // --- Floating Background ---
-        const bgItems = ['💄', '👠', '👜', '👗', '🧧', '🏮', '🌸', '🌼', '🍍', '💰'];
-        const bgContainer = document.getElementById('background-animation');
-        function createFloatingItem() {
-            const el = document.createElement('div');
-            el.innerText = bgItems[Math.floor(Math.random() * bgItems.length)];
-            el.classList.add('floating-item');
-            el.style.left = Math.random() * 92 + 'vw';
-            el.style.animationDuration = (Math.random() * 10 + 16) + 's';
-            el.style.fontSize = (Math.random() * 0.9 + 1.2) + 'rem';
-            bgContainer.appendChild(el);
-            setTimeout(() => el.remove(), 26000);
+        // ==================== 1. COUNTDOWN (04/02/2027) ====================
+        function updateHudCountdown() {
+            const target = new Date("Feb 04, 2027 00:00:00").getTime();
+            const diff = target - Date.now();
+            const el = document.getElementById("hudCountdown");
+            if (diff <= 0) { el.textContent = "Đang Nghỉ Tết 2027!"; return; }
+            const d = Math.floor(diff / 86400000);
+            const h = Math.floor((diff % 86400000) / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            const pad = n => n < 10 ? "0" + n : n;
+            el.textContent = `${d} ngày ${pad(h)}:${pad(m)}:${pad(s)}`;
         }
-        setInterval(createFloatingItem, 2200);
-        for (let i = 0; i < 5; i++) createFloatingItem();
+        setInterval(updateHudCountdown, 1000);
+        updateHudCountdown();
 
-        // --- Countdown (04/02/2027) ---
-        function updateCountdown() {
-            const now = Date.now();
-            const holidayStart = new Date("Feb 04, 2027 00:00:00").getTime();
-            const distance = holidayStart - now;
-            if (distance <= 0) {
-                ["days", "hours", "minutes", "seconds"].forEach(id => document.getElementById(id).innerText = "00");
-                return;
-            }
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            document.getElementById("days").innerText = days < 10 ? "0" + days : days;
-            document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
-            document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
-            document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
-        }
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
-
-        // --- Web Audio Bamboo Rattle ---
-        let audioCtx = null;
-        let soundEnabled = true;
-        const soundToggleBtn = document.getElementById('soundToggleBtn');
-        soundToggleBtn.addEventListener('click', () => {
+        // ==================== 2. AUDIO SYNTHESIZER ====================
+        let audioCtx = null, soundEnabled = true;
+        const soundToggleBtn = document.getElementById("soundToggleBtn");
+        soundToggleBtn.addEventListener("click", () => {
             soundEnabled = !soundEnabled;
-            soundToggleBtn.textContent = soundEnabled ? '🔊 Âm thanh: Bật' : '🔇 Âm thanh: Tắt';
+            soundToggleBtn.textContent = soundEnabled ? "🔊 Âm thanh" : "🔇 Đã tắt";
         });
 
         function playBambooClick(intensity = 1) {
             if (!soundEnabled) return;
             try {
-                if (!audioCtx) {
-                    const AudioContext = window.AudioContext || window.webkitAudioContext;
-                    audioCtx = new AudioContext();
-                }
-                if (audioCtx.state === 'suspended') audioCtx.resume();
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === "suspended") audioCtx.resume();
                 const now = audioCtx.currentTime;
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 const filter = audioCtx.createBiquadFilter();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(580 + Math.random() * 520, now);
-                osc.frequency.exponentialRampToValueAtTime(180, now + 0.045);
-                filter.type = 'bandpass';
+                osc.type = "triangle";
+                osc.frequency.setValueAtTime(560 + Math.random() * 480, now);
+                osc.frequency.exponentialRampToValueAtTime(170, now + 0.045);
+                filter.type = "bandpass";
                 filter.frequency.setValueAtTime(1100, now);
-                filter.Q.setValueAtTime(3.5, now);
+                filter.Q.setValueAtTime(3.2, now);
                 gain.gain.setValueAtTime(0.09 * intensity, now);
                 gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
                 osc.connect(filter);
@@ -1492,197 +877,492 @@
             } catch (e) {}
         }
 
-        // --- 24 Kịch Bản Quẻ Đầu Xuân Thực Tế ---
-        const realFortunes = [
-            { number: "01", level: "Đại Cát", levelClass: "level-great", title: "Lý Ngư Hóa Long", poem: "Nước xuân dâng ngập bến sông dài,\nCá chép vượt môn hóa rồng bay.\nBền chí bao ngày nay gặp hội,\nCông thành danh toại rạng tương lai.", work: "Bước ngoặt lớn trong sự nghiệp, dự án ấp ủ lâu nay dễ được duyệt hoặc bứt phá doanh số vượt kỳ vọng.", money: "Nguồn thu chính và phụ đều tăng; có cơ hội nhận thưởng hoặc hợp đồng giá trị cao.", love: "Gia đạo hòa thuận, người độc thân dễ gặp nhân duyên đồng điệu qua công việc.", health: "Tinh thần phấn chấn, thể lực dồi dào; chỉ cần giữ nhịp ngủ nghỉ điều độ.", advice: "Hãy tự tin nắm lấy cơ hội mới vào đầu năm, đừng ngại đảm nhận vai trò dẫn dắt.", luckyNum: "09, 68", luckyColor: "Đỏ son, Vàng kim" },
-            { number: "02", level: "Thượng Cát", levelClass: "level-great", title: "Xuân Phong Đắc Ý", poem: "Gió xuân thổi nhẹ nở ngàn hoa,\nQuý nhân đưa lối bước đường xa.\nMở lòng đón nhận duyên lành tới,\nThuận buồm xuôi gió khắp gần xa.", work: "Có quý nhân (cấp trên hoặc đối tác lớn) nâng đỡ, tháo gỡ nút thắt cũ một cách êm đẹp.", money: "Tiền bạc hanh thông, chi tiêu thoải mái nhưng vẫn dư dả tích lũy.", love: "Tình cảm ấm áp, những hiểu lầm cũ dần được hóa giải nhờ sự chân thành.", health: "Khí huyết lưu thông tốt, thích hợp bắt đầu thói quen vận động nhẹ mỗi sáng.", advice: "Giữ thái độ khiêm tốn và biết ơn những người đã hỗ trợ mình trong giai đoạn khó khăn.", luckyNum: "03, 27", luckyColor: "Xanh ngọc, Trắng kem" },
-            { number: "03", level: "Thượng Cát", levelClass: "level-good", title: "Vân Khai Kiến Nhật", poem: "Mây mù tan biến lộ vầng dương,\nTrăm việc dần thông suốt dặm trường.\nĐừng ngại đường xa nhiều dốc đá,\nQua cơn bĩ cực tới thanh lương.", work: "Những bế tắc cuối năm cũ sẽ dần sáng tỏ từ giữa quý I; kiên trì thêm một nhịp sẽ thấy kết quả.", money: "Thu nhập ổn định trở lại, các khoản nợ hoặc tiền kẹt có dấu hiệu hồi về.", love: "Người thương thấu hiểu áp lực của bạn hơn, tạo chỗ dựa tinh thần vững vàng.", health: "Cần chú ý giải tỏa căng thẳng vai gáy và hạn chế thức khuya sau Tết.", advice: "Đừng vội bỏ cuộc khi chưa thấy kết quả ngay trong tháng Giêng; ánh sáng đang ở ngay phía trước.", luckyNum: "06, 18", luckyColor: "Vàng nhạt, Xanh dương" },
-            { number: "04", level: "Trung Cát", levelClass: "level-good", title: "Tùng Bách Trường Thanh", poem: "Thông reo đỉnh núi vững ngàn năm,\nGió tuyết chẳng lay chí âm thầm.\nChậm rãi từng bước xây nền móng,\nHương lành tự tỏa chẳng cần thăm.", work: "Không bùng nổ chớp nhoáng nhưng cực kỳ bền vững; năng lực chuyên môn được đồng nghiệp nể trọng.", money: "Tích tiểu thành đại, tránh các kênh đầu tư lướt sóng rủi ro cao.", love: "Tình cảm chín muồi theo thời gian, phù hợp tính chuyện gắn bó lâu dài.", health: "Sức đề kháng tốt, nên duy trì ăn uống thanh đạm và uống đủ nước.", advice: "Tập trung nâng cao kỹ năng cốt lõi thay vì chạy theo xu hướng nhất thời.", luckyNum: "04, 15", luckyColor: "Xanh rêu, Nâu gỗ" },
-            { number: "05", level: "Tiểu Cát", levelClass: "level-peace", title: "Mai Hoa Tái Tiếu", poem: "Cành mai hé nụ giữa sương mai,\nNhỏ bé nhưng thơm ngát dặm dài.\nChẳng cần ồn ào khoe sắc thắm,\nNiềm vui bình dị vẫn tròn đầy.", work: "Công việc trôi chảy ở mức vừa phải, hoàn thành tốt KPI mà không bị quá tải.", money: "Có những khoản lộc nhỏ bất ngờ (lì xì, hoa hồng, hoàn tiền) giúp tâm trạng vui vẻ.", love: "Những cử chỉ quan tâm nhỏ hằng ngày mang lại hạnh phúc lớn cho cả hai.", health: "Ngủ ngon giấc hơn, tinh thần nhẹ nhõm nếu biết buông bớt lo âu vặt.", advice: "Trân trọng những niềm vui nhỏ và dành thời gian cho gia đình trong dịp đầu xuân.", luckyNum: "02, 12", luckyColor: "Hồng phấn, Vàng mơ" },
-            { number: "06", level: "Bình An", levelClass: "level-peace", title: "Tĩnh Thủy Lưu Thâm", poem: "Dòng sông lặng lẽ chảy xuôi dòng,\nSâu thẳm bên trong chẳng đục trong.\nGiữ tâm an tĩnh qua năm mới,\nVạn sự bình yên ở trong lòng.", work: "Năm thiên về ổn định và củng cố nội lực hơn là nhảy việc hay thay đổi đột ngột.", money: "Thu chi cân bằng, không thiếu thốn nhưng cần lập quỹ dự phòng rõ ràng.", love: "Bình yên, ít sóng gió; người độc thân nên mở rộng giao lưu nhẹ nhàng.", health: "Tâm an thì thân khỏe; hạn chế tiếp xúc quá nhiều tin tức tiêu cực.", advice: "Chậm lại một nhịp để lắng nghe bản thân muốn gì thực sự trong năm 2027.", luckyNum: "01, 10", luckyColor: "Xanh biển, Bạc" },
-            { number: "07", level: "Cẩn Trọng", levelClass: "level-caution", title: "Phong Ba Tạm Khởi", poem: "Biển lặng đôi khi nổi sóng cồn,\nNgười khôn giữ lái chớ bồn chồn.\nNói năng cẩn trọng từng câu chữ,\nGiữ mình an ổn vượt cơn giông.", work: "Dễ gặp hiểu lầm trong giao tiếp nội bộ hoặc thay đổi yêu cầu đột ngột từ khách hàng.", money: "Tránh cho vay mượn số tiền lớn hoặc ký kết giấy tờ khi chưa đọc kỹ điều khoản.", love: "Tránh tranh cãi vì chuyện nhỏ lúc nóng giận; lùi một bước biển rộng trời cao.", health: "Chú ý hệ tiêu hóa và giữ ấm cơ thể khi thời tiết giao mùa.", advice: "Làm việc có văn bản xác nhận rõ ràng, giữ bình tĩnh trước mọi tình huống phát sinh.", luckyNum: "05, 19", luckyColor: "Trắng ngà, Xám nhạt" },
-            { number: "08", level: "Đại Cát", levelClass: "level-great", title: "Kim Ngọc Mãn Đường", poem: "Ngọc sáng trong nhà rạng ánh vàng,\nLộc trời ban xuống cửa khang trang.\nChăm chỉ gieo mầm từ thuở trước,\nNay mùa quả ngọt nở mênh mang.", work: "Năng suất làm việc đạt đỉnh cao, dễ được giao trọng trách hoặc tăng thu nhập xứng đáng.", money: "Tài vận vượng phát, đặc biệt với người làm kinh doanh, thương mại điện tử và sáng tạo nội dung.", love: "Gia đình có tin vui, không khí sum vầy ấm áp.", health: "Năng lượng tích cực lan tỏa, cần cân bằng giữa làm việc và nghỉ ngơi cuối tuần.", advice: "Khi có lộc, hãy trích một phần nhỏ chia sẻ hoặc làm việc thiện để giữ phúc lâu dài.", luckyNum: "08, 88", luckyColor: "Vàng đồng, Đỏ trầm" },
-            { number: "09", level: "Trung Cát", levelClass: "level-good", title: "Hạc Lập Kê Quần", poem: "Chim hạc vươn cao giữa nắng hồng,\nTài năng tự khắc lộ bên trong.\nGiữ vững lập trường đường mình chọn,\nRồi sẽ vươn xa vượt biển đông.", work: "Ý tưởng cá nhân được đánh giá cao, phù hợp để đề xuất sáng kiến mới.", money: "Thu nhập tăng theo năng lực thực tế, không dựa vào may rủi.", love: "Sự tự tin giúp bạn thu hút ánh nhìn tích cực từ người xung quanh.", health: "Chú ý mỏi mắt do màn hình; áp dụng quy tắc nghỉ mắt mỗi 30 phút.", advice: "Đừng ngại khác biệt nếu bạn đã tính toán kỹ và có số liệu chứng minh.", luckyNum: "07, 21", luckyColor: "Trắng tinh, Xanh coban" },
-            { number: "10", level: "Thượng Cát", levelClass: "level-good", title: "Song Hỷ Lâm Môn", poem: "Đôi chim én lượn báo tin lành,\nHoa thắm đầu hiên nở biếc xanh.\nMột việc thành công kéo việc nữa,\nNiềm vui nối tiếp suốt năm hành.", work: "Vừa hoàn thành tốt mục tiêu cá nhân vừa có thành tích chung xuất sắc cùng đội ngũ.", money: "Có song song hai nguồn thu ổn định, giúp kế hoạch tài chính nhẹ nhàng hơn.", love: "Tin vui về tình cảm, đính ước hoặc sum họp gia đình.", health: "Tinh thần lạc quan giúp cơ thể phục hồi rất nhanh.", advice: "Biết sẻ chia niềm vui với đồng nghiệp và người thân sẽ nhân đôi may mắn.", luckyNum: "02, 22", luckyColor: "Hồng đào, Đỏ tươi" },
-            { number: "11", level: "Tiểu Cát", levelClass: "level-peace", title: "Thảo Mộc Phùng Xuân", poem: "Cỏ cây gặp tiết mưa xuân ấm,\nĐâm chồi nảy lộc khắp non ngàn.\nChẳng cần gấp gáp đòi hoa sớm,\nĐủ nắng đủ sương tự rỡ ràng.", work: "Giai đoạn gieo hạt và học hỏi thêm công cụ mới; quả ngọt sẽ đến từ giữa năm.", money: "Tiền vào đều đặn, đủ chi dùng và có dư một khoản tiết kiệm nhỏ.", love: "Mối quan hệ phát triển tự nhiên, không gượng ép.", health: "Thích hợp thanh lọc cơ thể sau những ngày tiệc tùng Tết.", advice: "Kiên nhẫn đầu tư cho kiến thức và sức khỏe ngay từ tháng Giêng.", luckyNum: "03, 14", luckyColor: "Xanh lá non, Kem" },
-            { number: "12", level: "Cẩn Trọng", levelClass: "level-caution", title: "Thủ Cựu Đãi Thời", poem: "Giữ thành vững chắc đợi thời cơ,\nChớ vội xuất quân lúc mịt mờ.\nTính kỹ trăm đường rồi hãy bước,\nAn toàn trên hết khỏi âu lo.", work: "Chưa phải lúc thích hợp để thay đổi đột ngột; hãy giữ vững vị trí hiện tại và hoàn thiện quy trình.", money: "Kiểm soát mua sắm cảm tính đầu năm, tránh thâm hụt ngân sách.", love: "Dành thời gian lắng nghe nhiều hơn là phán xét.", health: "Ngủ đủ giấc và tránh lạm dụng cà phê khi chạy deadline.", advice: "Chờ thời cơ chín muồi (khoảng quý II) hãy triển khai kế hoạch lớn.", luckyNum: "05, 11", luckyColor: "Nâu đất, Be" },
-            { number: "13", level: "Trung Cát", levelClass: "level-good", title: "Đồng Tâm Hiệp Lực", poem: "Một cây chẳng thể nên non cao,\nNhiều tay góp sức sóng dạt dào.\nChân thành kết nối cùng đồng đội,\nKhó mấy rồi đây cũng vượt qua.", work: "Làm việc nhóm cực kỳ ăn ý, hỗ trợ lẫn nhau giúp tiến độ nhanh gấp đôi.", money: "Lộc đến từ sự hợp tác, chia sẻ dự án hoặc giới thiệu khách hàng.", love: "Bạn bè, người thân luôn sẵn sàng lắng nghe và giúp đỡ khi bạn cần.", health: "Tham gia hoạt động thể thao cùng bạn bè giúp duy trì động lực tốt hơn.", advice: "Chủ động kết nối và giữ hòa khí với mọi người xung quanh.", luckyNum: "06, 24", luckyColor: "Cam đất, Vàng ấm" },
-            { number: "14", level: "Thượng Cát", levelClass: "level-great", title: "Thiên Quan Tứ Phúc", poem: "Trời xanh ban phúc xuống nhân gian,\nĐức dày tự khắc hưởng bình an.\nTâm sáng việc ngay không hổ thẹn,\nĐường đời rộng mở bước thênh thang.", work: "Uy tín cá nhân lên cao, được giao những khách hàng hoặc dự án trọng điểm.", money: "Tài chính vững vàng, ít gặp hao hụt vô cớ.", love: "Gia đạo yên ấm, con cháu hoặc người thân có tin vui học hành, công việc.", health: "Trạng thái cân bằng cả thể chất lẫn tinh thần.", advice: "Giữ vững sự tử tế và minh bạch trong mọi giao dịch.", luckyNum: "09, 16", luckyColor: "Vàng kim, Trắng" },
-            { number: "15", level: "Bình An", levelClass: "level-peace", title: "Thu Nguyệt Chiếu Đình", poem: "Trăng sáng soi hiên gió nhẹ đưa,\nTrong lòng thanh thản chuyện nắng mưa.\nKhông tham quá mức lòng tự nhẹ,\nĐủ đầy hạnh phúc biết thế vừa.", work: "Áp lực giảm bớt so với năm trước, có thời gian sắp xếp lại quy trình gọn gàng hơn.", money: "Không đột biến lớn nhưng đủ đầy, không phải lo nghĩ chuyện cơm áo.", love: "Yêu thương nhẹ nhàng, tôn trọng không gian riêng của nhau.", health: "Tâm trạng thư thái, giấc ngủ sâu.", advice: "Đừng so sánh nhịp đi của mình với người khác; đi đều và vui là thắng.", luckyNum: "07, 17", luckyColor: "Bạc, Xanh pastel" },
-            { number: "16", level: "Tiểu Cát", levelClass: "level-peace", title: "Đông Khứ Xuân Lai", poem: "Giá rét qua rồi nắng ấm lên,\nMọi điều cũ kỹ gửi vào quên.\nMở cửa đón chào trang giấy mới,\nTự tay viết tiếp chặng đường êm.", work: "Khởi đầu mới mẻ, thích hợp dọn dẹp lại bàn làm việc, kế hoạch và mục tiêu năm.", money: "Chi tiêu hợp lý đầu năm giúp giữ được đà tích lũy tốt.", love: "Nếu vừa bước qua chuyện buồn cũ, đây là lúc trái tim sẵn sàng bình yên trở lại.", health: "Nên đi kiểm tra sức khỏe định kỳ đầu năm để yên tâm công tác.", advice: "Khép lại chuyện không vui của năm cũ để bước vào năm Đinh Mùi thật nhẹ nhõm.", luckyNum: "01, 20", luckyColor: "Xanh ngọc, Trắng" },
-            { number: "17", level: "Đại Cát", levelClass: "level-great", title: "Nhật Xuất Đông Phương", poem: "Mặt trời ló dạng phía trời đông,\nRực rỡ muôn tia chiếu sáng trong.\nChí lớn nay đà gặp vận hội,\nMột bước vươn lên rạng núi sông.", work: "Thời cơ vàng để bứt phá, thăng tiến hoặc ra mắt sản phẩm/chiến dịch chủ lực.", money: "Doanh thu và lợi nhuận tăng trưởng rõ rệt.", love: "Rạng rỡ, tràn đầy năng lượng tích cực thu hút nhân duyên tốt.", health: "Tràn trề sinh lực, thích hợp cho những chuyến đi xa hoặc thử thách mới.", advice: "Quyết đoán đúng lúc, đừng để sự do dự làm trôi mất cơ hội tốt.", luckyNum: "01, 09", luckyColor: "Đỏ cam, Vàng rực" },
-            { number: "18", level: "Cẩn Trọng", levelClass: "level-caution", title: "Ẩm Thủy Tư Nguyên", poem: "Uống nước nhớ nguồn chớ vội quên,\nĐi xa vẫn nhớ gốc vững bền.\nLời nói vội vàng dễ sinh chuyện,\nSuy xét kỹ càng mới vững nền.", work: "Cần chú ý kiểm tra kỹ số liệu, hợp đồng và file gửi khách hàng trước khi bấm gửi.", money: "Hạn chế mua sắm trả góp hoặc đầu tư theo lời rủ rê thiếu cơ sở.", love: "Quan tâm hỏi thăm bố mẹ, người lớn tuổi trong nhà nhiều hơn.", health: "Chú ý an toàn giao thông khi đi du xuân, chúc Tết.", advice: "Chậm lại 5 giây trước khi quyết định hoặc phản hồi tin nhắn lúc đang mệt.", luckyNum: "04, 13", luckyColor: "Xanh than, Be" },
-            { number: "19", level: "Trung Cát", levelClass: "level-good", title: "Ngọc Trác Thành Khí", poem: "Ngọc quý không mài chẳng sáng trong,\nNgười tài rèn giũa mới nên công.\nKhó khăn hôm nay là bài học,\nMai sau rạng rỡ giữa đám đông.", work: "Khối lượng việc có thể hơi nhiều lúc đầu năm nhưng giúp bạn lên tay rất nhanh.", money: "Tiền công xứng đáng với mồ hôi công sức bỏ ra.", love: "Cùng nhau vượt qua bận rộn giúp hai người thêm gắn kết.", health: "Nhớ giãn cơ và đứng dậy đi lại sau mỗi giờ ngồi máy tính.", advice: "Xem thử thách là cơ hội nâng cấp bản thân thay vì gánh nặng.", luckyNum: "05, 25", luckyColor: "Trắng ngọc, Xanh dương" },
-            { number: "20", level: "Thượng Cát", levelClass: "level-good", title: "Quý Nhân Tương Trợ", poem: "Đường xa chợt gặp bạn đồng hành,\nChia sẻ gánh nặng bước đường nhanh.\nMở lòng chân thật cùng giao hảo,\nViệc khó rồi đây cũng hóa thành.", work: "Dễ gặp được mentor, đối tác hoặc đồng nghiệp cực kỳ có tâm hỗ trợ.", money: "Có cơ hội hợp tác sinh lời tốt trong nửa đầu năm.", love: "Bạn bè làm mai mối hoặc tạo cơ hội gặp người phù hợp.", health: "Tinh thần vui vẻ, ít ốm vặt.", advice: "Giữ liên lạc với những mối quan hệ chất lượng và luôn sòng phẳng, uy tín.", luckyNum: "06, 28", luckyColor: "Vàng nhạt, Xanh mint" },
-            { number: "21", level: "Tiểu Cát", levelClass: "level-peace", title: "Hòa Khí Sinh Tài", poem: "Một câu nhường nhịn ấm lòng nhau,\nHòa khí trong nhà phúc về sau.\nCười tươi đón khách niềm vui tới,\nLộc nhỏ tự nhiên chảy dạt dào.", work: "Môi trường làm việc thân thiện, khách hàng dễ tính khi bạn giữ thái độ niềm nở.", money: "Bán hàng hoặc giao dịch thuận lợi nhờ sự khéo léo trong giao tiếp.", love: "Không khí gia đình đầm ấm, tiếng cười ngập tràn ngày xuân.", health: "Giảm hẳn căng thẳng đầu óc.", advice: "Nụ cười và sự tử tế là chìa khóa mở mọi cánh cửa trong năm Đinh Mùi.", luckyNum: "02, 16", luckyColor: "Hồng san hô, Kem" },
-            { number: "22", level: "Bình An", levelClass: "level-peace", title: "Hải Yến Hà Thanh", poem: "Biển lặng sông trong sóng êm đềm,\nNgày dài trôi nhẹ giấc ngủ êm.\nChẳng cầu sóng gió hay hư ảo,\nChỉ mong bình dị suốt ngày đêm.", work: "Mọi việc diễn ra theo đúng lịch trình dự kiến, ít biến cố bất ngờ.", money: "Đủ dùng, có thể dành dụm cho một chuyến du lịch nhỏ trong năm.", love: "An toàn, tin tưởng và đồng hành nhẹ nhàng.", health: "Tốt, thích hợp duy trì thói quen đi bộ buổi chiều.", advice: "Đôi khi sự bình thường, không sóng gió chính là phúc phần lớn nhất.", luckyNum: "08, 18", luckyColor: "Xanh da trời, Trắng" },
-            { number: "23", level: "Trung Cát", levelClass: "level-good", title: "Khai Môn Kiến Hỷ", poem: "Mở cửa đầu xuân đón ánh hồng,\nTin vui bay tới khắp non sông.\nViệc cũ khép tròn trang sử đẹp,\nChào đón hành trình mới thành công.", work: "Có tin vui về dự án mới, khách hàng mới hoặc kế hoạch mở rộng đầu năm.", money: "Mở hàng đầu năm suôn sẻ, dòng tiền lưu thông tốt.", love: "Nhận được lời chúc và sự quan tâm chân thành từ những người tưởng đã ít liên lạc.", health: "Khởi sắc rõ rệt khi giữ nhịp sinh hoạt điều độ.", advice: "Hãy chủ động gửi lời chúc đầu năm tới những người bạn trân quý.", luckyNum: "03, 29", luckyColor: "Đỏ rượu, Vàng kem" },
-            { number: "24", level: "Cẩn Trọng", levelClass: "level-caution", title: "Tam Tư Nhi Hậu Hành", poem: "Nghĩ kỹ ba lần trước bước chân,\nChớ nghe lời ngọt vội tin thân.\nGiữ tâm sáng suốt phân hư thực,\nAn nhiên tự tại suốt mùa xuân.", work: "Cẩn thận trước các lời hứa hẹn quá tốt hoặc deadline quá gấp thiếu thực tế.", money: "Bảo mật thông tin tài khoản, tránh click các đường link lạ dịp mua sắm Tết.", love: "Đừng để lời đồn bên ngoài ảnh hưởng tới niềm tin giữa hai người.", health: "Hạn chế đồ ngọt, dầu mỡ quá nhiều trong tuần Tết.", advice: "Cẩn tắc vô áy náy — sự tỉnh táo sẽ giúp bạn tránh được 99% rắc rối không đáng có.", luckyNum: "07, 14", luckyColor: "Xanh đen, Bạc" }
+        // ==================== 3. 2D INTERACTIVE TEMPLE WORLD (HANGMU STYLE) ====================
+        const gameCanvas = document.getElementById("gameCanvas");
+        const ctx = gameCanvas.getContext("2d");
+        const interactPrompt = document.getElementById("interactPrompt");
+        const questStepTag = document.getElementById("questStepTag");
+        const questBannerText = document.getElementById("questBannerText");
+        const onlineCounter = document.getElementById("onlineCounter");
+
+        // World coordinates (1400 x 1100 map)
+        const WORLD_W = 1400, WORLD_H = 1100;
+        const ZONES = {
+            gate: { x: 700, y: 950 },
+            incense: { x: 700, y: 585, radius: 95 },
+            hallDoor: { x: 700, y: 360 },
+            altar: { x: 700, y: 215, radius: 105 },
+            graceDesk: { x: 1030, y: 610, radius: 95 }
+        };
+
+        const player = {
+            x: 700, y: 960, vx: 0, vy: 0, speed: 4.0,
+            targetX: null, targetY: null,
+            name: "Bạn (L.ASY)", color: "#B93829",
+            chat: "Mới tới cổng chùa 🏯", chatTimer: 260,
+            walkPhase: 0
+        };
+
+        let hasLitIncense = false;
+        let nearTarget = null; // "incense" | "altar" | "grace"
+        const smokeParticles = [];
+
+        // Online NPC Crowd (multiplayer feel)
+        const npcNames = ["Minh Anh", "Tuấn Kiệt", "Bảo Ngọc", "Ms Grace", "Hoàng Long", "Khánh Linh", "Đức Anh", "Thảo Vy", "Quốc Bảo", "Ngọc Hân"];
+        const npcColors = ["#0284C7", "#D97706", "#DB2777", "#7C3AED", "#059669", "#DC2626", "#4F46E5", "#0D9488"];
+        const npcLines = [
+            "Cầu năm mới Đinh Mùi 2027 đại cát!",
+            "Chúc team L.ASY vượt KPI 200% 🚀",
+            "Thắp hương thơm quá 🙏",
+            "Vào chính điện lắc quẻ 3D đi anh em!",
+            "Ai trốn việc qua bàn Ms Grace nhé 👀",
+            "Sắp nghỉ Tết 04/02 rồi cố lên!",
+            "Xin quẻ Lý Ngư Hóa Long ✨"
         ];
 
-        // --- TEMPLE PILGRIMAGE MULTIPLAYER SIMULATION ---
-        const templeWorld = document.getElementById('templeWorld');
-        const pilgrimsLayer = document.getElementById('pilgrimsLayer');
-        const incenseSmokeWrap = document.getElementById('incenseSmokeWrap');
-        const templeNextBtn = document.getElementById('templeNextBtn');
-        const guideTitle = document.getElementById('guideTitle');
-        const guideDesc = document.getElementById('guideDesc');
-        const pillStep1 = document.getElementById('pillStep1');
-        const pillStep2 = document.getElementById('pillStep2');
-        const pillStep3 = document.getElementById('pillStep3');
-        const onlineCountText = document.getElementById('onlineCountText');
+        const npcs = npcNames.map((name, i) => ({
+            name,
+            color: name === "Ms Grace" ? "#991B1B" : npcColors[i % npcColors.length],
+            x: name === "Ms Grace" ? 1030 : 420 + Math.random() * 560,
+            y: name === "Ms Grace" ? 575 : 220 + Math.random() * 680,
+            tx: 700, ty: 600,
+            wait: Math.random() * 120,
+            chat: name === "Ms Grace" ? "Ai nộp đơn nghỉ việc ra đây!" : npcLines[i % npcLines.length],
+            chatTimer: 180 + Math.random() * 200,
+            walkPhase: Math.random() * 6,
+            isBoss: name === "Ms Grace"
+        }));
 
-        const botPilgrims = [
-            { name: "Minh Anh", emoji: "👩", bg: "#E0F2FE", x: 22, y: 66, msg: "Cầu năm mới nhiều đơn!" },
-            { name: "Tuấn Kiệt", emoji: "🧑", bg: "#FEF3C7", x: 74, y: 68, msg: "Chúc L.ASY phát tài 🧧" },
-            { name: "Bảo Ngọc", emoji: "👧", bg: "#FCE7F3", x: 35, y: 58, msg: "Thắp hương xong rồi nè" },
-            { name: "Ms Grace", emoji: "👑", bg: "#FEE2E2", x: 60, y: 54, msg: "Ai trốn KPI là chị thấy đó!" },
-            { name: "Hoàng Long", emoji: "👨", bg: "#DCFCE7", x: 82, y: 60, msg: "Đang lắc quẻ Đại Cát ✨" }
-        ];
+        // Optional BroadcastChannel for real multi-tab sync
+        let bc = null;
+        const remotePeers = new Map();
+        try {
+            bc = new BroadcastChannel("lasy_temple_2027");
+            const myTabId = Math.random().toString(36).slice(2, 8);
+            bc.onmessage = (ev) => {
+                const d = ev.data;
+                if (!d || d.id === myTabId) return;
+                remotePeers.set(d.id, { ...d, lastSeen: Date.now() });
+            };
+            setInterval(() => {
+                bc.postMessage({ id: myTabId, x: player.x, y: player.y, name: player.name, color: player.color, chat: player.chatTimer > 0 ? player.chat : "" });
+                const now = Date.now();
+                for (const [k, v] of remotePeers.entries()) {
+                    if (now - v.lastSeen > 5000) remotePeers.delete(k);
+                }
+                onlineCounter.textContent = `${12 + npcs.length + remotePeers.size} đang đi chùa`;
+            }, 350);
+        } catch (e) {}
 
-        const mePilgrim = { name: "Bạn", emoji: "🙏", bg: "#B93829", x: 48, y: 78, msg: "Đang đứng ngoài cổng chùa", isMe: true };
-        const pilgrimNodes = [];
-
-        function initPilgrims() {
-            pilgrimsLayer.innerHTML = '';
-            pilgrimNodes.length = 0;
-            [...botPilgrims, mePilgrim].forEach((p) => {
-                const wrap = document.createElement('div');
-                wrap.className = 'pilgrim' + (p.isMe ? ' is-me' : '');
-                wrap.style.left = p.x + '%';
-                wrap.style.top = p.y + '%';
-
-                const chat = document.createElement('div');
-                chat.className = 'pilgrim-chat';
-                chat.textContent = p.msg;
-
-                const av = document.createElement('div');
-                av.className = 'pilgrim-avatar';
-                av.style.background = p.bg;
-                av.textContent = p.emoji;
-
-                const nm = document.createElement('div');
-                nm.className = 'pilgrim-name';
-                nm.textContent = p.name;
-
-                wrap.appendChild(chat);
-                wrap.appendChild(av);
-                wrap.appendChild(nm);
-                pilgrimsLayer.appendChild(wrap);
-                pilgrimNodes.push({ data: p, el: wrap, chatEl: chat });
-            });
+        function resizeGameCanvas() {
+            gameCanvas.width = window.innerWidth;
+            gameCanvas.height = window.innerHeight;
         }
-        initPilgrims();
+        window.addEventListener("resize", resizeGameCanvas);
+        resizeGameCanvas();
 
-        // Animate online crowd wandering around temple
-        const randomWishes = [
-            "Cầu sức khỏe & bình an 🌸",
-            "Đinh Mùi 2027 rực rỡ!",
-            "Chúc team vượt KPI 150%",
-            "Xin quẻ Đại Cát đầu năm",
-            "Thắp hương thơm quá 🙏"
-        ];
-        setInterval(() => {
-            pilgrimNodes.forEach((node) => {
-                if (node.data.isMe) return;
-                const nx = 18 + Math.random() * 64;
-                const ny = 52 + Math.random() * 24;
-                node.el.style.left = nx.toFixed(1) + '%';
-                node.el.style.top = ny.toFixed(1) + '%';
-                if (Math.random() < 0.35) {
-                    node.chatEl.textContent = randomWishes[Math.floor(Math.random() * randomWishes.length)];
-                }
-            });
-            const count = 14 + Math.floor(Math.random() * 7);
-            onlineCountText.textContent = `${count} người đang đi chùa`;
-        }, 3800);
-
-        let templeStep = 1; // 1: outside gate, 2: courtyard (light incense), 3: inside hall (open 3D popup)
-
-        function setTempleStep(step) {
-            templeStep = step;
-            const meNode = pilgrimNodes.find(n => n.data.isMe);
-
-            if (step === 1) {
-                templeWorld.className = 'temple-world';
-                incenseSmokeWrap.classList.add('hidden');
-                if (meNode) {
-                    meNode.el.style.left = '48%';
-                    meNode.el.style.top = '78%';
-                    meNode.chatEl.textContent = 'Đang đứng ngoài cổng chùa';
-                }
-                pillStep1.className = 'step-pill active';
-                pillStep2.className = 'step-pill';
-                pillStep3.className = 'step-pill';
-                guideTitle.textContent = 'Bước 1: Đang đứng ngoài Cổng Tam Quan';
-                guideDesc.textContent = 'Tiến vào sân chùa cùng mọi người để thắp hương cầu may năm Đinh Mùi 2027.';
-                templeNextBtn.innerHTML = '<span>Bước vào sân chùa</span><span class="guide-arrow-bounce">→</span>';
-            } else if (step === 2) {
-                templeWorld.className = 'temple-world zoom-courtyard';
-                if (meNode) {
-                    meNode.el.style.left = '48%';
-                    meNode.el.style.top = '58%';
-                    meNode.chatEl.textContent = 'Tới Lư Hương rồi 🙏';
-                }
-                pillStep1.className = 'step-pill done';
-                pillStep2.className = 'step-pill active';
-                pillStep3.className = 'step-pill';
-                guideTitle.textContent = 'Bước 2: Thắp hương tại Lư Hương';
-                guideDesc.textContent = 'Nhấn nút để thắp nén hương thơm trước khi vào chính điện xin quẻ.';
-                templeNextBtn.innerHTML = '<span>🕯️ Thắp Hương Thành Tâm</span>';
-            } else if (step === 3) {
-                templeWorld.className = 'temple-world zoom-hall';
-                incenseSmokeWrap.classList.remove('hidden');
-                if (meNode) {
-                    meNode.el.style.left = '48%';
-                    meNode.el.style.top = '48%';
-                    meNode.chatEl.textContent = 'Đã thắp hương ✨ Vào lắc quẻ!';
-                }
-                pillStep1.className = 'step-pill done';
-                pillStep2.className = 'step-pill done';
-                pillStep3.className = 'step-pill active';
-                guideTitle.textContent = 'Bước 3: Vào Chính Điện Lắc Quẻ 3D';
-                guideDesc.textContent = 'Mũi tên chỉ đường vào chính điện! Nhấn để mở ống xăm 3D.';
-                templeNextBtn.innerHTML = '<span class="guide-arrow-bounce">➔</span><span>Vào Trong Lắc Quẻ 3D</span>';
-            }
-        }
-
-        templeNextBtn.addEventListener('click', () => {
-            playBambooClick(0.9);
-            if (templeStep === 1) {
-                setTempleStep(2);
-            } else if (templeStep === 2) {
-                setTempleStep(3);
-            } else {
-                openFortuneModal();
+        const keys = {};
+        window.addEventListener("keydown", (e) => {
+            if (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA" || document.activeElement.tagName === "SELECT") return;
+            keys[e.key.toLowerCase()] = true;
+            if (e.key.toLowerCase() === "e" && nearTarget) {
+                triggerNearInteract();
             }
         });
+        window.addEventListener("keyup", (e) => { keys[e.key.toLowerCase()] = false; });
 
-        // --- 3D FORTUNE POPUP MODAL (MIN 5 CLICKS TO SHAKE) ---
-        const fortuneModal = document.getElementById('fortuneModal');
-        const closeFortuneModalBtn = document.getElementById('closeFortuneModalBtn');
-        const canvas3dWrap = document.getElementById('canvas3dWrap');
-        const canvasEl = document.getElementById('fortune3dCanvas');
-        const stickBadgeOverlay = document.getElementById('stickBadgeOverlay');
-        const shakeClickBtn = document.getElementById('shakeClickBtn');
-        const drawStickBtn = document.getElementById('drawStickBtn');
-        const shakeCountText = document.getElementById('shakeCountText');
-        const shakeProgressFill = document.getElementById('shakeProgressFill');
-        const shakeGuideLabel = document.getElementById('shakeGuideLabel');
-        const fortuneSlip = document.getElementById('fortuneSlip');
+        // Click / Tap on map to walk
+        let cameraX = 0, cameraY = 0;
+        gameCanvas.addEventListener("pointerdown", (e) => {
+            const rect = gameCanvas.getBoundingClientRect();
+            const wx = e.clientX - rect.left + cameraX;
+            const wy = e.clientY - rect.top + cameraY;
+            player.targetX = Math.max(120, Math.min(WORLD_W - 120, wx));
+            player.targetY = Math.max(150, Math.min(WORLD_H - 60, wy));
+        });
+
+        function triggerNearInteract() {
+            if (nearTarget === "incense") {
+                hasLitIncense = true;
+                player.chat = "Đã thắp hương thành tâm 🙏";
+                player.chatTimer = 220;
+                playBambooClick(1.1);
+                questStepTag.textContent = "BƯỚC 2/3";
+                questBannerText.textContent = "Đã thắp hương! Hãy đi theo mũi tên vàng vào Chính Điện lắc quẻ 3D";
+            } else if (nearTarget === "altar") {
+                openFortuneModal();
+            } else if (nearTarget === "grace") {
+                openCareerModal();
+            }
+        }
+        interactPrompt.addEventListener("click", triggerNearInteract);
+
+        // Chat Input
+        document.getElementById("chatForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const inp = document.getElementById("chatInput");
+            const txt = inp.value.trim();
+            if (!txt) return;
+            player.chat = txt;
+            player.chatTimer = 260;
+            inp.value = "";
+            inp.blur();
+        });
+
+        function updateWorld() {
+            // Keyboard movement
+            let dx = 0, dy = 0;
+            if (keys["w"] || keys["arrowup"]) dy -= 1;
+            if (keys["s"] || keys["arrowdown"]) dy += 1;
+            if (keys["a"] || keys["arrowleft"]) dx -= 1;
+            if (keys["d"] || keys["arrowright"]) dx += 1;
+
+            if (dx !== 0 || dy !== 0) {
+                const len = Math.hypot(dx, dy);
+                player.x += (dx / len) * player.speed;
+                player.y += (dy / len) * player.speed;
+                player.targetX = null;
+                player.targetY = null;
+                player.walkPhase += 0.25;
+            } else if (player.targetX !== null && player.targetY !== null) {
+                const tx = player.targetX - player.x;
+                const ty = player.targetY - player.y;
+                const dist = Math.hypot(tx, ty);
+                if (dist > 5) {
+                    player.x += (tx / dist) * player.speed;
+                    player.y += (ty / dist) * player.speed;
+                    player.walkPhase += 0.25;
+                } else {
+                    player.targetX = null;
+                    player.targetY = null;
+                }
+            }
+
+            player.x = Math.max(120, Math.min(WORLD_W - 120, player.x));
+            player.y = Math.max(150, Math.min(WORLD_H - 60, player.y));
+            if (player.chatTimer > 0) player.chatTimer--;
+
+            // Update NPCs
+            npcs.forEach((n) => {
+                if (n.isBoss) {
+                    n.chatTimer--;
+                    if (n.chatTimer <= 0) {
+                        n.chat = Math.random() < 0.5 ? "Ai nộp đơn nghỉ việc ra đây!" : "KPI Tết 2027 đang chờ em!";
+                        n.chatTimer = 260;
+                    }
+                    return;
+                }
+                const ndx = n.tx - n.x, ndy = n.ty - n.y;
+                const ndist = Math.hypot(ndx, ndy);
+                if (ndist > 6) {
+                    n.x += (ndx / ndist) * 1.35;
+                    n.y += (ndy / ndist) * 1.35;
+                    n.walkPhase += 0.14;
+                } else {
+                    n.wait--;
+                    if (n.wait <= 0) {
+                        n.tx = 280 + Math.random() * 840;
+                        n.ty = 200 + Math.random() * 740;
+                        n.wait = 80 + Math.random() * 140;
+                    }
+                }
+                n.chatTimer--;
+                if (n.chatTimer <= 0) {
+                    n.chat = npcLines[Math.floor(Math.random() * npcLines.length)];
+                    n.chatTimer = 220 + Math.random() * 200;
+                }
+            });
+
+            // Incense smoke particles
+            if (hasLitIncense && Math.random() < 0.35) {
+                smokeParticles.push({
+                    x: ZONES.incense.x + (Math.random() - 0.5) * 16,
+                    y: ZONES.incense.y - 26,
+                    vy: -0.9 - Math.random() * 0.5,
+                    r: 4 + Math.random() * 4,
+                    alpha: 0.7
+                });
+            }
+            for (let i = smokeParticles.length - 1; i >= 0; i--) {
+                const p = smokeParticles[i];
+                p.y += p.vy;
+                p.x += Math.sin(p.y * 0.08) * 0.35;
+                p.r += 0.08;
+                p.alpha -= 0.008;
+                if (p.alpha <= 0) smokeParticles.splice(i, 1);
+            }
+
+            // Proximity checks
+            const dIncense = Math.hypot(player.x - ZONES.incense.x, player.y - ZONES.incense.y);
+            const dAltar = Math.hypot(player.x - ZONES.altar.x, player.y - ZONES.altar.y);
+            const dGrace = Math.hypot(player.x - ZONES.graceDesk.x, player.y - ZONES.graceDesk.y);
+
+            nearTarget = null;
+            if (dIncense < ZONES.incense.radius && !hasLitIncense) {
+                nearTarget = "incense";
+                interactPrompt.textContent = "🕯️ Thắp Hương Thành Tâm [E]";
+                interactPrompt.classList.remove("hidden");
+            } else if (dAltar < ZONES.altar.radius) {
+                nearTarget = "altar";
+                interactPrompt.textContent = hasLitIncense ? "🎋 Vào Lắc Ống Xăm 3D [E]" : "🎋 Xin Quẻ 3D (Nên thắp hương trước) [E]";
+                interactPrompt.classList.remove("hidden");
+            } else if (dGrace < ZONES.graceDesk.radius) {
+                nearTarget = "grace";
+                interactPrompt.textContent = "⚖️ Gặp Ms Grace: Cày Cuốc hay Nghỉ Việc? [E]";
+                interactPrompt.classList.remove("hidden");
+            } else {
+                interactPrompt.classList.add("hidden");
+            }
+
+            // Smooth camera follow
+            const targetCamX = Math.max(0, Math.min(WORLD_W - gameCanvas.width, player.x - gameCanvas.width / 2));
+            const targetCamY = Math.max(0, Math.min(WORLD_H - gameCanvas.height, player.y - gameCanvas.height / 2));
+            cameraX += (targetCamX - cameraX) * 0.12;
+            cameraY += (targetCamY - cameraY) * 0.12;
+        }
+
+        function drawCharacter(c, isMe = false) {
+            const bob = Math.sin(c.walkPhase || 0) * 2.5;
+            // Shadow
+            ctx.fillStyle = "rgba(0,0,0,0.22)";
+            ctx.beginPath();
+            ctx.ellipse(c.x, c.y + 18, 14, 6, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Body (Áo dài / Outfit)
+            ctx.fillStyle = c.color;
+            ctx.beginPath();
+            ctx.roundRect(c.x - 11, c.y - 4 + bob, 22, 22, 7);
+            ctx.fill();
+
+            // Head
+            ctx.fillStyle = "#FDE4C8";
+            ctx.beginPath();
+            ctx.arc(c.x, c.y - 13 + bob, 11, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = isMe ? "#FCD34D" : "#451A03";
+            ctx.lineWidth = isMe ? 2.5 : 1.5;
+            ctx.stroke();
+
+            // Eyes
+            ctx.fillStyle = "#1C1917";
+            ctx.beginPath();
+            ctx.arc(c.x - 3.5, c.y - 13 + bob, 1.6, 0, Math.PI * 2);
+            ctx.arc(c.x + 3.5, c.y - 13 + bob, 1.6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Name tag
+            ctx.font = "600 11px 'Be Vietnam Pro', sans-serif";
+            const nw = ctx.measureText(c.name).width + 12;
+            ctx.fillStyle = isMe ? "rgba(185, 56, 41, 0.92)" : "rgba(255, 255, 255, 0.88)";
+            ctx.beginPath();
+            ctx.roundRect(c.x - nw / 2, c.y + 22, nw, 18, 6);
+            ctx.fill();
+            ctx.fillStyle = isMe ? "#FFFFFF" : "#1C1917";
+            ctx.textAlign = "center";
+            ctx.fillText(c.name, c.x, c.y + 34);
+
+            // Chat bubble
+            if (c.chat && (c.chatTimer === undefined || c.chatTimer > 0)) {
+                ctx.font = "500 11.5px 'Be Vietnam Pro', sans-serif";
+                const cw = Math.min(210, ctx.measureText(c.chat).width + 18);
+                ctx.fillStyle = "rgba(255, 255, 255, 0.96)";
+                ctx.strokeStyle = "#D4C7B4";
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.roundRect(c.x - cw / 2, c.y - 52 + bob, cw, 22, 10);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = "#1C1917";
+                ctx.fillText(c.chat, c.x, c.y - 37 + bob, cw - 10);
+            }
+        }
+
+        function drawWorld() {
+            ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+            ctx.save();
+            ctx.translate(-cameraX, -cameraY);
+
+            // 1. Grass & Outer Temple Grounds
+            ctx.fillStyle = "#D8C3A5";
+            ctx.fillRect(0, 0, WORLD_W, WORLD_H);
+
+            // Courtyard Stone Paving
+            ctx.fillStyle = "#E8D9C5";
+            ctx.fillRect(220, 120, 960, 740);
+            ctx.strokeStyle = "#C7B299";
+            ctx.lineWidth = 3;
+            ctx.strokeRect(220, 120, 960, 740);
+
+            // Main Stone Walkway from Gate -> Incense -> Chính Điện
+            ctx.fillStyle = "#B89F82";
+            ctx.fillRect(635, 180, 130, 880);
+            ctx.strokeStyle = "#9C8265";
+            ctx.lineWidth = 2;
+            for (let y = 200; y < 1040; y += 45) {
+                ctx.beginPath();
+                ctx.moveTo(635, y);
+                ctx.lineTo(765, y);
+                ctx.stroke();
+            }
+
+            // 2. Outer Temple Gate (Cổng Tam Quan - bottom)
+            ctx.fillStyle = "#9E2A1C";
+            ctx.fillRect(540, 845, 95, 36);
+            ctx.fillRect(765, 845, 95, 36);
+            ctx.fillStyle = "#B93829";
+            ctx.fillRect(585, 815, 230, 34);
+            ctx.fillStyle = "#B67E1E";
+            ctx.fillRect(625, 822, 150, 20);
+            ctx.fillStyle = "#FFFDF9";
+            ctx.font = "bold 12px 'Be Vietnam Pro', sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("CỔNG CHÙA L.ASY 2027", 700, 836);
+
+            // 3. Chính Điện (Main Hall - top)
+            ctx.fillStyle = "#FFF8EE";
+            ctx.fillRect(460, 110, 480, 165);
+            ctx.strokeStyle = "#8C542B";
+            ctx.lineWidth = 4;
+            ctx.strokeRect(460, 110, 480, 165);
+            // Roof
+            ctx.fillStyle = "#9E2A1C";
+            ctx.beginPath();
+            ctx.moveTo(420, 120);
+            ctx.quadraticCurveTo(700, 45, 980, 120);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = "#B67E1E";
+            ctx.fillRect(610, 88, 180, 24);
+            ctx.fillStyle = "#FFFDF9";
+            ctx.font = "bold 13px 'Be Vietnam Pro', sans-serif";
+            ctx.fillText("CHÍNH ĐIỆN • XIN QUẺ 3D", 700, 104);
+
+            // Fortune Altar Table inside Chính Điện
+            ctx.fillStyle = "#7C2D12";
+            ctx.fillRect(635, 185, 130, 46);
+            ctx.fillStyle = "#D99B26";
+            ctx.fillRect(688, 174, 24, 26); // Bamboo tube icon on altar
+
+            // 4. Lư Hương (Incense Burner in Courtyard)
+            ctx.fillStyle = "#785012";
+            ctx.beginPath();
+            ctx.ellipse(ZONES.incense.x, ZONES.incense.y + 8, 34, 14, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = "#D99B26";
+            ctx.beginPath();
+            ctx.ellipse(ZONES.incense.x, ZONES.incense.y - 6, 30, 12, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = "#4A2511";
+            ctx.beginPath();
+            ctx.ellipse(ZONES.incense.x, ZONES.incense.y - 8, 22, 8, 0, 0, Math.PI * 2);
+            ctx.fill();
+            if (hasLitIncense) {
+                ctx.strokeStyle = "#DC2626";
+                ctx.lineWidth = 3;
+                [-8, 0, 8].forEach(ox => {
+                    ctx.beginPath();
+                    ctx.moveTo(ZONES.incense.x + ox, ZONES.incense.y - 8);
+                    ctx.lineTo(ZONES.incense.x + ox, ZONES.incense.y - 26);
+                    ctx.stroke();
+                });
+            }
+
+            // 5. Guided Glowing Floor Arrows!
+            const pulse = 0.55 + Math.sin(Date.now() * 0.006) * 0.45;
+            ctx.fillStyle = `rgba(185, 56, 41, ${pulse})`;
+            ctx.font = "bold 20px 'JetBrains Mono', monospace";
+            if (!hasLitIncense) {
+                ctx.fillText("▲ THẮP HƯƠNG ▲", 700, 730);
+            } else {
+                ctx.fillStyle = `rgba(45, 106, 79, ${pulse})`;
+                ctx.fillText("▲ VÀO CHÍNH ĐIỆN LẮC QUẺ ▲", 700, 455);
+                ctx.fillText("▲", 700, 395);
+            }
+
+            // 6. Ms Grace HR Desk (Right Courtyard)
+            ctx.fillStyle = "#FEF2F2";
+            ctx.fillRect(975, 580, 110, 48);
+            ctx.strokeStyle = "#B93829";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(975, 580, 110, 48);
+            ctx.fillStyle = "#B93829";
+            ctx.font = "bold 11px 'Be Vietnam Pro', sans-serif";
+            ctx.fillText("BÀN HR MS GRACE", 1030, 608);
+
+            // 7. Blossom Trees (Mai & Đào)
+            const trees = [
+                { x: 340, y: 350, c: "#FBBF24" }, { x: 340, y: 680, c: "#F59E0B" },
+                { x: 1060, y: 350, c: "#FB7185" }, { x: 1060, y: 740, c: "#F43F5E" }
+            ];
+            trees.forEach(t => {
+                ctx.fillStyle = "#5C3419";
+                ctx.fillRect(t.x - 7, t.y, 14, 34);
+                ctx.fillStyle = t.c;
+                ctx.beginPath();
+                ctx.arc(t.x, t.y - 10, 34, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Smoke particles
+            smokeParticles.forEach(p => {
+                ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // 8. Draw All Characters (NPCs + Remote Peers + Player) sorted by Y
+            const allChars = [
+                ...npcs.map(n => ({ ...n, isMe: false })),
+                ...Array.from(remotePeers.values()).map(r => ({ ...r, isMe: false })),
+                { ...player, isMe: true }
+            ].sort((a, b) => a.y - b.y);
+
+            allChars.forEach(c => drawCharacter(c, c.isMe));
+
+            ctx.restore();
+        }
+
+        function gameLoop() {
+            updateWorld();
+            drawWorld();
+            requestAnimationFrame(gameLoop);
+        }
+        requestAnimationFrame(gameLoop);
+
+        // ==================== 4. 3D FORTUNE POPUP (MIN 5 CLICKS) ====================
+        const realFortunes = [
+            { number: "01", level: "Đại Cát", levelClass: "level-great", title: "Lý Ngư Hóa Long", poem: "Nước xuân dâng ngập bến sông dài,\nCá chép vượt môn hóa rồng bay.\nBền chí bao ngày nay gặp hội,\nCông thành danh toại rạng tương lai.", work: "Bước ngoặt lớn trong sự nghiệp, dự án ấp ủ lâu nay dễ được duyệt hoặc bứt phá doanh số vượt kỳ vọng.", money: "Nguồn thu chính và phụ đều tăng; có cơ hội nhận thưởng hoặc hợp đồng giá trị cao.", love: "Gia đạo hòa thuận, người độc thân dễ gặp nhân duyên đồng điệu qua công việc.", health: "Tinh thần phấn chấn, thể lực dồi dào.", advice: "Hãy tự tin nắm lấy cơ hội mới vào đầu năm, đừng ngại đảm nhận vai trò dẫn dắt.", luckyNum: "09, 68", luckyColor: "Đỏ son, Vàng kim" },
+            { number: "02", level: "Thượng Cát", levelClass: "level-great", title: "Xuân Phong Đắc Ý", poem: "Gió xuân thổi nhẹ nở ngàn hoa,\nQuý nhân đưa lối bước đường xa.\nMở lòng đón nhận duyên lành tới,\nThuận buồm xuôi gió khắp gần xa.", work: "Có quý nhân nâng đỡ, tháo gỡ nút thắt cũ một cách êm đẹp.", money: "Tiền bạc hanh thông, chi tiêu thoải mái nhưng vẫn dư dả tích lũy.", love: "Tình cảm ấm áp, những hiểu lầm cũ dần được hóa giải.", health: "Khí huyết lưu thông tốt.", advice: "Giữ thái độ khiêm tốn và biết ơn những người đã hỗ trợ mình.", luckyNum: "03, 27", luckyColor: "Xanh ngọc, Trắng kem" },
+            { number: "03", level: "Thượng Cát", levelClass: "level-good", title: "Vân Khai Kiến Nhật", poem: "Mây mù tan biến lộ vầng dương,\nTrăm việc dần thông suốt dặm trường.\nĐừng ngại đường xa nhiều dốc đá,\nQua cơn bĩ cực tới thanh lương.", work: "Những bế tắc cuối năm cũ sẽ dần sáng tỏ từ quý I.", money: "Thu nhập ổn định trở lại, các khoản tiền kẹt có dấu hiệu hồi về.", love: "Người thương thấu hiểu áp lực của bạn hơn.", health: "Hạn chế thức khuya sau Tết.", advice: "Đừng vội bỏ cuộc khi chưa thấy kết quả ngay trong tháng Giêng.", luckyNum: "06, 18", luckyColor: "Vàng nhạt, Xanh dương" },
+            { number: "04", level: "Trung Cát", levelClass: "level-good", title: "Tùng Bách Trường Thanh", poem: "Thông reo đỉnh núi vững ngàn năm,\nGió tuyết chẳng lay chí âm thầm.\nChậm rãi từng bước xây nền móng,\nHương lành tự tỏa chẳng cần thăm.", work: "Không bùng nổ chớp nhoáng nhưng cực kỳ bền vững.", money: "Tích tiểu thành đại, tránh đầu tư lướt sóng rủi ro.", love: "Tình cảm chín muồi theo thời gian.", health: "Sức đề kháng tốt.", advice: "Tập trung nâng cao kỹ năng cốt lõi.", luckyNum: "04, 15", luckyColor: "Xanh rêu, Nâu gỗ" },
+            { number: "05", level: "Tiểu Cát", levelClass: "level-peace", title: "Mai Hoa Tái Tiếu", poem: "Cành mai hé nụ giữa sương mai,\nNhỏ bé nhưng thơm ngát dặm dài.\nChẳng cần ồn ào khoe sắc thắm,\nNiềm vui bình dị vẫn tròn đầy.", work: "Hoàn thành tốt KPI mà không bị quá tải.", money: "Có những khoản lộc nhỏ bất ngờ đầu năm.", love: "Quan tâm nhỏ hằng ngày mang lại hạnh phúc lớn.", health: "Ngủ ngon giấc hơn.", advice: "Trân trọng những niềm vui nhỏ bên gia đình.", luckyNum: "02, 12", luckyColor: "Hồng phấn, Vàng mơ" },
+            { number: "06", level: "Bình An", levelClass: "level-peace", title: "Tĩnh Thủy Lưu Thâm", poem: "Dòng sông lặng lẽ chảy xuôi dòng,\nSâu thẳm bên trong chẳng đục trong.\nGiữ tâm an tĩnh qua năm mới,\nVạn sự bình yên ở trong lòng.", work: "Năm thiên về ổn định và củng cố nội lực.", money: "Thu chi cân bằng, lập quỹ dự phòng rõ ràng.", love: "Bình yên, ít sóng gió.", health: "Tâm an thì thân khỏe.", advice: "Chậm lại một nhịp để lắng nghe bản thân.", luckyNum: "01, 10", luckyColor: "Xanh biển, Bạc" },
+            { number: "07", level: "Cẩn Trọng", levelClass: "level-caution", title: "Phong Ba Tạm Khởi", poem: "Biển lặng đôi khi nổi sóng cồn,\nNgười khôn giữ lái chớ bồn chồn.\nNói năng cẩn trọng từng câu chữ,\nGiữ mình an ổn vượt cơn giông.", work: "Cẩn thận hiểu lầm giao tiếp hoặc thay đổi yêu cầu đột ngột.", money: "Tránh cho vay mượn số tiền lớn.", love: "Tránh tranh cãi lúc nóng giận.", health: "Chú ý tiêu hóa và giữ ấm cơ thể.", advice: "Làm việc có xác nhận rõ ràng, giữ bình tĩnh.", luckyNum: "05, 19", luckyColor: "Trắng ngà, Xám" },
+            { number: "08", level: "Đại Cát", levelClass: "level-great", title: "Kim Ngọc Mãn Đường", poem: "Ngọc sáng trong nhà rạng ánh vàng,\nLộc trời ban xuống cửa khang trang.\nChăm chỉ gieo mầm từ thuở trước,\nNay mùa quả ngọt nở mênh mang.", work: "Năng suất đạt đỉnh cao, dễ tăng thu nhập xứng đáng.", money: "Tài vận vượng phát, đặc biệt với TMĐT & sáng tạo.", love: "Gia đình có tin vui sum vầy.", health: "Năng lượng tích cực lan tỏa.", advice: "Khi có lộc hãy sẻ chia để giữ phúc lâu dài.", luckyNum: "08, 88", luckyColor: "Vàng đồng, Đỏ trầm" }
+        ];
+
+        const fortuneModal = document.getElementById("fortuneModal");
+        const canvas3dWrap = document.getElementById("canvas3dWrap");
+        const canvasEl = document.getElementById("fortune3dCanvas");
+        const stickBadgeOverlay = document.getElementById("stickBadgeOverlay");
+        const shakeClickBtn = document.getElementById("shakeClickBtn");
+        const drawStickBtn = document.getElementById("drawStickBtn");
+        const shakeCountText = document.getElementById("shakeCountText");
+        const shakeProgressFill = document.getElementById("shakeProgressFill");
+        const shakeGuideLabel = document.getElementById("shakeGuideLabel");
+        const fortuneSlip = document.getElementById("fortuneSlip");
 
         const MIN_SHAKES = 5;
-        let shakeClicks = 0;
-        let currentFortune = null;
-        let threeReady = false;
+        let shakeClicks = 0, currentFortune = null, threeReady = false;
         let scene, camera, renderer, tubeGroup, stickMeshes = [], chosenMesh = null;
         let impulseVel = 0, ejecting = false, ejectStart = 0, lastShakeImpulseTime = 0;
 
         function initThreeScene() {
-            if (typeof THREE === 'undefined') return false;
+            if (typeof THREE === "undefined") return false;
             try {
-                const w = canvas3dWrap.clientWidth || 580;
-                const h = canvas3dWrap.clientHeight || 290;
+                const w = canvas3dWrap.clientWidth || 580, h = canvas3dWrap.clientHeight || 270;
                 scene = new THREE.Scene();
                 camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 100);
                 camera.position.set(0, 1.5, 6.1);
@@ -1696,24 +1376,13 @@
                 const keyLight = new THREE.DirectionalLight(0xfff8ed, 1.15);
                 keyLight.position.set(4, 7, 5);
                 scene.add(keyLight);
-                const rimLight = new THREE.DirectionalLight(0xffd28a, 0.55);
-                rimLight.position.set(-5, 3, -4);
-                scene.add(rimLight);
-
-                const shadowDisc = new THREE.Mesh(
-                    new THREE.CircleGeometry(1.35, 32),
-                    new THREE.MeshBasicMaterial({ color: 0x3b2a1a, transparent: true, opacity: 0.16 })
-                );
-                shadowDisc.rotation.x = -Math.PI / 2;
-                shadowDisc.position.y = -1.45;
-                scene.add(shadowDisc);
 
                 tubeGroup = new THREE.Group();
                 scene.add(tubeGroup);
 
                 const bodyMesh = new THREE.Mesh(
                     new THREE.CylinderGeometry(0.88, 0.82, 2.35, 36),
-                    new THREE.MeshStandardMaterial({ color: 0x8b4f24, roughness: 0.48, metalness: 0.08 })
+                    new THREE.MeshStandardMaterial({ color: 0x8b4f24, roughness: 0.48 })
                 );
                 bodyMesh.position.y = -0.15;
                 tubeGroup.add(bodyMesh);
@@ -1745,9 +1414,7 @@
                 const tipGeo = new THREE.BoxGeometry(0.088, 0.28, 0.038);
                 const stickWoodMat = new THREE.MeshStandardMaterial({ color: 0xe6c48c, roughness: 0.55 });
                 const stickTipMat = new THREE.MeshStandardMaterial({ color: 0xc43424, roughness: 0.4 });
-                const chosenMat = new THREE.MeshStandardMaterial({
-                    color: 0xffdf7a, emissive: 0xd99b26, emissiveIntensity: 0.5, roughness: 0.25
-                });
+                const chosenMat = new THREE.MeshStandardMaterial({ color: 0xffdf7a, emissive: 0xd99b26, emissiveIntensity: 0.5 });
 
                 stickMeshes = [];
                 for (let i = 0; i < 20; i++) {
@@ -1758,14 +1425,10 @@
                     sGroup.add(shaft);
                     sGroup.add(tip);
 
-                    const angle = (i / 20) * Math.PI * 2 + (Math.random() - 0.5) * 0.2;
+                    const angle = (i / 20) * Math.PI * 2;
                     const radius = 0.14 + (i % 3) * 0.16;
-                    const bx = Math.cos(angle) * radius;
-                    const bz = Math.sin(angle) * radius;
-                    const by = 0.92 + (Math.random() - 0.5) * 0.18;
-                    const rx = (Math.random() - 0.5) * 0.18;
-                    const rz = (Math.random() - 0.5) * 0.18;
-
+                    const bx = Math.cos(angle) * radius, bz = Math.sin(angle) * radius, by = 0.92 + (Math.random() - 0.5) * 0.18;
+                    const rx = (Math.random() - 0.5) * 0.18, rz = (Math.random() - 0.5) * 0.18;
                     sGroup.position.set(bx, by, bz);
                     sGroup.rotation.set(rx, angle, rz);
                     sGroup.userData = { bx, by, bz, rx, ry: angle, rz, phase: i * 1.13, shaft, stickWoodMat, chosenMat };
@@ -1774,69 +1437,44 @@
                 }
 
                 threeReady = true;
-                startRenderLoop();
-                return true;
-            } catch (e) {
-                return false;
-            }
-        }
-
-        function resizeThree() {
-            if (!threeReady || !renderer || !camera) return;
-            const w = canvas3dWrap.clientWidth || 580;
-            const h = canvas3dWrap.clientHeight || 290;
-            camera.aspect = w / h;
-            camera.updateProjectionMatrix();
-            renderer.setSize(w, h, false);
-        }
-        window.addEventListener('resize', resizeThree);
-
-        function startRenderLoop() {
-            function tick(now) {
-                requestAnimationFrame(tick);
-                if (!threeReady) return;
-
-                if (impulseVel > 0.01) {
-                    const t = now - lastShakeImpulseTime;
-                    tubeGroup.rotation.z = Math.sin(t * 0.036) * 0.35 * impulseVel;
-                    tubeGroup.rotation.x = 0.22 + Math.cos(t * 0.028) * 0.2 * impulseVel;
-                    tubeGroup.position.y = Math.abs(Math.sin(t * 0.036)) * 0.32 * impulseVel;
-                    stickMeshes.forEach((s) => {
-                        const d = s.userData;
-                        s.position.y = d.by + Math.abs(Math.sin(t * 0.05 + d.phase)) * 0.35 * impulseVel;
-                        s.rotation.z = d.rz + Math.sin(t * 0.05 + d.phase) * 0.18 * impulseVel;
-                    });
-                    impulseVel *= 0.935;
-                } else {
-                    tubeGroup.rotation.z *= 0.85;
-                    tubeGroup.rotation.x += (0.24 - tubeGroup.rotation.x) * 0.1;
-                    tubeGroup.position.y *= 0.85;
-                    tubeGroup.rotation.y += 0.004;
-                }
-
-                if (ejecting && chosenMesh) {
-                    const p = Math.min((now - ejectStart) / 650, 1);
-                    const ease = 1 - Math.pow(1 - p, 3);
-                    const d = chosenMesh.userData;
-                    chosenMesh.position.set(d.bx * (1 - ease), d.by + ease * 1.48, d.bz + ease * 0.78);
-                    chosenMesh.rotation.set(d.rx * (1 - ease) + ease * 0.25, d.ry + ease * Math.PI * 2, d.rz * (1 - ease));
-                    if (p >= 1) {
-                        ejecting = false;
-                        renderFortuneSlip(currentFortune);
+                (function tick(now) {
+                    requestAnimationFrame(tick);
+                    if (!threeReady) return;
+                    if (impulseVel > 0.01) {
+                        const t = now - lastShakeImpulseTime;
+                        tubeGroup.rotation.z = Math.sin(t * 0.036) * 0.35 * impulseVel;
+                        tubeGroup.rotation.x = 0.22 + Math.cos(t * 0.028) * 0.2 * impulseVel;
+                        tubeGroup.position.y = Math.abs(Math.sin(t * 0.036)) * 0.32 * impulseVel;
+                        stickMeshes.forEach((s) => {
+                            const d = s.userData;
+                            s.position.y = d.by + Math.abs(Math.sin(t * 0.05 + d.phase)) * 0.35 * impulseVel;
+                            s.rotation.z = d.rz + Math.sin(t * 0.05 + d.phase) * 0.18 * impulseVel;
+                        });
+                        impulseVel *= 0.935;
+                    } else {
+                        tubeGroup.rotation.z *= 0.85;
+                        tubeGroup.rotation.x += (0.24 - tubeGroup.rotation.x) * 0.1;
+                        tubeGroup.position.y *= 0.85;
+                        tubeGroup.rotation.y += 0.004;
                     }
-                }
-
-                renderer.render(scene, camera);
-            }
-            requestAnimationFrame(tick);
+                    if (ejecting && chosenMesh) {
+                        const p = Math.min((now - ejectStart) / 650, 1);
+                        const ease = 1 - Math.pow(1 - p, 3);
+                        const d = chosenMesh.userData;
+                        chosenMesh.position.set(d.bx * (1 - ease), d.by + ease * 1.48, d.bz + ease * 0.78);
+                        chosenMesh.rotation.set(d.rx * (1 - ease) + ease * 0.25, d.ry + ease * Math.PI * 2, d.rz * (1 - ease));
+                        if (p >= 1) { ejecting = false; renderFortuneSlip(currentFortune); }
+                    }
+                    renderer.render(scene, camera);
+                })(performance.now());
+                return true;
+            } catch (e) { return false; }
         }
 
         function resetShakeSession() {
-            shakeClicks = 0;
-            ejecting = false;
-            currentFortune = null;
-            fortuneSlip.classList.add('hidden');
-            stickBadgeOverlay.classList.add('hidden');
+            shakeClicks = 0; ejecting = false; currentFortune = null;
+            fortuneSlip.classList.add("hidden");
+            stickBadgeOverlay.classList.add("hidden");
             if (threeReady) {
                 stickMeshes.forEach((s) => {
                     const d = s.userData;
@@ -1850,10 +1488,8 @@
         }
 
         function updateShakeUI() {
-            const pct = Math.min((shakeClicks / MIN_SHAKES) * 100, 100);
-            shakeProgressFill.style.width = pct + '%';
+            shakeProgressFill.style.width = Math.min((shakeClicks / MIN_SHAKES) * 100, 100) + "%";
             shakeCountText.textContent = `${shakeClicks} / ${MIN_SHAKES} lần`;
-
             if (shakeClicks < MIN_SHAKES) {
                 const remain = MIN_SHAKES - shakeClicks;
                 shakeGuideLabel.textContent = `Nhấn vào ống xăm 3D thêm ít nhất ${remain} lần nữa để mở quẻ`;
@@ -1879,8 +1515,10 @@
             if (shakeClicks < MIN_SHAKES || ejecting) return;
             currentFortune = realFortunes[Math.floor(Math.random() * realFortunes.length)];
             stickBadgeOverlay.textContent = `THẺ SỐ ${currentFortune.number}`;
-            stickBadgeOverlay.classList.remove('hidden');
+            stickBadgeOverlay.classList.remove("hidden");
             playBambooClick(1.3);
+            player.chat = `Vừa xin được quẻ ${currentFortune.title} ✨`;
+            player.chatTimer = 260;
 
             if (threeReady && stickMeshes.length > 0) {
                 chosenMesh = stickMeshes[Math.floor(Math.random() * stickMeshes.length)];
@@ -1893,116 +1531,100 @@
         }
 
         function renderFortuneSlip(f) {
-            document.getElementById('slipNum').textContent = `QUẺ SỐ ${f.number}`;
-            const levelEl = document.getElementById('slipLevel');
+            document.getElementById("slipNum").textContent = `QUẺ SỐ ${f.number}`;
+            const levelEl = document.getElementById("slipLevel");
             levelEl.textContent = f.level;
             levelEl.className = `slip-level ${f.levelClass}`;
-            document.getElementById('slipTitle').textContent = f.title;
-            document.getElementById('slipPoem').textContent = f.poem;
-            document.getElementById('aspectWork').textContent = f.work;
-            document.getElementById('aspectMoney').textContent = f.money;
-            document.getElementById('aspectLove').textContent = f.love;
-            document.getElementById('aspectHealth').textContent = f.health;
-            document.getElementById('slipAdvice').textContent = f.advice;
-            document.getElementById('slipLucky').textContent = `Số may mắn: ${f.luckyNum} • Màu hợp: ${f.luckyColor}`;
-
-            fortuneSlip.classList.remove('hidden');
-            fortuneSlip.classList.remove('flip-reveal');
+            document.getElementById("slipTitle").textContent = f.title;
+            document.getElementById("slipPoem").textContent = f.poem;
+            document.getElementById("aspectWork").textContent = f.work;
+            document.getElementById("aspectMoney").textContent = f.money;
+            document.getElementById("aspectLove").textContent = f.love;
+            document.getElementById("aspectHealth").textContent = f.health;
+            document.getElementById("slipAdvice").textContent = f.advice;
+            document.getElementById("slipLucky").textContent = `Số may mắn: ${f.luckyNum} • Màu hợp: ${f.luckyColor}`;
+            fortuneSlip.classList.remove("hidden");
+            fortuneSlip.classList.remove("flip-reveal");
             void fortuneSlip.offsetWidth;
-            fortuneSlip.classList.add('flip-reveal');
+            fortuneSlip.classList.add("flip-reveal");
         }
 
         function openFortuneModal() {
-            fortuneModal.classList.remove('hidden');
-            if (!threeReady) {
-                initThreeScene();
-            } else {
-                resizeThree();
-            }
+            fortuneModal.classList.remove("hidden");
+            if (!threeReady) initThreeScene();
             resetShakeSession();
+            questStepTag.textContent = "HOÀN THÀNH";
+            questBannerText.textContent = "Đã vào Chính Điện! Lắc ống xăm 3D tối thiểu 5 lần để rút quẻ";
         }
 
-        closeFortuneModalBtn.addEventListener('click', () => fortuneModal.classList.add('hidden'));
-        canvas3dWrap.addEventListener('click', handleShakeClick);
-        shakeClickBtn.addEventListener('click', handleShakeClick);
-        drawStickBtn.addEventListener('click', handleDrawStick);
-        document.getElementById('reshakeBtn').addEventListener('click', resetShakeSession);
+        document.getElementById("closeFortuneModalBtn").addEventListener("click", () => fortuneModal.classList.add("hidden"));
+        canvas3dWrap.addEventListener("click", handleShakeClick);
+        shakeClickBtn.addEventListener("click", handleShakeClick);
+        drawStickBtn.addEventListener("click", handleDrawStick);
+        document.getElementById("reshakeBtn").addEventListener("click", resetShakeSession);
 
-        const copyFortuneBtn = document.getElementById('copyFortuneBtn');
-        copyFortuneBtn.addEventListener('click', () => {
+        const copyFortuneBtn = document.getElementById("copyFortuneBtn");
+        copyFortuneBtn.addEventListener("click", () => {
             if (!currentFortune) return;
             const f = currentFortune;
-            const text =
-                `🎋 L.ASY TẾT ĐINH MÙI 2027 — QUẺ SỐ ${f.number} (${f.level})\n` +
-                `✨ ${f.title}\n\n${f.poem}\n\n` +
-                `• Công danh: ${f.work}\n• Tài lộc: ${f.money}\n• Tình duyên: ${f.love}\n• Sức khỏe: ${f.health}\n` +
-                `• Lời khuyên: ${f.advice}\n🍀 Số may mắn: ${f.luckyNum} | Màu hợp: ${f.luckyColor}`;
+            const text = `🎋 CHÙA L.ASY 2027 — QUẺ SỐ ${f.number} (${f.level})\n✨ ${f.title}\n\n${f.poem}\n\n• Công danh: ${f.work}\n• Tài lộc: ${f.money}\n• Tình duyên: ${f.love}\n• Sức khỏe: ${f.health}\n• Lời khuyên: ${f.advice}\n🍀 Số may mắn: ${f.luckyNum} | Màu hợp: ${f.luckyColor}`;
             navigator.clipboard.writeText(text).then(() => {
-                copyFortuneBtn.textContent = '✓ Đã sao chép';
-                setTimeout(() => { copyFortuneBtn.textContent = 'Sao chép quẻ'; }, 1800);
+                copyFortuneBtn.textContent = "✓ Đã sao chép";
+                setTimeout(() => { copyFortuneBtn.textContent = "Sao chép quẻ"; }, 1800);
             });
         });
 
-        // --- INTEGRATED "CÀY CUỐC VS NGHỈ VIỆC" COMPATIBILITY ---
-        const qMoney = document.getElementById('qMoney');
-        const qKpi = document.getElementById('qKpi');
-        const qGoal = document.getElementById('qGoal');
-        const qMood = document.getElementById('qMood');
-        const workPctLabel = document.getElementById('workPctLabel');
-        const quitPctLabel = document.getElementById('quitPctLabel');
-        const workMeterFill = document.getElementById('workMeterFill');
-        const careerVerdictBox = document.getElementById('careerVerdictBox');
-        const graceTauntBox = document.getElementById('graceTauntBox');
-        const runawayQuitBtn = document.getElementById('runawayQuitBtn');
-        const stayBtn = document.getElementById('stayBtn');
-        const quitArena = document.getElementById('quitArena');
-        const quitTrapView = document.getElementById('quitTrapView');
-        const acceptFateBtn = document.getElementById('acceptFateBtn');
-
+        // ==================== 5. INTEGRATED CAREER MODAL ====================
+        const careerModal = document.getElementById("careerModal");
+        const qMoney = document.getElementById("qMoney"), qKpi = document.getElementById("qKpi"), qGoal = document.getElementById("qGoal"), qMood = document.getElementById("qMood");
+        const workPctLabel = document.getElementById("workPctLabel"), quitPctLabel = document.getElementById("quitPctLabel");
+        const workMeterFill = document.getElementById("workMeterFill"), careerVerdictBox = document.getElementById("careerVerdictBox");
+        const graceTauntBox = document.getElementById("graceTauntBox"), runawayQuitBtn = document.getElementById("runawayQuitBtn");
+        const stayBtn = document.getElementById("stayBtn"), quitArena = document.getElementById("quitArena"), quitTrapView = document.getElementById("quitTrapView");
         let dodgeCount = 0;
 
         function computeCareerCompatibility() {
-            const selects = [qMoney, qKpi, qGoal, qMood];
-            let workScore = 0;
-            selects.forEach((s) => {
-                if (s.value === 'work') workScore += 25;
-                else if (s.value === 'mid') workScore += 14;
-                else workScore += 4;
-            });
-            const workPct = Math.min(96, Math.max(12, workScore));
-            const quitPct = 100 - workPct;
-
+            let score = 0;
+            [qMoney, qKpi, qGoal, qMood].forEach(s => score += s.value === "work" ? 25 : s.value === "mid" ? 14 : 4);
+            const workPct = Math.min(96, Math.max(12, score)), quitPct = 100 - workPct;
             workPctLabel.textContent = `💪 Hợp Cày Cuốc: ${workPct}%`;
             quitPctLabel.textContent = `🚪 Muốn Nghỉ Việc: ${quitPct}%`;
-            workMeterFill.style.width = workPct + '%';
-
+            workMeterFill.style.width = workPct + "%";
             if (workPct >= 70) {
-                careerVerdictBox.innerHTML = `<strong>Kết luận: Chiến thần KPI L.ASY (${workPct}% hợp Cày Cuốc)!</strong> Ví tiền và mục tiêu Tết 2027 đang gọi tên bạn. Cày hết mình để cuối năm hình lên bảng vàng nhé!`;
+                careerVerdictBox.innerHTML = `<strong>Kết luận: Chiến thần KPI L.ASY (${workPct}% hợp Cày Cuốc)!</strong> Ví tiền và mục tiêu Tết 2027 đang gọi tên bạn.`;
                 graceTauntBox.textContent = `💖 Ms Grace: "Chị biết ngay mà! Em sinh ra để cày KPI cùng L.ASY!"`;
             } else if (workPct >= 45) {
-                careerVerdictBox.innerHTML = `<strong>Kết luận: Nửa muốn nghỉ, nửa thèm thưởng Tết (${workPct}% Cày Cuốc / ${quitPct}% Nghỉ).</strong> Uống ngay một ly trà sữa rồi chốt nốt KPI tuần này là nhẹ đầu ngay!`;
-                graceTauntBox.textContent = `🧋 Ms Grace: "Đừng dao động em ơi, thưởng Tết Đinh Mùi đang chờ phía trước!"`;
+                careerVerdictBox.innerHTML = `<strong>Kết luận: Nửa muốn nghỉ, nửa thèm thưởng (${workPct}% / ${quitPct}%).</strong> Uống ly trà sữa rồi chốt nốt KPI nhé!`;
+                graceTauntBox.textContent = `🧋 Ms Grace: "Đừng dao động em ơi, thưởng Tết Đinh Mùi đang chờ!"`;
             } else {
-                careerVerdictBox.innerHTML = `<strong>Kết luận: Tín hiệu muốn "bay màu" (${quitPct}% muốn Nghỉ Việc)!</strong> Nhưng tiếc là cổng HR vẫn do Ms Grace kiểm soát... thử bấm nút Nộp Đơn xem!`;
-                graceTauntBox.textContent = `😤 Ms Grace: "Em định bỏ chị thật hả? Thử bấm nút Nộp Đơn bên dưới xem được không!"`;
+                careerVerdictBox.innerHTML = `<strong>Kết luận: Tín hiệu muốn nghỉ (${quitPct}%)!</strong> Nhưng cổng HR vẫn do Ms Grace giữ... thử bấm Nộp Đơn xem!`;
+                graceTauntBox.textContent = `😤 Ms Grace: "Em định bỏ chị thật hả? Thử bấm nút bên dưới xem!"`;
             }
         }
-
-        [qMoney, qKpi, qGoal, qMood].forEach((sel) => sel.addEventListener('change', computeCareerCompatibility));
+        [qMoney, qKpi, qGoal, qMood].forEach(s => s.addEventListener("change", computeCareerCompatibility));
         computeCareerCompatibility();
 
-        const taunts = [
-            "😤 Ms Grace: 'Chị chưa duyệt đâu nhé! Định bỏ chị đi đâu?'",
-            "⚡ Ms Grace: 'KPI tháng này ai gánh thay em đây?'",
-            "🧋 Ms Grace: 'Nghỉ làm gì, ở lại chị bao trà sữa!'",
-            "🔒 Hệ thống HR: 'Nút nộp đơn đã bị Ms Grace khóa tọa độ!'"
-        ];
+        function openCareerModal() {
+            careerModal.classList.remove("hidden");
+            quitArena.classList.remove("hidden");
+            quitTrapView.classList.add("hidden");
+            runawayQuitBtn.style.transform = "translate(0, 0)";
+            stayBtn.style.transform = "scale(1)";
+            dodgeCount = 0;
+        }
+        document.getElementById("openCareerBtn").addEventListener("click", openCareerModal);
+        document.getElementById("closeCareerModalBtn").addEventListener("click", () => careerModal.classList.add("hidden"));
 
+        const taunts = [
+            "😤 Ms Grace: 'Chị chưa duyệt đâu nhé!'",
+            "⚡ Ms Grace: 'KPI tháng này ai gánh thay em?'",
+            "🧋 Ms Grace: 'Ở lại chị bao trà sữa!'",
+            "🔒 HR: 'Nút nộp đơn đã bị khóa tọa độ!'"
+        ];
         function dodgeQuitButton() {
             if (dodgeCount < 4) {
-                const maxX = Math.min(130, (quitArena.clientWidth || 320) * 0.28);
-                const dx = (Math.random() > 0.5 ? 1 : -1) * (35 + Math.random() * maxX);
-                const dy = (Math.random() > 0.5 ? 1 : -1) * (10 + Math.random() * 22);
+                const dx = (Math.random() > 0.5 ? 1 : -1) * (35 + Math.random() * 110);
+                const dy = (Math.random() > 0.5 ? 1 : -1) * (10 + Math.random() * 20);
                 runawayQuitBtn.style.transform = `translate(${dx.toFixed(0)}px, ${dy.toFixed(0)}px)`;
                 stayBtn.style.transform = `scale(${1 + (dodgeCount + 1) * 0.04})`;
                 graceTauntBox.textContent = taunts[dodgeCount % taunts.length];
@@ -2010,50 +1632,39 @@
                 playBambooClick(0.8);
             }
         }
-
-        runawayQuitBtn.addEventListener('mouseenter', dodgeQuitButton);
-        runawayQuitBtn.addEventListener('click', () => {
-            if (dodgeCount < 3) {
-                dodgeQuitButton();
-            } else {
-                quitArena.classList.add('hidden');
-                quitTrapView.classList.remove('hidden');
-                quitTrapView.classList.add('animate-pop');
-            }
+        runawayQuitBtn.addEventListener("mouseenter", dodgeQuitButton);
+        runawayQuitBtn.addEventListener("click", () => {
+            if (dodgeCount < 3) dodgeQuitButton();
+            else { quitArena.classList.add("hidden"); quitTrapView.classList.remove("hidden"); }
+        });
+        stayBtn.addEventListener("click", () => {
+            careerModal.classList.add("hidden");
+            player.chat = "Chốt cày KPI nhận thưởng Tết 2027! 💪";
+            player.chatTimer = 240;
+        });
+        document.getElementById("acceptFateBtn").addEventListener("click", () => {
+            careerModal.classList.add("hidden");
+            player.chat = "Đã nhận trà sữa & ở lại với Ms Grace 🧋";
+            player.chatTimer = 240;
         });
 
-        stayBtn.addEventListener('click', () => {
-            graceTauntBox.textContent = "✨ Quyết định quá chuẩn! Chúc bạn bứt phá KPI rực rỡ đón Tết Đinh Mùi 2027!";
-            runawayQuitBtn.style.transform = 'translate(0, 0)';
-            stayBtn.style.transform = 'scale(1)';
-            dodgeCount = 0;
+        // ==================== 6. CUSTOMIZE CHARACTER ====================
+        const customModal = document.getElementById("customModal");
+        let selectedColor = player.color;
+        document.getElementById("openCustomBtn").addEventListener("click", () => customModal.classList.remove("hidden"));
+        document.getElementById("closeCustomModalBtn").addEventListener("click", () => customModal.classList.add("hidden"));
+        document.querySelectorAll(".outfit-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".outfit-btn").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                selectedColor = btn.dataset.color;
+            });
         });
-
-        acceptFateBtn.addEventListener('click', () => {
-            quitTrapView.classList.add('hidden');
-            quitArena.classList.remove('hidden');
-            runawayQuitBtn.style.transform = 'translate(0, 0)';
-            stayBtn.style.transform = 'scale(1)';
-            dodgeCount = 0;
-            graceTauntBox.textContent = "🧋 Đã chốt 01 ly trà sữa & gia hạn hợp đồng cày KPI! Chiến tiếp thôi nào!";
-        });
-
-        // --- Mode Switchers ---
-        const templeModeBtn = document.getElementById('templeModeBtn');
-        const careerModeBtn = document.getElementById('careerModeBtn');
-        const templeGameSection = document.getElementById('templeGameSection');
-        const careerGameSection = document.getElementById('careerGameSection');
-
-        templeModeBtn.addEventListener('click', () => {
-            careerGameSection.classList.add('hidden');
-            templeGameSection.classList.remove('hidden');
-            templeGameSection.classList.add('animate-pop');
-        });
-
-        careerModeBtn.addEventListener('click', () => {
-            templeGameSection.classList.add('hidden');
-            careerGameSection.classList.remove('hidden');
-            careerGameSection.classList.add('animate-pop');
+        document.getElementById("saveCustomBtn").addEventListener("click", () => {
+            const nm = document.getElementById("playerNameInput").value.trim();
+            if (nm) player.name = nm;
+            player.color = selectedColor;
+            customModal.classList.add("hidden");
         });
     </script>
 </body>
