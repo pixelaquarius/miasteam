@@ -174,17 +174,62 @@ const logo = r => {
   return `<div style="width:100%;height:100%;background:${r.c};color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:12px">${r.ini}<img src="img/brands/b${lid}.png" alt="${r.brand}" loading="lazy" onerror="this.style.display='none'"></div>`;
 };
 
-/* ================= STATE ================= */
+/* ================= STATE (LƯU ĐẦY ĐỦ LOCALSTORAGE) ================= */
 const state = {
   user: store.get('user', { name: 'Khách', phone: '0900 000 000' }),
   pos: store.get('pos', { lat: 10.7725, lng: 106.6980, addr: 'Chợ Bến Thành, Quận 1' }),
+  posHistory: store.get('posHistory', []),
   gpsDone: store.get('gpsDone', false),
   wallet: store.get('wallet', 500000),
   points: store.get('points', 1250),
+  lastPay: store.get('lastPay', 'wallet'),
+  dnote: store.get('dnote', ''),
   cat: 'all', q: '', chip: 'all', brandFilter: null, pageLimit: 40,
-  cart: store.get('cart', null), orders: store.get('orders', []), tab: 'home', voucher: null
+  cart: store.get('cart', null), orders: store.get('orders', []), tab: 'home', voucher: store.get('voucher', null)
 };
-const save = () => { store.set('orders', state.orders); store.set('wallet', state.wallet); store.set('cart', state.cart); store.set('points', state.points); };
+const save = () => {
+  store.set('user', state.user);
+  store.set('pos', state.pos);
+  store.set('posHistory', state.posHistory);
+  store.set('gpsDone', state.gpsDone);
+  store.set('orders', state.orders);
+  store.set('wallet', state.wallet);
+  store.set('cart', state.cart);
+  store.set('points', state.points);
+  store.set('voucher', state.voucher);
+  store.set('lastPay', state.lastPay);
+  store.set('dnote', state.dnote);
+};
+function recordPos(p) {
+  state.pos = { ...p, updatedAt: Date.now() };
+  state.gpsDone = true;
+  state.posHistory = [state.pos, ...state.posHistory.filter(x => x.addr !== p.addr)].slice(0, 6);
+  save();
+}
+// Tự động kiểm tra và đồng bộ các đơn đang chạy trong nền (kể cả khi tắt tab mở lại sau 5-10 phút)
+function syncActiveOrders() {
+  let changed = false;
+  const now = Date.now();
+  state.orders.forEach(o => {
+    if (o.status === 'active') {
+      const P = o.plan || { totalMs: 360000, incidentIdx: 0 };
+      const total = P.totalMs || (P.tConfirm + P.tFind1 + P.tCancel1 + P.tFind2 + P.tToShop + P.tKitchen + P.tKitchenDelay + P.tDeliver + P.tFinalIncident);
+      if (now - o.t >= total) {
+        const isRide = o.svcType === 'bike' || o.svcType === 'car';
+        const incList = isRide ? INCIDENTS_RIDE : INCIDENTS_FOOD;
+        const inc = incList[(P.incidentIdx || 0) % incList.length];
+        o.status = 'cancelled';
+        o.cancelReason = inc[0];
+        o.cancelDetail = inc[1];
+        if (o.pay === 'wallet') state.wallet += o.total;
+        state.wallet += 30000;
+        changed = true;
+      }
+    }
+  });
+  if (changed) save();
+}
+setInterval(syncActiveOrders, 4000);
 const km2lat = km => km / 110.57;
 const km2lng = km => km / (111.32 * Math.cos(state.pos.lat * Math.PI / 180));
 const rpos = r => [state.pos.lat + km2lat(r.dy), state.pos.lng + km2lng(r.dx)];
@@ -294,11 +339,10 @@ function checkMandatoryGps() {
   gmk.on('dragend', () => { const p = gmk.getLatLng(); updatePin(p.lat, p.lng); });
 
   const finishGps = () => {
-    state.pos = tmp; state.gpsDone = true;
-    store.set('pos', tmp); store.set('gpsDone', true);
+    recordPos(tmp);
     try { gm.remove(); } catch {}
     gate.remove();
-    toast(`Đã định vị GPS: ${R.length.toLocaleString('vi-VN')} quán quanh bạn`);
+    toast(`Đã lưu GPS: ${R.length.toLocaleString('vi-VN')} quán quanh bạn`);
     go(viewHome);
   };
 
@@ -838,7 +882,7 @@ function viewPickLoc(back) {
   m.on('click', e => set(e.latlng.lat, e.latlng.lng));
   mkr.on('dragend', () => { const p = mkr.getLatLng(); set(p.lat, p.lng); });
   $('#gps').onclick = () => navigator.geolocation ? navigator.geolocation.getCurrentPosition(p => { m.setView([p.coords.latitude, p.coords.longitude], 16); set(p.coords.latitude, p.coords.longitude); }, () => toast('Không lấy được vị trí GPS'), { timeout: 8000 }) : toast('Thiết bị không hỗ trợ GPS');
-  $('#ok').onclick = () => { state.pos = tmp; state.gpsDone = true; store.set('pos', tmp); store.set('gpsDone', true); toast('Đã cập nhật vị trí giao hàng'); back(); };
+  $('#ok').onclick = () => { recordPos(tmp); toast('Đã lưu vị trí GPS vào máy'); back(); };
   $('#bk').onclick = () => go(back);
 }
 
@@ -1122,12 +1166,22 @@ function viewTrack(id) {
     $('#call').onclick = () => toast('📞 Đang đổ chuông tới tài xế ' + drv[0] + '…');
     $('#msg').onclick = () => {
       const c = $('#chat'); if (c.innerHTML) { c.innerHTML = ''; return; }
-      c.innerHTML = `<div class="chatb"><div class="msgs" id="ms"><p>Chào bạn, mình là ${drv[0].split(' ').pop()}, mình đã nhận yêu cầu của bạn rồi nhé!</p></div><form id="cf"><input id="ci" placeholder="Nhắn tin cho tài xế..." autocomplete="off"><button>Gửi</button></form></div>`;
+      if (!o.chatLogs) o.chatLogs = [['drv', `Chào bạn, mình là ${drv[0].split(' ').pop()}, mình đã nhận yêu cầu của bạn rồi nhé!`]];
+      const drawChat = () => {
+        if (!$('#ms')) return;
+        $('#ms').innerHTML = o.chatLogs.map(m => `<p class="${m[0] === 'me' ? 'me' : ''}">${m[1]}</p>`).join('');
+        $('#ms').scrollTop = 1e5;
+      };
+      c.innerHTML = `<div class="chatb"><div class="msgs" id="ms"></div><form id="cf"><input id="ci" placeholder="Nhắn tin cho tài xế..." autocomplete="off"><button>Gửi</button></form></div>`;
+      drawChat();
       $('#cf').onsubmit = e => {
         e.preventDefault(); const v = $('#ci').value.trim(); if (!v) return;
-        $('#ms').innerHTML += `<p class="me">${v}</p>`; $('#ci').value = '';
+        o.chatLogs.push(['me', v]); save(); drawChat(); $('#ci').value = '';
         const replies = ['Ok bạn ơi, đường đang hơi đông xíu bạn đợi mình vài phút nha 👍', 'Mình ghi nhận rồi nhé, tới nơi mình gọi bạn ngay!', 'Mình đang cố chạy nhanh nhất có thể đây ạ, bạn yên tâm nhé!'];
-        setTimeout(() => { if ($('#ms')) { $('#ms').innerHTML += `<p>${replies[Math.floor(Math.random() * replies.length)]}</p>`; $('#ms').scrollTop = 1e5; } }, 1600);
+        setTimeout(() => {
+          o.chatLogs.push(['drv', replies[Math.floor(Math.random() * replies.length)]]);
+          save(); drawChat();
+        }, 1600);
       };
     };
   };
@@ -1253,22 +1307,37 @@ function viewAccount() {
   state.tab = 'account'; tabs();
   screen.innerHTML = `<div class="prof"><div class="avatar">${state.user.name[0].toUpperCase()}</div><div><b style="font-size:19px">${state.user.name}</b><br><span style="opacity:.9;font-size:13px">${state.user.phone} · Thành viên Vàng</span></div></div>
   <div class="wallet" style="margin-top:-1px;border-radius:0"><div id="gopay" style="cursor:pointer">Ví GrabPay<b>${fmt(state.wallet)}</b></div><div id="tp" style="color:var(--g);font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer">+ Nạp 100.000đ</div></div>
+  <div class="box" style="margin-top:10px">
+    <h4>💾 Dữ liệu GPS & Đơn hàng đã lưu trên máy</h4>
+    <div style="font-size:12.5px;color:#444;line-height:1.6">
+      <div>• Tọa độ GPS hiện tại: <b>${state.pos.lat.toFixed(5)}, ${state.pos.lng.toFixed(5)}</b></div>
+      <div>• Địa chỉ: <b>${state.pos.addr}</b></div>
+      <div>• Tổng đơn & chuyến đã lưu: <b>${state.orders.length} đơn</b> (${state.orders.filter(x => x.status === 'active').length} đang xử lý)</div>
+      <div>• Giỏ hàng đang lưu: <b>${state.cart ? Object.values(state.cart.items).reduce((a, b) => a + b.q, 0) + ' món' : 'Trống'}</b></div>
+    </div>
+    ${state.posHistory.length > 1 ? `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--line);font-size:12px;color:#666"><b>Lịch sử vị trí GPS gần đây:</b>${state.posHistory.map((p, idx) => `<div style="margin-top:3px;cursor:pointer;color:${idx === 0 ? '#00863c' : '#555'}" data-hp="${idx}">📍 ${p.addr} (${p.lat.toFixed(4)}, ${p.lng.toFixed(4)})</div>`).join('')}</div>` : ''}
+  </div>
   <div class="menu" style="margin-top:10px">
     <div class="m" id="e1"><span>✏️ Chỉnh sửa thông tin cá nhân</span><span>›</span></div>
-    <div class="m" id="e2"><span>📍 Địa chỉ đã lưu (${state.pos.addr.slice(0, 22)}…)</span><span>›</span></div>
-    <div class="m" id="egps"><span>📡 Định vị lại GPS từ đầu</span><span>›</span></div>
+    <div class="m" id="e2"><span>📍 Đổi vị trí GPS trên bản đồ</span><span>›</span></div>
+    <div class="m" id="egps"><span>📡 Bật lại màn hình quét GPS từ đầu</span><span>›</span></div>
     <div class="m" id="edeal"><span>🎟️ Kho ưu đãi & GrabRewards</span><span style="color:#ef4b3f;font-weight:700">4 mã</span></div>
-    <div class="m" id="e3"><span>🗑️ Xoá lịch sử hoạt động</span><span>›</span></div>
+    <div class="m" id="e3"><span>🗑️ Xoá lịch sử đơn hàng</span><span>›</span></div>
   </div>`;
-  $('#e1').onclick = () => { const n = prompt('Tên của bạn:', state.user.name); if (n) { state.user.name = n; const p = prompt('Số điện thoại:', state.user.phone); if (p) state.user.phone = p; store.set('user', state.user); viewAccount(); } };
+  $('#e1').onclick = () => { const n = prompt('Tên của bạn:', state.user.name); if (n) { state.user.name = n; const p = prompt('Số điện thoại:', state.user.phone); if (p) state.user.phone = p; save(); viewAccount(); } };
   $('#e2').onclick = () => go(viewPickLoc, () => go(viewAccount));
-  $('#egps').onclick = () => { state.gpsDone = false; store.set('gpsDone', false); checkMandatoryGps(); };
+  $('#egps').onclick = () => { state.gpsDone = false; save(); checkMandatoryGps(); };
   $('#edeal').onclick = () => go(viewDeals);
   $('#gopay').onclick = () => { state.tab = 'pay'; go(viewPay); };
   $('#tp').onclick = () => { state.wallet += 100000; save(); toast('Đã nạp 100.000đ vào GrabPay'); viewAccount(); };
-  $('#e3').onclick = () => { if (confirm('Xoá toàn bộ lịch sử hoạt động?')) { state.orders = []; save(); toast('Đã xoá lịch sử'); } };
+  $('#e3').onclick = () => { if (confirm('Xoá toàn bộ lịch sử hoạt động?')) { state.orders = []; save(); toast('Đã xoá lịch sử'); viewAccount(); } };
+  $$('[data-hp]').forEach(el => el.onclick = () => {
+    const p = state.posHistory[+el.dataset.hp];
+    if (p) { recordPos(p); toast('Đã chuyển về vị trí GPS đã lưu'); viewAccount(); }
+  });
 }
 
+syncActiveOrders();
 viewHome();
 setTimeout(() => {
   const s = $('#splash');
