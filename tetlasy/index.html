@@ -99,20 +99,7 @@
         .online-dot { width: 8px; height: 8px; border-radius: 50%; background: #22C55E; animation: pulseDot 1.6s infinite; }
         @keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(1.25); } }
 
-        .quest-banner {
-            position: fixed; top: 64px; left: 50%; transform: translateX(-50%); z-index: 22;
-            background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(8px);
-            border: 1px solid var(--border-strong); border-radius: 999px;
-            padding: 5px 14px; font-size: 0.76rem; font-weight: 600; color: var(--ink-primary);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
-            display: flex; align-items: center; gap: 8px; white-space: nowrap; max-width: 94vw;
-            overflow: hidden; text-overflow: ellipsis;
-        }
 
-        .quest-step-tag {
-            font-family: 'JetBrains Mono', monospace; font-size: 0.66rem;
-            padding: 2px 8px; border-radius: 999px; background: var(--crimson); color: #FFFFFF;
-        }
 
         .interact-prompt {
             position: fixed; bottom: 136px; left: 50%; transform: translateX(-50%); z-index: 28;
@@ -477,7 +464,6 @@
         @media (max-width: 640px) {
             .quiz-grid { grid-template-columns: 1fr; }
             .dpad-pc, .hud-countdown { display: none; }
-            .quest-banner { top: 56px; font-size: 0.7rem; }
             .stick-engraved-text { font-size: 1rem; }
         }
         /* ===== Character customizer v2 ===== */
@@ -492,8 +478,12 @@
         .swatch { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px var(--border-strong); cursor: pointer; }
         .swatch.active { box-shadow: 0 0 0 2px var(--crimson); transform: scale(1.1); }
         #custPreviewCanvas { width: 100%; height: 190px; display: block; border-radius: 14px; background: radial-gradient(circle at 50% 35%, #fff8ec, #ead9bf); margin-bottom: 12px; }
-        .incense-pill { font-family: 'JetBrains Mono', monospace; }
-        .incense-pill.full { background: var(--crimson-soft); color: var(--crimson); border-color: var(--crimson); }
+        .fps-reticle {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 7px; height: 7px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9); box-shadow: 0 0 0 1.5px rgba(28, 25, 23, 0.65);
+            pointer-events: none; z-index: 24;
+        }
 
     </style>
 </head>
@@ -518,16 +508,11 @@
                 <span class="online-dot"></span>
                 <span id="onlineCounter">Đang kết nối...</span>
             </div>
-            <div class="hud-pill incense-pill" id="incensePill" title="Trên 15 nén Tiểu Sư sẽ hốt vác vai đem hóa">🕯️ Lư hương: 0/15</div>
             <button id="soundToggleBtn" class="hud-pill" type="button">🔊 Âm thanh</button>
         </div>
     </div>
 
-    <!-- Quest Banner -->
-    <div class="quest-banner" id="questBanner">
-        <span class="quest-step-tag" id="questStepTag">BƯỚC 1/3</span>
-        <span id="questBannerText">Kéo chuột xoay 360° • WASD/Joystick đi thắp nhang & lên Chính Điện lắc quẻ</span>
-    </div>
+    <div id="fpsReticle" class="fps-reticle hidden"></div>
 
     <!-- Interact Prompt -->
     <button id="interactPrompt" class="interact-prompt hidden" type="button">🕯️ Thắp Hương [E]</button>
@@ -1167,10 +1152,7 @@
         const worldCanvas = document.getElementById("world3dCanvas");
         const labelsLayer = document.getElementById("labelsLayer");
         const interactPrompt = document.getElementById("interactPrompt");
-        const questStepTag = document.getElementById("questStepTag");
-        const questBannerText = document.getElementById("questBannerText");
         const onlineCounter = document.getElementById("onlineCounter");
-        const incensePill = document.getElementById("incensePill");
 
         // Random auspicious pilgrim names
         const NAME_FIRST = ["An", "Bình", "Khang", "Phúc", "Lộc", "Thịnh", "Minh", "Ngọc", "Mai", "Đào", "Lan", "Cúc", "Tâm", "Hạnh", "Vy", "Huy", "Long", "Phát", "Tài", "Quý", "Như", "Gia"];
@@ -1195,11 +1177,10 @@
         };
 
         let camYaw = typeof savedState.camYaw === "number" ? savedState.camYaw : 0;
-        let camPitch = typeof savedState.camPitch === "number" ? Math.max(0.08, Math.min(1.15, savedState.camPitch)) : 0.28;
+        let camPitch = typeof savedState.camPitch === "number" ? Math.max(-0.35, Math.min(1.05, savedState.camPitch)) : 0.28;
         let camDist = typeof savedState.camDist === "number" ? Math.max(4.0, Math.min(16.0, savedState.camDist)) : 7.2;
         let hasLitIncense = !!savedState.hasLitIncense, nearTarget = null;
         let suppressedAutoModal = Math.hypot(player.x, player.z - (-13.5)) < 4.5;
-        let savedQuestStep = savedState.questStep || (hasLitIncense ? "BƯỚC 2/3" : "BƯỚC 1/3");
         let lastFortuneNum = savedState.lastFortuneNum || null;
 
         function saveLocalState(immediate = false) {
@@ -1214,8 +1195,6 @@
                         x: Number(player.x.toFixed(2)), z: Number(player.z.toFixed(2)), rotY: Number(player.rotY.toFixed(2)),
                         camYaw: Number(camYaw.toFixed(3)), camPitch: Number(camPitch.toFixed(3)), camDist: Number(camDist.toFixed(2)),
                         soundEnabled, hasLitIncense,
-                        questStep: questStepTag.textContent,
-                        questBannerText: questBannerText.textContent,
                         localIncenseCount: typeof incenseSticks !== "undefined" ? incenseSticks.length : 3,
                         lastFortuneNum,
                         careerQuiz: qMoneyEl ? {
@@ -1952,11 +1931,7 @@
             g.traverse(m => { if (m.isMesh) m.castShadow = true; });
             return g;
         }
-        function updateIncensePill() {
-            if (!incensePill) return;
-            incensePill.textContent = `🕯️ Lư hương: ${incenseSticks.length}/${INCENSE_MAX}`;
-            incensePill.classList.toggle("full", incenseSticks.length > INCENSE_MAX);
-        }
+        function updateIncensePill() {}
         function plantIncense(byName, broadcast = false) {
             if (!wScene) return;
             const st = makeIncenseStick();
@@ -2190,33 +2165,65 @@
             updateJoystick(e.clientX, e.clientY);
         });
 
-        // 360° Camera Orbit (Mouse drag + Touch drag + Wheel zoom + Double-click reset)
+        // FPS-style Mouse Look (Pointer Lock: lia chuột tự do không cần giữ click) + Touch drag fallback + Zoom
+        const fpsReticle = document.getElementById("fpsReticle");
+        function exitFpsLock() {
+            try { if (document.pointerLockElement) document.exitPointerLock(); } catch (e) {}
+        }
+        document.addEventListener("pointerlockchange", () => {
+            const locked = document.pointerLockElement === worldCanvas;
+            if (fpsReticle) fpsReticle.classList.toggle("hidden", !locked);
+            worldCanvas.style.cursor = locked ? "none" : "grab";
+        });
+
         let camPointerId = null, camPrev = { x: 0, y: 0 };
         worldCanvas.addEventListener("contextmenu", (e) => e.preventDefault());
         worldCanvas.addEventListener("pointerdown", (e) => {
-            if (camPointerId !== null || anyModalOpen()) return;
-            camPointerId = e.pointerId;
-            camPrev = { x: e.clientX, y: e.clientY };
-            worldCanvas.classList.add("dragging");
+            if (anyModalOpen()) return;
+            if (e.pointerType === "mouse") {
+                if (document.pointerLockElement === worldCanvas) {
+                    if (nearTarget) triggerNearInteract();
+                } else {
+                    try {
+                        const pr = worldCanvas.requestPointerLock && worldCanvas.requestPointerLock();
+                        if (pr && typeof pr.catch === "function") pr.catch(() => {});
+                    } catch (err) {}
+                }
+            }
+            if (camPointerId === null) {
+                camPointerId = e.pointerId;
+                camPrev = { x: e.clientX, y: e.clientY };
+                worldCanvas.classList.add("dragging");
+            }
         });
         worldCanvas.addEventListener("dblclick", () => {
-            if (anyModalOpen()) return;
+            if (anyModalOpen() || document.pointerLockElement === worldCanvas) return;
             camYaw = 0; camPitch = 0.28; camDist = 7.2;
             saveLocalState(true);
         });
         worldCanvas.addEventListener("wheel", (e) => {
             if (anyModalOpen()) return;
             e.preventDefault();
-            camDist = Math.max(4.0, Math.min(16.0, camDist + e.deltaY * 0.006));
+            camDist = Math.max(3.6, Math.min(16.0, camDist + e.deltaY * 0.006));
             saveLocalState(false);
         }, { passive: false });
 
+        // Continuous FPS mouse sweep via Pointer Lock movementX/movementY
+        document.addEventListener("mousemove", (e) => {
+            if (document.pointerLockElement !== worldCanvas || anyModalOpen()) return;
+            camYaw -= (e.movementX || 0) * 0.0032;
+            camPitch = Math.max(-0.35, Math.min(1.05, camPitch + (e.movementY || 0) * 0.0026));
+            player.rotY = camYaw + Math.PI;
+            saveLocalState(false);
+        });
+
         window.addEventListener("pointermove", (e) => {
             if (e.pointerId === joyPointerId) updateJoystick(e.clientX, e.clientY);
-            if (e.pointerId === camPointerId && !anyModalOpen()) {
+            if (e.pointerId === camPointerId && document.pointerLockElement !== worldCanvas && !anyModalOpen()) {
                 const dx = e.clientX - camPrev.x, dy = e.clientY - camPrev.y;
                 camYaw -= dx * 0.0075;
-                camPitch = Math.max(0.08, Math.min(1.15, camPitch + dy * 0.0065));
+                camPitch = Math.max(-0.35, Math.min(1.05, camPitch + dy * 0.0065));
+                player.rotY = camYaw + Math.PI;
                 camPrev = { x: e.clientX, y: e.clientY };
                 saveLocalState(false);
             }
@@ -2240,8 +2247,7 @@
                 plantIncense(player.name, true);
                 player.chat = `Vừa thắp nén hương thơm (#${incenseSticks.length}) 🙏`; player.chatTimer = 220;
                 playBambooClick(1.15);
-                questStepTag.textContent = "BƯỚC 2/3";
-                questBannerText.textContent = `Đã thắp hương (${incenseSticks.length}/${INCENSE_MAX} cây)! Lên bậc thềm Chính Điện để gieo quẻ AR 3D`; saveLocalState(true);
+                saveLocalState(true);
             } else if (nearTarget === "altar") {
                 openFortuneModal();
             } else if (nearTarget === "grace") {
@@ -2343,19 +2349,21 @@
             playerMesh.position.set(player.x, py, player.z);
             playerMesh.rotation.y = player.rotY;
 
-            // Smooth 360° Orbit 3rd-person camera
+            // Responsive FPS-style 3rd-person camera (allows looking up at sky/roofs & rotating 360°)
             const horizD = Math.cos(camPitch) * camDist;
             const vertD = Math.sin(camPitch) * camDist;
             const targetCamX = player.x + Math.sin(camYaw) * horizD;
-            const targetCamY = Math.max(py + 0.9, py + 1.4 + vertD);
+            const targetCamY = Math.max(py + 0.68, py + 1.55 + vertD * 0.85);
             const targetCamZ = player.z + Math.cos(camYaw) * horizD;
-            wCamera.position.x += (targetCamX - wCamera.position.x) * 0.15;
-            wCamera.position.y += (targetCamY - wCamera.position.y) * 0.15;
-            wCamera.position.z += (targetCamZ - wCamera.position.z) * 0.15;
+            const camLerp = document.pointerLockElement === worldCanvas ? 0.52 : 0.22;
+            wCamera.position.x += (targetCamX - wCamera.position.x) * camLerp;
+            wCamera.position.y += (targetCamY - wCamera.position.y) * camLerp;
+            wCamera.position.z += (targetCamZ - wCamera.position.z) * camLerp;
+            const lookOffY = camPitch < 0.22 ? (0.22 - camPitch) * 4.5 : -(camPitch - 0.28) * 1.4;
             wCamera.lookAt(
-                player.x - Math.sin(camYaw) * 1.15,
-                py + 1.55,
-                player.z - Math.cos(camYaw) * 1.15
+                player.x - Math.sin(camYaw) * 2.0,
+                py + 1.55 + lookOffY,
+                player.z - Math.cos(camYaw) * 2.0
             );
 
             // Drifting clouds & swaying lanterns
@@ -2514,7 +2522,7 @@
             nearTarget = null;
             if (dIncense < 3.2) {
                 nearTarget = "incense";
-                interactPrompt.textContent = `🕯️ Thắp Hương (${incenseSticks.length}/${INCENSE_MAX}) [E]`;
+                interactPrompt.textContent = "🕯️ Thắp Hương Thành Tâm [E]";
                 interactPrompt.classList.remove("hidden");
             } else if (dAltar < 4.0) {
                 nearTarget = "altar";
@@ -2865,12 +2873,12 @@
         }
 
         function openFortuneModal() {
+            exitFpsLock();
             fortuneModal.classList.remove("hidden");
             requestAnimationFrame(() => fortuneModal.classList.add("show"));
             if (!modalThreeReady) initModalThree();
             resetShakeSession();
-            questStepTag.textContent = "BƯỚC 3/3";
-            questBannerText.textContent = "Đã tới Chính Điện! Bấm lắc ≥5 lần rồi dừng tay quẻ tự ra, hoặc xoay úp ngược để đổ hết quẻ";
+            
             const lfb = document.getElementById("viewLastFortuneBtn");
             if (lfb) { lfb.textContent = `📜 Quẻ gần nhất (#${lastFortuneNum})`; lfb.classList.toggle("hidden", !lastFortuneNum); }
             saveLocalState(true);
@@ -2935,6 +2943,7 @@
         computeCareerCompatibility();
 
         function openCareerModal() {
+            exitFpsLock();
             careerModal.classList.remove("hidden");
             requestAnimationFrame(() => careerModal.classList.add("show"));
             quitArena.classList.remove("hidden"); quitTrapView.classList.add("hidden");
@@ -3012,6 +3021,7 @@
         }
 
         document.getElementById("openCustomBtn").addEventListener("click", () => {
+            exitFpsLock();
             syncCustomUI();
             customModal.classList.remove("hidden");
             requestAnimationFrame(() => customModal.classList.add("show"));
@@ -3056,8 +3066,6 @@
         initMultiplayer();
         const initCount = typeof savedState.localIncenseCount === "number" ? Math.max(0, Math.min(INCENSE_MAX, savedState.localIncenseCount)) : 3;
         for (let k = 0; k < initCount; k++) plantIncense("Chùa Vạn Phúc", false);
-        if (savedState.questStep) questStepTag.textContent = savedState.questStep;
-        if (savedState.questBannerText) questBannerText.textContent = savedState.questBannerText;
         updateIncensePill();
         animate3DWorld();
     </script>
