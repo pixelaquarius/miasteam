@@ -670,6 +670,43 @@
             background: #FEF3C7; color: #92400E; border: 1px solid #F59E0B; border-radius: 8px;
             padding: 4px 8px; font-size: 0.72rem; font-weight: 700; margin-bottom: 8px; text-align: center;
         }
+        .outfit-btn { padding: 8px 6px; font-size: 0.78rem; }
+        #custPreviewCanvas { height: 158px; }
+        /* === KITCHEN & OUTFIT SHOP UI === */
+        .kitchen-panel {
+            position: fixed; top: 68px; right: 16px; z-index: 46; width: min(410px, calc(100vw - 32px));
+            max-height: calc(100vh - 152px); display: flex; flex-direction: column;
+            background: rgba(252, 246, 234, 0.97); backdrop-filter: blur(10px);
+            border: 1.5px solid #B8862D; border-radius: 18px; padding: 14px 16px;
+            box-shadow: 0 20px 50px rgba(20, 12, 6, 0.4); color: #2D2218;
+        }
+        .dish-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin: 8px 0; }
+        .dish-card {
+            padding: 8px; border-radius: 10px; border: 1.5px solid #DFCCA8; background: #FFFDF8;
+            text-align: left; cursor: pointer; font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.75rem;
+        }
+        .dish-card.active { border-color: #9E2418; background: #FDF0EC; color: #7C1D13; font-weight: 700; }
+        .recipe-box {
+            background: #FFFDF8; border: 1px solid #DFCCA8; border-radius: 10px;
+            padding: 9px 11px; font-size: 0.77rem; line-height: 1.5; margin-bottom: 10px;
+            max-height: 220px; overflow-y: auto; text-align: left;
+        }
+        .recipe-step { padding: 4px 6px; border-radius: 6px; margin-top: 4px; background: #FBF5E8; }
+        .recipe-step.done { background: #DCFCE7; color: #166534; }
+        .outfit-btn.locked { background: #F5EFE3; color: #6B5C4C; border-style: dashed; }
+        .outfit-price-tag {
+            display: block; font-family: 'JetBrains Mono', monospace; font-size: 0.66rem;
+            color: #9E2418; margin-top: 2px; font-weight: 700;
+        }
+        .buy-outfit-btn {
+            width: 100%; padding: 10px; border-radius: 12px; border: 1.5px solid #D99B26;
+            background: linear-gradient(180deg, #B93829, #8F1D14); color: #FFF8E7;
+            font-family: 'Be Vietnam Pro', sans-serif; font-weight: 700; font-size: 0.84rem;
+            cursor: pointer; margin-bottom: 8px;
+        }
+        @media (max-width: 640px) {
+            .kitchen-panel { left: 12px; right: 12px; width: auto; bottom: 72px; max-height: 58vh; }
+        }
 
     </style>
 </head>
@@ -729,6 +766,24 @@
 
 
     <div id="meritToast" class="merit-toast hidden"></div>
+
+    <!-- ==================== FLOATING KITCHEN & DINING PANEL (NHÀ ĂN CƠM CHAY) ==================== -->
+    <aside id="kitchenPanel" class="kitchen-panel hidden" aria-label="Nhà Ăn Cơm Chay">
+        <div class="modal-top-bar" style="margin-bottom:6px;">
+            <span class="year-pill">🍜 TRAI ĐƯỜNG • BẾP CƠM CHAY</span>
+            <button id="closeKitchenPanelBtn" class="modal-close-x" type="button" style="width:28px;height:28px;font-size:0.9rem;">✕</button>
+        </div>
+        <div id="chefGreetingBox" style="background:#F4E9D2;border:1px solid #DFCCA8;border-radius:10px;padding:7px 10px;font-size:0.77rem;font-weight:600;margin-bottom:6px;">
+            👩‍🍳 Cô Bếp: "Thí chủ hôm nay muốn ăn món chay gì để nhà bếp nấu và bưng ra bàn ạ?"
+        </div>
+        <div class="dish-grid" id="dishGrid"></div>
+        <div class="recipe-box" id="recipeBox"></div>
+        <div class="sutra-actions" style="flex-wrap:wrap;">
+            <button id="orderDishBtn" class="sutra-stand-btn" style="flex:1;" type="button">🍽️ Gọi Món Bưng Ra Bàn</button>
+            <button id="cookStepBtn" class="sutra-bell-btn" type="button">👨‍🍳 Thực Hành Nấu Bước 1</button>
+            <button id="eatTableDishBtn" class="sutra-stand-btn hidden" style="width:100%;background:#2D6A4F;" type="button">🙏 Thưởng Thức Món Trên Bàn (+2 Phước)</button>
+        </div>
+    </aside>
 
     <!-- ==================== FLOATING SUTRA & AFK MEDITATION PANEL ==================== -->
     <aside id="sutraPanel" class="sutra-panel hidden" aria-label="Đọc Kinh Phật Tích Phước">
@@ -958,10 +1013,14 @@
             <div class="cust-row">
                 <span class="quiz-label">Trang phục:</span>
                 <div class="outfit-grid" style="margin: 6px 0 0;">
-                    <button class="outfit-btn active" data-outfit="aodai" type="button">👘 Áo dài</button>
-                    <button class="outfit-btn" data-outfit="lam" type="button">🙏 Đồ lam đi chùa</button>
-                    <button class="outfit-btn" data-outfit="baba" type="button">🌾 Áo bà ba</button>
-                    <button class="outfit-btn" data-outfit="vest" type="button">💼 Vest công sở</button>
+                    <button class="outfit-btn active" data-outfit="aodai" type="button">👘 Áo dài<span class="outfit-price-tag"></span></button>
+                    <button class="outfit-btn" data-outfit="lam" type="button">🙏 Đồ lam đi chùa<span class="outfit-price-tag"></span></button>
+                    <button class="outfit-btn" data-outfit="baba" type="button">🌾 Áo bà ba<span class="outfit-price-tag"></span></button>
+                    <button class="outfit-btn" data-outfit="vest" type="button">💼 Vest công sở<span class="outfit-price-tag"></span></button>
+                    <button class="outfit-btn locked" data-outfit="nhatbinh" type="button">👑 Áo Nhật Bình<span class="outfit-price-tag">🔒 10 Phước</span></button>
+                    <button class="outfit-btn locked" data-outfit="aotac" type="button">🪶 Áo Tấc Cổ Phục<span class="outfit-price-tag">🔒 15 Phước</span></button>
+                    <button class="outfit-btn locked" data-outfit="hanhgia" type="button">🪷 Áo Hành Giả<span class="outfit-price-tag">🔒 8 Phước</span></button>
+                    <button class="outfit-btn locked" data-outfit="hoangkim" type="button">✨ Hoàng Bào Lễ<span class="outfit-price-tag">🔒 25 Phước</span></button>
                 </div>
             </div>
             <div class="cust-row">
@@ -977,7 +1036,8 @@
                     <button class="swatch" data-color="#1E293B" style="background:#1E293B" type="button" title="Đen than"></button>
                 </div>
             </div>
-            <button id="saveCustomBtn" class="shake-cta" style="width: 100%;" type="button">Lưu &amp; Tiếp Tục Đi Chùa</button>
+            <button id="buyOutfitBtn" class="buy-outfit-btn hidden" type="button">🛒 Mua Trang Phục</button>
+            <button id="saveCustomBtn" class="shake-cta" style="width: 100%;" type="button">Lưu &amp; Đồng Bộ Nhân Vật</button>
         </div>
     </div>
 
@@ -1289,6 +1349,7 @@
             const hairMat = new THREE.MeshStandardMaterial({ color: hairColor, roughness: 0.45, metalness: 0.1 });
             let pantsColor = 0xf5f1ea;
             if (outfit === "baba" || outfit === "vest") pantsColor = 0x1c1c22;
+            if (outfit === "hanhgia") pantsColor = 0x3f2e21;
             if (outfit === "lam" || outfit === "monk") pantsColor = new THREE.Color(robeColor).multiplyScalar(0.8).getHex();
             const pantsMat = new THREE.MeshStandardMaterial({ color: pantsColor, roughness: 0.7 });
             const shoeMat = new THREE.MeshStandardMaterial({ color: 0x2a1d16, roughness: 0.6 });
@@ -1358,6 +1419,39 @@
                     const skirt = new THREE.Mesh(new THREE.CylinderGeometry(waistR + 0.02, 0.24, 0.42, S), new THREE.MeshStandardMaterial({ color: 0x1c1c22, roughness: 0.6 }));
                     skirt.position.y = 0.66; group.add(skirt); skirtMeshes.push(skirt);
                 }
+            } else if (outfit === "nhatbinh") {
+                const goldTrim = new THREE.MeshStandardMaterial({ color: 0xd99b26, metalness: 0.5, roughness: 0.3 });
+                const flare = new THREE.Mesh(new THREE.CylinderGeometry(waistR + 0.03, 0.38, 0.78, S, 1, true), mainMat);
+                flare.position.y = 0.56; flare.castShadow = true; group.add(flare); skirtMeshes.push(flare);
+                const neckBand = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.34, 0.03), goldTrim);
+                neckBand.position.set(0, 1.34, shoulderW - 0.01); group.add(neckBand);
+                const hemGold = new THREE.Mesh(new THREE.TorusGeometry(0.37, 0.02, 8, S), goldTrim);
+                hemGold.rotation.x = Math.PI / 2; hemGold.position.y = 0.19; group.add(hemGold); skirtMeshes.push(hemGold);
+            } else if (outfit === "aotac") {
+                const satinTrim = new THREE.MeshStandardMaterial({ color: 0xfef3c7, roughness: 0.4 });
+                const gown = new THREE.Mesh(new THREE.CylinderGeometry(waistR + 0.02, 0.34, 0.84, S, 1, true), mainMat);
+                gown.position.y = 0.52; gown.castShadow = true; group.add(gown); skirtMeshes.push(gown);
+                const lapel = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.42, 0.03), satinTrim);
+                lapel.rotation.z = -0.35; lapel.position.set(0.03, 1.32, waistR + 0.045); group.add(lapel);
+                const sash = new THREE.Mesh(new THREE.TorusGeometry(waistR + 0.03, 0.028, 10, S), new THREE.MeshStandardMaterial({ color: 0xb93829, roughness: 0.4 }));
+                sash.rotation.x = Math.PI / 2; sash.position.y = 0.96; group.add(sash);
+            } else if (outfit === "hanhgia") {
+                const linenHem = new THREE.Mesh(new THREE.CylinderGeometry(waistR + 0.02, 0.28, 0.54, S, 1, true), mainMat);
+                linenHem.position.y = 0.66; group.add(linenHem); skirtMeshes.push(linenHem);
+                const beads = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.022, 10, 24), new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.4 }));
+                beads.rotation.x = 0.55; beads.position.set(0, 1.39, 0.08); group.add(beads);
+                const cord = new THREE.Mesh(new THREE.TorusGeometry(waistR + 0.02, 0.018, 8, S), new THREE.MeshStandardMaterial({ color: 0xd9a032, roughness: 0.5 }));
+                cord.rotation.x = Math.PI / 2; cord.position.y = 0.95; group.add(cord);
+            } else if (outfit === "hoangkim") {
+                const royalGold = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.65, roughness: 0.25 });
+                const cape = new THREE.Mesh(new THREE.CylinderGeometry(waistR + 0.05, 0.41, 0.88, S, 1, true), mainMat);
+                cape.position.y = 0.5; cape.castShadow = true; group.add(cape); skirtMeshes.push(cape);
+                const cloudCollar = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.34, 0.09, S), royalGold);
+                cloudCollar.position.y = 1.46; group.add(cloudCollar);
+                const medallion = new THREE.Mesh(new THREE.CircleGeometry(0.1, 20), royalGold);
+                medallion.position.set(0, 1.24, waistR + 0.065); group.add(medallion);
+                const belt = new THREE.Mesh(new THREE.TorusGeometry(waistR + 0.04, 0.03, 10, S), royalGold);
+                belt.rotation.x = Math.PI / 2; belt.position.y = 0.96; group.add(belt);
             }
 
             // --- Arms (rounded shoulder cap + pivot cleanly tucked to torso) ---
@@ -1466,6 +1560,21 @@
         let camYaw = typeof savedState.camYaw === "number" ? savedState.camYaw : 0;
         let camPitch = typeof savedState.camPitch === "number" ? Math.max(-0.35, Math.min(1.05, savedState.camPitch)) : 0.28;
         let camDist = typeof savedState.camDist === "number" ? Math.max(4.0, Math.min(16.0, savedState.camDist)) : 7.2;
+        let effectiveDist = camDist, effectivePitch = camPitch;
+        const OUTFIT_CATALOG = {
+            aodai: { name: "👘 Áo dài", cost: 0 },
+            lam: { name: "🙏 Đồ lam đi chùa", cost: 0 },
+            baba: { name: "🌾 Áo bà ba", cost: 0 },
+            vest: { name: "💼 Vest công sở", cost: 0 },
+            nhatbinh: { name: "👑 Áo Nhật Bình", cost: 10 },
+            aotac: { name: "🪶 Áo Tấc Cổ Phục", cost: 15 },
+            hanhgia: { name: "🪷 Áo Hành Giả", cost: 8 },
+            hoangkim: { name: "✨ Hoàng Bào Lễ", cost: 25 }
+        };
+        let unlockedOutfits = Array.isArray(savedState.unlockedOutfits)
+            ? Array.from(new Set(["aodai", "lam", "baba", "vest", ...savedState.unlockedOutfits]))
+            : ["aodai", "lam", "baba", "vest"];
+        if (!unlockedOutfits.includes(player.outfit)) player.outfit = "aodai";
         let hasLitIncense = !!savedState.hasLitIncense, nearTarget = null;
         let suppressedAutoModal = Math.hypot(player.x, player.z - (-13.5)) < 4.5;
         let lastFortuneNum = savedState.lastFortuneNum || null;
@@ -1497,7 +1606,7 @@
                         camYaw: Number(camYaw.toFixed(3)), camPitch: Number(camPitch.toFixed(3)), camDist: Number(camDist.toFixed(2)),
                         soundEnabled, hasLitIncense,
                         localIncenseCount: typeof incenseSticks !== "undefined" ? incenseSticks.length : 3,
-                        lastFortuneNum, meritPoints, leavesSwept, sutraSeconds, dailyFreeDate, freeFortuneDraws, extraFortuneDraws, dailyIncenseDate, freeIncenseLeft, meritBuffUntil, fortuneHistory, meritActivityLog, fishCount, fishFedCount, fishGrowth,
+                        unlockedOutfits, lastFortuneNum, meritPoints, leavesSwept, sutraSeconds, dailyFreeDate, freeFortuneDraws, extraFortuneDraws, dailyIncenseDate, freeIncenseLeft, meritBuffUntil, fortuneHistory, meritActivityLog, fishCount, fishFedCount, fishGrowth,
                         careerQuiz: qMoneyEl ? {
                             qMoney: qMoneyEl.value, qKpi: qKpiEl.value, qGoal: qGoalEl.value, qMood: qMoodEl.value
                         } : (savedState.careerQuiz || null)
@@ -1510,6 +1619,8 @@
         window.addEventListener("beforeunload", () => saveLocalState(true));
         let wScene, wCamera, wRenderer, playerMesh, smokeTex, cloudSprites = [], furnaceLight, furnaceGlowMat;
         const smokePuffs = [], guideArrows = [], petals = [], swayLanterns = [];
+        const roofZones = [], occlusionWalls = [];
+        let camRaycaster = null, _roofBoxHit = null;
 
         // ---------- Ground heights (hall platform + steps) & collisions ----------
         const HALL = { x: 8.5, zFront: -6.0, zBack: -18.0, h: 0.6 };
@@ -1908,6 +2019,8 @@
         }
 
         function init3DWorld() {
+            camRaycaster = new THREE.Raycaster();
+            _roofBoxHit = new THREE.Vector3();
             wScene = new THREE.Scene();
             wScene.background = new THREE.Color(0xd8e4ec);
             wScene.fog = new THREE.FogExp2(0xe6e2d6, 0.0105);
@@ -1961,6 +2074,14 @@
             const brickMat = new THREE.MeshStandardMaterial({ map: brickTex, bumpMap: brickTex, bumpScale: 0.5, roughness: 0.82 });
             const curbMat = new THREE.MeshStandardMaterial({ color: 0x9a948a, roughness: 0.8 });
             const roofArgs = { roofMat, trimMat, goldMat, gableMat, dragonMat };
+            const makeZoneRoofArgs = () => {
+                const rM = roofMat.clone(); rM.transparent = true; rM.opacity = 1;
+                const tM = trimMat.clone(); tM.transparent = true; tM.opacity = 1;
+                const gM = gableMat.clone(); gM.transparent = true; gM.opacity = 1;
+                const auM = goldMat.clone(); auM.transparent = true; auM.opacity = 1;
+                const dM = dragonMat.clone(); dM.transparent = true; dM.opacity = 1;
+                return { roofMat: rM, trimMat: tM, goldMat: auM, gableMat: gM, dragonMat: dM };
+            };
 
             // ---- Ground: grass outside, flagstone courtyard inside ----
             const grass = new THREE.Mesh(new THREE.PlaneGeometry(600, 600), new THREE.MeshStandardMaterial({ map: makeGrassTexture(120), roughness: 0.95 }));
@@ -2023,14 +2144,19 @@
             const sign = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 0.82), new THREE.MeshStandardMaterial({ map: makeTextPanel(["CHÙA VẠN PHÚC"], { w: 1024, h: 264, font: "700 104px 'Playfair Display', serif" }), roughness: 0.45 }));
             sign.position.set(0, 5.02, 0.37); gate.add(sign);
             const signBack = sign.clone(); signBack.rotation.y = Math.PI; signBack.position.z = -0.37; gate.add(signBack);
+            const gateRoofArgs = makeZoneRoofArgs();
+            const gateRoofList = [];
             [-1, 1].forEach(sx => {
                 const l = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.8, 0.6), plasterMat); l.position.set(sx * 3.15, 3.6, 0); l.castShadow = true; gate.add(l);
                 const filler = new THREE.Mesh(new THREE.BoxGeometry(0.5, 3.2, 0.6), plasterMat); filler.position.set(sx * 4.4, 1.6, 0); gate.add(filler);
-                const sr = buildTempleRoof({ w: 2.9, d: 2.6, h: 1.0, ...roofArgs, dragons: false }); sr.position.set(sx * 3.15, 4.0, 0); gate.add(sr);
+                const sr = buildTempleRoof({ w: 2.9, d: 2.6, h: 1.0, ...gateRoofArgs, dragons: false }); sr.position.set(sx * 3.15, 4.0, 0); gate.add(sr); gateRoofList.push(sr);
             });
-            const cr = buildTempleRoof({ w: 5.8, d: 3.4, h: 1.45, ...roofArgs, dragons: false }); cr.position.set(0, 5.85, 0); gate.add(cr);
-            const crWall = new THREE.Mesh(new THREE.BoxGeometry(3.1, 0.55, 1.3), redLacquerMat); crWall.position.set(0, 7.25, 0); gate.add(crWall);
-            const cr2 = buildTempleRoof({ w: 4.3, d: 2.5, h: 1.15, ...roofArgs, dragons: true }); cr2.position.set(0, 7.55, 0); gate.add(cr2);
+            const cr = buildTempleRoof({ w: 5.8, d: 3.4, h: 1.45, ...gateRoofArgs, dragons: false }); cr.position.set(0, 5.85, 0); gate.add(cr);
+            const crWallMat = redLacquerMat.clone(); crWallMat.transparent = true; crWallMat.opacity = 1;
+            const crWall = new THREE.Mesh(new THREE.BoxGeometry(3.1, 0.55, 1.3), crWallMat); crWall.position.set(0, 7.25, 0); gate.add(crWall);
+            const cr2 = buildTempleRoof({ w: 4.3, d: 2.5, h: 1.15, ...gateRoofArgs, dragons: true }); cr2.position.set(0, 7.55, 0); gate.add(cr2);
+            gateRoofList.push(cr, crWall, cr2);
+            roofZones.push({ name: "tamquan", x1: -5.5, x2: 5.5, z1: 15.8, z2: 20.2, indoorDist: 4.8, mats: [...Object.values(gateRoofArgs), crWallMat], roofs: gateRoofList, alpha: 1 });
             const coupletL = makeTextPanel(["AN", "KHANG", "THỊNH", "VƯỢNG"], { w: 256, h: 1024, vertical: true, font: "700 62px 'Playfair Display', serif" });
             const coupletR = makeTextPanel(["VẠN", "SỰ", "NHƯ", "Ý"], { w: 256, h: 1024, vertical: true, font: "700 70px 'Playfair Display', serif" });
             [[-2.1, coupletL], [2.1, coupletR]].forEach(([px, tex]) => {
@@ -2126,16 +2252,21 @@
             const sideWallGeo = new THREE.BoxGeometry(0.5, 4.9, 10.5);
             [-8.2, 8.2].forEach(px => {
                 const wl = new THREE.Mesh(sideWallGeo, plasterMat); wl.position.set(px, 3.05, -12.6); wl.castShadow = true; wl.receiveShadow = true; wScene.add(wl);
+                occlusionWalls.push(wl);
                 addBoxCol(px - 0.35, px + 0.35, -17.9, -7.3);
             });
             const hallBackWall = new THREE.Mesh(new THREE.BoxGeometry(16.9, 4.9, 0.5), plasterMat);
             hallBackWall.position.set(0, 3.05, -17.6); hallBackWall.receiveShadow = true; wScene.add(hallBackWall);
+            occlusionWalls.push(hallBackWall);
             addBoxCol(-8.5, 8.5, -18.0, -17.3);
             const carpet = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 6.0), new THREE.MeshStandardMaterial({ color: 0x8e1b12, roughness: 0.9 }));
             carpet.rotation.x = -Math.PI / 2; carpet.position.set(0, 0.615, -9.6); carpet.receiveShadow = true; wScene.add(carpet);
-            const lowerRoof = buildTempleRoof({ w: 19, d: 14, h: 2.5, ...roofArgs, dragons: false }); lowerRoof.position.set(0, 5.75, -12); wScene.add(lowerRoof);
-            const coDiem = new THREE.Mesh(new THREE.BoxGeometry(11, 1.3, 6.5), plasterMat); coDiem.position.set(0, 7.6, -12); wScene.add(coDiem);
-            const upperRoof = buildTempleRoof({ w: 12.5, d: 8.6, h: 2.1, ...roofArgs, dragons: true }); upperRoof.position.set(0, 8.1, -12); wScene.add(upperRoof);
+            const mainRoofArgs = makeZoneRoofArgs();
+            const lowerRoof = buildTempleRoof({ w: 19, d: 14, h: 2.5, ...mainRoofArgs, dragons: false }); lowerRoof.position.set(0, 5.75, -12); wScene.add(lowerRoof);
+            const coDiemMat = plasterMat.clone(); coDiemMat.transparent = true; coDiemMat.opacity = 1;
+            const coDiem = new THREE.Mesh(new THREE.BoxGeometry(11, 1.3, 6.5), coDiemMat); coDiem.position.set(0, 7.6, -12); wScene.add(coDiem);
+            const upperRoof = buildTempleRoof({ w: 12.5, d: 8.6, h: 2.1, ...mainRoofArgs, dragons: true }); upperRoof.position.set(0, 8.1, -12); wScene.add(upperRoof);
+            roofZones.push({ name: "chinhdien", x1: -9.2, x2: 9.2, z1: -18.3, z2: -5.8, indoorDist: 4.15, mats: [...Object.values(mainRoofArgs), coDiemMat], roofs: [lowerRoof, coDiem, upperRoof], alpha: 1 });
             [-6, -3, 3, 6].forEach(px => { const ln = makeLantern(0xd42a1a, 1.0); ln.position.set(px, 4.4, -6.2); wScene.add(ln); swayLanterns.push(ln); });
 
             // Buddha statue + offerings + fortune altar
@@ -2186,15 +2317,19 @@
                 addCircleCol(px, -20.5, 0.35);
             });
             const rearBack = new THREE.Mesh(new THREE.BoxGeometry(15.6, 4.2, 0.45), plasterMat); rearBack.position.set(0, 2.26, -26.5); wScene.add(rearBack);
+            occlusionWalls.push(rearBack);
             [-7.6, 7.6].forEach(px => {
                 const sw = new THREE.Mesh(new THREE.BoxGeometry(0.45, 4.2, 6.2), plasterMat); sw.position.set(px, 2.26, -23.5); wScene.add(sw);
+                occlusionWalls.push(sw);
                 addBoxCol(px - 0.3, px + 0.3, -26.8, -20.2);
             });
             addBoxCol(-7.9, 7.9, -26.8, -26.2);
             const rearSign = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 0.78), new THREE.MeshStandardMaterial({ map: makeTextPanel(["TỔ ĐƯỜNG • HẬU ĐIỆN"], { w: 1024, h: 240, font: "700 84px 'Playfair Display', serif" }), roughness: 0.45 }));
             rearSign.position.set(0, 3.85, -20.22); wScene.add(rearSign);
-            const rearRoof1 = buildTempleRoof({ w: 17.5, d: 8.6, h: 2.0, ...roofArgs, dragons: false }); rearRoof1.position.set(0, 4.4, -23.5); wScene.add(rearRoof1);
-            const rearRoof2 = buildTempleRoof({ w: 10.5, d: 5.5, h: 1.5, ...roofArgs, dragons: true }); rearRoof2.position.set(0, 6.1, -23.5); wScene.add(rearRoof2);
+            const rearRoofArgs = makeZoneRoofArgs();
+            const rearRoof1 = buildTempleRoof({ w: 17.5, d: 8.6, h: 2.0, ...rearRoofArgs, dragons: false }); rearRoof1.position.set(0, 4.4, -23.5); wScene.add(rearRoof1);
+            const rearRoof2 = buildTempleRoof({ w: 10.5, d: 5.5, h: 1.5, ...rearRoofArgs, dragons: true }); rearRoof2.position.set(0, 6.1, -23.5); wScene.add(rearRoof2);
+            roofZones.push({ name: "toduong", x1: -8.4, x2: 8.4, z1: -27.2, z2: -19.8, indoorDist: 4.0, mats: Object.values(rearRoofArgs), roofs: [rearRoof1, rearRoof2], alpha: 1 });
             const rearAltar = new THREE.Mesh(new THREE.BoxGeometry(4.2, 1.0, 1.2), woodMat); rearAltar.position.set(0, 0.66, -25.2); wScene.add(rearAltar);
             const rearUrn = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.18, 0.4, 20), bronzeMat); rearUrn.position.set(0, 1.36, -25.2); wScene.add(rearUrn);
             addBoxCol(-2.2, 2.2, -25.9, -24.5);
@@ -2212,17 +2347,21 @@
                 addCircleCol(-10.5, -1.5 + dz * 0.9, 0.34);
             });
             const lectBack = new THREE.Mesh(new THREE.BoxGeometry(0.45, 4.3, 10.6), plasterMat); lectBack.position.set(-21.6, 2.31, -1.5); wScene.add(lectBack);
+            occlusionWalls.push(lectBack);
             addBoxCol(-21.9, -21.3, -6.9, 3.9);
             [-6.7, 3.7].forEach(wz => {
                 const sw = new THREE.Mesh(new THREE.BoxGeometry(11.0, 4.3, 0.45), plasterMat); sw.position.set(-16.0, 2.31, wz); wScene.add(sw);
+                occlusionWalls.push(sw);
                 addBoxCol(-21.6, -10.5, wz - 0.3, wz + 0.3);
             });
             const lectSign = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 0.8), new THREE.MeshStandardMaterial({ map: makeTextPanel(["GIẢNG ĐƯỜNG TỤNG KINH"], { w: 1024, h: 200, font: "700 76px 'Playfair Display', serif" }), roughness: 0.45 }));
             lectSign.rotation.y = Math.PI / 2; lectSign.position.set(-10.18, 4.05, -1.5); wScene.add(lectSign);
-            const lectRoof = buildTempleRoof({ w: 12.6, d: 13.0, h: 2.3, ...roofArgs, dragons: false });
+            const lectRoofArgs = makeZoneRoofArgs();
+            const lectRoof = buildTempleRoof({ w: 12.6, d: 13.0, h: 2.3, ...lectRoofArgs, dragons: false });
             lectRoof.rotation.y = Math.PI / 2; lectRoof.position.set(-16.0, 4.55, -1.5); wScene.add(lectRoof);
-            const lectRoof2 = buildTempleRoof({ w: 7.5, d: 7.5, h: 1.5, ...roofArgs, dragons: true });
+            const lectRoof2 = buildTempleRoof({ w: 7.5, d: 7.5, h: 1.5, ...lectRoofArgs, dragons: true });
             lectRoof2.rotation.y = Math.PI / 2; lectRoof2.position.set(-16.0, 6.4, -1.5); wScene.add(lectRoof2);
+            roofZones.push({ name: "giangduong", x1: -22.0, x2: -10.0, z1: -7.2, z2: 4.2, indoorDist: 4.2, mats: Object.values(lectRoofArgs), roofs: [lectRoof, lectRoof2], alpha: 1 });
             [-3.5, 0.5].forEach(dz => { const ln = makeLantern(0xd42a1a, 0.95); ln.position.set(-10.1, 3.5, -1.5 + dz); wScene.add(ln); swayLanterns.push(ln); });
 
             // Dharma Lectern + Open Glowing Sutra + Giant Bronze Bowl + Wood Fish at x = -19.8, z = -1.5
@@ -2250,10 +2389,12 @@
                 col.position.set(-19.5 + dx, 3.26, 11.5 + dz); col.castShadow = true; wScene.add(col);
                 addCircleCol(-19.5 + dx, 11.5 + dz, 0.32);
             });
-            const btRoof1 = buildTempleRoof({ w: 5.4, d: 5.4, h: 1.35, ...roofArgs, dragons: false }); btRoof1.position.set(-19.5, 3.3, 11.5); wScene.add(btRoof1);
+            const btRoofArgs = makeZoneRoofArgs();
+            const btRoof1 = buildTempleRoof({ w: 5.4, d: 5.4, h: 1.35, ...btRoofArgs, dragons: false }); btRoof1.position.set(-19.5, 3.3, 11.5); wScene.add(btRoof1);
             const btSign = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 0.55), new THREE.MeshStandardMaterial({ map: makeTextPanel(["GÁC CHUÔNG"], { w: 768, h: 192, font: "700 84px 'Playfair Display', serif" }), roughness: 0.45 }));
             btSign.position.set(-19.5, 3.1, 13.7); wScene.add(btSign);
-            const btRoof2 = buildTempleRoof({ w: 4.5, d: 4.5, h: 1.65, ...roofArgs, dragons: true }); btRoof2.position.set(-19.5, 6.2, 11.5); wScene.add(btRoof2);
+            const btRoof2 = buildTempleRoof({ w: 4.5, d: 4.5, h: 1.65, ...btRoofArgs, dragons: true }); btRoof2.position.set(-19.5, 6.2, 11.5); wScene.add(btRoof2);
+            roofZones.push({ name: "gacchuong", x1: -22.2, x2: -16.8, z1: 8.8, z2: 14.2, indoorDist: 4.4, mats: Object.values(btRoofArgs), roofs: [btRoof1, btRoof2], alpha: 1 });
             hangingBellGroup = new THREE.Group();
             hangingBellGroup.position.set(-19.5, 5.8, 11.5);
             const bellPts = [new THREE.Vector2(0.55, -1.4), new THREE.Vector2(0.46, -0.9), new THREE.Vector2(0.42, -0.3), new THREE.Vector2(0.22, 0), new THREE.Vector2(0, 0.05)];
@@ -2269,17 +2410,53 @@
                 c.position.set(11.0, 2.26, -1.5 + dz); c.castShadow = true; wScene.add(c);
                 addCircleCol(11.0, -1.5 + dz, 0.34);
             });
+            const eastFloor = new THREE.Mesh(new THREE.BoxGeometry(9.8, 0.03, 9.6), lectMat);
+            eastFloor.position.set(16.0, 0.175, -1.5); eastFloor.receiveShadow = true; wScene.add(eastFloor);
             const eastBack = new THREE.Mesh(new THREE.BoxGeometry(0.45, 4.2, 10.2), plasterMat); eastBack.position.set(21.1, 2.26, -1.5); wScene.add(eastBack);
+            occlusionWalls.push(eastBack);
             addBoxCol(20.8, 21.4, -6.7, 3.7);
             [-6.5, 3.5].forEach(wz => {
                 const sw = new THREE.Mesh(new THREE.BoxGeometry(10.0, 4.2, 0.45), plasterMat); sw.position.set(16.0, 2.26, wz); wScene.add(sw);
+                occlusionWalls.push(sw);
                 addBoxCol(11.0, 21.1, wz - 0.3, wz + 0.3);
             });
-            const eastSign = new THREE.Mesh(new THREE.PlaneGeometry(4.0, 0.78), new THREE.MeshStandardMaterial({ map: makeTextPanel(["ĐÔNG LANG • TRAI ĐƯỜNG"], { w: 1024, h: 200, font: "700 74px 'Playfair Display', serif" }), roughness: 0.45 }));
+            const eastSign = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 0.78), new THREE.MeshStandardMaterial({ map: makeTextPanel(["TRAI ĐƯỜNG • NHÀ ĂN CHAY"], { w: 1024, h: 200, font: "700 72px 'Playfair Display', serif" }), roughness: 0.45 }));
             eastSign.rotation.y = -Math.PI / 2; eastSign.position.set(10.72, 3.95, -1.5); wScene.add(eastSign);
-            const eastRoof = buildTempleRoof({ w: 11.8, d: 12.2, h: 2.2, ...roofArgs, dragons: true });
+            const eastRoofArgs = makeZoneRoofArgs();
+            const eastRoof = buildTempleRoof({ w: 11.8, d: 12.2, h: 2.2, ...eastRoofArgs, dragons: true });
             eastRoof.rotation.y = Math.PI / 2; eastRoof.position.set(16.0, 4.4, -1.5); wScene.add(eastRoof);
+            roofZones.push({ name: "traiduong", x1: 10.4, x2: 21.6, z1: -7.0, z2: 4.0, indoorDist: 4.15, mats: Object.values(eastRoofArgs), roofs: [eastRoof], alpha: 1 });
             [-3.0, 0.5].forEach(dz => { const ln = makeLantern(0xd42a1a, 0.9); ln.position.set(10.65, 3.4, -1.5 + dz); wScene.add(ln); swayLanterns.push(ln); });
+            const diningLight = new THREE.PointLight(0xffbe76, 1.8, 12, 2); diningLight.position.set(16.0, 3.6, -1.5); wScene.add(diningLight);
+
+            // Nhà Ăn Cơm Chay Furniture: Bếp Lửa (x=19.0, z=-3.8) + Bàn Ăn Dài & Ghế (x=14.5, z=-1.2)
+            const kCounter = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.9, 3.8), woodMat); kCounter.position.set(19.0, 0.61, -3.7); kCounter.castShadow = true; wScene.add(kCounter);
+            const kTop = new THREE.Mesh(new THREE.BoxGeometry(1.48, 0.08, 3.88), stoneMat); kTop.position.set(19.0, 1.09, -3.7); wScene.add(kTop);
+            const kStove = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.5, 0.25, 20), brickMat); kStove.position.set(18.9, 1.25, -4.6); wScene.add(kStove);
+            const wok = new THREE.Mesh(new THREE.SphereGeometry(0.36, 20, 12, 0, Math.PI * 2, Math.PI * 0.45, Math.PI * 0.55), new THREE.MeshStandardMaterial({ color: 0x1f2937, metalness: 0.6, roughness: 0.35, side: THREE.DoubleSide }));
+            wok.position.set(18.9, 1.48, -4.6); wScene.add(wok);
+            const fireEmber = new THREE.Mesh(new THREE.SphereGeometry(0.16, 10, 8), new THREE.MeshBasicMaterial({ color: 0xff6b1a })); fireEmber.position.set(18.62, 1.22, -4.6); wScene.add(fireEmber);
+            [-3.3, -2.5].forEach(bz => {
+                const st = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.24, 20), bambooMat); st.position.set(18.95, 1.25, bz); wScene.add(st);
+                const lid = new THREE.Mesh(new THREE.ConeGeometry(0.25, 0.12, 20), bambooMat); lid.position.set(18.95, 1.43, bz); wScene.add(lid);
+            });
+            const kSign = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 0.65), new THREE.MeshStandardMaterial({ map: makeTextPanel(["🍜 BẾP CƠM CHAY"], { w: 768, h: 200, font: "700 68px 'Be Vietnam Pro', sans-serif" }), roughness: 0.45 }));
+            kSign.rotation.y = -Math.PI / 2; kSign.position.set(20.75, 2.75, -3.7); wScene.add(kSign);
+            addBoxCol(18.1, 20.0, -5.8, -1.7);
+
+            const dTableTop = new THREE.Mesh(new THREE.BoxGeometry(1.45, 0.1, 3.2), woodMat); dTableTop.position.set(14.5, 0.92, -1.2); dTableTop.castShadow = true; wScene.add(dTableTop);
+            [[-0.55, -1.3], [0.55, -1.3], [-0.55, 1.3], [0.55, 1.3]].forEach(([dx, dz]) => {
+                const leg = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.76, 0.12), woodMat); leg.position.set(14.5 + dx, 0.54, -1.2 + dz); wScene.add(leg);
+            });
+            const teaPot = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.13, 0.18, 16), new THREE.MeshStandardMaterial({ color: 0xfffdf8, roughness: 0.3 }));
+            teaPot.position.set(14.5, 1.06, -2.35); wScene.add(teaPot);
+            [13.35, 15.65].forEach(bx => {
+                const bench = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.08, 2.8), woodMat); bench.position.set(bx, 0.56, -1.2); bench.castShadow = true; wScene.add(bench);
+                [-1.1, 1.1].forEach(bz => {
+                    const bLeg = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.4, 0.1), woodMat); bLeg.position.set(bx, 0.36, -1.2 + bz); wScene.add(bLeg);
+                });
+            });
+            addBoxCol(13.68, 15.32, -2.9, 0.5);
 
             // Sếp HR Desk beside East Pavilion (x = 9.0, z = 4)
             const graceDesk = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.95, 1.3), woodMat); graceDesk.position.set(9, 0.55, 4); graceDesk.castShadow = true; wScene.add(graceDesk);
@@ -2571,6 +2748,11 @@
                 id: "grace", name: "Sếp 👑", robeColor: "#7F1D1D", isBoss: true, gender: "female", outfit: "vest",
                 x: 9.0, z: 2.6, role: "boss",
                 chat: "Ai muốn xem hợp Cày Cuốc hay Nghỉ Việc qua đây!"
+            },
+            {
+                id: "chef", name: "Cô Bếp An Nhiên", robeColor: "#9A3412", gender: "female", outfit: "baba",
+                x: 17.5, z: -4.2, role: "chef",
+                chat: "Thí chủ ăn cơm chay hay học nấu cùng nhà bếp ạ? [E] 🍲"
             }
         ];
 
@@ -2583,9 +2765,17 @@
                 });
                 mesh.position.set(cfg.x, groundHeight(cfg.x, cfg.z), cfg.z);
                 wScene.add(mesh);
+                let trayAnchor = null;
+                if (cfg.role === "chef") {
+                    const apron = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.56, 0.04), new THREE.MeshStandardMaterial({ color: 0xfffdf8, roughness: 0.7 }));
+                    apron.position.set(0, 1.05, 0.21); mesh.add(apron);
+                    trayAnchor = new THREE.Group(); trayAnchor.position.set(0, 1.06, 0.46); mesh.add(trayAnchor);
+                    mesh.rotation.y = Math.atan2(-3.0, 3.0);
+                }
                 npcInstances.push({
-                    ...cfg, mesh, labelObj: createLabelEl(cfg.id, cfg.name, false),
-                    wpIdx: cfg.startIdx || 0, wait: 60 + Math.random() * 100, walkPhase: 0, chatTimer: cfg.id === 'pilgrim1' ? 140 : 0, nextChatAt: 160 + Math.floor(Math.random() * 400), task: null, merit: cfg.role === 'master' ? 120 : 12 + Math.floor(Math.random() * 25), sitting: false
+                    ...cfg, mesh, trayAnchor, carryTray: null, pendingDish: null, greetedPlayer: false,
+                    labelObj: createLabelEl(cfg.id, cfg.name, false),
+                    wpIdx: cfg.startIdx || 0, wait: 60 + Math.random() * 100, walkPhase: 0, chatTimer: cfg.id === 'pilgrim1' ? 140 : 0, nextChatAt: 160 + Math.floor(Math.random() * 400), task: cfg.role === "chef" ? "idle" : null, merit: cfg.role === 'master' ? 120 : 12 + Math.floor(Math.random() * 25), sitting: false
                 });
             });
         }
@@ -2603,6 +2793,8 @@
                         n.chat = `Lư hương đang có ${incenseSticks.length} nén ạ 🕯️`; n.chatTimer = 220;
                     } else if (n.role === "boss" && (low.includes("nghỉ") || low.includes("kpi") || low.includes("lương"))) {
                         n.chat = "Đừng hòng trốn KPI nhé em! 😤"; n.chatTimer = 240;
+                    } else if (n.role === "chef" && (low.includes("ăn") || low.includes("cơm") || low.includes("đói") || low.includes("nấu") || low.includes("chay") || low.includes("phở"))) {
+                        n.chat = "Mời thí chủ vào Trai Đường chọn Cơm Sen, Phở Nấm hoặc tự học nấu nhé! 🍜"; n.chatTimer = 240;
                     }
                 }, 400 + idx * 300);
             });
@@ -2641,32 +2833,40 @@
         function upsertRemotePlayer(data) {
             if (!data || !data.id || data.id === myId || data.type) return;
             let rp = remotePlayers.get(data.id);
-            const g = data.gender || "male", o = data.outfit || "aodai", col = data.color || "#0284C7";
+            const g = data.gender || "male", o = data.outfit || "aodai", col = data.color || "#0284C7", hb = !!data.hasBroom;
             if (!rp) {
-                const mesh = createArticulatedCharacter({ robeColor: col, gender: g, outfit: o });
+                const mesh = createArticulatedCharacter({ robeColor: col, gender: g, outfit: o, hasBroom: hb });
                 mesh.position.set(data.x || 0, groundHeight(data.x || 0, data.z || 28), data.z || 28);
                 wScene.add(mesh);
-                rp = { ...data, gender: g, outfit: o, color: col, mesh, labelObj: createLabelEl(data.id, data.name || "Khách", false), walkPhase: 0, lastSeen: Date.now() };
+                rp = { ...data, gender: g, outfit: o, color: col, hasBroom: hb, mesh, labelObj: createLabelEl(data.id, data.name || "Khách", false), walkPhase: 0, lastSeen: Date.now() };
                 remotePlayers.set(data.id, rp);
-            } else if (rp.gender !== g || rp.outfit !== o || rp.color !== col) {
+            } else if (rp.gender !== g || rp.outfit !== o || rp.color !== col || !!rp.hasBroom !== hb) {
                 wScene.remove(rp.mesh);
-                rp.mesh = createArticulatedCharacter({ robeColor: col, gender: g, outfit: o });
+                rp.mesh = createArticulatedCharacter({ robeColor: col, gender: g, outfit: o, hasBroom: hb });
                 rp.mesh.position.set(rp.tx || data.x || 0, groundHeight(rp.tx || 0, rp.tz || 28), rp.tz || data.z || 28);
                 wScene.add(rp.mesh);
-                rp.gender = g; rp.outfit = o; rp.color = col;
+                rp.gender = g; rp.outfit = o; rp.color = col; rp.hasBroom = hb;
             }
             rp.tx = data.x; rp.tz = data.z; rp.rotY = data.rotY || 0;
-            rp.name = data.name || rp.name; rp.chat = data.chat || ""; rp.merit = Number(data.merit || 0); rp.sitting = !!data.sitting; rp.seat = Number(data.seat || 0); rp.lastSeen = Date.now();
+            rp.name = data.name || rp.name;
+            if (rp.labelObj && rp.labelObj.nm) rp.labelObj.nm.textContent = rp.name;
+            rp.chat = data.chat || ""; rp.merit = Number(data.merit || 0); rp.sitting = !!data.sitting; rp.seat = Number(data.seat || 0); rp.lastSeen = Date.now();
         }
 
         function myStatePayload() {
             return {
                 id: myId, x: Number(player.x.toFixed(2)), z: Number(player.z.toFixed(2)),
                 rotY: Number(player.rotY.toFixed(2)), name: player.name, color: player.color,
-                gender: player.gender, outfit: player.outfit,
+                gender: player.gender, outfit: player.outfit, hasBroom: playerHasBroom,
                 merit: meritPoints, sitting: playerSitting, seat: playerSeatIdx,
                 chat: player.chatTimer > 0 ? player.chat : ""
             };
+        }
+
+        function publishMyStateNow() {
+            const payload = myStatePayload();
+            try { if (bcChannel) bcChannel.postMessage(payload); } catch (e) {}
+            try { if (mqttClient && mqttClient.connected) mqttClient.publish(MQTT_TOPIC, JSON.stringify(payload)); } catch (e) {}
         }
 
         function initMultiplayer() {
@@ -2826,6 +3026,7 @@
             } else if (nearTarget === "broom_rack") {
                 playerHasBroom = !playerHasBroom;
                 rebuildPlayerMesh();
+                publishMyStateNow();
                 playBambooClick(1.0);
                 player.chat = playerHasBroom ? "Cầm chổi đi quét lá tích đức 🧹" : "Đã cất chổi vào giá 🙏";
                 player.chatTimer = 200;
@@ -2865,6 +3066,8 @@
                 saveLocalState(true);
             } else if (nearTarget === "altar") {
                 openFortuneModal();
+            } else if (nearTarget === "kitchen") {
+                openKitchenPanel();
             } else if (nearTarget === "grace") {
                 openCareerModal();
             }
@@ -2911,6 +3114,11 @@
                 armL.rotation.x = swing * 0.4;
                 armR.rotation.x = -2.25; armR.rotation.z = -0.25;
                 armL.rotation.y = 0; armL.rotation.z = 0; armR.rotation.y = 0; legL.rotation.set(-swing, 0, 0); legR.rotation.set(swing, 0, 0);
+            } else if (mode === "hold_tray") {
+                const swing = Math.sin(phase) * 0.42;
+                armL.rotation.set(-0.92, 0.12, -0.06);
+                armR.rotation.set(-0.92, -0.12, 0.06);
+                legL.rotation.set(-swing, 0, 0); legR.rotation.set(swing, 0, 0);
             } else if (mode === "sweep") {
                 armR.rotation.x = -0.5 + Math.sin(Date.now() * 0.008) * 0.35;
                 armR.rotation.z = Math.cos(Date.now() * 0.008) * 0.2;
@@ -2983,22 +3191,73 @@
             playerMesh.position.set(player.x, py, player.z);
             playerMesh.rotation.y = player.rotY;
 
-            // Responsive FPS-style 3rd-person camera (allows looking up at sky/roofs & rotating 360°)
-            const horizD = Math.cos(camPitch) * camDist;
-            const vertD = Math.sin(camPitch) * camDist;
+            // Smart indoor/outdoor camera near-far + smooth roof fade + wall collision clamp
+            const activeRoofZone = roofZones.find(z => player.x >= z.x1 && player.x <= z.x2 && player.z >= z.z1 && player.z <= z.z2);
+            const desiredDist = activeRoofZone ? Math.min(camDist, activeRoofZone.indoorDist || 4.15) : camDist;
+            const desiredPitch = activeRoofZone ? Math.max(-0.12, Math.min(0.46, camPitch)) : camPitch;
+
+            const pHead = new THREE.Vector3(player.x, py + 1.48, player.z);
+            const camRayDir = new THREE.Vector3(
+                Math.sin(camYaw) * Math.cos(desiredPitch),
+                Math.sin(desiredPitch),
+                Math.cos(camYaw) * Math.cos(desiredPitch)
+            ).normalize();
+            camRaycaster.set(pHead, camRayDir);
+            camRaycaster.far = desiredDist + 0.4;
+
+            let wallLimit = desiredDist;
+            if (occlusionWalls.length) {
+                const wHits = camRaycaster.intersectObjects(occlusionWalls, false);
+                if (wHits.length > 0 && wHits[0].distance > 0.6) {
+                    wallLimit = Math.min(wallLimit, Math.max(2.05, wHits[0].distance - 0.5));
+                }
+            }
+            const targetDist = Math.min(desiredDist, wallLimit);
+            effectiveDist += (targetDist - effectiveDist) * 0.14;
+            effectivePitch += (desiredPitch - effectivePitch) * 0.14;
+
+            const horizD = Math.cos(effectivePitch) * effectiveDist;
+            const vertD = Math.sin(effectivePitch) * effectiveDist;
             const targetCamX = player.x + Math.sin(camYaw) * horizD;
-            const targetCamY = Math.max(py + 0.68, py + 1.55 + vertD * 0.85);
             const targetCamZ = player.z + Math.cos(camYaw) * horizD;
+            const floorAtCam = groundHeight(targetCamX, targetCamZ);
+            const targetCamY = Math.max(floorAtCam + 0.55, Math.max(py + 0.65, py + 1.52 + vertD * 0.85));
             const camLerp = document.pointerLockElement === worldCanvas ? 0.52 : 0.22;
             wCamera.position.x += (targetCamX - wCamera.position.x) * camLerp;
             wCamera.position.y += (targetCamY - wCamera.position.y) * camLerp;
             wCamera.position.z += (targetCamZ - wCamera.position.z) * camLerp;
-            const lookOffY = camPitch < 0.22 ? (0.22 - camPitch) * 4.5 : -(camPitch - 0.28) * 1.4;
+            const lookOffY = effectivePitch < 0.22 ? (0.22 - effectivePitch) * 3.8 : -(effectivePitch - 0.28) * 1.15;
             wCamera.lookAt(
-                player.x - Math.sin(camYaw) * 2.0,
-                py + 1.55 + lookOffY,
-                player.z - Math.cos(camYaw) * 2.0
+                player.x - Math.sin(camYaw) * (activeRoofZone ? 1.2 : 2.0),
+                py + 1.52 + lookOffY,
+                player.z - Math.cos(camYaw) * (activeRoofZone ? 1.2 : 2.0)
             );
+
+            // Fade roofs containing the player OR occluding camera-to-player line of sight (fast Box3 check)
+            const camVec = wCamera.position.clone().sub(pHead);
+            const camVecLen = camVec.length();
+            if (camVecLen > 0.1) camRaycaster.set(pHead, camVec.normalize());
+            roofZones.forEach(rz => {
+                if (!rz.roofBox) {
+                    rz.roofBox = new THREE.Box3();
+                    rz.roofs.forEach(r => rz.roofBox.expandByObject(r));
+                }
+                const inside = (player.x >= rz.x1 - 0.5 && player.x <= rz.x2 + 0.5 && player.z >= rz.z1 - 0.5 && player.z <= rz.z2 + 0.5)
+                    || (wCamera.position.x >= rz.x1 && wCamera.position.x <= rz.x2 && wCamera.position.z >= rz.z1 && wCamera.position.z <= rz.z2 && wCamera.position.y < 6.5);
+                let rayBlocked = false;
+                if (!inside && camVecLen > 0.1 && camRaycaster.ray.intersectBox(rz.roofBox, _roofBoxHit)) {
+                    rayBlocked = _roofBoxHit.distanceTo(pHead) < camVecLen;
+                }
+                const targetAlpha = (inside || rayBlocked) ? 0.14 : 1.0;
+                rz.alpha += (targetAlpha - rz.alpha) * 0.16;
+                if (rz.lastAlpha === undefined || Math.abs(rz.alpha - rz.lastAlpha) > 0.004) {
+                    rz.lastAlpha = rz.alpha;
+                    rz.mats.forEach(m => {
+                        m.opacity = rz.alpha;
+                        m.depthWrite = rz.alpha > 0.85;
+                    });
+                }
+            });
 
             // Drifting clouds & swaying lanterns
             cloudSprites.forEach(c => {
@@ -3175,6 +3434,58 @@
                     }
                 }
 
+                if (n.role === "chef") {
+                    const inDining = player.x > 11.2 && player.x < 20.8 && player.z > -6.0 && player.z < 3.0;
+                    if (!inDining && player.x < 9.5) n.greetedPlayer = false;
+                    if (n.task === "cooking") {
+                        n.mesh.rotation.y = Math.atan2(18.9 - n.x, -4.6 - n.z);
+                        animateArticulated(n.mesh, Date.now() * 0.012, "sweep");
+                        n.wait--;
+                        if (n.wait <= 0 && n.pendingDish) {
+                            const tray = makeDishTrayMesh(n.pendingDish.color);
+                            if (n.trayAnchor) n.trayAnchor.add(tray);
+                            n.carryTray = tray;
+                            n.task = "carrying";
+                            n.chat = `Đang bưng ${n.pendingDish.name} ra bàn ạ! 🍲`; n.chatTimer = 240;
+                        }
+                    } else if (n.task === "carrying") {
+                        if (stepNpcToward(n, 15.85, -1.2, 0.055, "hold_tray")) {
+                            if (n.carryTray && n.trayAnchor) { n.trayAnchor.remove(n.carryTray); n.carryTray = null; }
+                            if (tableDishMesh) wScene.remove(tableDishMesh);
+                            tableDishInfo = n.pendingDish;
+                            tableDishMesh = makeDishTrayMesh(n.pendingDish ? n.pendingDish.color : 0xfacc15);
+                            tableDishMesh.position.set(14.5, 0.99, -1.0);
+                            wScene.add(tableDishMesh);
+                            if (typeof renderKitchenUI === "function") renderKitchenUI();
+                            if (chefGreetingBox && n.pendingDish) {
+                                chefGreetingBox.textContent = `👩‍🍳 Cô Bếp: "Đã bưng ${n.pendingDish.name} ra bàn rồi! Mời thí chủ thưởng thức hoặc thực hành nấu thêm nhé!"`;
+                            }
+                            playWoodFish();
+                            n.chat = `Mời thí chủ dùng ${n.pendingDish ? n.pendingDish.name : "cơm chay"} trên bàn! 🙏`; n.chatTimer = 260;
+                            n.merit = (n.merit || 0) + 1;
+                            n.pendingDish = null;
+                            n.task = "returning";
+                        }
+                    } else if (n.task === "returning") {
+                        if (stepNpcToward(n, 17.5, -4.2, 0.05, "walk")) {
+                            n.task = "idle";
+                            n.mesh.rotation.y = Math.atan2(-3.0, 3.0);
+                        }
+                    } else {
+                        animateArticulated(n.mesh, 0);
+                        n.mesh.rotation.y = Math.atan2(player.x - n.x, player.z - n.z);
+                        if (inDining && !n.greetedPlayer) {
+                            n.greetedPlayer = true;
+                            n.chat = "Thí chủ muốn ăn món chay gì để bếp nấu & bưng ra bàn ạ? 🍲"; n.chatTimer = 260;
+                        }
+                    }
+                    n.mesh.position.set(n.x, groundHeight(n.x, n.z), n.z);
+                    if (n.chatTimer > 0) n.chatTimer--;
+                    else if (n.nextChatAt !== undefined) { n.nextChatAt--; if (n.nextChatAt <= 0) { n.chatTimer = 170; n.nextChatAt = 480 + Math.floor(Math.random() * 520); } }
+                    projectLabel(n.mesh.position, n.labelObj, n.name, n.chatTimer > 0 ? n.chat : "");
+                    return;
+                }
+
                 if (n.role === "sweeper") {
                     for (let li = groundLeaves.length - 1; li >= 0; li--) {
                         if (Math.hypot(groundLeaves[li].x - n.x, groundLeaves[li].z - n.z) < 1.2) { sweepLeafAt(li, false); n.merit = (n.merit || 0) + 1; break; }
@@ -3253,6 +3564,7 @@
             const dBroom = Math.hypot(player.x - (-5.4), player.z - 6.2);
             const dPond = Math.hypot(player.x - 6.2, player.z - 10.5);
             const dBell = Math.hypot(player.x - (-19.5), player.z - 11.5);
+            const dKitchen = (player.x > 11.2 && player.x < 20.8 && player.z > -6.0 && player.z < 3.0) ? 0 : Math.hypot(player.x - 14.5, player.z - (-1.2));
             const hasNearbyLeaf = playerHasBroom && groundLeaves.some(gl => Math.hypot(gl.x - player.x, gl.z - player.z) < 2.9);
 
             if (dAltar > 5.0) suppressedAutoModal = false;
@@ -3291,6 +3603,10 @@
                 nearTarget = "altar";
                 interactPrompt.textContent = "🎋 Mở Ống Xăm AR 3D [E]";
                 interactPrompt.classList.remove("hidden");
+            } else if (dKitchen < 2.4) {
+                nearTarget = "kitchen";
+                interactPrompt.textContent = "🍜 Trai Đường • Gọi Món & Học Nấu Chay [E]";
+                interactPrompt.classList.toggle("hidden", !kitchenPanel.classList.contains("hidden"));
             } else if (dGrace < 3.2) {
                 nearTarget = "grace";
                 interactPrompt.textContent = "⚖️ Gặp Sếp: Cày Cuốc hay Nghỉ Việc? [E]";
@@ -3838,12 +4154,37 @@
             })();
         }
 
+        const buyOutfitBtn = document.getElementById("buyOutfitBtn");
+        const saveCustomBtn = document.getElementById("saveCustomBtn");
+        function updateOutfitShopUI() {
+            document.querySelectorAll(".outfit-btn").forEach(b => {
+                const id = b.dataset.outfit;
+                const owned = unlockedOutfits.includes(id);
+                const info = OUTFIT_CATALOG[id] || { name: id, cost: 0 };
+                b.classList.toggle("locked", !owned);
+                const tag = b.querySelector(".outfit-price-tag");
+                if (tag) {
+                    tag.textContent = owned ? (info.cost > 0 ? "✓ Đã sở hữu" : "") : `🔒 ${info.cost} Công Đức`;
+                }
+            });
+            const selInfo = OUTFIT_CATALOG[draftOutfit] || { name: draftOutfit, cost: 0 };
+            const selOwned = unlockedOutfits.includes(draftOutfit);
+            if (!selOwned) {
+                buyOutfitBtn.classList.remove("hidden");
+                buyOutfitBtn.textContent = `🛒 Mua ${selInfo.name} (-${selInfo.cost} Công Đức) • Bạn có: ${meritPoints}`;
+                saveCustomBtn.textContent = "Mua Trang Phục Trên Hoặc Chọn Bộ Đã Có";
+            } else {
+                buyOutfitBtn.classList.add("hidden");
+                saveCustomBtn.textContent = "Lưu & Đồng Bộ Nhân Vật";
+            }
+        }
         function syncCustomUI() {
             playerNameInput.value = player.name;
             draftGender = player.gender; draftOutfit = player.outfit; draftColor = player.color;
             document.querySelectorAll("#genderToggle .seg-btn").forEach(b => b.classList.toggle("active", b.dataset.gender === draftGender));
             document.querySelectorAll(".outfit-btn").forEach(b => b.classList.toggle("active", b.dataset.outfit === draftOutfit));
             document.querySelectorAll("#swatchRow .swatch").forEach(b => b.classList.toggle("active", b.dataset.color.toUpperCase() === draftColor.toUpperCase()));
+            updateOutfitShopUI();
         }
 
         document.getElementById("openCustomBtn").addEventListener("click", () => {
@@ -3878,12 +4219,51 @@
                 btn.classList.add("active"); draftColor = btn.dataset.color; refreshCustPreviewMesh();
             });
         });
-        document.getElementById("saveCustomBtn").addEventListener("click", () => {
+        document.querySelectorAll(".outfit-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                draftOutfit = btn.dataset.outfit;
+                updateOutfitShopUI();
+            });
+        });
+
+        buyOutfitBtn.addEventListener("click", () => {
+            const info = OUTFIT_CATALOG[draftOutfit];
+            if (!info || unlockedOutfits.includes(draftOutfit)) return;
+            if (meritPoints < info.cost) {
+                addMerit(0, `⚠️ Cần ${info.cost} Công Đức để mua ${info.name} (Hiện có ${meritPoints})!`);
+                return;
+            }
+            meritPoints -= info.cost;
+            unlockedOutfits.push(draftOutfit);
+            player.outfit = draftOutfit;
+            playBambooClick(1.2);
+            refreshMeritHud();
+            updateOutfitShopUI();
+            recordMeritLog(player.name, `Thỉnh trang phục ${info.name}`, -info.cost, true);
+            addMerit(0, `✨ Đã mở khóa & mặc ${info.name}!`);
+            rebuildPlayerMesh();
+            saveLocalState(true);
+            publishMyStateNow();
+        });
+
+        saveCustomBtn.addEventListener("click", () => {
+            if (!unlockedOutfits.includes(draftOutfit)) {
+                const info = OUTFIT_CATALOG[draftOutfit] || { cost: 0, name: draftOutfit };
+                addMerit(0, `🛒 Hãy nhấn Mua ${info.name} (-${info.cost} Công Đức) trước hoặc chọn trang phục đã có!`);
+                return;
+            }
             const nm = playerNameInput.value.trim();
             if (nm) player.name = nm;
             player.gender = draftGender; player.outfit = draftOutfit; player.color = draftColor;
-            saveLocalState(true);
+            if (player.labelObj && player.labelObj.nm) player.labelObj.nm.textContent = player.name;
             rebuildPlayerMesh();
+            player.chat = `Diện mạo mới: ${(OUTFIT_CATALOG[player.outfit] || {}).name || player.outfit} ✨`;
+            player.chatTimer = 180;
+            saveLocalState(true);
+            publishMyStateNow();
+            refreshMeritHud();
+            if (!rankingModal.classList.contains("hidden")) renderRankingModal();
+            addMerit(0, `✅ Đã lưu & đồng bộ nhân vật: ${player.name}`);
             customModal.classList.remove("show"); setTimeout(() => customModal.classList.add("hidden"), 350);
         });
 
@@ -3945,6 +4325,7 @@
                 }, 1700);
             }
             saveLocalState(false);
+            if (total !== 0) publishMyStateNow();
         }
         setInterval(refreshMeritHud, 1000);
 
@@ -4197,6 +4578,7 @@
             player.x = -9.6; player.z = -1.5;
             player.chat = `Công đức viên mãn (${meritPoints} Phước) 🪷`; player.chatTimer = 200;
             saveLocalState(true);
+            publishMyStateNow();
         }
 
         document.getElementById("standUpBtn").addEventListener("click", standUpFromSutra);
@@ -4206,6 +4588,138 @@
             activeLineIdx = (activeLineIdx + 1) % SUTRAS[activeSutraIdx].lines.length;
             renderSutraContent();
             addMerit(1, "🥢 Gõ mõ tụng kinh +1 Phước");
+        });
+
+        // ==================== 12. NHÀ ĂN CƠM CHAY (ORDER + BƯNG RA BÀN + HƯỚNG DẪN NẤU) ====================
+        const DISHES = [
+            {
+                id: "comsen", name: "🍲 Cơm Sen Chay", color: 0xfacc15,
+                ingredients: "Gạo tám thơm, hạt sen Huế, nấm hương, cà rốt, đậu hũ non, lá sen tươi.",
+                steps: [
+                    "Bước 1: Ngâm gạo thơm & hấp chín cùng hạt sen tươi cho bùi ngọt.",
+                    "Bước 2: Xào nấm hương, cà rốt, đậu hũ thái hạt lựu với nước tương thanh đạm.",
+                    "Bước 3: Trộn cơm hạt sen với nhân nấm, gói vào lá sen hấp cách thủy 10 phút là thơm lừng!"
+                ]
+            },
+            {
+                id: "phonam", name: "🍜 Phở Nấm Đông Cô", color: 0xfef3c7,
+                ingredients: "Bánh phở mềm, nấm đông cô, củ cải trắng, lê ngọt, quế, hồi, thảo quả.",
+                steps: [
+                    "Bước 1: Nướng sơ gừng, quế, hoa hồi rồi hầm cùng củ cải & lê trong 40 phút lấy nước ngọt.",
+                    "Bước 2: Ngâm mềm nấm đông cô, xào nhẹ cùng gia vị chay và trụng bánh phở.",
+                    "Bước 3: Xếp nấm & rau thơm vào tô, chan nước dùng nóng hổi là dùng ngay!"
+                ]
+            },
+            {
+                id: "dauhu", name: "🥗 Đậu Hũ Kho Nấm", color: 0xd97706,
+                ingredients: "Đậu hũ non chiên vàng, nấm rơm, nước tương cổ truyền, tiêu xanh.",
+                steps: [
+                    "Bước 1: Cắt đậu hũ miếng vừa ăn, áp chảo vàng đều hai mặt.",
+                    "Bước 2: Sơ chế nấm rơm chẻ đôi, phi thơm hành boa-rô cho dậy mùi.",
+                    "Bước 3: Cho đậu hũ & nấm vào nồi đất, kho lửa riu với nước tương & chút tiêu xanh!"
+                ]
+            },
+            {
+                id: "chesen", name: "🍵 Chè Sen Long Nhãn", color: 0xfde68a,
+                ingredients: "Hạt sen bở, nhãn nhục Hưng Yên, đường phèn, lá dứa thơm.",
+                steps: [
+                    "Bước 1: Luộc hạt sen vừa chín mềm (không nát), vớt ra ngâm nước đường nhẹ.",
+                    "Bước 2: Đun sôi nước lá dứa hòa tan đường phèn thanh mát.",
+                    "Bước 3: Lồng hạt sen vào long nhãn, thả vào nồi chè đun nhẹ 2 phút rồi múc ra chén!"
+                ]
+            }
+        ];
+
+        const kitchenPanel = document.getElementById("kitchenPanel");
+        const dishGridEl = document.getElementById("dishGrid");
+        const recipeBoxEl = document.getElementById("recipeBox");
+        const chefGreetingBox = document.getElementById("chefGreetingBox");
+        const cookStepBtn = document.getElementById("cookStepBtn");
+        const eatTableDishBtn = document.getElementById("eatTableDishBtn");
+
+        let selectedDishIdx = 0, cookStepProgress = 0;
+        let tableDishMesh = null, tableDishInfo = null;
+
+        function makeDishTrayMesh(colorHex = 0xfacc15) {
+            const g = new THREE.Group();
+            const tray = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.28, 0.04, 24), new THREE.MeshStandardMaterial({ color: 0x7c4a21, roughness: 0.5 }));
+            g.add(tray);
+            const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.14, 0.12, 20), new THREE.MeshStandardMaterial({ color: 0xfffdf8, roughness: 0.3 }));
+            bowl.position.y = 0.08; g.add(bowl);
+            const food = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 12), new THREE.MeshStandardMaterial({ color: colorHex, roughness: 0.6 }));
+            food.scale.set(1, 0.55, 1); food.position.y = 0.14; g.add(food);
+            return g;
+        }
+
+        function renderKitchenUI() {
+            const dish = DISHES[selectedDishIdx];
+            dishGridEl.innerHTML = DISHES.map((d, i) =>
+                `<button type="button" class="dish-card${i === selectedDishIdx ? " active" : ""}" data-didx="${i}">${d.name}</button>`
+            ).join("");
+            dishGridEl.querySelectorAll(".dish-card").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    selectedDishIdx = Number(btn.dataset.didx);
+                    cookStepProgress = 0;
+                    renderKitchenUI();
+                });
+            });
+            recipeBoxEl.innerHTML = `<div><strong>🥗 Nguyên liệu:</strong> ${dish.ingredients}</div>` +
+                dish.steps.map((s, idx) => `<div class="recipe-step${idx < cookStepProgress ? " done" : ""}">${idx < cookStepProgress ? "✅ " : ""}${s}</div>`).join("");
+            cookStepBtn.textContent = cookStepProgress >= dish.steps.length
+                ? "✨ Hoàn Thành Tự Nấu (+3 Phước)"
+                : `👨‍🍳 Thực Hành Nấu Bước ${cookStepProgress + 1}/${dish.steps.length}`;
+            eatTableDishBtn.classList.toggle("hidden", !tableDishMesh);
+            if (tableDishInfo) eatTableDishBtn.textContent = `🙏 Thưởng Thức ${tableDishInfo.name} Trên Bàn (+2 Phước)`;
+        }
+
+        function openKitchenPanel() {
+            exitFpsLock();
+            renderKitchenUI();
+            kitchenPanel.classList.remove("hidden");
+        }
+        document.getElementById("closeKitchenPanelBtn").addEventListener("click", () => kitchenPanel.classList.add("hidden"));
+
+        document.getElementById("orderDishBtn").addEventListener("click", () => {
+            const dish = DISHES[selectedDishIdx];
+            const chef = npcInstances.find(n => n.role === "chef");
+            if (!chef) return;
+            if (chef.task && chef.task !== "idle") {
+                addMerit(0, "👩‍🍳 Cô Bếp đang bưng món, thí chủ chờ một chút nhé!");
+                return;
+            }
+            chef.pendingDish = dish;
+            chef.task = "cooking";
+            chef.wait = 45;
+            chef.chat = `Dạ có ngay ${dish.name}! Chờ bếp nấu xíu nhé 🔥`;
+            chef.chatTimer = 220;
+            chefGreetingBox.textContent = `👩‍🍳 Cô Bếp: "Con đã nhận order ${dish.name}, đang chế biến & bưng ra bàn ngay ạ!"`;
+            player.chat = `Đặt 1 phần ${dish.name} tại Trai Đường 🍽️`; player.chatTimer = 200;
+        });
+
+        cookStepBtn.addEventListener("click", () => {
+            const dish = DISHES[selectedDishIdx];
+            if (cookStepProgress < dish.steps.length) {
+                cookStepProgress++;
+                playBambooClick(1.0);
+                renderKitchenUI();
+                if (cookStepProgress === dish.steps.length) {
+                    addMerit(3, `👨‍🍳 Tự tay nấu xong ${dish.name} +3 Phước!`, `Tự nấu ${dish.name}`);
+                    chefGreetingBox.textContent = `👩‍🍳 Cô Bếp: "Thí chủ khéo tay quá! Nấu ${dish.name} chuẩn vị nhà chùa rồi ạ!"`;
+                }
+            } else {
+                cookStepProgress = 0;
+                renderKitchenUI();
+            }
+        });
+
+        eatTableDishBtn.addEventListener("click", () => {
+            if (!tableDishMesh) return;
+            const dName = tableDishInfo ? tableDishInfo.name : "Món Chay";
+            wScene.remove(tableDishMesh); tableDishMesh = null; tableDishInfo = null;
+            addMerit(2, `🙏 Dùng xong ${dName} thanh đạm +2 Phước!`, `Dùng bữa ${dName}`);
+            player.chat = `Cảm ơn nhà bếp! ${dName} ngon tuyệt 🙏`; player.chatTimer = 200;
+            playWoodFish();
+            renderKitchenUI();
         });
 
         init3DWorld();
