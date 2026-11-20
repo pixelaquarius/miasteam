@@ -6,7 +6,7 @@
 
 [![Deploy L.ASY Studio to GitHub Pages](https://github.com/pixelaquarius/miasteam/actions/workflows/pages.yml/badge.svg)](https://github.com/pixelaquarius/miasteam/actions/workflows/pages.yml)
 [![Static Site](https://img.shields.io/badge/Architecture-100%25%20Client--Side-B93829?style=flat-square)](https://pages.github.com/)
-[![Tết Đinh Mùi](https://img.shields.io/badge/Tết%202027-06%2F02%2F2027-C58B2A?style=flat-square)](./tetlasy/index.html)
+[![Tết Đinh Mùi](https://img.shields.io/badge/Nghỉ%20Tết%202027-04%2F02%2F2027-C58B2A?style=flat-square)](./tetlasy/index.html)
 
 </div>
 
@@ -20,7 +20,7 @@
 
 | Công cụ | Đường dẫn | Mô tả |
 | :--- | :--- | :--- |
-| **Tết L.ASY 2027** | [`tetlasy/index.html`](./tetlasy/index.html) | Đếm ngược Tết Nguyên Đán Đinh Mùi (**06/02/2027**), tạo động lực **Cày Cuốc**, **Bóc Quẻ** đầu xuân và tương tác **Nghỉ Việc**. |
+| **Tết L.ASY 2027** | [`tetlasy/index.html`](./tetlasy/index.html) | Đếm ngược lịch nghỉ Tết Nhà nước Đinh Mùi (**04/02/2027 – 28 tháng Chạp**, nghỉ 7 ngày tới 10/02/2027), mô phỏng lắc ống xăm **3D Motion** với 24 kịch bản quẻ thực tế, **Cày Cuốc** và **Nghỉ Việc**. |
 | **Ghép Ảnh Lưới** | [`ghepanh/index.html`](./ghepanh/index.html) | Ghép nhiều ảnh thành lưới vuông 3–6 cột bằng HTML5 Canvas, giữ nguyên tỷ lệ ảnh gốc (fit-in, không cắt góc), tùy chỉnh màu nền/khoảng cách và xuất ảnh chất lượng cao. |
 | **KOL Performance Auditor** | [`checkkol/index.html`](./checkkol/index.html) | Phân tích dữ liệu Kalodata DOM/HTML, chấm điểm tương thích theo Short-Video / Livestream track, đối chiếu Top 20 Vietnam Beauty Brands, lưu lịch sử & so sánh Before/After. |
 
