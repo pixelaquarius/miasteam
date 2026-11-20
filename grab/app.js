@@ -439,7 +439,7 @@ function viewHome() {
   <div class="dots" id="dots"><i class="on"></i><i></i><i></i></div></div>
 
   <div class="sw" style="margin-top:10px;padding-bottom:16px"><div class="sec">Quán ngon gần bạn nhất<a id="all1">Xem ${R.length.toLocaleString('vi-VN')} quán</a></div>
-  <div class="hs">${nearAll.slice(0, 12).map(r => `<div class="hcard" data-id="${r.id}"><div class="im" style="background:${r.c}33">${vcardTag(r)}${im('r' + r.aid + '/cover')}<span class="timechip">${eta(r)} phút · ${rdist(r).toFixed(1)} km</span></div><b>${r.name}</b><small><span class="star">★</span> ${r.rate} (${r.rv}) · ${r.isChain ? r.branchCount + ' CN' : 'Quán địa phương'}</small></div>`).join('')}</div></div>
+  <div class="hs">${nearAll.slice(0, 12).map(r => `<div class="hcard" data-id="${r.id}"><div class="im" style="background:${r.c}33">${vcardTag(r)}${thumbImg(r)}<span class="timechip">${eta(r)} phút · ${rdist(r).toFixed(1)} km</span></div><b>${r.name}</b><small><span class="star">★</span> ${r.rate} (${r.rv}) · ${r.isChain ? r.branchCount + ' CN' : 'Quán địa phương'}</small></div>`).join('')}</div></div>
 
   <div class="sec" style="padding-bottom:4px">Đề xuất đa dạng trên Google Maps</div>${nearDistinct.map(rcard).join('')}
   <div style="padding:8px 16px 24px"><button class="btn o" id="all2" style="text-align:center">Khám phá toàn bộ ${R.length.toLocaleString('vi-VN')} quán ăn</button></div>`;
@@ -472,15 +472,63 @@ function viewHome() {
   const pr = $('#pr'); pr.onscroll = () => { const i = Math.round(pr.scrollLeft / (pr.firstChild.offsetWidth + 12)); $$('#dots i').forEach((d, k) => d.classList.toggle('on', k === i)); };
 }
 
+const thumbImg = r => {
+  const tid = r.logoId || (r.bid <= 50 ? r.bid : ((r.bid % 50) + 1));
+  return `<img src="img/thumbs/t${tid}.jpg" alt="${r.name}" loading="lazy" onerror="this.src='img/r${r.aid}/cover.jpg'">`;
+};
+const mapPopupHTML = r => `<div class="mpop">
+  <div class="mplg">${thumbImg(r)}</div>
+  <div class="mpinf">
+    <b>${r.name}</b>
+    <div class="mpmt"><span class="star">★</span> <b>${r.rate}</b> (${r.rv}) · ${rdist(r).toFixed(1)} km · ~${eta(r)}p</div>
+    <div class="mpad">📍 ${r.addr}</div>
+    <a href="#" id="pop_${r.id}">Xem quán & đặt món →</a>
+  </div>
+</div>`;
+
 function rcard(r) {
   const bcnt = r.branchCount || 1;
-  const subLabel = bcnt > 1 ? `📍 ${r.addr} · Hệ thống ${bcnt} chi nhánh` : `📍 ${r.addr} · Quán đặc sản địa phương`;
-  const topRv = getReviewsFor(r)[0];
-  return `<div class="rcard" data-id="${r.id}"><div class="im" style="background:${r.c}33">${vcardTag(r)}<span class="partner">✓ Google Maps</span>${im('r' + r.aid + '/cover')}<span class="timechip">${eta(r)} phút · ${rdist(r).toFixed(1)} km</span></div>
-  <div class="bd"><div class="lg">${logo(r)}</div><div class="nm">${r.name}</div><div class="br">${subLabel}</div>
-  <div class="mt"><span><span class="star">★</span> <b style="color:#1f1f1f">${r.rate}</b> (${r.rv} đánh giá)</span><i class="dot"></i><span>${r.tags}</span></div>
-  <div style="font-size:11.5px;color:#555;background:#f7f8f9;border-radius:8px;padding:5px 8px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">💬 <b>${topRv.user}:</b> "${topRv.text}"</div>
-  ${r.promo ? `<span class="vtag">🎟️ ${r.promo === 'Freeship' ? 'Miễn phí giao hàng' : r.promo === 'Mua 1 tặng 1' ? 'Mua 1 tặng 1 (tối đa 30k)' : r.promo + ' cho đơn hôm nay'}</span>` : ''}</div></div>`;
+  const origFee = feeOf(r);
+  const isFree = r.promo === 'Freeship' || r.id % 3 === 0;
+  const saleFee = isFree ? 'Miễn phí' : fmt(Math.max(1000, origFee - 12000));
+  const disc1 = r.promo && r.promo !== 'Freeship' ? r.promo : 'Giảm 17.000đ';
+  const minOrd1 = ((r.id % 4) * 15 + 70) + '.000đ';
+  const dishes3 = r.menu.slice(0, 3);
+  return `<div class="rcard" data-id="${r.id}">
+    <div class="rtop">
+      <div class="rthumb">${thumbImg(r)}</div>
+      <div class="rbody">
+        <div class="rtitle">
+          ${r.id % 2 === 1 ? '<span class="adtag">Quảng cáo</span>' : ''}
+          <div class="nm">${r.name}</div>
+          <span class="dots3">⋮</span>
+        </div>
+        <div class="mt">
+          <span><span class="star">★</span> <b style="color:#1f1f1f">${r.rate}</b> (${r.rv})</span>
+          <i class="dot"></i><span><b>$$</b><span style="color:#ccc">$$</span></span>
+          <i class="dot"></i><span>${r.tags.split('·')[0].trim()}</span>
+          ${bcnt > 1 ? `<i class="dot"></i><span style="color:#00863c;font-weight:700">${bcnt} CN</span>` : ''}
+        </div>
+        <div class="shiprow">
+          <span class="free">🛵 ${saleFee}</span>
+          <s>${fmt(origFee)}</s>
+          <i class="dot"></i><span>${eta(r)} phút trở lên</span>
+          <i class="dot"></i><span>${rdist(r).toFixed(1)} km</span>
+        </div>
+        <div class="vstrip">
+          <div class="vpill"><i>Ưu đãi<br>Quán Xịn</i><div><b>${disc1}</b><small>Đơn hàng từ ${minOrd1}</small></div></div>
+          <div class="vpill"><i class="org">♾️</i><div><b>Giảm 29.000đ</b><small>Đơn hàng từ 110.000đ</small></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="dstrip">
+      ${dishes3.map((it, idx) => `<div class="dmini">
+        <div class="dpic"><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:32px">${it[3]}</span>${im('r' + r.aid + '/m' + idx, it[0])}</div>
+        <b>${it[1].toLocaleString('vi-VN')}</b>
+        <span>${it[0]}</span>
+      </div>`).join('')}
+    </div>
+  </div>`;
 }
 
 /* ================= DỊCH VỤ ĐẶT XE GRABBIKE / GRABCAR ================= */
@@ -852,12 +900,12 @@ function viewMapAll() {
   L.marker([state.pos.lat, state.pos.lng], { icon: homeIcon(), zIndexOffset: 2000 }).addTo(m);
   list.slice(0, 120).forEach(r => {
     const mkr = L.marker(rpos(r), { icon: shopIcon(r) }).addTo(m);
-    mkr.bindPopup(`<b>${r.name}</b><br><span style="font-size:12px;color:#666">📍 ${r.addr} · ★ ${r.rate} (${r.rv}) · ${rdist(r).toFixed(1)} km</span><br><a href="#" id="pop_${r.id}" style="color:#00b14f;font-weight:700">Xem thực đơn & đánh giá →</a>`);
+    mkr.bindPopup(mapPopupHTML(r));
     mkr.on('popupopen', () => { const a = $('#pop_' + r.id); if (a) a.onclick = e => { e.preventDefault(); go(viewRest, r.id); }; });
   });
   list.slice(120).forEach(r => {
     const cm = L.circleMarker(rpos(r), { radius: 6, fillColor: r.c, color: '#fff', weight: 1.5, fillOpacity: 0.9 }).addTo(m);
-    cm.bindPopup(`<b>${r.name}</b><br><span style="font-size:12px;color:#666">📍 ${r.addr} · ★ ${r.rate} (${r.rv}) · ${rdist(r).toFixed(1)} km</span><br><a href="#" id="pop_${r.id}" style="color:#00b14f;font-weight:700">Xem thực đơn & đánh giá →</a>`);
+    cm.bindPopup(mapPopupHTML(r));
     cm.on('popupopen', () => { const a = $('#pop_' + r.id); if (a) a.onclick = e => { e.preventDefault(); go(viewRest, r.id); }; });
   });
   $('#bk').onclick = () => go(viewFood, {});
@@ -935,7 +983,11 @@ function viewRest(id) {
   <div class="box" style="margin-top:10px"><h4>Vị trí trên Google Maps ${sibs.length > 1 ? `(${sibs.length} chi nhánh)` : ''}</h4><div style="font-size:13px;color:#555;margin-bottom:8px">📍 ${r.addr} · Mở cửa ${r.hours}</div><div id="mp" style="height:180px;border-radius:12px;overflow:hidden;position:relative;z-index:0"></div></div><div style="height:90px"></div><div class="cartbar" id="cb"></div>`;
 
   const m = newMap('mp', rpos(r), 15, { scrollWheelZoom: false });
-  sibs.forEach(sb => L.marker(rpos(sb), { icon: shopIcon(sb), opacity: sb.id === r.id ? 1 : 0.65 }).addTo(m));
+  sibs.forEach(sb => {
+    const mkr = L.marker(rpos(sb), { icon: shopIcon(sb), opacity: sb.id === r.id ? 1 : 0.65 }).addTo(m);
+    mkr.bindPopup(mapPopupHTML(sb));
+    mkr.on('popupopen', () => { const a = $('#pop_' + sb.id); if (a) a.onclick = e => { e.preventDefault(); go(viewRest, sb.id); }; });
+  });
   L.marker([state.pos.lat, state.pos.lng], { icon: homeIcon() }).addTo(m);
   m.fitBounds([rpos(r), [state.pos.lat, state.pos.lng]], { padding: [36, 36] });
 
