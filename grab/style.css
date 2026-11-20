@@ -182,9 +182,9 @@ img{display:block}
 .bar i.err{background:var(--red)}
 .bar i.cur:after{content:"";position:absolute;inset:0;background:#fff8;animation:sh 1.2s infinite}
 @keyframes sh{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
-.evlog{background:#f8f9fa;border-radius:12px;padding:8px 11px;margin:8px 0;font-size:12px;color:#444;border-left:3px solid var(--g)}
-.evlog.warn{border-left-color:var(--warn);background:#fffbeb;color:#92400e}
-.evlog.err{border-left-color:var(--red);background:#fef2f2;color:#b91c1c}
+.evlog{background:#f3fcf7;border-radius:12px;padding:8px 11px;margin:8px 0;font-size:12px;color:#00693e;border:1px solid #ccebd9}
+.evlog.warn{border-color:#fde68a;background:#fffbeb;color:#92400e}
+.evlog.err{border-color:#fecaca;background:#fef2f2;color:#b91c1c}
 .drv{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line);margin-top:6px}
 .drv .av{width:46px;height:46px;border-radius:50%;background:#d8f1e2;flex:none;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:#00863c}
 .drv .d{flex:1;font-size:12px;color:var(--mut);min-width:0}
