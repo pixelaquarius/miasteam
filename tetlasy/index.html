@@ -36,7 +36,9 @@
             user-select: none; touch-action: none;
         }
 
-        #world3dCanvas { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; }
+        #world3dCanvas { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; cursor: grab; }
+        #world3dCanvas.dragging { cursor: grabbing; }
+        .last-fortune-btn { font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.72rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--gold-soft); color: #7C5111; cursor: pointer; }
         #labelsLayer { position: fixed; inset: 0; pointer-events: none; z-index: 10; overflow: hidden; }
 
         .char-label {
@@ -524,7 +526,7 @@
     <!-- Quest Banner -->
     <div class="quest-banner" id="questBanner">
         <span class="quest-step-tag" id="questStepTag">BƯỚC 1/3</span>
-        <span id="questBannerText">Ngoài Cổng Tam Quan • Đi qua cổng vào Lư Hương thắp nhang, lên Chính Điện lắc quẻ 3D</span>
+        <span id="questBannerText">Kéo chuột xoay 360° • WASD/Joystick đi thắp nhang & lên Chính Điện lắc quẻ</span>
     </div>
 
     <!-- Interact Prompt -->
@@ -558,7 +560,10 @@
         <div class="modal-card">
             <div class="modal-top-bar">
                 <span class="year-pill">CHÍNH ĐIỆN • GIEO QUẺ ĐẦU XUÂN</span>
-                <button id="closeFortuneModalBtn" class="modal-close-x" type="button">✕</button>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <button id="viewLastFortuneBtn" class="last-fortune-btn hidden" type="button">📜 Quẻ gần nhất</button>
+                    <button id="closeFortuneModalBtn" class="modal-close-x" type="button">✕</button>
+                </div>
             </div>
 
             <div class="shake-progress-box">
@@ -761,11 +766,26 @@
         setInterval(updateHudCountdown, 1000);
         updateHudCountdown();
 
-        // ==================== 2. AUDIO SYNTHESIZER ====================
-        let audioCtx = null, soundEnabled = true;
-        document.getElementById("soundToggleBtn").addEventListener("click", (e) => {
+        // ==================== 2. LOCAL STORAGE UI PERSISTENCE & AUDIO ====================
+        const STATE_KEY = "vanphuc_temple_state_v1";
+        function loadLocalState() {
+            try {
+                const raw = localStorage.getItem(STATE_KEY);
+                if (raw) return JSON.parse(raw);
+                const old = localStorage.getItem("vanphuc_temple_profile");
+                return old ? JSON.parse(old) : {};
+            } catch (e) { return {}; }
+        }
+        const savedState = loadLocalState() || {};
+        let saveTimer = null;
+
+        let audioCtx = null, soundEnabled = savedState.soundEnabled !== undefined ? !!savedState.soundEnabled : true;
+        const soundToggleBtn = document.getElementById("soundToggleBtn");
+        soundToggleBtn.textContent = soundEnabled ? "🔊 Âm thanh" : "🔇 Đã tắt";
+        soundToggleBtn.addEventListener("click", () => {
             soundEnabled = !soundEnabled;
-            e.currentTarget.textContent = soundEnabled ? "🔊 Âm thanh" : "🔇 Đã tắt";
+            soundToggleBtn.textContent = soundEnabled ? "🔊 Âm thanh" : "🔇 Đã tắt";
+            saveLocalState(true);
         });
 
         function playBambooClick(intensity = 1) {
@@ -1162,18 +1182,52 @@
         }
 
         const myId = "p_" + Math.random().toString(36).slice(2, 9);
-        let savedProfile = null;
-        try { savedProfile = JSON.parse(localStorage.getItem("vanphuc_temple_profile") || "null"); } catch (e) {}
+        const startX = typeof savedState.x === "number" ? Math.max(-27, Math.min(27, savedState.x)) : 0;
+        const startZ = typeof savedState.z === "number" ? Math.max(-27, Math.min(35, savedState.z)) : 29;
         const player = {
-            id: myId, x: 0, z: 29, rotY: Math.PI, speed: 0.15,
-            name: (savedProfile && savedProfile.name) || randomPilgrimName(),
-            color: (savedProfile && savedProfile.color) || "#B93829",
-            gender: (savedProfile && savedProfile.gender) || (Math.random() < 0.5 ? "male" : "female"),
-            outfit: (savedProfile && savedProfile.outfit) || "aodai",
-            chat: "Mới tới cổng chùa 🏯", chatTimer: 260, walkPhase: 0
+            id: myId, x: startX, z: startZ,
+            rotY: typeof savedState.rotY === "number" ? savedState.rotY : Math.PI, speed: 0.15,
+            name: savedState.name || randomPilgrimName(),
+            color: savedState.color || "#B93829",
+            gender: savedState.gender || (Math.random() < 0.5 ? "male" : "female"),
+            outfit: savedState.outfit || "aodai",
+            chat: "Mới tới Chùa Vạn Phúc 🏯", chatTimer: 260, walkPhase: 0
         };
 
-        let hasLitIncense = false, nearTarget = null, suppressedAutoModal = false;
+        let camYaw = typeof savedState.camYaw === "number" ? savedState.camYaw : 0;
+        let camPitch = typeof savedState.camPitch === "number" ? Math.max(0.08, Math.min(1.15, savedState.camPitch)) : 0.28;
+        let camDist = typeof savedState.camDist === "number" ? Math.max(4.0, Math.min(16.0, savedState.camDist)) : 7.2;
+        let hasLitIncense = !!savedState.hasLitIncense, nearTarget = null;
+        let suppressedAutoModal = Math.hypot(player.x, player.z - (-13.5)) < 4.5;
+        let savedQuestStep = savedState.questStep || (hasLitIncense ? "BƯỚC 2/3" : "BƯỚC 1/3");
+        let lastFortuneNum = savedState.lastFortuneNum || null;
+
+        function saveLocalState(immediate = false) {
+            const doWrite = () => {
+                try {
+                    const qMoneyEl = document.getElementById("qMoney");
+                    const qKpiEl = document.getElementById("qKpi");
+                    const qGoalEl = document.getElementById("qGoal");
+                    const qMoodEl = document.getElementById("qMood");
+                    localStorage.setItem(STATE_KEY, JSON.stringify({
+                        name: player.name, gender: player.gender, outfit: player.outfit, color: player.color,
+                        x: Number(player.x.toFixed(2)), z: Number(player.z.toFixed(2)), rotY: Number(player.rotY.toFixed(2)),
+                        camYaw: Number(camYaw.toFixed(3)), camPitch: Number(camPitch.toFixed(3)), camDist: Number(camDist.toFixed(2)),
+                        soundEnabled, hasLitIncense,
+                        questStep: questStepTag.textContent,
+                        questBannerText: questBannerText.textContent,
+                        localIncenseCount: typeof incenseSticks !== "undefined" ? incenseSticks.length : 3,
+                        lastFortuneNum,
+                        careerQuiz: qMoneyEl ? {
+                            qMoney: qMoneyEl.value, qKpi: qKpiEl.value, qGoal: qGoalEl.value, qMood: qMoodEl.value
+                        } : (savedState.careerQuiz || null)
+                    }));
+                } catch (e) {}
+            };
+            if (immediate) { if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; } doWrite(); }
+            else if (!saveTimer) { saveTimer = setTimeout(() => { saveTimer = null; doWrite(); }, 600); }
+        }
+        window.addEventListener("beforeunload", () => saveLocalState(true));
         let wScene, wCamera, wRenderer, playerMesh, smokeTex, cloudSprites = [], furnaceLight, furnaceGlowMat;
         const smokePuffs = [], guideArrows = [], petals = [], swayLanterns = [];
 
@@ -1514,7 +1568,11 @@
             wScene.fog = new THREE.FogExp2(0xe6e2d6, 0.0105);
 
             wCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 700);
-            wCamera.position.set(0, 3.45, player.z + 6.9);
+            wCamera.position.set(
+                player.x + Math.sin(camYaw) * Math.cos(camPitch) * camDist,
+                groundHeight(player.x, player.z) + 1.4 + Math.sin(camPitch) * camDist,
+                player.z + Math.cos(camYaw) * Math.cos(camPitch) * camDist
+            );
             wRenderer = new THREE.WebGLRenderer({ canvas: worldCanvas, antialias: true, powerPreference: "high-performance" });
             wRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2.5));
             wRenderer.setSize(window.innerWidth, window.innerHeight);
@@ -1861,8 +1919,10 @@
             }
 
             // Player 3D Mesh
+            if (isBlocked(player.x, player.z)) { player.x = 0; player.z = 29; }
             playerMesh = createArticulatedCharacter({ robeColor: player.color, gender: player.gender, outfit: player.outfit });
-            playerMesh.position.set(player.x, 0, player.z);
+            playerMesh.position.set(player.x, groundHeight(player.x, player.z), player.z);
+            playerMesh.rotation.y = player.rotY;
             wScene.add(playerMesh);
             player.labelObj = createLabelEl("me", player.name, true);
         }
@@ -2112,7 +2172,7 @@
 
         const joystickZone = document.getElementById("joystickZone");
         const joystickKnob = document.getElementById("joystickKnob");
-        let joyActive = false, joyCenter = { x: 0, y: 0 };
+        let joyPointerId = null, joyCenter = { x: 0, y: 0 };
         const MAX_JOY = 34;
 
         function updateJoystick(cx, cy) {
@@ -2123,16 +2183,56 @@
             joyVec.x = dx / MAX_JOY; joyVec.y = dy / MAX_JOY;
         }
         joystickZone.addEventListener("pointerdown", (e) => {
-            e.preventDefault(); joyActive = true;
+            e.preventDefault(); e.stopPropagation();
+            joyPointerId = e.pointerId;
             const r = joystickZone.getBoundingClientRect();
             joyCenter = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
             updateJoystick(e.clientX, e.clientY);
         });
-        window.addEventListener("pointermove", (e) => { if (joyActive) updateJoystick(e.clientX, e.clientY); });
-        window.addEventListener("pointerup", () => {
-            if (!joyActive) return; joyActive = false; joyVec = { x: 0, y: 0 };
-            joystickKnob.style.transform = "translate(0px, 0px)";
+
+        // 360° Camera Orbit (Mouse drag + Touch drag + Wheel zoom + Double-click reset)
+        let camPointerId = null, camPrev = { x: 0, y: 0 };
+        worldCanvas.addEventListener("contextmenu", (e) => e.preventDefault());
+        worldCanvas.addEventListener("pointerdown", (e) => {
+            if (camPointerId !== null || anyModalOpen()) return;
+            camPointerId = e.pointerId;
+            camPrev = { x: e.clientX, y: e.clientY };
+            worldCanvas.classList.add("dragging");
         });
+        worldCanvas.addEventListener("dblclick", () => {
+            if (anyModalOpen()) return;
+            camYaw = 0; camPitch = 0.28; camDist = 7.2;
+            saveLocalState(true);
+        });
+        worldCanvas.addEventListener("wheel", (e) => {
+            if (anyModalOpen()) return;
+            e.preventDefault();
+            camDist = Math.max(4.0, Math.min(16.0, camDist + e.deltaY * 0.006));
+            saveLocalState(false);
+        }, { passive: false });
+
+        window.addEventListener("pointermove", (e) => {
+            if (e.pointerId === joyPointerId) updateJoystick(e.clientX, e.clientY);
+            if (e.pointerId === camPointerId && !anyModalOpen()) {
+                const dx = e.clientX - camPrev.x, dy = e.clientY - camPrev.y;
+                camYaw -= dx * 0.0075;
+                camPitch = Math.max(0.08, Math.min(1.15, camPitch + dy * 0.0065));
+                camPrev = { x: e.clientX, y: e.clientY };
+                saveLocalState(false);
+            }
+        });
+        const releasePointer = (e) => {
+            if (e.pointerId === joyPointerId) {
+                joyPointerId = null; joyVec = { x: 0, y: 0 };
+                joystickKnob.style.transform = "translate(0px, 0px)";
+            }
+            if (e.pointerId === camPointerId) {
+                camPointerId = null;
+                worldCanvas.classList.remove("dragging");
+            }
+        };
+        window.addEventListener("pointerup", releasePointer);
+        window.addEventListener("pointercancel", releasePointer);
 
         function triggerNearInteract() {
             if (nearTarget === "incense") {
@@ -2141,7 +2241,7 @@
                 player.chat = `Vừa thắp nén hương thơm (#${incenseSticks.length}) 🙏`; player.chatTimer = 220;
                 playBambooClick(1.15);
                 questStepTag.textContent = "BƯỚC 2/3";
-                questBannerText.textContent = `Đã thắp hương (${incenseSticks.length}/${INCENSE_MAX} cây)! Lên bậc thềm Chính Điện để gieo quẻ AR 3D`;
+                questBannerText.textContent = `Đã thắp hương (${incenseSticks.length}/${INCENSE_MAX} cây)! Lên bậc thềm Chính Điện để gieo quẻ AR 3D`; saveLocalState(true);
             } else if (nearTarget === "altar") {
                 openFortuneModal();
             } else if (nearTarget === "grace") {
@@ -2222,12 +2322,18 @@
 
             const mag = Math.hypot(mx, mz);
             if (mag > 0.1) {
-                const nx = (mx / Math.max(1, mag)) * player.speed, nz = (mz / Math.max(1, mag)) * player.speed;
+                const fwd = -mz;
+                const worldDx = mx * Math.cos(camYaw) - fwd * Math.sin(camYaw);
+                const worldDz = -mx * Math.sin(camYaw) - fwd * Math.cos(camYaw);
+                const wMag = Math.hypot(worldDx, worldDz) || 1;
+                const step = Math.min(1, mag) * player.speed;
+                const nx = (worldDx / wMag) * step, nz = (worldDz / wMag) * step;
                 if (canMove(player.x, player.z, player.x + nx, player.z)) player.x += nx;
                 if (canMove(player.x, player.z, player.x, player.z + nz)) player.z += nz;
                 player.rotY = Math.atan2(nx, nz);
                 player.walkPhase += 0.22;
                 animateArticulated(playerMesh, player.walkPhase);
+                saveLocalState(false);
             } else {
                 animateArticulated(playerMesh, 0);
             }
@@ -2237,11 +2343,20 @@
             playerMesh.position.set(player.x, py, player.z);
             playerMesh.rotation.y = player.rotY;
 
-            // Smooth 3rd-person follow camera (passes smoothly beneath Cổng Tam Quan eaves)
-            wCamera.position.x += (player.x * 0.78 - wCamera.position.x) * 0.1;
-            wCamera.position.y += (py + 3.45 - wCamera.position.y) * 0.1;
-            wCamera.position.z += (player.z + 6.9 - wCamera.position.z) * 0.1;
-            wCamera.lookAt(player.x, py + 1.55, player.z - 3.2);
+            // Smooth 360° Orbit 3rd-person camera
+            const horizD = Math.cos(camPitch) * camDist;
+            const vertD = Math.sin(camPitch) * camDist;
+            const targetCamX = player.x + Math.sin(camYaw) * horizD;
+            const targetCamY = Math.max(py + 0.9, py + 1.4 + vertD);
+            const targetCamZ = player.z + Math.cos(camYaw) * horizD;
+            wCamera.position.x += (targetCamX - wCamera.position.x) * 0.15;
+            wCamera.position.y += (targetCamY - wCamera.position.y) * 0.15;
+            wCamera.position.z += (targetCamZ - wCamera.position.z) * 0.15;
+            wCamera.lookAt(
+                player.x - Math.sin(camYaw) * 1.15,
+                py + 1.55,
+                player.z - Math.cos(camYaw) * 1.15
+            );
 
             // Drifting clouds & swaying lanterns
             cloudSprites.forEach(c => {
@@ -2672,7 +2787,7 @@
             if (shakeClicks < MIN_SHAKES || pouringOut || pouringAll || currentFortune) return;
             if (autoEjectTimer) { clearTimeout(autoEjectTimer); autoEjectTimer = null; }
             pendingAutoDrop = false;
-            currentFortune = realFortunes[Math.floor(Math.random() * realFortunes.length)];
+            currentFortune = realFortunes[Math.floor(Math.random() * realFortunes.length)]; lastFortuneNum = currentFortune.number; saveLocalState(true);
             stickBadgeOverlay.textContent = `ĐỆ ${currentFortune.number} QUẺ`;
             stickBadgeOverlay.classList.remove("hidden");
             playBambooClick(1.3);
@@ -2756,6 +2871,9 @@
             resetShakeSession();
             questStepTag.textContent = "BƯỚC 3/3";
             questBannerText.textContent = "Đã tới Chính Điện! Bấm lắc ≥5 lần rồi dừng tay quẻ tự ra, hoặc xoay úp ngược để đổ hết quẻ";
+            const lfb = document.getElementById("viewLastFortuneBtn");
+            if (lfb) { lfb.textContent = `📜 Quẻ gần nhất (#${lastFortuneNum})`; lfb.classList.toggle("hidden", !lastFortuneNum); }
+            saveLocalState(true);
         }
 
         function closeFortuneModal() {
@@ -2767,6 +2885,13 @@
 
         document.getElementById("closeFortuneModalBtn").addEventListener("click", closeFortuneModal);
         document.getElementById("reshakeBtn").addEventListener("click", resetShakeSession);
+        document.getElementById("viewLastFortuneBtn").addEventListener("click", () => {
+            const prev = realFortunes.find(f => f.number === lastFortuneNum);
+            if (!prev) return;
+            currentFortune = prev; shakeClicks = MIN_SHAKES;
+            stickBadgeOverlay.textContent = `ĐỆ ${prev.number} QUẺ`; stickBadgeOverlay.classList.remove("hidden");
+            updateShakeUI(); renderFortuneSlip(prev);
+        });
         document.getElementById("copyFortuneBtn").addEventListener("click", (e) => {
             if (!currentFortune) return;
             const f = currentFortune;
@@ -2803,7 +2928,10 @@
                 graceTauntBox.textContent = `😤 Sếp: "Em định nghỉ thật hả? Thử bấm nút bên dưới xem!"`;
             }
         }
-        [qMoney, qKpi, qGoal, qMood].forEach(s => s.addEventListener("change", computeCareerCompatibility));
+        if (savedState.careerQuiz) {
+            ["qMoney", "qKpi", "qGoal", "qMood"].forEach(k => { if (savedState.careerQuiz[k]) document.getElementById(k).value = savedState.careerQuiz[k]; });
+        }
+        [qMoney, qKpi, qGoal, qMood].forEach(s => s.addEventListener("change", () => { computeCareerCompatibility(); saveLocalState(true); }));
         computeCareerCompatibility();
 
         function openCareerModal() {
@@ -2918,11 +3046,7 @@
             const nm = playerNameInput.value.trim();
             if (nm) player.name = nm;
             player.gender = draftGender; player.outfit = draftOutfit; player.color = draftColor;
-            try {
-                localStorage.setItem("vanphuc_temple_profile", JSON.stringify({
-                    name: player.name, gender: player.gender, outfit: player.outfit, color: player.color
-                }));
-            } catch (e) {}
+            saveLocalState(true);
             rebuildPlayerMesh();
             customModal.classList.remove("show"); setTimeout(() => customModal.classList.add("hidden"), 350);
         });
@@ -2930,7 +3054,10 @@
         init3DWorld();
         initTempleNpcs();
         initMultiplayer();
-        for (let k = 0; k < 3; k++) plantIncense("Chùa Vạn Phúc", false);
+        const initCount = typeof savedState.localIncenseCount === "number" ? Math.max(0, Math.min(INCENSE_MAX, savedState.localIncenseCount)) : 3;
+        for (let k = 0; k < initCount; k++) plantIncense("Chùa Vạn Phúc", false);
+        if (savedState.questStep) questStepTag.textContent = savedState.questStep;
+        if (savedState.questBannerText) questBannerText.textContent = savedState.questBannerText;
         updateIncensePill();
         animate3DWorld();
     </script>
