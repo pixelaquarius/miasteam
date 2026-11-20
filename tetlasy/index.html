@@ -1038,10 +1038,18 @@
 
         window.addEventListener("keydown", (e) => {
             if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) return;
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) e.preventDefault();
+            keys[e.code] = true;
             keys[e.key.toLowerCase()] = true;
-            if (e.key.toLowerCase() === "e" && nearTarget) triggerNearInteract();
+            if ((e.code === "KeyE" || e.key.toLowerCase() === "e") && nearTarget) triggerNearInteract();
         });
-        window.addEventListener("keyup", (e) => { keys[e.key.toLowerCase()] = false; });
+        window.addEventListener("keyup", (e) => {
+            keys[e.code] = false;
+            keys[e.key.toLowerCase()] = false;
+        });
+        window.addEventListener("blur", () => {
+            Object.keys(keys).forEach(k => { keys[k] = false; });
+        });
 
         document.querySelectorAll(".dpad-btn").forEach(btn => {
             const dir = btn.dataset.dir;
@@ -1128,10 +1136,10 @@
             requestAnimationFrame(animate3DWorld);
 
             let mx = joyVec.x, mz = joyVec.y;
-            if (keys["a"] || keys["arrowleft"] || dpadState.left) mx -= 1;
-            if (keys["d"] || keys["arrowright"] || dpadState.right) mx += 1;
-            if (keys["w"] || keys["arrowup"] || dpadState.up) mz -= 1;
-            if (keys["s"] || keys["arrowdown"] || dpadState.down) mz += 1;
+            if (keys["KeyA"] || keys["a"] || keys["ArrowLeft"] || keys["arrowleft"] || dpadState.left) mx -= 1;
+            if (keys["KeyD"] || keys["d"] || keys["ArrowRight"] || keys["arrowright"] || dpadState.right) mx += 1;
+            if (keys["KeyW"] || keys["w"] || keys["ArrowUp"] || keys["arrowup"] || dpadState.up) mz -= 1;
+            if (keys["KeyS"] || keys["s"] || keys["ArrowDown"] || keys["arrowdown"] || dpadState.down) mz += 1;
 
             const mag = Math.hypot(mx, mz);
             if (mag > 0.1) {
