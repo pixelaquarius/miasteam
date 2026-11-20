@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chùa L.ASY 2027 — Đi Chùa Bóc Quẻ 3D &amp; Đếm Ngược Nghỉ Tết</title>
-    <meta name="description" content="Trò chơi đi chùa online L.ASY Tết Đinh Mùi 2027: Điều khiển nhân vật từ ngoài cổng chùa vào thắp hương, theo mũi tên vào chính điện lắc quẻ 3D (tối thiểu 5 lần) và xem độ hợp Cày Cuốc vs Nghỉ Việc.">
+    <title>Chùa 3D L.ASY 2027 — Đi Chùa Online &amp; Bóc Quẻ 3D</title>
+    <meta name="description" content="Thế giới Chùa 3D L.ASY Tết Đinh Mùi 2027: Đi bộ 3D từ ngoài cổng chùa vào thắp hương, theo mũi tên vào chính điện lắc quẻ 3D (tối thiểu 5 lần), chơi online cùng mọi người và xem độ hợp Cày Cuốc vs Nghỉ Việc.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
@@ -25,52 +25,97 @@
             --gold-bright: #D99B26;
             --gold-soft: #FBF5E8;
             --sage: #2D6A4F;
-            --sage-soft: #EEF6F2;
         }
 
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         html, body {
             width: 100%;
             height: 100%;
             overflow: hidden;
             font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #2C221A;
+            background: #1C140E;
             color: var(--ink-primary);
             user-select: none;
-        }
-
-        /* Full-Screen Game World Canvas */
-        #gameCanvas {
-            display: block;
-            width: 100vw;
-            height: 100vh;
-            cursor: crosshair;
             touch-action: none;
         }
 
-        /* Floating Top HUD */
+        #world3dCanvas {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+
+        /* Projected 3D Labels (Names & Chat Bubbles above 3D Characters) */
+        #labelsLayer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .char-label {
+            position: absolute;
+            transform: translate(-50%, -100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            will-change: left, top;
+        }
+
+        .char-bubble {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid var(--border-strong);
+            border-radius: 10px;
+            padding: 3px 9px;
+            font-size: 0.72rem;
+            color: var(--ink-primary);
+            max-width: 190px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .char-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.66rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 6px;
+            background: rgba(28, 25, 23, 0.8);
+            color: #FFFDF9;
+            white-space: nowrap;
+        }
+
+        .char-label.is-me .char-name {
+            background: var(--crimson);
+            border: 1px solid #FCD34D;
+        }
+
+        /* Top HUD */
         .hud-top {
             position: fixed;
             top: 12px;
             left: 12px;
             right: 12px;
-            z-index: 20;
+            z-index: 25;
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 10px;
+            gap: 8px;
             pointer-events: none;
         }
 
         .hud-group {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
             pointer-events: auto;
         }
@@ -78,32 +123,28 @@
         .hud-pill {
             display: inline-flex;
             align-items: center;
-            gap: 7px;
-            padding: 7px 13px;
+            gap: 6px;
+            padding: 7px 12px;
             border-radius: 999px;
             background: rgba(250, 247, 242, 0.94);
             backdrop-filter: blur(8px);
             border: 1px solid var(--border-strong);
             color: var(--ink-primary);
             text-decoration: none;
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             font-weight: 600;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
             cursor: pointer;
-            transition: transform 0.15s ease, background-color 0.15s ease;
         }
 
-        .hud-pill:hover {
-            transform: translateY(-1px);
-            background: #FFFFFF;
-        }
+        .hud-pill:hover { background: #FFFFFF; }
 
         .hud-countdown {
             background: rgba(28, 25, 23, 0.9);
             color: #FFFDF9;
             border: 1px solid rgba(217, 155, 38, 0.55);
             border-radius: 14px;
-            padding: 7px 14px;
+            padding: 6px 14px;
             text-align: center;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
             pointer-events: auto;
@@ -111,7 +152,7 @@
 
         .hud-cd-title {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.64rem;
+            font-size: 0.62rem;
             text-transform: uppercase;
             letter-spacing: 0.08em;
             color: #FCD34D;
@@ -119,9 +160,8 @@
 
         .hud-cd-time {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.92rem;
+            font-size: 0.88rem;
             font-weight: 700;
-            letter-spacing: 0.03em;
         }
 
         .online-dot {
@@ -137,57 +177,57 @@
             50% { opacity: 0.45; transform: scale(1.25); }
         }
 
-        /* Quest / Guide Banner */
+        /* Quest Banner */
         .quest-banner {
             position: fixed;
-            top: 66px;
+            top: 64px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 19;
+            z-index: 22;
             background: rgba(255, 255, 255, 0.94);
             backdrop-filter: blur(8px);
             border: 1px solid var(--border-strong);
             border-radius: 999px;
-            padding: 6px 16px;
-            font-size: 0.78rem;
+            padding: 5px 14px;
+            font-size: 0.76rem;
             font-weight: 600;
             color: var(--ink-primary);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
             display: flex;
             align-items: center;
             gap: 8px;
             white-space: nowrap;
-            max-width: 92vw;
+            max-width: 94vw;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .quest-step-tag {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.68rem;
+            font-size: 0.66rem;
             padding: 2px 8px;
             border-radius: 999px;
             background: var(--crimson);
             color: #FFFFFF;
         }
 
-        /* Context Interact Prompt (Near Lư Hương / Bàn Quẻ / Bàn Ms Grace) */
+        /* Context Interact Button */
         .interact-prompt {
             position: fixed;
-            bottom: 84px;
+            bottom: 136px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 25;
+            z-index: 28;
             padding: 11px 22px;
             border-radius: 999px;
             border: 2px solid #FCD34D;
             background: var(--crimson);
             color: #FFFFFF;
             font-family: 'Be Vietnam Pro', sans-serif;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 8px 24px rgba(185, 56, 41, 0.45);
+            box-shadow: 0 8px 24px rgba(185, 56, 41, 0.5);
             animation: floatBtn 1.4s ease-in-out infinite;
         }
 
@@ -196,17 +236,75 @@
             50% { transform: translate(-50%, -4px); }
         }
 
-        /* Bottom Chat & Controls Bar */
+        /* Virtual Analog Joystick (Bottom-Left - works on Phone & Mouse) */
+        .joystick-zone {
+            position: fixed;
+            bottom: 72px;
+            left: 18px;
+            width: 112px;
+            height: 112px;
+            border-radius: 50%;
+            background: rgba(28, 25, 23, 0.45);
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(4px);
+            z-index: 26;
+            touch-action: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .joystick-knob {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: rgba(250, 247, 242, 0.92);
+            border: 2px solid var(--crimson);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+            pointer-events: none;
+            transform: translate(0px, 0px);
+        }
+
+        /* PC On-Screen Directional Buttons (Bottom-Right) */
+        .dpad-pc {
+            position: fixed;
+            bottom: 72px;
+            right: 18px;
+            z-index: 26;
+            display: grid;
+            grid-template-columns: repeat(3, 38px);
+            grid-template-rows: repeat(2, 38px);
+            gap: 4px;
+        }
+
+        .dpad-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            background: rgba(28, 25, 23, 0.68);
+            color: #FFFFFF;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dpad-btn:active { background: var(--crimson); }
+
+        /* Bottom Chat Bar */
         .hud-bottom {
             position: fixed;
             bottom: 14px;
             left: 14px;
             right: 14px;
-            z-index: 20;
+            z-index: 25;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 12px;
+            justify-content: center;
+            gap: 10px;
             pointer-events: none;
         }
 
@@ -219,10 +317,10 @@
             border: 1px solid var(--border-strong);
             border-radius: 999px;
             padding: 5px 6px 5px 14px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
             pointer-events: auto;
             width: 100%;
-            max-width: 390px;
+            max-width: 440px;
         }
 
         .chat-bar input {
@@ -247,19 +345,9 @@
             cursor: pointer;
         }
 
-        .controls-hint {
-            background: rgba(28, 25, 23, 0.82);
-            color: #F3EDE3;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            padding: 7px 12px;
-            border-radius: 999px;
-            pointer-events: auto;
-        }
-
         .hidden { display: none !important; }
 
-        /* ==================== MODALS (3D FORTUNE + CAREER + CUSTOMIZE) ==================== */
+        /* ==================== MODALS ==================== */
         .modal-backdrop {
             position: fixed;
             inset: 0;
@@ -293,13 +381,7 @@
             100% { transform: scale(1) translateY(0); opacity: 1; }
         }
 
-        .modal-top-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
+        .modal-top-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
 
         .year-pill {
             font-family: 'JetBrains Mono', monospace;
@@ -313,318 +395,107 @@
         }
 
         .modal-close-x {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            border: 1px solid var(--border-sand);
-            background: var(--bg-elevated);
-            color: var(--ink-primary);
-            font-size: 1.1rem;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            width: 34px; height: 34px; border-radius: 50%;
+            border: 1px solid var(--border-sand); background: var(--bg-elevated);
+            color: var(--ink-primary); font-size: 1.1rem; cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center;
         }
 
-        .modal-close-x:hover { background: var(--bg-subtle); }
-
-        .shaker-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.45rem;
-            font-weight: 700;
-            color: var(--ink-primary);
-        }
+        .shaker-title { font-family: 'Playfair Display', serif; font-size: 1.45rem; font-weight: 700; color: var(--ink-primary); }
 
         .shake-progress-box {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-sand);
-            border-radius: 12px;
-            padding: 10px 14px;
-            margin: 10px 0 12px;
-            text-align: left;
+            background: var(--bg-elevated); border: 1px solid var(--border-sand);
+            border-radius: 12px; padding: 10px 14px; margin: 10px 0 12px; text-align: left;
         }
 
         .shake-progress-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--ink-primary);
-            margin-bottom: 6px;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 8px; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px;
         }
 
-        .shake-count-pill {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.74rem;
-            color: var(--crimson);
-            flex-shrink: 0;
-        }
-
-        .progress-track {
-            width: 100%;
-            height: 8px;
-            border-radius: 999px;
-            background: var(--bg-subtle);
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--gold-bright), var(--crimson));
-            border-radius: 999px;
-            transition: width 0.25s ease;
-        }
+        .shake-count-pill { font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; color: var(--crimson); flex-shrink: 0; }
+        .progress-track { width: 100%; height: 8px; border-radius: 999px; background: var(--bg-subtle); overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold-bright), var(--crimson)); border-radius: 999px; transition: width 0.25s ease; }
 
         .canvas-3d-wrap {
-            position: relative;
-            width: 100%;
-            height: 270px;
-            border-radius: 16px;
+            position: relative; width: 100%; height: 265px; border-radius: 16px;
             background: radial-gradient(circle at 50% 42%, #FFFDF9 0%, #EFE5D5 70%, #E4D6C1 100%);
-            border: 1px solid var(--border-sand);
-            overflow: hidden;
-            margin-bottom: 14px;
-            cursor: pointer;
-            touch-action: none;
+            border: 1px solid var(--border-sand); overflow: hidden; margin-bottom: 14px; cursor: pointer;
         }
 
         #fortune3dCanvas { width: 100%; height: 100%; display: block; }
 
         .stick-badge-overlay {
-            position: absolute;
-            top: 12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(28, 25, 23, 0.88);
-            color: #FFF5D6;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.78rem;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 999px;
-            border: 1px solid rgba(217, 155, 38, 0.6);
-            pointer-events: none;
+            position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+            background: rgba(28, 25, 23, 0.88); color: #FFF5D6;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 700;
+            padding: 6px 14px; border-radius: 999px; border: 1px solid rgba(217, 155, 38, 0.6);
         }
 
-        .shaker-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+        .shaker-controls { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .shake-cta { padding: 12px 22px; border-radius: 12px; border: none; background: var(--crimson); color: #FFFFFF; font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.92rem; font-weight: 600; cursor: pointer; }
+        .draw-cta { padding: 12px 22px; border-radius: 12px; border: none; background: var(--sage); color: #FFFFFF; font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.92rem; font-weight: 600; cursor: pointer; }
+        .draw-cta:disabled { background: #CBD5E1; color: #64748B; cursor: not-allowed; }
 
-        .shake-cta {
-            padding: 12px 22px;
-            border-radius: 12px;
-            border: none;
-            background: var(--crimson);
-            color: #FFFFFF;
-            font-family: 'Be Vietnam Pro', sans-serif;
-            font-size: 0.92rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 6px 18px rgba(185, 56, 41, 0.25);
-        }
+        .slip-perspective { perspective: 1200px; margin-top: 16px; }
+        .fortune-slip { background: var(--bg-elevated); border: 1px solid var(--border-strong); border-radius: 18px; padding: 20px; text-align: left; }
+        .flip-reveal { animation: flip3dIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        @keyframes flip3dIn { 0% { transform: rotateX(-35deg) translateY(16px); opacity: 0; } 100% { transform: rotateX(0deg) translateY(0); opacity: 1; } }
 
-        .shake-cta:hover { background: var(--crimson-dark); }
-
-        .draw-cta {
-            padding: 12px 22px;
-            border-radius: 12px;
-            border: none;
-            background: var(--sage);
-            color: #FFFFFF;
-            font-family: 'Be Vietnam Pro', sans-serif;
-            font-size: 0.92rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .draw-cta:disabled {
-            background: #CBD5E1;
-            color: #64748B;
-            cursor: not-allowed;
-        }
-
-        /* Fortune Slip */
-        .slip-perspective { perspective: 1200px; margin-top: 18px; }
-
-        .fortune-slip {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-strong);
-            border-radius: 18px;
-            padding: 20px;
-            text-align: left;
-            box-shadow: 0 12px 32px rgba(28, 25, 23, 0.09);
-        }
-
-        .flip-reveal {
-            animation: flip3dIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-
-        @keyframes flip3dIn {
-            0% { transform: rotateX(-35deg) translateY(16px) scale(0.95); opacity: 0; }
-            100% { transform: rotateX(0deg) translateY(0) scale(1); opacity: 1; }
-        }
-
-        .slip-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 10px;
-            margin-bottom: 12px;
-            border-bottom: 1px solid var(--border-sand);
-        }
-
+        .slip-top { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; margin-bottom: 12px; border-bottom: 1px solid var(--border-sand); }
         .slip-num { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 700; color: var(--ink-muted); }
-
-        .slip-level {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.72rem;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 999px;
-            text-transform: uppercase;
-        }
-
+        .slip-level { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: 700; padding: 4px 12px; border-radius: 999px; text-transform: uppercase; }
         .level-great { background: #FDF2F0; color: #B93829; border: 1px solid rgba(185, 56, 41, 0.28); }
         .level-good { background: #FBF5E8; color: #9A6610; border: 1px solid rgba(182, 126, 30, 0.28); }
         .level-peace { background: #EEF6F2; color: #2D6A4F; border: 1px solid rgba(45, 106, 79, 0.25); }
         .level-caution { background: #F3EDE3; color: #575049; border: 1px solid #D4C7B4; }
 
-        .slip-header-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 10px;
-        }
-
-        .slip-title { font-family: 'Playfair Display', serif; font-size: 1.55rem; font-weight: 700; }
-
-        .red-stamp {
-            width: 44px;
-            height: 44px;
-            border: 2px solid var(--crimson);
-            border-radius: 8px;
-            color: var(--crimson);
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: 0.66rem;
-            line-height: 1.1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            transform: rotate(-8deg);
-            flex-shrink: 0;
-        }
-
-        .slip-poem {
-            background: var(--bg-paper);
-            border-left: 3px solid var(--crimson);
-            border-radius: 0 12px 12px 0;
-            padding: 12px 16px;
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 0.98rem;
-            line-height: 1.65;
-            margin-bottom: 12px;
-            white-space: pre-line;
-        }
-
-        .aspects-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .aspect-box {
-            background: var(--bg-paper);
-            border: 1px solid var(--border-sand);
-            border-radius: 10px;
-            padding: 10px 12px;
-        }
-
+        .slip-header-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+        .slip-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; }
+        .red-stamp { width: 44px; height: 44px; border: 2px solid var(--crimson); border-radius: 8px; color: var(--crimson); font-family: 'Playfair Display', serif; font-weight: 700; font-size: 0.65rem; line-height: 1.1; display: flex; align-items: center; justify-content: center; text-align: center; transform: rotate(-8deg); flex-shrink: 0; }
+        .slip-poem { background: var(--bg-paper); border-left: 3px solid var(--crimson); border-radius: 0 12px 12px 0; padding: 12px 16px; font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.98rem; line-height: 1.65; margin-bottom: 12px; white-space: pre-line; }
+        .aspects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
+        .aspect-box { background: var(--bg-paper); border: 1px solid var(--border-sand); border-radius: 10px; padding: 10px 12px; }
         .aspect-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--crimson); margin-bottom: 3px; }
         .aspect-text { font-size: 0.82rem; color: var(--ink-secondary); line-height: 1.45; }
-
-        .slip-advice {
-            background: var(--gold-soft);
-            border: 1px solid rgba(182, 126, 30, 0.25);
-            border-radius: 10px;
-            padding: 10px 14px;
-            font-size: 0.84rem;
-            color: #6B4408;
-            margin-bottom: 12px;
-        }
-
-        .slip-footer {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            padding-top: 10px;
-            border-top: 1px solid var(--border-sand);
-        }
-
+        .slip-advice { background: var(--gold-soft); border: 1px solid rgba(182, 126, 30, 0.25); border-radius: 10px; padding: 10px 14px; font-size: 0.84rem; color: #6B4408; margin-bottom: 12px; }
+        .slip-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding-top: 10px; border-top: 1px solid var(--border-sand); }
         .lucky-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.73rem; color: var(--ink-muted); }
         .slip-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .mini-btn { padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--bg-elevated); color: var(--ink-primary); font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.78rem; font-weight: 600; cursor: pointer; }
 
-        .mini-btn {
-            padding: 7px 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border-strong);
-            background: var(--bg-elevated);
-            color: var(--ink-primary);
-            font-family: 'Be Vietnam Pro', sans-serif;
-            font-size: 0.78rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        /* Career Modal */
+        /* Career & Customize */
         .quiz-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 14px 0; text-align: left; }
         .quiz-card { background: var(--bg-elevated); border: 1px solid var(--border-sand); border-radius: 12px; padding: 10px 12px; }
         .quiz-label { display: block; font-size: 0.76rem; font-weight: 700; margin-bottom: 6px; }
         .quiz-select { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--bg-paper); font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.82rem; }
-
         .compatibility-meter { background: var(--bg-elevated); border: 1px solid var(--border-sand); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; text-align: left; }
         .meter-labels { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; margin-bottom: 8px; }
         .meter-bar { height: 11px; border-radius: 999px; background: var(--crimson-soft); overflow: hidden; border: 1px solid var(--border-sand); margin-bottom: 8px; }
         .meter-work-fill { height: 100%; background: linear-gradient(90deg, var(--sage), #40916C); transition: width 0.35s ease; }
         .verdict-box { font-size: 0.84rem; color: var(--ink-secondary); line-height: 1.5; }
-
         .grace-taunt { background: var(--gold-soft); border: 1px dashed rgba(182, 126, 30, 0.45); border-radius: 12px; padding: 10px 14px; font-size: 0.82rem; color: #6B4408; margin-bottom: 12px; font-weight: 500; text-align: left; }
-
         .quit-arena { position: relative; min-height: 76px; background: var(--bg-elevated); border: 1px solid var(--border-sand); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
         .stay-btn { padding: 11px 16px; border-radius: 10px; border: none; background: var(--sage); color: #FFFFFF; font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.86rem; font-weight: 600; cursor: pointer; z-index: 2; }
         .runaway-btn { padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(185, 56, 41, 0.35); background: var(--crimson-soft); color: var(--crimson); font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.84rem; font-weight: 600; cursor: pointer; transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1); z-index: 3; }
-
         .contract-card { background: var(--bg-elevated); border: 2px solid var(--crimson); border-radius: 16px; padding: 20px; text-align: center; margin-top: 10px; }
         .contract-stamp { display: inline-block; border: 2px solid var(--crimson); color: var(--crimson); font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; transform: rotate(-4deg); margin-bottom: 8px; }
-
-        /* Customize Modal */
         .outfit-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 12px 0 16px; }
         .outfit-btn { padding: 10px; border-radius: 10px; border: 1px solid var(--border-sand); background: var(--bg-elevated); cursor: pointer; font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.84rem; font-weight: 600; }
         .outfit-btn.active { border-color: var(--crimson); background: var(--crimson-soft); color: var(--crimson); }
 
         @media (max-width: 640px) {
-            .controls-hint { display: none; }
             .quiz-grid, .aspects-grid { grid-template-columns: 1fr; }
-            .quest-banner { top: 62px; font-size: 0.72rem; }
+            .dpad-pc { display: none; }
+            .hud-countdown { display: none; }
+            .quest-banner { top: 56px; font-size: 0.7rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Full-Screen Interactive Temple World -->
-    <canvas id="gameCanvas"></canvas>
+    <!-- Full-Screen 3D World -->
+    <canvas id="world3dCanvas"></canvas>
+    <div id="labelsLayer"></div>
 
     <!-- Top HUD -->
     <div class="hud-top">
@@ -640,34 +511,46 @@
         </div>
 
         <div class="hud-group">
-            <div class="hud-pill" style="cursor: default;">
+            <div class="hud-pill" id="onlineStatusPill" title="Kết nối phòng đi chùa online">
                 <span class="online-dot"></span>
-                <span id="onlineCounter">18 đang đi chùa</span>
+                <span id="onlineCounter">Đang kết nối...</span>
             </div>
             <button id="soundToggleBtn" class="hud-pill" type="button">🔊 Âm thanh</button>
         </div>
     </div>
 
-    <!-- Quest Guidance Banner -->
+    <!-- Quest Banner -->
     <div class="quest-banner" id="questBanner">
         <span class="quest-step-tag" id="questStepTag">BƯỚC 1/3</span>
-        <span id="questBannerText">Bạn đang ngoài cổng chùa • Đi bộ vào sân tới Lư Hương để thắp hương</span>
+        <span id="questBannerText">Ngoài Cổng Tam Quan • Dùng Joystick / WASD đi vào sân chùa thắp hương</span>
     </div>
 
-    <!-- Context Interact Button -->
+    <!-- Interact Prompt -->
     <button id="interactPrompt" class="interact-prompt hidden" type="button">
         🕯️ Thắp Hương Thành Tâm [E]
     </button>
 
-    <!-- Bottom Chat & Controls -->
+    <!-- Virtual Analog Joystick (Phone & Touch/Mouse) -->
+    <div id="joystickZone" class="joystick-zone" title="Kéo để di chuyển nhân vật 3D">
+        <div id="joystickKnob" class="joystick-knob"></div>
+    </div>
+
+    <!-- PC On-Screen Directional Buttons -->
+    <div class="dpad-pc" aria-label="Nút điều khiển di chuyển">
+        <div></div>
+        <button class="dpad-btn" data-dir="up" type="button">▲</button>
+        <div></div>
+        <button class="dpad-btn" data-dir="left" type="button">◀</button>
+        <button class="dpad-btn" data-dir="down" type="button">▼</button>
+        <button class="dpad-btn" data-dir="right" type="button">▶</button>
+    </div>
+
+    <!-- Bottom Chat Bar -->
     <div class="hud-bottom">
         <form id="chatForm" class="chat-bar">
-            <input id="chatInput" type="text" maxlength="60" placeholder="Nhắn lời chúc đầu xuân (hiện trên đầu nhân vật)..." autocomplete="off">
+            <input id="chatInput" type="text" maxlength="60" placeholder="Nhắn lời chúc đầu xuân (hoặc nói chuyện với bot)..." autocomplete="off">
             <button class="chat-send-btn" type="submit">Gửi</button>
         </form>
-        <div class="controls-hint">
-            WASD / Mũi tên hoặc Click bản đồ để đi • Phím E tương tác
-        </div>
     </div>
 
     <!-- ==================== MODAL 1: 3D FORTUNE POPUP (MIN 5 CLICKS) ==================== -->
@@ -684,9 +567,7 @@
                     <span id="shakeGuideLabel">Hướng dẫn: Nhấn vào ống xăm 3D ít nhất 5 lần để thành tâm lắc quẻ</span>
                     <span id="shakeCountText" class="shake-count-pill">0 / 5 lần</span>
                 </div>
-                <div class="progress-track">
-                    <div id="shakeProgressFill" class="progress-fill"></div>
-                </div>
+                <div class="progress-track"><div id="shakeProgressFill" class="progress-fill"></div></div>
             </div>
 
             <div class="canvas-3d-wrap" id="canvas3dWrap">
@@ -805,7 +686,7 @@
     <div id="customModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
         <div class="modal-card" style="max-width: 420px;">
             <div class="modal-top-bar">
-                <span class="year-pill">NHÂN VẬT ĐI CHÙA</span>
+                <span class="year-pill">NHÂN VẬT 3D</span>
                 <button id="closeCustomModalBtn" class="modal-close-x" type="button">✕</button>
             </div>
             <h2 class="shaker-title" style="margin-bottom: 12px;">Tùy Chỉnh Nhân Vật</h2>
@@ -827,6 +708,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <script>
         // ==================== 1. COUNTDOWN (04/02/2027) ====================
         function updateHudCountdown() {
@@ -846,10 +728,9 @@
 
         // ==================== 2. AUDIO SYNTHESIZER ====================
         let audioCtx = null, soundEnabled = true;
-        const soundToggleBtn = document.getElementById("soundToggleBtn");
-        soundToggleBtn.addEventListener("click", () => {
+        document.getElementById("soundToggleBtn").addEventListener("click", (e) => {
             soundEnabled = !soundEnabled;
-            soundToggleBtn.textContent = soundEnabled ? "🔊 Âm thanh" : "🔇 Đã tắt";
+            e.currentTarget.textContent = soundEnabled ? "🔊 Âm thanh" : "🔇 Đã tắt";
         });
 
         function playBambooClick(intensity = 1) {
@@ -858,127 +739,386 @@
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 if (audioCtx.state === "suspended") audioCtx.resume();
                 const now = audioCtx.currentTime;
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                const filter = audioCtx.createBiquadFilter();
+                const osc = audioCtx.createOscillator(), gain = audioCtx.createGain(), filter = audioCtx.createBiquadFilter();
                 osc.type = "triangle";
                 osc.frequency.setValueAtTime(560 + Math.random() * 480, now);
                 osc.frequency.exponentialRampToValueAtTime(170, now + 0.045);
-                filter.type = "bandpass";
-                filter.frequency.setValueAtTime(1100, now);
-                filter.Q.setValueAtTime(3.2, now);
+                filter.type = "bandpass"; filter.frequency.setValueAtTime(1100, now); filter.Q.setValueAtTime(3.2, now);
                 gain.gain.setValueAtTime(0.09 * intensity, now);
                 gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-                osc.connect(filter);
-                filter.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start(now);
-                osc.stop(now + 0.055);
+                osc.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(now); osc.stop(now + 0.055);
             } catch (e) {}
         }
 
-        // ==================== 3. 2D INTERACTIVE TEMPLE WORLD (HANGMU STYLE) ====================
-        const gameCanvas = document.getElementById("gameCanvas");
-        const ctx = gameCanvas.getContext("2d");
+        // ==================== 3. TRUE 3D TEMPLE WORLD (THREE.JS) ====================
+        const worldCanvas = document.getElementById("world3dCanvas");
+        const labelsLayer = document.getElementById("labelsLayer");
         const interactPrompt = document.getElementById("interactPrompt");
         const questStepTag = document.getElementById("questStepTag");
         const questBannerText = document.getElementById("questBannerText");
         const onlineCounter = document.getElementById("onlineCounter");
 
-        // World coordinates (1400 x 1100 map)
-        const WORLD_W = 1400, WORLD_H = 1100;
-        const ZONES = {
-            gate: { x: 700, y: 950 },
-            incense: { x: 700, y: 585, radius: 95 },
-            hallDoor: { x: 700, y: 360 },
-            altar: { x: 700, y: 215, radius: 105 },
-            graceDesk: { x: 1030, y: 610, radius: 95 }
-        };
-
+        const myId = "p_" + Math.random().toString(36).slice(2, 9);
         const player = {
-            x: 700, y: 960, vx: 0, vy: 0, speed: 4.0,
-            targetX: null, targetY: null,
+            id: myId, x: 0, z: 22, rotY: Math.PI, speed: 0.16,
             name: "Bạn (L.ASY)", color: "#B93829",
-            chat: "Mới tới cổng chùa 🏯", chatTimer: 260,
-            walkPhase: 0
+            chat: "Mới tới cổng chùa 🏯", chatTimer: 260, walkPhase: 0
         };
 
-        let hasLitIncense = false;
-        let nearTarget = null; // "incense" | "altar" | "grace"
-        const smokeParticles = [];
+        let hasLitIncense = false, nearTarget = null;
+        let wScene, wCamera, wRenderer, playerMesh;
+        const smokePuffs = [], guideArrows = [];
 
-        // Online NPC Crowd (multiplayer feel)
-        const npcNames = ["Minh Anh", "Tuấn Kiệt", "Bảo Ngọc", "Ms Grace", "Hoàng Long", "Khánh Linh", "Đức Anh", "Thảo Vy", "Quốc Bảo", "Ngọc Hân"];
-        const npcColors = ["#0284C7", "#D97706", "#DB2777", "#7C3AED", "#059669", "#DC2626", "#4F46E5", "#0D9488"];
-        const npcLines = [
-            "Cầu năm mới Đinh Mùi 2027 đại cát!",
-            "Chúc team L.ASY vượt KPI 200% 🚀",
-            "Thắp hương thơm quá 🙏",
-            "Vào chính điện lắc quẻ 3D đi anh em!",
-            "Ai trốn việc qua bàn Ms Grace nhé 👀",
-            "Sắp nghỉ Tết 04/02 rồi cố lên!",
-            "Xin quẻ Lý Ngư Hóa Long ✨"
+        function create3DCharacter(colorHex) {
+            const group = new THREE.Group();
+            const body = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.32, 0.42, 1.05, 16),
+                new THREE.MeshStandardMaterial({ color: colorHex, roughness: 0.55 })
+            );
+            body.position.y = 0.72;
+            group.add(body);
+
+            const head = new THREE.Mesh(
+                new THREE.SphereGeometry(0.32, 16, 16),
+                new THREE.MeshStandardMaterial({ color: 0xfde4c8, roughness: 0.6 })
+            );
+            head.position.y = 1.52;
+            group.add(head);
+
+            // Simple face eyes
+            const eyeMat = new THREE.MeshBasicMaterial({ color: 0x1c1917 });
+            const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), eyeMat);
+            const eyeR = eyeL.clone();
+            eyeL.position.set(-0.1, 1.55, 0.28);
+            eyeR.position.set(0.1, 1.55, 0.28);
+            group.add(eyeL, eyeR);
+
+            // Shadow
+            const shadow = new THREE.Mesh(
+                new THREE.CircleGeometry(0.45, 16),
+                new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.28 })
+            );
+            shadow.rotation.x = -Math.PI / 2;
+            shadow.position.y = 0.03;
+            group.add(shadow);
+
+            group.userData = { body, head };
+            return group;
+        }
+
+        function createLabelEl(id, name, isMe = false) {
+            const el = document.createElement("div");
+            el.className = "char-label" + (isMe ? " is-me" : "");
+            el.id = "lbl_" + id;
+            const bubble = document.createElement("div");
+            bubble.className = "char-bubble hidden";
+            const nm = document.createElement("div");
+            nm.className = "char-name";
+            nm.textContent = name;
+            el.appendChild(bubble);
+            el.appendChild(nm);
+            labelsLayer.appendChild(el);
+            return { el, bubble, nm };
+        }
+
+        function init3DWorld() {
+            wScene = new THREE.Scene();
+            wScene.background = new THREE.Color(0xf4dec1);
+            wScene.fog = new THREE.Fog(0xf4dec1, 22, 65);
+
+            wCamera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 120);
+            wRenderer = new THREE.WebGLRenderer({ canvas: worldCanvas, antialias: true });
+            wRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+            wRenderer.setSize(window.innerWidth, window.innerHeight);
+
+            wScene.add(new THREE.AmbientLight(0xfff5e4, 0.85));
+            const sun = new THREE.DirectionalLight(0xfff8eb, 1.05);
+            sun.position.set(14, 24, 16);
+            wScene.add(sun);
+
+            // Ground & Courtyard
+            const ground = new THREE.Mesh(
+                new THREE.PlaneGeometry(90, 90),
+                new THREE.MeshStandardMaterial({ color: 0xd5be9f, roughness: 0.9 })
+            );
+            ground.rotation.x = -Math.PI / 2;
+            wScene.add(ground);
+
+            const walkway = new THREE.Mesh(
+                new THREE.BoxGeometry(5.5, 0.05, 42),
+                new THREE.MeshStandardMaterial({ color: 0xb09678, roughness: 0.85 })
+            );
+            walkway.position.set(0, 0.02, 4);
+            wScene.add(walkway);
+
+            // 1. Cổng Tam Quan (Outer Gate at z = 16)
+            const pillarMat = new THREE.MeshStandardMaterial({ color: 0x9e2a1c, roughness: 0.5 });
+            const goldMat = new THREE.MeshStandardMaterial({ color: 0xd99b26, roughness: 0.35, metalness: 0.4 });
+            [-3.6, 3.6].forEach(px => {
+                const p = new THREE.Mesh(new THREE.BoxGeometry(0.9, 4.6, 0.9), pillarMat);
+                p.position.set(px, 2.3, 16);
+                wScene.add(p);
+            });
+            const gateRoof = new THREE.Mesh(new THREE.BoxGeometry(9.6, 0.8, 1.8), pillarMat);
+            gateRoof.position.set(0, 4.9, 16);
+            wScene.add(gateRoof);
+            const gateSign = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.7, 1.9), goldMat);
+            gateSign.position.set(0, 4.2, 16);
+            wScene.add(gateSign);
+
+            // 2. Lư Hương (Incense Burner at z = 4)
+            const burner = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.95, 0.7, 1.25, 20),
+                new THREE.MeshStandardMaterial({ color: 0xb67e1e, roughness: 0.35, metalness: 0.55 })
+            );
+            burner.position.set(0, 0.62, 4);
+            wScene.add(burner);
+
+            // 3. Chính Điện (Main Temple Hall at z = -12)
+            const hallFloor = new THREE.Mesh(
+                new THREE.BoxGeometry(16, 0.4, 11),
+                new THREE.MeshStandardMaterial({ color: 0xe8d9c5, roughness: 0.8 })
+            );
+            hallFloor.position.set(0, 0.2, -12);
+            wScene.add(hallFloor);
+
+            [-6.5, -2.5, 2.5, 6.5].forEach(px => {
+                const col = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.38, 5.2, 14), pillarMat);
+                col.position.set(px, 2.8, -7.2);
+                wScene.add(col);
+            });
+            const hallBack = new THREE.Mesh(
+                new THREE.BoxGeometry(15.5, 5.2, 0.6),
+                new THREE.MeshStandardMaterial({ color: 0xfff3e0, roughness: 0.7 })
+            );
+            hallBack.position.set(0, 2.8, -17);
+            wScene.add(hallBack);
+            const hallRoof = new THREE.Mesh(new THREE.ConeGeometry(12.2, 3.2, 4), pillarMat);
+            hallRoof.rotation.y = Math.PI / 4;
+            hallRoof.position.set(0, 6.9, -12);
+            wScene.add(hallRoof);
+
+            // Fortune Altar & Glowing 3D Bamboo Tube at z = -13.5
+            const altar = new THREE.Mesh(
+                new THREE.BoxGeometry(3.6, 1.1, 1.4),
+                new THREE.MeshStandardMaterial({ color: 0x6b2c14, roughness: 0.6 })
+            );
+            altar.position.set(0, 0.95, -13.5);
+            wScene.add(altar);
+
+            const altarTube = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.28, 0.25, 0.75, 16),
+                goldMat
+            );
+            altarTube.position.set(0, 1.85, -13.5);
+            wScene.add(altarTube);
+
+            // 4. Ms Grace HR Desk (Right Courtyard x = 8.5, z = 4)
+            const graceDesk = new THREE.Mesh(
+                new THREE.BoxGeometry(2.8, 1.0, 1.3),
+                new THREE.MeshStandardMaterial({ color: 0xfdf2f0, roughness: 0.5 })
+            );
+            graceDesk.position.set(8.5, 0.5, 4);
+            wScene.add(graceDesk);
+
+            // 5. Guided Glowing Floor Arrows (z = 1.5, -1.5, -4.5)
+            [-1.5, -4.5, 10].forEach((az, i) => {
+                const arrow = new THREE.Mesh(
+                    new THREE.ConeGeometry(0.55, 1.2, 3),
+                    new THREE.MeshBasicMaterial({ color: i === 2 ? 0xb93829 : 0x2d6a4f, transparent: true, opacity: 0.85 })
+                );
+                arrow.rotation.x = -Math.PI / 2;
+                arrow.position.set(0, 0.12, az);
+                wScene.add(arrow);
+                guideArrows.push({ mesh: arrow, isHall: i < 2 });
+            });
+
+            // 6. Blossom Trees (Mai & Đào)
+            const treePositions = [
+                { x: -9, z: 10, c: 0xfbbf24 }, { x: -10, z: -2, c: 0xf59e0b },
+                { x: 9, z: 12, c: 0xfb7185 }, { x: 11, z: -3, c: 0xf43f5e }
+            ];
+            treePositions.forEach(t => {
+                const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.3, 2.2, 8), new THREE.MeshStandardMaterial({ color: 0x5c3419 }));
+                trunk.position.set(t.x, 1.1, t.z);
+                wScene.add(trunk);
+                const crown = new THREE.Mesh(new THREE.SphereGeometry(1.65, 12, 12), new THREE.MeshStandardMaterial({ color: t.c, roughness: 0.7 }));
+                crown.position.set(t.x, 3.0, t.z);
+                wScene.add(crown);
+            });
+
+            // Player 3D Mesh + Label
+            playerMesh = create3DCharacter(player.color);
+            playerMesh.position.set(player.x, 0, player.z);
+            wScene.add(playerMesh);
+            player.labelObj = createLabelEl("me", player.name, true);
+        }
+
+        // ==================== 4. SMART INTERACTIVE BOTS + REAL MULTIPLAYER (MQTT) ====================
+        const botConfigs = [
+            { id: "b1", name: "Ms Grace 👑", color: "#991B1B", x: 8.5, z: 2.6, isBoss: true, chat: "Ai nộp đơn nghỉ việc ra đây!" },
+            { id: "b2", name: "Minh Anh", color: "#0284C7", x: -3.2, z: 8, routeIdx: 0, chat: "Đang đi vào cổng chùa 🏯" },
+            { id: "b3", name: "Tuấn Kiệt", color: "#D97706", x: 3.0, z: 5, routeIdx: 1, chat: "Thắp hương xong rồi nè 🙏" },
+            { id: "b4", name: "Bảo Ngọc", color: "#DB2777", x: -2.0, z: -9, routeIdx: 2, chat: "Vừa xin quẻ Đại Cát ✨" },
+            { id: "b5", name: "Hoàng Long", color: "#059669", x: 3.5, z: -8, routeIdx: 3, chat: "Chúc L.ASY năm mới phát tài!" }
+        ];
+        const botRoute = [
+            { x: -1.8, z: 14, line: "Mới tới cổng chùa, đông vui quá!" },
+            { x: -1.2, z: 5.5, line: "Thắp nén hương cầu KPI 2027 🙏" },
+            { x: -1.5, z: -11, line: "Vào Chính Điện lắc quẻ 3D thôi!" },
+            { x: 6.5, z: 4.5, line: "Ghẹo Ms Grace xin trà sữa 🧋" }
         ];
 
-        const npcs = npcNames.map((name, i) => ({
-            name,
-            color: name === "Ms Grace" ? "#991B1B" : npcColors[i % npcColors.length],
-            x: name === "Ms Grace" ? 1030 : 420 + Math.random() * 560,
-            y: name === "Ms Grace" ? 575 : 220 + Math.random() * 680,
-            tx: 700, ty: 600,
-            wait: Math.random() * 120,
-            chat: name === "Ms Grace" ? "Ai nộp đơn nghỉ việc ra đây!" : npcLines[i % npcLines.length],
-            chatTimer: 180 + Math.random() * 200,
-            walkPhase: Math.random() * 6,
-            isBoss: name === "Ms Grace"
-        }));
-
-        // Optional BroadcastChannel for real multi-tab sync
-        let bc = null;
-        const remotePeers = new Map();
-        try {
-            bc = new BroadcastChannel("lasy_temple_2027");
-            const myTabId = Math.random().toString(36).slice(2, 8);
-            bc.onmessage = (ev) => {
-                const d = ev.data;
-                if (!d || d.id === myTabId) return;
-                remotePeers.set(d.id, { ...d, lastSeen: Date.now() });
-            };
-            setInterval(() => {
-                bc.postMessage({ id: myTabId, x: player.x, y: player.y, name: player.name, color: player.color, chat: player.chatTimer > 0 ? player.chat : "" });
-                const now = Date.now();
-                for (const [k, v] of remotePeers.entries()) {
-                    if (now - v.lastSeen > 5000) remotePeers.delete(k);
-                }
-                onlineCounter.textContent = `${12 + npcs.length + remotePeers.size} đang đi chùa`;
-            }, 350);
-        } catch (e) {}
-
-        function resizeGameCanvas() {
-            gameCanvas.width = window.innerWidth;
-            gameCanvas.height = window.innerHeight;
+        const bots = [];
+        function initBots() {
+            botConfigs.forEach(cfg => {
+                const mesh = create3DCharacter(cfg.color);
+                mesh.position.set(cfg.x, 0, cfg.z);
+                wScene.add(mesh);
+                bots.push({
+                    ...cfg, mesh, labelObj: createLabelEl(cfg.id, cfg.name, false),
+                    wait: 60 + Math.random() * 120, walkPhase: 0, chatTimer: 220
+                });
+            });
         }
-        window.addEventListener("resize", resizeGameCanvas);
-        resizeGameCanvas();
 
-        const keys = {};
-        window.addEventListener("keydown", (e) => {
-            if (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA" || document.activeElement.tagName === "SELECT") return;
-            keys[e.key.toLowerCase()] = true;
-            if (e.key.toLowerCase() === "e" && nearTarget) {
-                triggerNearInteract();
+        // Bot reacts to your chat!
+        function triggerBotReplies(userMsg) {
+            const low = userMsg.toLowerCase();
+            bots.forEach((b, idx) => {
+                setTimeout(() => {
+                    if (b.isBoss && (low.includes("nghỉ") || low.includes("kpi") || low.includes("lương"))) {
+                        b.chat = "Đừng hòng trốn KPI nhé em! 😤"; b.chatTimer = 240;
+                    } else if (low.includes("chào") || low.includes("hi") || low.includes("hello")) {
+                        b.chat = `Chào ${player.name}! Chúc năm mới phát tài 🧧`; b.chatTimer = 220;
+                    } else if (low.includes("quẻ") || low.includes("lắc")) {
+                        b.chat = "Nhớ lắc đủ 5 lần mới linh nhé! 🎋"; b.chatTimer = 220;
+                    } else if (idx === 1) {
+                        b.chat = "Chúc mừng năm mới Đinh Mùi 2027! 🌸"; b.chatTimer = 220;
+                    }
+                }, 450 + idx * 350);
+            });
+        }
+
+        // Real-Time Online Multiplayer via Public MQTT over WebSocket + BroadcastChannel
+        const remotePlayers = new Map();
+        let mqttClient = null, onlineConnected = false;
+        const MQTT_TOPIC = "lasy/tet2027/temple3d/v1";
+
+        function upsertRemotePlayer(data) {
+            if (!data || !data.id || data.id === myId) return;
+            let rp = remotePlayers.get(data.id);
+            if (!rp) {
+                const mesh = create3DCharacter(data.color || "#0284C7");
+                mesh.position.set(data.x || 0, 0, data.z || 20);
+                wScene.add(mesh);
+                rp = { ...data, mesh, labelObj: createLabelEl(data.id, data.name || "Khách", false), lastSeen: Date.now() };
+                remotePlayers.set(data.id, rp);
             }
+            rp.tx = data.x; rp.tz = data.z; rp.rotY = data.rotY || 0;
+            rp.name = data.name || rp.name;
+            rp.labelObj.nm.textContent = rp.name;
+            rp.chat = data.chat || "";
+            rp.lastSeen = Date.now();
+        }
+
+        function initMultiplayer() {
+            // 1. BroadcastChannel for instant local-tab sync
+            try {
+                const bc = new BroadcastChannel(MQTT_TOPIC);
+                bc.onmessage = (e) => upsertRemotePlayer(e.data);
+                setInterval(() => {
+                    bc.postMessage({ id: myId, x: player.x, z: player.z, rotY: player.rotY, name: player.name, color: player.color, chat: player.chatTimer > 0 ? player.chat : "" });
+                }, 200);
+            } catch (e) {}
+
+            // 2. Public MQTT WebSocket for real cross-device online players on GitHub Pages
+            if (typeof mqtt !== "undefined") {
+                try {
+                    mqttClient = mqtt.connect("wss://broker.emqx.io:8084/mqtt", { clientId: "lasy_" + myId, clean: true, connectTimeout: 5000 });
+                    mqttClient.on("connect", () => {
+                        onlineConnected = true;
+                        mqttClient.subscribe(MQTT_TOPIC);
+                    });
+                    mqttClient.on("message", (_, payload) => {
+                        try { upsertRemotePlayer(JSON.parse(payload.toString())); } catch (e) {}
+                    });
+                    setInterval(() => {
+                        if (mqttClient && mqttClient.connected) {
+                            mqttClient.publish(MQTT_TOPIC, JSON.stringify({
+                                id: myId, x: Number(player.x.toFixed(2)), z: Number(player.z.toFixed(2)),
+                                rotY: Number(player.rotY.toFixed(2)), name: player.name, color: player.color,
+                                chat: player.chatTimer > 0 ? player.chat : ""
+                            }));
+                        }
+                    }, 220);
+                } catch (e) {}
+            }
+
+            setInterval(() => {
+                const now = Date.now();
+                for (const [k, rp] of remotePlayers.entries()) {
+                    if (now - rp.lastSeen > 6000) {
+                        wScene.remove(rp.mesh);
+                        rp.labelObj.el.remove();
+                        remotePlayers.delete(k);
+                    }
+                }
+                const total = 1 + bots.length + remotePlayers.size;
+                onlineCounter.textContent = `${total} đang đi chùa${onlineConnected ? " (Online)" : ""}`;
+            }, 1000);
+        }
+
+        // ==================== 5. CONTROLS: JOYSTICK (PHONE) + KEYS/BUTTONS (PC) ====================
+        const keys = {};
+        const dpadState = { up: false, down: false, left: false, right: false };
+        let joyVec = { x: 0, y: 0 };
+
+        window.addEventListener("keydown", (e) => {
+            if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) return;
+            keys[e.key.toLowerCase()] = true;
+            if (e.key.toLowerCase() === "e" && nearTarget) triggerNearInteract();
         });
         window.addEventListener("keyup", (e) => { keys[e.key.toLowerCase()] = false; });
 
-        // Click / Tap on map to walk
-        let cameraX = 0, cameraY = 0;
-        gameCanvas.addEventListener("pointerdown", (e) => {
-            const rect = gameCanvas.getBoundingClientRect();
-            const wx = e.clientX - rect.left + cameraX;
-            const wy = e.clientY - rect.top + cameraY;
-            player.targetX = Math.max(120, Math.min(WORLD_W - 120, wx));
-            player.targetY = Math.max(150, Math.min(WORLD_H - 60, wy));
+        // PC On-Screen D-Pad
+        document.querySelectorAll(".dpad-btn").forEach(btn => {
+            const dir = btn.dataset.dir;
+            btn.addEventListener("pointerdown", (e) => { e.preventDefault(); dpadState[dir] = true; });
+            btn.addEventListener("pointerup", () => { dpadState[dir] = false; });
+            btn.addEventListener("pointerleave", () => { dpadState[dir] = false; });
+        });
+
+        // Virtual Analog Joystick
+        const joystickZone = document.getElementById("joystickZone");
+        const joystickKnob = document.getElementById("joystickKnob");
+        let joyActive = false, joyCenter = { x: 0, y: 0 };
+        const MAX_JOY = 34;
+
+        function updateJoystick(clientX, clientY) {
+            let dx = clientX - joyCenter.x;
+            let dy = clientY - joyCenter.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist > MAX_JOY) { dx = (dx / dist) * MAX_JOY; dy = (dy / dist) * MAX_JOY; }
+            joystickKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+            joyVec.x = dx / MAX_JOY;
+            joyVec.y = dy / MAX_JOY;
+        }
+
+        joystickZone.addEventListener("pointerdown", (e) => {
+            e.preventDefault();
+            joyActive = true;
+            const rect = joystickZone.getBoundingClientRect();
+            joyCenter = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+            updateJoystick(e.clientX, e.clientY);
+        });
+        window.addEventListener("pointermove", (e) => { if (joyActive) updateJoystick(e.clientX, e.clientY); });
+        window.addEventListener("pointerup", () => {
+            if (!joyActive) return;
+            joyActive = false;
+            joyVec = { x: 0, y: 0 };
+            joystickKnob.style.transform = "translate(0px, 0px)";
         });
 
         function triggerNearInteract() {
@@ -986,9 +1126,9 @@
                 hasLitIncense = true;
                 player.chat = "Đã thắp hương thành tâm 🙏";
                 player.chatTimer = 220;
-                playBambooClick(1.1);
+                playBambooClick(1.15);
                 questStepTag.textContent = "BƯỚC 2/3";
-                questBannerText.textContent = "Đã thắp hương! Hãy đi theo mũi tên vàng vào Chính Điện lắc quẻ 3D";
+                questBannerText.textContent = "Đã thắp hương! Đi theo mũi tên xanh vào Chính Điện lắc quẻ 3D";
             } else if (nearTarget === "altar") {
                 openFortuneModal();
             } else if (nearTarget === "grace") {
@@ -997,7 +1137,6 @@
         }
         interactPrompt.addEventListener("click", triggerNearInteract);
 
-        // Chat Input
         document.getElementById("chatForm").addEventListener("submit", (e) => {
             e.preventDefault();
             const inp = document.getElementById("chatInput");
@@ -1005,108 +1144,147 @@
             if (!txt) return;
             player.chat = txt;
             player.chatTimer = 260;
+            triggerBotReplies(txt);
             inp.value = "";
             inp.blur();
         });
 
-        function updateWorld() {
-            // Keyboard movement
-            let dx = 0, dy = 0;
-            if (keys["w"] || keys["arrowup"]) dy -= 1;
-            if (keys["s"] || keys["arrowdown"]) dy += 1;
-            if (keys["a"] || keys["arrowleft"]) dx -= 1;
-            if (keys["d"] || keys["arrowright"]) dx += 1;
-
-            if (dx !== 0 || dy !== 0) {
-                const len = Math.hypot(dx, dy);
-                player.x += (dx / len) * player.speed;
-                player.y += (dy / len) * player.speed;
-                player.targetX = null;
-                player.targetY = null;
-                player.walkPhase += 0.25;
-            } else if (player.targetX !== null && player.targetY !== null) {
-                const tx = player.targetX - player.x;
-                const ty = player.targetY - player.y;
-                const dist = Math.hypot(tx, ty);
-                if (dist > 5) {
-                    player.x += (tx / dist) * player.speed;
-                    player.y += (ty / dist) * player.speed;
-                    player.walkPhase += 0.25;
-                } else {
-                    player.targetX = null;
-                    player.targetY = null;
-                }
+        // Project 3D position to 2D screen label
+        function projectLabel(pos3d, labelObj, nameText, chatText) {
+            const v = pos3d.clone();
+            v.y += 2.25;
+            v.project(wCamera);
+            if (v.z > 1) {
+                labelObj.el.classList.add("hidden");
+                return;
             }
+            labelObj.el.classList.remove("hidden");
+            const sx = (v.x * 0.5 + 0.5) * window.innerWidth;
+            const sy = (-v.y * 0.5 + 0.5) * window.innerHeight;
+            labelObj.el.style.left = sx + "px";
+            labelObj.el.style.top = sy + "px";
+            labelObj.nm.textContent = nameText;
+            if (chatText) {
+                labelObj.bubble.textContent = chatText;
+                labelObj.bubble.classList.remove("hidden");
+            } else {
+                labelObj.bubble.classList.add("hidden");
+            }
+        }
 
-            player.x = Math.max(120, Math.min(WORLD_W - 120, player.x));
-            player.y = Math.max(150, Math.min(WORLD_H - 60, player.y));
+        function animate3DWorld() {
+            requestAnimationFrame(animate3DWorld);
+
+            // Movement vector from Keyboard + D-pad + Joystick
+            let mx = joyVec.x, mz = joyVec.y;
+            if (keys["a"] || keys["arrowleft"] || dpadState.left) mx -= 1;
+            if (keys["d"] || keys["arrowright"] || dpadState.right) mx += 1;
+            if (keys["w"] || keys["arrowup"] || dpadState.up) mz -= 1;
+            if (keys["s"] || keys["arrowdown"] || dpadState.down) mz += 1;
+
+            const mag = Math.hypot(mx, mz);
+            if (mag > 0.1) {
+                const nx = mx / Math.max(1, mag), nz = mz / Math.max(1, mag);
+                player.x = Math.max(-18, Math.min(18, player.x + nx * player.speed));
+                player.z = Math.max(-15.5, Math.min(26, player.z + nz * player.speed));
+                player.rotY = Math.atan2(nx, nz);
+                player.walkPhase += 0.24;
+            }
             if (player.chatTimer > 0) player.chatTimer--;
 
-            // Update NPCs
-            npcs.forEach((n) => {
-                if (n.isBoss) {
-                    n.chatTimer--;
-                    if (n.chatTimer <= 0) {
-                        n.chat = Math.random() < 0.5 ? "Ai nộp đơn nghỉ việc ra đây!" : "KPI Tết 2027 đang chờ em!";
-                        n.chatTimer = 260;
-                    }
-                    return;
-                }
-                const ndx = n.tx - n.x, ndy = n.ty - n.y;
-                const ndist = Math.hypot(ndx, ndy);
-                if (ndist > 6) {
-                    n.x += (ndx / ndist) * 1.35;
-                    n.y += (ndy / ndist) * 1.35;
-                    n.walkPhase += 0.14;
-                } else {
-                    n.wait--;
-                    if (n.wait <= 0) {
-                        n.tx = 280 + Math.random() * 840;
-                        n.ty = 200 + Math.random() * 740;
-                        n.wait = 80 + Math.random() * 140;
-                    }
-                }
-                n.chatTimer--;
-                if (n.chatTimer <= 0) {
-                    n.chat = npcLines[Math.floor(Math.random() * npcLines.length)];
-                    n.chatTimer = 220 + Math.random() * 200;
-                }
+            playerMesh.position.set(player.x, Math.abs(Math.sin(player.walkPhase)) * 0.08, player.z);
+            playerMesh.rotation.y = player.rotY;
+
+            // Smooth 3rd-person follow camera
+            const camTargetX = player.x * 0.7;
+            const camTargetZ = player.z + 9.2;
+            wCamera.position.x += (camTargetX - wCamera.position.x) * 0.1;
+            wCamera.position.y += (5.8 - wCamera.position.y) * 0.1;
+            wCamera.position.z += (camTargetZ - wCamera.position.z) * 0.1;
+            wCamera.lookAt(player.x, 1.35, player.z - 2.5);
+
+            // Guide Arrows visibility & pulse
+            const pulse = 0.55 + Math.sin(Date.now() * 0.006) * 0.4;
+            guideArrows.forEach(a => {
+                a.mesh.visible = a.isHall ? hasLitIncense : !hasLitIncense;
+                a.mesh.material.opacity = pulse;
             });
 
-            // Incense smoke particles
-            if (hasLitIncense && Math.random() < 0.35) {
-                smokeParticles.push({
-                    x: ZONES.incense.x + (Math.random() - 0.5) * 16,
-                    y: ZONES.incense.y - 26,
-                    vy: -0.9 - Math.random() * 0.5,
-                    r: 4 + Math.random() * 4,
-                    alpha: 0.7
-                });
+            // 3D Smoke Puffs at Lư Hương
+            if (hasLitIncense && Math.random() < 0.25) {
+                const puff = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.16, 8, 8),
+                    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.65 })
+                );
+                puff.position.set((Math.random() - 0.5) * 0.4, 1.35, 4 + (Math.random() - 0.5) * 0.4);
+                wScene.add(puff);
+                smokePuffs.push(puff);
             }
-            for (let i = smokeParticles.length - 1; i >= 0; i--) {
-                const p = smokeParticles[i];
-                p.y += p.vy;
-                p.x += Math.sin(p.y * 0.08) * 0.35;
-                p.r += 0.08;
-                p.alpha -= 0.008;
-                if (p.alpha <= 0) smokeParticles.splice(i, 1);
+            for (let i = smokePuffs.length - 1; i >= 0; i--) {
+                const sp = smokePuffs[i];
+                sp.position.y += 0.03;
+                sp.scale.multiplyScalar(1.015);
+                sp.material.opacity -= 0.009;
+                if (sp.material.opacity <= 0) { wScene.remove(sp); smokePuffs.splice(i, 1); }
             }
 
-            // Proximity checks
-            const dIncense = Math.hypot(player.x - ZONES.incense.x, player.y - ZONES.incense.y);
-            const dAltar = Math.hypot(player.x - ZONES.altar.x, player.y - ZONES.altar.y);
-            const dGrace = Math.hypot(player.x - ZONES.graceDesk.x, player.y - ZONES.graceDesk.y);
+            // Update Interactive Bots
+            bots.forEach(b => {
+                if (!b.isBoss) {
+                    const target = botRoute[b.routeIdx];
+                    const dx = target.x - b.x, dz = target.z - b.z;
+                    const d = Math.hypot(dx, dz);
+                    if (d > 0.4) {
+                        b.x += (dx / d) * 0.055;
+                        b.z += (dz / d) * 0.055;
+                        b.mesh.rotation.y = Math.atan2(dx, dz);
+                        b.walkPhase += 0.15;
+                    } else {
+                        b.wait--;
+                        if (b.wait <= 0) {
+                            b.routeIdx = (b.routeIdx + 1) % botRoute.length;
+                            b.chat = botRoute[b.routeIdx].line;
+                            b.chatTimer = 200;
+                            b.wait = 90 + Math.random() * 140;
+                        }
+                    }
+                    b.mesh.position.set(b.x, Math.abs(Math.sin(b.walkPhase)) * 0.06, b.z);
+                } else {
+                    // Ms Grace turns toward player when nearby
+                    const dToMe = Math.hypot(player.x - b.x, player.z - b.z);
+                    if (dToMe < 5) {
+                        b.mesh.rotation.y = Math.atan2(player.x - b.x, player.z - b.z);
+                    }
+                }
+                if (b.chatTimer > 0) b.chatTimer--;
+                projectLabel(b.mesh.position, b.labelObj, b.name, b.chatTimer > 0 ? b.chat : "");
+            });
+
+            // Smoothly interpolate Remote Online Players
+            remotePlayers.forEach(rp => {
+                rp.mesh.position.x += ((rp.tx || 0) - rp.mesh.position.x) * 0.18;
+                rp.mesh.position.z += ((rp.tz || 0) - rp.mesh.position.z) * 0.18;
+                rp.mesh.rotation.y = rp.rotY || 0;
+                projectLabel(rp.mesh.position, rp.labelObj, rp.name, rp.chat);
+            });
+
+            projectLabel(playerMesh.position, player.labelObj, player.name, player.chatTimer > 0 ? player.chat : "");
+
+            // Proximity interaction check
+            const dIncense = Math.hypot(player.x - 0, player.z - 4);
+            const dAltar = Math.hypot(player.x - 0, player.z - (-13.5));
+            const dGrace = Math.hypot(player.x - 8.5, player.z - 4);
 
             nearTarget = null;
-            if (dIncense < ZONES.incense.radius && !hasLitIncense) {
+            if (dIncense < 3.0 && !hasLitIncense) {
                 nearTarget = "incense";
                 interactPrompt.textContent = "🕯️ Thắp Hương Thành Tâm [E]";
                 interactPrompt.classList.remove("hidden");
-            } else if (dAltar < ZONES.altar.radius) {
+            } else if (dAltar < 3.5) {
                 nearTarget = "altar";
-                interactPrompt.textContent = hasLitIncense ? "🎋 Vào Lắc Ống Xăm 3D [E]" : "🎋 Xin Quẻ 3D (Nên thắp hương trước) [E]";
+                interactPrompt.textContent = "🎋 Lắc Ống Xăm 3D (Tối thiểu 5 lần) [E]";
                 interactPrompt.classList.remove("hidden");
-            } else if (dGrace < ZONES.graceDesk.radius) {
+            } else if (dGrace < 3.2) {
                 nearTarget = "grace";
                 interactPrompt.textContent = "⚖️ Gặp Ms Grace: Cày Cuốc hay Nghỉ Việc? [E]";
                 interactPrompt.classList.remove("hidden");
@@ -1114,232 +1292,30 @@
                 interactPrompt.classList.add("hidden");
             }
 
-            // Smooth camera follow
-            const targetCamX = Math.max(0, Math.min(WORLD_W - gameCanvas.width, player.x - gameCanvas.width / 2));
-            const targetCamY = Math.max(0, Math.min(WORLD_H - gameCanvas.height, player.y - gameCanvas.height / 2));
-            cameraX += (targetCamX - cameraX) * 0.12;
-            cameraY += (targetCamY - cameraY) * 0.12;
+            wRenderer.render(wScene, wCamera);
         }
 
-        function drawCharacter(c, isMe = false) {
-            const bob = Math.sin(c.walkPhase || 0) * 2.5;
-            // Shadow
-            ctx.fillStyle = "rgba(0,0,0,0.22)";
-            ctx.beginPath();
-            ctx.ellipse(c.x, c.y + 18, 14, 6, 0, 0, Math.PI * 2);
-            ctx.fill();
+        window.addEventListener("resize", () => {
+            if (!wCamera || !wRenderer) return;
+            wCamera.aspect = window.innerWidth / window.innerHeight;
+            wCamera.updateProjectionMatrix();
+            wRenderer.setSize(window.innerWidth, window.innerHeight);
+        });
 
-            // Body (Áo dài / Outfit)
-            ctx.fillStyle = c.color;
-            ctx.beginPath();
-            ctx.roundRect(c.x - 11, c.y - 4 + bob, 22, 22, 7);
-            ctx.fill();
+        init3DWorld();
+        initBots();
+        initMultiplayer();
+        animate3DWorld();
 
-            // Head
-            ctx.fillStyle = "#FDE4C8";
-            ctx.beginPath();
-            ctx.arc(c.x, c.y - 13 + bob, 11, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = isMe ? "#FCD34D" : "#451A03";
-            ctx.lineWidth = isMe ? 2.5 : 1.5;
-            ctx.stroke();
-
-            // Eyes
-            ctx.fillStyle = "#1C1917";
-            ctx.beginPath();
-            ctx.arc(c.x - 3.5, c.y - 13 + bob, 1.6, 0, Math.PI * 2);
-            ctx.arc(c.x + 3.5, c.y - 13 + bob, 1.6, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Name tag
-            ctx.font = "600 11px 'Be Vietnam Pro', sans-serif";
-            const nw = ctx.measureText(c.name).width + 12;
-            ctx.fillStyle = isMe ? "rgba(185, 56, 41, 0.92)" : "rgba(255, 255, 255, 0.88)";
-            ctx.beginPath();
-            ctx.roundRect(c.x - nw / 2, c.y + 22, nw, 18, 6);
-            ctx.fill();
-            ctx.fillStyle = isMe ? "#FFFFFF" : "#1C1917";
-            ctx.textAlign = "center";
-            ctx.fillText(c.name, c.x, c.y + 34);
-
-            // Chat bubble
-            if (c.chat && (c.chatTimer === undefined || c.chatTimer > 0)) {
-                ctx.font = "500 11.5px 'Be Vietnam Pro', sans-serif";
-                const cw = Math.min(210, ctx.measureText(c.chat).width + 18);
-                ctx.fillStyle = "rgba(255, 255, 255, 0.96)";
-                ctx.strokeStyle = "#D4C7B4";
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.roundRect(c.x - cw / 2, c.y - 52 + bob, cw, 22, 10);
-                ctx.fill();
-                ctx.stroke();
-                ctx.fillStyle = "#1C1917";
-                ctx.fillText(c.chat, c.x, c.y - 37 + bob, cw - 10);
-            }
-        }
-
-        function drawWorld() {
-            ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
-            ctx.save();
-            ctx.translate(-cameraX, -cameraY);
-
-            // 1. Grass & Outer Temple Grounds
-            ctx.fillStyle = "#D8C3A5";
-            ctx.fillRect(0, 0, WORLD_W, WORLD_H);
-
-            // Courtyard Stone Paving
-            ctx.fillStyle = "#E8D9C5";
-            ctx.fillRect(220, 120, 960, 740);
-            ctx.strokeStyle = "#C7B299";
-            ctx.lineWidth = 3;
-            ctx.strokeRect(220, 120, 960, 740);
-
-            // Main Stone Walkway from Gate -> Incense -> Chính Điện
-            ctx.fillStyle = "#B89F82";
-            ctx.fillRect(635, 180, 130, 880);
-            ctx.strokeStyle = "#9C8265";
-            ctx.lineWidth = 2;
-            for (let y = 200; y < 1040; y += 45) {
-                ctx.beginPath();
-                ctx.moveTo(635, y);
-                ctx.lineTo(765, y);
-                ctx.stroke();
-            }
-
-            // 2. Outer Temple Gate (Cổng Tam Quan - bottom)
-            ctx.fillStyle = "#9E2A1C";
-            ctx.fillRect(540, 845, 95, 36);
-            ctx.fillRect(765, 845, 95, 36);
-            ctx.fillStyle = "#B93829";
-            ctx.fillRect(585, 815, 230, 34);
-            ctx.fillStyle = "#B67E1E";
-            ctx.fillRect(625, 822, 150, 20);
-            ctx.fillStyle = "#FFFDF9";
-            ctx.font = "bold 12px 'Be Vietnam Pro', sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText("CỔNG CHÙA L.ASY 2027", 700, 836);
-
-            // 3. Chính Điện (Main Hall - top)
-            ctx.fillStyle = "#FFF8EE";
-            ctx.fillRect(460, 110, 480, 165);
-            ctx.strokeStyle = "#8C542B";
-            ctx.lineWidth = 4;
-            ctx.strokeRect(460, 110, 480, 165);
-            // Roof
-            ctx.fillStyle = "#9E2A1C";
-            ctx.beginPath();
-            ctx.moveTo(420, 120);
-            ctx.quadraticCurveTo(700, 45, 980, 120);
-            ctx.closePath();
-            ctx.fill();
-            ctx.fillStyle = "#B67E1E";
-            ctx.fillRect(610, 88, 180, 24);
-            ctx.fillStyle = "#FFFDF9";
-            ctx.font = "bold 13px 'Be Vietnam Pro', sans-serif";
-            ctx.fillText("CHÍNH ĐIỆN • XIN QUẺ 3D", 700, 104);
-
-            // Fortune Altar Table inside Chính Điện
-            ctx.fillStyle = "#7C2D12";
-            ctx.fillRect(635, 185, 130, 46);
-            ctx.fillStyle = "#D99B26";
-            ctx.fillRect(688, 174, 24, 26); // Bamboo tube icon on altar
-
-            // 4. Lư Hương (Incense Burner in Courtyard)
-            ctx.fillStyle = "#785012";
-            ctx.beginPath();
-            ctx.ellipse(ZONES.incense.x, ZONES.incense.y + 8, 34, 14, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = "#D99B26";
-            ctx.beginPath();
-            ctx.ellipse(ZONES.incense.x, ZONES.incense.y - 6, 30, 12, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = "#4A2511";
-            ctx.beginPath();
-            ctx.ellipse(ZONES.incense.x, ZONES.incense.y - 8, 22, 8, 0, 0, Math.PI * 2);
-            ctx.fill();
-            if (hasLitIncense) {
-                ctx.strokeStyle = "#DC2626";
-                ctx.lineWidth = 3;
-                [-8, 0, 8].forEach(ox => {
-                    ctx.beginPath();
-                    ctx.moveTo(ZONES.incense.x + ox, ZONES.incense.y - 8);
-                    ctx.lineTo(ZONES.incense.x + ox, ZONES.incense.y - 26);
-                    ctx.stroke();
-                });
-            }
-
-            // 5. Guided Glowing Floor Arrows!
-            const pulse = 0.55 + Math.sin(Date.now() * 0.006) * 0.45;
-            ctx.fillStyle = `rgba(185, 56, 41, ${pulse})`;
-            ctx.font = "bold 20px 'JetBrains Mono', monospace";
-            if (!hasLitIncense) {
-                ctx.fillText("▲ THẮP HƯƠNG ▲", 700, 730);
-            } else {
-                ctx.fillStyle = `rgba(45, 106, 79, ${pulse})`;
-                ctx.fillText("▲ VÀO CHÍNH ĐIỆN LẮC QUẺ ▲", 700, 455);
-                ctx.fillText("▲", 700, 395);
-            }
-
-            // 6. Ms Grace HR Desk (Right Courtyard)
-            ctx.fillStyle = "#FEF2F2";
-            ctx.fillRect(975, 580, 110, 48);
-            ctx.strokeStyle = "#B93829";
-            ctx.lineWidth = 2;
-            ctx.strokeRect(975, 580, 110, 48);
-            ctx.fillStyle = "#B93829";
-            ctx.font = "bold 11px 'Be Vietnam Pro', sans-serif";
-            ctx.fillText("BÀN HR MS GRACE", 1030, 608);
-
-            // 7. Blossom Trees (Mai & Đào)
-            const trees = [
-                { x: 340, y: 350, c: "#FBBF24" }, { x: 340, y: 680, c: "#F59E0B" },
-                { x: 1060, y: 350, c: "#FB7185" }, { x: 1060, y: 740, c: "#F43F5E" }
-            ];
-            trees.forEach(t => {
-                ctx.fillStyle = "#5C3419";
-                ctx.fillRect(t.x - 7, t.y, 14, 34);
-                ctx.fillStyle = t.c;
-                ctx.beginPath();
-                ctx.arc(t.x, t.y - 10, 34, 0, Math.PI * 2);
-                ctx.fill();
-            });
-
-            // Smoke particles
-            smokeParticles.forEach(p => {
-                ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fill();
-            });
-
-            // 8. Draw All Characters (NPCs + Remote Peers + Player) sorted by Y
-            const allChars = [
-                ...npcs.map(n => ({ ...n, isMe: false })),
-                ...Array.from(remotePeers.values()).map(r => ({ ...r, isMe: false })),
-                { ...player, isMe: true }
-            ].sort((a, b) => a.y - b.y);
-
-            allChars.forEach(c => drawCharacter(c, c.isMe));
-
-            ctx.restore();
-        }
-
-        function gameLoop() {
-            updateWorld();
-            drawWorld();
-            requestAnimationFrame(gameLoop);
-        }
-        requestAnimationFrame(gameLoop);
-
-        // ==================== 4. 3D FORTUNE POPUP (MIN 5 CLICKS) ====================
+        // ==================== 6. 3D FORTUNE POPUP (MIN 5 CLICKS) ====================
         const realFortunes = [
-            { number: "01", level: "Đại Cát", levelClass: "level-great", title: "Lý Ngư Hóa Long", poem: "Nước xuân dâng ngập bến sông dài,\nCá chép vượt môn hóa rồng bay.\nBền chí bao ngày nay gặp hội,\nCông thành danh toại rạng tương lai.", work: "Bước ngoặt lớn trong sự nghiệp, dự án ấp ủ lâu nay dễ được duyệt hoặc bứt phá doanh số vượt kỳ vọng.", money: "Nguồn thu chính và phụ đều tăng; có cơ hội nhận thưởng hoặc hợp đồng giá trị cao.", love: "Gia đạo hòa thuận, người độc thân dễ gặp nhân duyên đồng điệu qua công việc.", health: "Tinh thần phấn chấn, thể lực dồi dào.", advice: "Hãy tự tin nắm lấy cơ hội mới vào đầu năm, đừng ngại đảm nhận vai trò dẫn dắt.", luckyNum: "09, 68", luckyColor: "Đỏ son, Vàng kim" },
-            { number: "02", level: "Thượng Cát", levelClass: "level-great", title: "Xuân Phong Đắc Ý", poem: "Gió xuân thổi nhẹ nở ngàn hoa,\nQuý nhân đưa lối bước đường xa.\nMở lòng đón nhận duyên lành tới,\nThuận buồm xuôi gió khắp gần xa.", work: "Có quý nhân nâng đỡ, tháo gỡ nút thắt cũ một cách êm đẹp.", money: "Tiền bạc hanh thông, chi tiêu thoải mái nhưng vẫn dư dả tích lũy.", love: "Tình cảm ấm áp, những hiểu lầm cũ dần được hóa giải.", health: "Khí huyết lưu thông tốt.", advice: "Giữ thái độ khiêm tốn và biết ơn những người đã hỗ trợ mình.", luckyNum: "03, 27", luckyColor: "Xanh ngọc, Trắng kem" },
-            { number: "03", level: "Thượng Cát", levelClass: "level-good", title: "Vân Khai Kiến Nhật", poem: "Mây mù tan biến lộ vầng dương,\nTrăm việc dần thông suốt dặm trường.\nĐừng ngại đường xa nhiều dốc đá,\nQua cơn bĩ cực tới thanh lương.", work: "Những bế tắc cuối năm cũ sẽ dần sáng tỏ từ quý I.", money: "Thu nhập ổn định trở lại, các khoản tiền kẹt có dấu hiệu hồi về.", love: "Người thương thấu hiểu áp lực của bạn hơn.", health: "Hạn chế thức khuya sau Tết.", advice: "Đừng vội bỏ cuộc khi chưa thấy kết quả ngay trong tháng Giêng.", luckyNum: "06, 18", luckyColor: "Vàng nhạt, Xanh dương" },
-            { number: "04", level: "Trung Cát", levelClass: "level-good", title: "Tùng Bách Trường Thanh", poem: "Thông reo đỉnh núi vững ngàn năm,\nGió tuyết chẳng lay chí âm thầm.\nChậm rãi từng bước xây nền móng,\nHương lành tự tỏa chẳng cần thăm.", work: "Không bùng nổ chớp nhoáng nhưng cực kỳ bền vững.", money: "Tích tiểu thành đại, tránh đầu tư lướt sóng rủi ro.", love: "Tình cảm chín muồi theo thời gian.", health: "Sức đề kháng tốt.", advice: "Tập trung nâng cao kỹ năng cốt lõi.", luckyNum: "04, 15", luckyColor: "Xanh rêu, Nâu gỗ" },
+            { number: "01", level: "Đại Cát", levelClass: "level-great", title: "Lý Ngư Hóa Long", poem: "Nước xuân dâng ngập bến sông dài,\nCá chép vượt môn hóa rồng bay.\nBền chí bao ngày nay gặp hội,\nCông thành danh toại rạng tương lai.", work: "Bước ngoặt lớn trong sự nghiệp, dự án ấp ủ lâu nay dễ được duyệt hoặc bứt phá doanh số vượt kỳ vọng.", money: "Nguồn thu chính và phụ đều tăng; có cơ hội nhận thưởng hoặc hợp đồng giá trị cao.", love: "Gia đạo hòa thuận, người độc thân dễ gặp nhân duyên đồng điệu qua công việc.", health: "Tinh thần phấn chấn, thể lực dồi dào.", advice: "Hãy tự tin nắm lấy cơ hội mới vào đầu năm.", luckyNum: "09, 68", luckyColor: "Đỏ son, Vàng kim" },
+            { number: "02", level: "Thượng Cát", levelClass: "level-great", title: "Xuân Phong Đắc Ý", poem: "Gió xuân thổi nhẹ nở ngàn hoa,\nQuý nhân đưa lối bước đường xa.\nMở lòng đón nhận duyên lành tới,\nThuận buồm xuôi gió khắp gần xa.", work: "Có quý nhân nâng đỡ, tháo gỡ nút thắt cũ êm đẹp.", money: "Tiền bạc hanh thông, chi tiêu thoải mái.", love: "Tình cảm ấm áp, hiểu lầm cũ dần hóa giải.", health: "Khí huyết lưu thông tốt.", advice: "Giữ thái độ khiêm tốn và biết ơn.", luckyNum: "03, 27", luckyColor: "Xanh ngọc, Trắng kem" },
+            { number: "03", level: "Thượng Cát", levelClass: "level-good", title: "Vân Khai Kiến Nhật", poem: "Mây mù tan biến lộ vầng dương,\nTrăm việc dần thông suốt dặm trường.\nĐừng ngại đường xa nhiều dốc đá,\nQua cơn bĩ cực tới thanh lương.", work: "Những bế tắc cuối năm cũ sẽ dần sáng tỏ từ quý I.", money: "Thu nhập ổn định trở lại.", love: "Người thương thấu hiểu áp lực của bạn hơn.", health: "Hạn chế thức khuya sau Tết.", advice: "Đừng vội bỏ cuộc khi chưa thấy kết quả ngay.", luckyNum: "06, 18", luckyColor: "Vàng nhạt, Xanh dương" },
+            { number: "04", level: "Trung Cát", levelClass: "level-good", title: "Tùng Bách Trường Thanh", poem: "Thông reo đỉnh núi vững ngàn năm,\nGió tuyết chẳng lay chí âm thầm.\nChậm rãi từng bước xây nền móng,\nHương lành tự tỏa chẳng cần thăm.", work: "Không bùng nổ chớp nhoáng nhưng cực kỳ bền vững.", money: "Tích tiểu thành đại, tránh đầu tư lướt sóng.", love: "Tình cảm chín muồi theo thời gian.", health: "Sức đề kháng tốt.", advice: "Tập trung nâng cao kỹ năng cốt lõi.", luckyNum: "04, 15", luckyColor: "Xanh rêu, Nâu gỗ" },
             { number: "05", level: "Tiểu Cát", levelClass: "level-peace", title: "Mai Hoa Tái Tiếu", poem: "Cành mai hé nụ giữa sương mai,\nNhỏ bé nhưng thơm ngát dặm dài.\nChẳng cần ồn ào khoe sắc thắm,\nNiềm vui bình dị vẫn tròn đầy.", work: "Hoàn thành tốt KPI mà không bị quá tải.", money: "Có những khoản lộc nhỏ bất ngờ đầu năm.", love: "Quan tâm nhỏ hằng ngày mang lại hạnh phúc lớn.", health: "Ngủ ngon giấc hơn.", advice: "Trân trọng những niềm vui nhỏ bên gia đình.", luckyNum: "02, 12", luckyColor: "Hồng phấn, Vàng mơ" },
             { number: "06", level: "Bình An", levelClass: "level-peace", title: "Tĩnh Thủy Lưu Thâm", poem: "Dòng sông lặng lẽ chảy xuôi dòng,\nSâu thẳm bên trong chẳng đục trong.\nGiữ tâm an tĩnh qua năm mới,\nVạn sự bình yên ở trong lòng.", work: "Năm thiên về ổn định và củng cố nội lực.", money: "Thu chi cân bằng, lập quỹ dự phòng rõ ràng.", love: "Bình yên, ít sóng gió.", health: "Tâm an thì thân khỏe.", advice: "Chậm lại một nhịp để lắng nghe bản thân.", luckyNum: "01, 10", luckyColor: "Xanh biển, Bạc" },
-            { number: "07", level: "Cẩn Trọng", levelClass: "level-caution", title: "Phong Ba Tạm Khởi", poem: "Biển lặng đôi khi nổi sóng cồn,\nNgười khôn giữ lái chớ bồn chồn.\nNói năng cẩn trọng từng câu chữ,\nGiữ mình an ổn vượt cơn giông.", work: "Cẩn thận hiểu lầm giao tiếp hoặc thay đổi yêu cầu đột ngột.", money: "Tránh cho vay mượn số tiền lớn.", love: "Tránh tranh cãi lúc nóng giận.", health: "Chú ý tiêu hóa và giữ ấm cơ thể.", advice: "Làm việc có xác nhận rõ ràng, giữ bình tĩnh.", luckyNum: "05, 19", luckyColor: "Trắng ngà, Xám" },
+            { number: "07", level: "Cẩn Trọng", levelClass: "level-caution", title: "Phong Ba Tạm Khởi", poem: "Biển lặng đôi khi nổi sóng cồn,\nNgười khôn giữ lái chớ bồn chồn.\nNói năng cẩn trọng từng câu chữ,\nGiữ mình an ổn vượt cơn giông.", work: "Cẩn thận hiểu lầm giao tiếp hoặc thay đổi yêu cầu.", money: "Tránh cho vay mượn số tiền lớn.", love: "Tránh tranh cãi lúc nóng giận.", health: "Chú ý tiêu hóa và giữ ấm cơ thể.", advice: "Làm việc có xác nhận rõ ràng, giữ bình tĩnh.", luckyNum: "05, 19", luckyColor: "Trắng ngà, Xám" },
             { number: "08", level: "Đại Cát", levelClass: "level-great", title: "Kim Ngọc Mãn Đường", poem: "Ngọc sáng trong nhà rạng ánh vàng,\nLộc trời ban xuống cửa khang trang.\nChăm chỉ gieo mầm từ thuở trước,\nNay mùa quả ngọt nở mênh mang.", work: "Năng suất đạt đỉnh cao, dễ tăng thu nhập xứng đáng.", money: "Tài vận vượng phát, đặc biệt với TMĐT & sáng tạo.", love: "Gia đình có tin vui sum vầy.", health: "Năng lượng tích cực lan tỏa.", advice: "Khi có lộc hãy sẻ chia để giữ phúc lâu dài.", luckyNum: "08, 88", luckyColor: "Vàng đồng, Đỏ trầm" }
         ];
 
@@ -1355,132 +1331,95 @@
         const fortuneSlip = document.getElementById("fortuneSlip");
 
         const MIN_SHAKES = 5;
-        let shakeClicks = 0, currentFortune = null, threeReady = false;
-        let scene, camera, renderer, tubeGroup, stickMeshes = [], chosenMesh = null;
+        let shakeClicks = 0, currentFortune = null, modalThreeReady = false;
+        let mScene, mCamera, mRenderer, tubeGroup, stickMeshes = [], chosenMesh = null;
         let impulseVel = 0, ejecting = false, ejectStart = 0, lastShakeImpulseTime = 0;
 
-        function initThreeScene() {
-            if (typeof THREE === "undefined") return false;
-            try {
-                const w = canvas3dWrap.clientWidth || 580, h = canvas3dWrap.clientHeight || 270;
-                scene = new THREE.Scene();
-                camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 100);
-                camera.position.set(0, 1.5, 6.1);
-                camera.lookAt(0, 0.2, 0);
+        function initModalThree() {
+            if (typeof THREE === "undefined") return;
+            const w = canvas3dWrap.clientWidth || 580, h = canvas3dWrap.clientHeight || 265;
+            mScene = new THREE.Scene();
+            mCamera = new THREE.PerspectiveCamera(40, w / h, 0.1, 100);
+            mCamera.position.set(0, 1.5, 6.1);
+            mCamera.lookAt(0, 0.2, 0);
+            mRenderer = new THREE.WebGLRenderer({ canvas: canvasEl, antialias: true, alpha: true });
+            mRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+            mRenderer.setSize(w, h, false);
 
-                renderer = new THREE.WebGLRenderer({ canvas: canvasEl, antialias: true, alpha: true });
-                renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-                renderer.setSize(w, h, false);
+            mScene.add(new THREE.AmbientLight(0xfff5e4, 0.8));
+            const kl = new THREE.DirectionalLight(0xfff8ed, 1.15); kl.position.set(4, 7, 5); mScene.add(kl);
 
-                scene.add(new THREE.AmbientLight(0xfff5e4, 0.8));
-                const keyLight = new THREE.DirectionalLight(0xfff8ed, 1.15);
-                keyLight.position.set(4, 7, 5);
-                scene.add(keyLight);
+            tubeGroup = new THREE.Group();
+            mScene.add(tubeGroup);
 
-                tubeGroup = new THREE.Group();
-                scene.add(tubeGroup);
+            const bodyMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.88, 0.82, 2.35, 36), new THREE.MeshStandardMaterial({ color: 0x8b4f24, roughness: 0.48 }));
+            bodyMesh.position.y = -0.15; tubeGroup.add(bodyMesh);
+            const cav = new THREE.Mesh(new THREE.CylinderGeometry(0.76, 0.76, 0.08, 32), new THREE.MeshBasicMaterial({ color: 0x1e1108 }));
+            cav.position.y = 1.01; tubeGroup.add(cav);
 
-                const bodyMesh = new THREE.Mesh(
-                    new THREE.CylinderGeometry(0.88, 0.82, 2.35, 36),
-                    new THREE.MeshStandardMaterial({ color: 0x8b4f24, roughness: 0.48 })
-                );
-                bodyMesh.position.y = -0.15;
-                tubeGroup.add(bodyMesh);
+            const ringMat = new THREE.MeshStandardMaterial({ color: 0xd99b26, roughness: 0.28, metalness: 0.65 });
+            [0.98, 0.62, -0.95].forEach((yPos, idx) => {
+                const r = idx === 0 ? 0.90 : idx === 1 ? 0.885 : 0.84;
+                const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.032, 12, 36), ringMat);
+                ring.rotation.x = Math.PI / 2; ring.position.y = yPos; tubeGroup.add(ring);
+            });
+            const plaque = new THREE.Mesh(new THREE.BoxGeometry(0.68, 1.02, 0.06), new THREE.MeshStandardMaterial({ color: 0xb93829, roughness: 0.4 }));
+            plaque.position.set(0, -0.12, 0.85); tubeGroup.add(plaque);
 
-                const cavityMesh = new THREE.Mesh(
-                    new THREE.CylinderGeometry(0.76, 0.76, 0.08, 32),
-                    new THREE.MeshBasicMaterial({ color: 0x1e1108 })
-                );
-                cavityMesh.position.y = 1.01;
-                tubeGroup.add(cavityMesh);
+            const stickGeo = new THREE.BoxGeometry(0.085, 2.05, 0.035), tipGeo = new THREE.BoxGeometry(0.088, 0.28, 0.038);
+            const stickWoodMat = new THREE.MeshStandardMaterial({ color: 0xe6c48c, roughness: 0.55 });
+            const stickTipMat = new THREE.MeshStandardMaterial({ color: 0xc43424, roughness: 0.4 });
+            const chosenMat = new THREE.MeshStandardMaterial({ color: 0xffdf7a, emissive: 0xd99b26, emissiveIntensity: 0.5 });
 
-                const ringMat = new THREE.MeshStandardMaterial({ color: 0xd99b26, roughness: 0.28, metalness: 0.65 });
-                [0.98, 0.62, -0.95].forEach((yPos, idx) => {
-                    const r = idx === 0 ? 0.90 : idx === 1 ? 0.885 : 0.84;
-                    const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.032, 12, 36), ringMat);
-                    ring.rotation.x = Math.PI / 2;
-                    ring.position.y = yPos;
-                    tubeGroup.add(ring);
-                });
+            stickMeshes = [];
+            for (let i = 0; i < 20; i++) {
+                const sGroup = new THREE.Group();
+                const shaft = new THREE.Mesh(stickGeo, stickWoodMat), tip = new THREE.Mesh(tipGeo, stickTipMat);
+                tip.position.y = 0.92; sGroup.add(shaft, tip);
+                const angle = (i / 20) * Math.PI * 2, radius = 0.14 + (i % 3) * 0.16;
+                const bx = Math.cos(angle) * radius, bz = Math.sin(angle) * radius, by = 0.92 + (Math.random() - 0.5) * 0.18;
+                const rx = (Math.random() - 0.5) * 0.18, rz = (Math.random() - 0.5) * 0.18;
+                sGroup.position.set(bx, by, bz); sGroup.rotation.set(rx, angle, rz);
+                sGroup.userData = { bx, by, bz, rx, ry: angle, rz, phase: i * 1.13, shaft, stickWoodMat, chosenMat };
+                tubeGroup.add(sGroup); stickMeshes.push(sGroup);
+            }
 
-                const plaque = new THREE.Mesh(
-                    new THREE.BoxGeometry(0.68, 1.02, 0.06),
-                    new THREE.MeshStandardMaterial({ color: 0xb93829, roughness: 0.4 })
-                );
-                plaque.position.set(0, -0.12, 0.85);
-                tubeGroup.add(plaque);
-
-                const stickGeo = new THREE.BoxGeometry(0.085, 2.05, 0.035);
-                const tipGeo = new THREE.BoxGeometry(0.088, 0.28, 0.038);
-                const stickWoodMat = new THREE.MeshStandardMaterial({ color: 0xe6c48c, roughness: 0.55 });
-                const stickTipMat = new THREE.MeshStandardMaterial({ color: 0xc43424, roughness: 0.4 });
-                const chosenMat = new THREE.MeshStandardMaterial({ color: 0xffdf7a, emissive: 0xd99b26, emissiveIntensity: 0.5 });
-
-                stickMeshes = [];
-                for (let i = 0; i < 20; i++) {
-                    const sGroup = new THREE.Group();
-                    const shaft = new THREE.Mesh(stickGeo, stickWoodMat);
-                    const tip = new THREE.Mesh(tipGeo, stickTipMat);
-                    tip.position.y = 0.92;
-                    sGroup.add(shaft);
-                    sGroup.add(tip);
-
-                    const angle = (i / 20) * Math.PI * 2;
-                    const radius = 0.14 + (i % 3) * 0.16;
-                    const bx = Math.cos(angle) * radius, bz = Math.sin(angle) * radius, by = 0.92 + (Math.random() - 0.5) * 0.18;
-                    const rx = (Math.random() - 0.5) * 0.18, rz = (Math.random() - 0.5) * 0.18;
-                    sGroup.position.set(bx, by, bz);
-                    sGroup.rotation.set(rx, angle, rz);
-                    sGroup.userData = { bx, by, bz, rx, ry: angle, rz, phase: i * 1.13, shaft, stickWoodMat, chosenMat };
-                    tubeGroup.add(sGroup);
-                    stickMeshes.push(sGroup);
+            modalThreeReady = true;
+            (function tick(now) {
+                requestAnimationFrame(tick);
+                if (!modalThreeReady || fortuneModal.classList.contains("hidden")) return;
+                if (impulseVel > 0.01) {
+                    const t = now - lastShakeImpulseTime;
+                    tubeGroup.rotation.z = Math.sin(t * 0.036) * 0.35 * impulseVel;
+                    tubeGroup.rotation.x = 0.22 + Math.cos(t * 0.028) * 0.2 * impulseVel;
+                    tubeGroup.position.y = Math.abs(Math.sin(t * 0.036)) * 0.32 * impulseVel;
+                    stickMeshes.forEach(s => {
+                        const d = s.userData;
+                        s.position.y = d.by + Math.abs(Math.sin(t * 0.05 + d.phase)) * 0.35 * impulseVel;
+                        s.rotation.z = d.rz + Math.sin(t * 0.05 + d.phase) * 0.18 * impulseVel;
+                    });
+                    impulseVel *= 0.935;
+                } else {
+                    tubeGroup.rotation.z *= 0.85; tubeGroup.rotation.x += (0.24 - tubeGroup.rotation.x) * 0.1;
+                    tubeGroup.position.y *= 0.85; tubeGroup.rotation.y += 0.004;
                 }
-
-                threeReady = true;
-                (function tick(now) {
-                    requestAnimationFrame(tick);
-                    if (!threeReady) return;
-                    if (impulseVel > 0.01) {
-                        const t = now - lastShakeImpulseTime;
-                        tubeGroup.rotation.z = Math.sin(t * 0.036) * 0.35 * impulseVel;
-                        tubeGroup.rotation.x = 0.22 + Math.cos(t * 0.028) * 0.2 * impulseVel;
-                        tubeGroup.position.y = Math.abs(Math.sin(t * 0.036)) * 0.32 * impulseVel;
-                        stickMeshes.forEach((s) => {
-                            const d = s.userData;
-                            s.position.y = d.by + Math.abs(Math.sin(t * 0.05 + d.phase)) * 0.35 * impulseVel;
-                            s.rotation.z = d.rz + Math.sin(t * 0.05 + d.phase) * 0.18 * impulseVel;
-                        });
-                        impulseVel *= 0.935;
-                    } else {
-                        tubeGroup.rotation.z *= 0.85;
-                        tubeGroup.rotation.x += (0.24 - tubeGroup.rotation.x) * 0.1;
-                        tubeGroup.position.y *= 0.85;
-                        tubeGroup.rotation.y += 0.004;
-                    }
-                    if (ejecting && chosenMesh) {
-                        const p = Math.min((now - ejectStart) / 650, 1);
-                        const ease = 1 - Math.pow(1 - p, 3);
-                        const d = chosenMesh.userData;
-                        chosenMesh.position.set(d.bx * (1 - ease), d.by + ease * 1.48, d.bz + ease * 0.78);
-                        chosenMesh.rotation.set(d.rx * (1 - ease) + ease * 0.25, d.ry + ease * Math.PI * 2, d.rz * (1 - ease));
-                        if (p >= 1) { ejecting = false; renderFortuneSlip(currentFortune); }
-                    }
-                    renderer.render(scene, camera);
-                })(performance.now());
-                return true;
-            } catch (e) { return false; }
+                if (ejecting && chosenMesh) {
+                    const p = Math.min((now - ejectStart) / 650, 1), ease = 1 - Math.pow(1 - p, 3), d = chosenMesh.userData;
+                    chosenMesh.position.set(d.bx * (1 - ease), d.by + ease * 1.48, d.bz + ease * 0.78);
+                    chosenMesh.rotation.set(d.rx * (1 - ease) + ease * 0.25, d.ry + ease * Math.PI * 2, d.rz * (1 - ease));
+                    if (p >= 1) { ejecting = false; renderFortuneSlip(currentFortune); }
+                }
+                mRenderer.render(mScene, mCamera);
+            })(performance.now());
         }
 
         function resetShakeSession() {
             shakeClicks = 0; ejecting = false; currentFortune = null;
-            fortuneSlip.classList.add("hidden");
-            stickBadgeOverlay.classList.add("hidden");
-            if (threeReady) {
-                stickMeshes.forEach((s) => {
-                    const d = s.userData;
-                    d.shaft.material = d.stickWoodMat;
-                    s.position.set(d.bx, d.by, d.bz);
-                    s.rotation.set(d.rx, d.ry, d.rz);
+            fortuneSlip.classList.add("hidden"); stickBadgeOverlay.classList.add("hidden");
+            if (modalThreeReady) {
+                stickMeshes.forEach(s => {
+                    const d = s.userData; d.shaft.material = d.stickWoodMat;
+                    s.position.set(d.bx, d.by, d.bz); s.rotation.set(d.rx, d.ry, d.rz);
                 });
                 chosenMesh = null;
             }
@@ -1493,20 +1432,16 @@
             if (shakeClicks < MIN_SHAKES) {
                 const remain = MIN_SHAKES - shakeClicks;
                 shakeGuideLabel.textContent = `Nhấn vào ống xăm 3D thêm ít nhất ${remain} lần nữa để mở quẻ`;
-                drawStickBtn.disabled = true;
-                drawStickBtn.textContent = `✨ Rút Quẻ (Còn ${remain} lần)`;
+                drawStickBtn.disabled = true; drawStickBtn.textContent = `✨ Rút Quẻ (Còn ${remain} lần)`;
             } else {
                 shakeGuideLabel.textContent = `Đã đủ ${shakeClicks} lần lắc! Có thể lắc thêm hoặc bấm Rút Quẻ`;
-                drawStickBtn.disabled = false;
-                drawStickBtn.textContent = `✨ Rút Quẻ Ngay`;
+                drawStickBtn.disabled = false; drawStickBtn.textContent = `✨ Rút Quẻ Ngay`;
             }
         }
 
         function handleShakeClick() {
             if (ejecting) return;
-            shakeClicks++;
-            impulseVel = 1.05;
-            lastShakeImpulseTime = performance.now();
+            shakeClicks++; impulseVel = 1.05; lastShakeImpulseTime = performance.now();
             playBambooClick(0.85 + Math.min(shakeClicks, 6) * 0.06);
             updateShakeUI();
         }
@@ -1519,22 +1454,16 @@
             playBambooClick(1.3);
             player.chat = `Vừa xin được quẻ ${currentFortune.title} ✨`;
             player.chatTimer = 260;
-
-            if (threeReady && stickMeshes.length > 0) {
+            if (modalThreeReady && stickMeshes.length > 0) {
                 chosenMesh = stickMeshes[Math.floor(Math.random() * stickMeshes.length)];
                 chosenMesh.userData.shaft.material = chosenMesh.userData.chosenMat;
-                ejecting = true;
-                ejectStart = performance.now();
-            } else {
-                renderFortuneSlip(currentFortune);
-            }
+                ejecting = true; ejectStart = performance.now();
+            } else renderFortuneSlip(currentFortune);
         }
 
         function renderFortuneSlip(f) {
             document.getElementById("slipNum").textContent = `QUẺ SỐ ${f.number}`;
-            const levelEl = document.getElementById("slipLevel");
-            levelEl.textContent = f.level;
-            levelEl.className = `slip-level ${f.levelClass}`;
+            const lv = document.getElementById("slipLevel"); lv.textContent = f.level; lv.className = `slip-level ${f.levelClass}`;
             document.getElementById("slipTitle").textContent = f.title;
             document.getElementById("slipPoem").textContent = f.poem;
             document.getElementById("aspectWork").textContent = f.work;
@@ -1543,15 +1472,13 @@
             document.getElementById("aspectHealth").textContent = f.health;
             document.getElementById("slipAdvice").textContent = f.advice;
             document.getElementById("slipLucky").textContent = `Số may mắn: ${f.luckyNum} • Màu hợp: ${f.luckyColor}`;
-            fortuneSlip.classList.remove("hidden");
-            fortuneSlip.classList.remove("flip-reveal");
-            void fortuneSlip.offsetWidth;
-            fortuneSlip.classList.add("flip-reveal");
+            fortuneSlip.classList.remove("hidden"); fortuneSlip.classList.remove("flip-reveal");
+            void fortuneSlip.offsetWidth; fortuneSlip.classList.add("flip-reveal");
         }
 
         function openFortuneModal() {
             fortuneModal.classList.remove("hidden");
-            if (!threeReady) initThreeScene();
+            if (!modalThreeReady) initModalThree();
             resetShakeSession();
             questStepTag.textContent = "HOÀN THÀNH";
             questBannerText.textContent = "Đã vào Chính Điện! Lắc ống xăm 3D tối thiểu 5 lần để rút quẻ";
@@ -1562,19 +1489,16 @@
         shakeClickBtn.addEventListener("click", handleShakeClick);
         drawStickBtn.addEventListener("click", handleDrawStick);
         document.getElementById("reshakeBtn").addEventListener("click", resetShakeSession);
-
-        const copyFortuneBtn = document.getElementById("copyFortuneBtn");
-        copyFortuneBtn.addEventListener("click", () => {
+        document.getElementById("copyFortuneBtn").addEventListener("click", (e) => {
             if (!currentFortune) return;
             const f = currentFortune;
-            const text = `🎋 CHÙA L.ASY 2027 — QUẺ SỐ ${f.number} (${f.level})\n✨ ${f.title}\n\n${f.poem}\n\n• Công danh: ${f.work}\n• Tài lộc: ${f.money}\n• Tình duyên: ${f.love}\n• Sức khỏe: ${f.health}\n• Lời khuyên: ${f.advice}\n🍀 Số may mắn: ${f.luckyNum} | Màu hợp: ${f.luckyColor}`;
-            navigator.clipboard.writeText(text).then(() => {
-                copyFortuneBtn.textContent = "✓ Đã sao chép";
-                setTimeout(() => { copyFortuneBtn.textContent = "Sao chép quẻ"; }, 1800);
+            navigator.clipboard.writeText(`🎋 CHÙA 3D L.ASY 2027 — QUẺ SỐ ${f.number} (${f.level})\n✨ ${f.title}\n\n${f.poem}\n\n• Công danh: ${f.work}\n• Tài lộc: ${f.money}\n• Tình duyên: ${f.love}\n• Sức khỏe: ${f.health}\n• Lời khuyên: ${f.advice}`).then(() => {
+                e.currentTarget.textContent = "✓ Đã sao chép";
+                setTimeout(() => { e.currentTarget.textContent = "Sao chép quẻ"; }, 1800);
             });
         });
 
-        // ==================== 5. INTEGRATED CAREER MODAL ====================
+        // ==================== 7. INTEGRATED CAREER MODAL ====================
         const careerModal = document.getElementById("careerModal");
         const qMoney = document.getElementById("qMoney"), qKpi = document.getElementById("qKpi"), qGoal = document.getElementById("qGoal"), qMood = document.getElementById("qMood");
         const workPctLabel = document.getElementById("workPctLabel"), quitPctLabel = document.getElementById("quitPctLabel");
@@ -1606,21 +1530,13 @@
 
         function openCareerModal() {
             careerModal.classList.remove("hidden");
-            quitArena.classList.remove("hidden");
-            quitTrapView.classList.add("hidden");
-            runawayQuitBtn.style.transform = "translate(0, 0)";
-            stayBtn.style.transform = "scale(1)";
-            dodgeCount = 0;
+            quitArena.classList.remove("hidden"); quitTrapView.classList.add("hidden");
+            runawayQuitBtn.style.transform = "translate(0, 0)"; stayBtn.style.transform = "scale(1)"; dodgeCount = 0;
         }
         document.getElementById("openCareerBtn").addEventListener("click", openCareerModal);
         document.getElementById("closeCareerModalBtn").addEventListener("click", () => careerModal.classList.add("hidden"));
 
-        const taunts = [
-            "😤 Ms Grace: 'Chị chưa duyệt đâu nhé!'",
-            "⚡ Ms Grace: 'KPI tháng này ai gánh thay em?'",
-            "🧋 Ms Grace: 'Ở lại chị bao trà sữa!'",
-            "🔒 HR: 'Nút nộp đơn đã bị khóa tọa độ!'"
-        ];
+        const taunts = ["😤 Ms Grace: 'Chị chưa duyệt đâu nhé!'", "⚡ Ms Grace: 'KPI tháng này ai gánh thay em?'", "🧋 Ms Grace: 'Ở lại chị bao trà sữa!'", "🔒 HR: 'Nút nộp đơn đã bị khóa tọa độ!'"];
         function dodgeQuitButton() {
             if (dodgeCount < 4) {
                 const dx = (Math.random() > 0.5 ? 1 : -1) * (35 + Math.random() * 110);
@@ -1628,8 +1544,7 @@
                 runawayQuitBtn.style.transform = `translate(${dx.toFixed(0)}px, ${dy.toFixed(0)}px)`;
                 stayBtn.style.transform = `scale(${1 + (dodgeCount + 1) * 0.04})`;
                 graceTauntBox.textContent = taunts[dodgeCount % taunts.length];
-                dodgeCount++;
-                playBambooClick(0.8);
+                dodgeCount++; playBambooClick(0.8);
             }
         }
         runawayQuitBtn.addEventListener("mouseenter", dodgeQuitButton);
@@ -1639,16 +1554,14 @@
         });
         stayBtn.addEventListener("click", () => {
             careerModal.classList.add("hidden");
-            player.chat = "Chốt cày KPI nhận thưởng Tết 2027! 💪";
-            player.chatTimer = 240;
+            player.chat = "Chốt cày KPI nhận thưởng Tết 2027! 💪"; player.chatTimer = 240;
         });
         document.getElementById("acceptFateBtn").addEventListener("click", () => {
             careerModal.classList.add("hidden");
-            player.chat = "Đã nhận trà sữa & ở lại với Ms Grace 🧋";
-            player.chatTimer = 240;
+            player.chat = "Đã nhận trà sữa & ở lại với Ms Grace 🧋"; player.chatTimer = 240;
         });
 
-        // ==================== 6. CUSTOMIZE CHARACTER ====================
+        // ==================== 8. CUSTOMIZE CHARACTER ====================
         const customModal = document.getElementById("customModal");
         let selectedColor = player.color;
         document.getElementById("openCustomBtn").addEventListener("click", () => customModal.classList.remove("hidden"));
@@ -1664,6 +1577,7 @@
             const nm = document.getElementById("playerNameInput").value.trim();
             if (nm) player.name = nm;
             player.color = selectedColor;
+            playerMesh.userData.body.material.color.set(selectedColor);
             customModal.classList.add("hidden");
         });
     </script>
