@@ -3,219 +3,542 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lasy Tết 2026</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font viết tay hỗ trợ tiếng Việt -->
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <title>L.ASY Tết 2027 — Đếm Ngược Tết Đinh Mùi</title>
+    <meta name="description" content="Đếm ngược Tết Nguyên Đán Đinh Mùi 2027 (06/02/2027) cùng L.ASY Studio: Cày Cuốc, Bóc Quẻ đầu xuân và tương tác giải trí.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-paper: #FAF7F2;
+            --bg-elevated: #FFFFFF;
+            --bg-subtle: #F3EDE3;
+            --border-sand: #E6DDD0;
+            --ink-primary: #1C1917;
+            --ink-secondary: #575049;
+            --ink-muted: #847A6E;
+            --crimson: #B93829;
+            --crimson-dark: #94281C;
+            --crimson-soft: #FDF2F0;
+            --gold: #B67E1E;
+            --gold-soft: #FBF5E8;
+            --shadow-card: 0 2px 4px rgba(28, 25, 23, 0.04), 0 16px 40px rgba(28, 25, 23, 0.07);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: 'Patrick Hand', cursive; /* Font chính dạng viết tay dễ đọc */
-            background-color: #fef3c7; /* Màu kem nền nã */
-            background-image: radial-gradient(#ef4444 1px, transparent 1px);
-            background-size: 20px 20px;
+            font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-paper);
+            background-image:
+                radial-gradient(ellipse 75% 50% at 50% 0%, rgba(185, 56, 41, 0.08), transparent),
+                radial-gradient(ellipse 50% 40% at 100% 100%, rgba(182, 126, 30, 0.07), transparent);
+            color: var(--ink-primary);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             overflow-x: hidden;
-            color: #451a03;
+            position: relative;
         }
 
-        /* Style vẽ tay 2D */
-        .hand-drawn-box {
-            background: #fff;
-            border: 3px solid #451a03;
-            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-            box-shadow: 4px 4px 0px 0px #451a03;
-            transition: all 0.2s ease-in-out;
+        /* Top Bar */
+        .top-bar {
+            position: relative;
+            z-index: 20;
+            max-width: 960px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px 24px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
         }
 
-        .hand-drawn-btn {
-            border: 2px solid #451a03;
-            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-            box-shadow: 3px 3px 0px 0px #451a03;
-            transition: all 0.1s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .hand-drawn-btn:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 5px 5px 0px 0px #451a03;
-        }
-        .hand-drawn-btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: 1px 1px 0px 0px #451a03;
-        }
-
-        .animate-pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes pop {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-sand);
+            color: var(--ink-primary);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(28, 25, 23, 0.05);
         }
 
-        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
+        .back-link:hover {
+            border-color: var(--ink-primary);
+            transform: translateX(-2px);
         }
 
-        /* Hiệu ứng bay */
+        .year-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: var(--crimson-soft);
+            color: var(--crimson);
+            border: 1px solid rgba(185, 56, 41, 0.22);
+        }
+
+        /* Floating Background */
+        #background-animation {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
         .floating-item {
             position: absolute;
             bottom: -50px;
-            animation: floatUp 20s linear infinite;
-            opacity: 0.8;
-            font-size: 1.8rem;
-            z-index: 0;
+            animation: floatUp 22s linear infinite;
+            opacity: 0.45;
             pointer-events: none;
-            filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.1));
         }
+
         @keyframes floatUp {
             0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(-110vh) rotate(360deg); }
+            100% { transform: translateY(-115vh) rotate(320deg); }
         }
 
-        /* Trang trí góc */
-        .corner-decor {
-            position: fixed;
-            z-index: 1;
-            pointer-events: none;
-            font-size: 5rem;
-            opacity: 0.9;
+        /* Main Stage */
+        .stage {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 28px 20px 48px;
+            position: relative;
+            z-index: 10;
         }
-        .top-left { top: -10px; left: -10px; transform: rotate(-45deg); }
-        .top-right { top: -10px; right: -10px; transform: rotate(45deg); }
-        
-        h1, .script-font { font-family: 'Dancing Script', cursive; }
+
+        .studio-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-sand);
+            border-radius: 24px;
+            box-shadow: var(--shadow-card);
+            padding: 40px 36px;
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+        }
+
+        .brand-crest {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 16px;
+            border-radius: 999px;
+            background: var(--gold-soft);
+            border: 1px solid rgba(182, 126, 30, 0.25);
+            color: var(--gold);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(2rem, 4.8vw, 3rem);
+            font-weight: 700;
+            color: var(--ink-primary);
+            line-height: 1.15;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        h1 span {
+            color: var(--crimson);
+            font-style: italic;
+        }
+
+        .subtitle {
+            font-size: 0.96rem;
+            color: var(--ink-secondary);
+            margin-bottom: 32px;
+        }
+
+        .subtitle strong {
+            color: var(--ink-primary);
+            font-weight: 600;
+        }
+
+        /* Countdown Grid */
+        .countdown-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+
+        .time-box {
+            background: var(--bg-paper);
+            border: 1px solid var(--border-sand);
+            border-radius: 16px;
+            padding: 18px 10px;
+        }
+
+        .time-val {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: var(--crimson);
+            line-height: 1.1;
+        }
+
+        .time-label {
+            display: block;
+            margin-top: 6px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--ink-muted);
+        }
+
+        /* Action Buttons */
+        .actions-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            border: 1px solid transparent;
+            border-radius: 12px;
+            padding: 13px 16px;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-motivate {
+            background: var(--gold-soft);
+            color: #7D520A;
+            border-color: rgba(182, 126, 30, 0.35);
+        }
+
+        .btn-motivate:hover {
+            background: #F5E6C8;
+            box-shadow: 0 6px 16px rgba(182, 126, 30, 0.16);
+        }
+
+        .btn-fortune {
+            background: var(--crimson);
+            color: #FFFFFF;
+        }
+
+        .btn-fortune:hover {
+            background: var(--crimson-dark);
+            box-shadow: 0 6px 16px rgba(185, 56, 41, 0.24);
+        }
+
+        .btn-quit {
+            background: var(--bg-subtle);
+            color: var(--ink-secondary);
+            border-color: var(--border-sand);
+        }
+
+        .btn-quit:hover {
+            background: #EAE2D5;
+            color: var(--ink-primary);
+        }
+
+        /* Result Areas */
+        .hidden {
+            display: none !important;
+        }
+
+        .message-box {
+            background: var(--gold-soft);
+            border: 1px dashed rgba(182, 126, 30, 0.45);
+            border-radius: 14px;
+            padding: 16px 20px;
+            color: #6B4408;
+            font-size: 0.98rem;
+            font-weight: 500;
+            font-style: italic;
+            line-height: 1.55;
+        }
+
+        .fortune-card {
+            background: var(--crimson-soft);
+            border: 1px solid rgba(185, 56, 41, 0.25);
+            border-radius: 16px;
+            padding: 20px 22px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fortune-tag {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--crimson);
+            margin-bottom: 6px;
+        }
+
+        .fortune-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: var(--crimson-dark);
+            margin-bottom: 4px;
+        }
+
+        .fortune-sub {
+            font-size: 0.94rem;
+            color: var(--ink-secondary);
+            line-height: 1.5;
+        }
+
+        /* Animations */
+        .animate-pop {
+            animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.92); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .shake {
+            animation: shake 0.45s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(3px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
+            40%, 60% { transform: translate3d(5px, 0, 0); }
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            background: rgba(28, 25, 23, 0.65);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-sand);
+            border-radius: 22px;
+            padding: 32px 28px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-emoji {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--crimson);
+            margin-bottom: 14px;
+        }
+
+        .modal-quote {
+            background: var(--gold-soft);
+            border: 1px solid rgba(182, 126, 30, 0.25);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            font-size: 0.96rem;
+            color: var(--ink-primary);
+            line-height: 1.55;
+        }
+
+        .modal-quote strong {
+            display: block;
+            margin-top: 6px;
+            color: var(--crimson);
+            font-size: 1.04rem;
+        }
+
+        .modal-close-btn {
+            width: 100%;
+            padding: 13px 18px;
+            border: none;
+            border-radius: 12px;
+            background: var(--ink-primary);
+            color: #FFFFFF;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            font-size: 0.94rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .modal-close-btn:hover {
+            background: #332E2A;
+        }
+
+        @media (max-width: 600px) {
+            .studio-card {
+                padding: 28px 20px;
+            }
+            .countdown-grid {
+                gap: 8px;
+            }
+            .time-box {
+                padding: 14px 6px;
+            }
+            .actions-row {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
-<body class="flex items-center justify-center p-4 relative min-h-screen">
+<body>
+    <div id="background-animation" aria-hidden="true"></div>
 
-    <!-- Background Animation -->
-    <div id="background-animation" class="absolute inset-0 overflow-hidden w-full h-full pointer-events-none"></div>
+    <nav class="top-bar">
+        <a href="../index.html" class="back-link">← L.ASY Studio</a>
+        <span class="year-pill">ĐINH MÙI • 2027</span>
+    </nav>
 
-    <!-- Góc trang trí -->
-    <div class="corner-decor top-left">🏮</div>
-    <div class="corner-decor top-right">🌸</div>
+    <main class="stage">
+        <div class="studio-card">
+            <div class="brand-crest">L.ASY • TẾT NGUYÊN ĐÁN</div>
 
-    <!-- Main Container -->
-    <div class="hand-drawn-box p-6 md:p-8 w-full max-w-2xl text-center relative z-10 flex flex-col items-center bg-white/95">
-        
-        <!-- Logo Text -->
-        <div class="mb-4 transform -rotate-2">
-            <h1 class="text-5xl md:text-6xl font-bold text-red-600 drop-shadow-sm border-4 border-yellow-400 rounded-full px-6 py-1 bg-yellow-100 inline-block rotate-3">
-                LASY
-            </h1>
+            <h1>Đếm Ngược <span>Tết 2027</span></h1>
+            <p class="subtitle">
+                Cùng nhau về đích ngày <strong>06/02/2027</strong> (Mùng 1 Tết Đinh Mùi)
+            </p>
+
+            <div class="countdown-grid" aria-label="Bộ đếm ngược tới Tết 2027">
+                <div class="time-box">
+                    <span id="days" class="time-val">00</span>
+                    <span class="time-label">Ngày</span>
+                </div>
+                <div class="time-box">
+                    <span id="hours" class="time-val">00</span>
+                    <span class="time-label">Giờ</span>
+                </div>
+                <div class="time-box">
+                    <span id="minutes" class="time-val">00</span>
+                    <span class="time-label">Phút</span>
+                </div>
+                <div class="time-box">
+                    <span id="seconds" class="time-val">00</span>
+                    <span class="time-label">Giây</span>
+                </div>
+            </div>
+
+            <div class="actions-row">
+                <button id="motivationBtn" class="action-btn btn-motivate" type="button">
+                    💪 Cày Cuốc
+                </button>
+                <button id="fortuneBtn" class="action-btn btn-fortune" type="button">
+                    🥠 Bóc Quẻ
+                </button>
+                <button id="quitBtn" class="action-btn btn-quit" type="button">
+                    🚪 Nghỉ Việc
+                </button>
+            </div>
+
+            <div id="messageArea" class="message-box hidden" role="status"></div>
+
+            <div id="fortuneArea" class="fortune-card hidden" role="status">
+                <span class="fortune-tag">Lời Phán Đầu Xuân</span>
+                <p id="fortuneText" class="fortune-title"></p>
+                <p id="fortuneSub" class="fortune-sub"></p>
+            </div>
         </div>
+    </main>
 
-        <!-- Header -->
-        <h2 class="text-2xl md:text-4xl mb-2 text-red-700 font-bold script-font">
-            Đếm Ngược Tết 2026
-        </h2>
-        <p class="text-base md:text-lg mb-6 text-gray-600 font-bold">
-            Cùng nhau về đích ngày 17/02/2026
-        </p>
-
-        <!-- Countdown Timer -->
-        <div class="grid grid-cols-4 gap-2 md:gap-4 mb-8 w-full">
-            <!-- Days -->
-            <div class="bg-red-50 border-2 border-red-200 rounded-lg p-2 md:p-3">
-                <span id="days" class="block text-2xl md:text-4xl font-bold text-red-600 leading-none">00</span>
-                <span class="text-xs md:text-sm text-red-400 font-bold">Ngày</span>
+    <!-- Ms Grace Modal -->
+    <div id="graceModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="graceModalTitle">
+        <div id="graceModalCard" class="modal-card animate-pop">
+            <div class="modal-emoji">😤⛓️</div>
+            <h2 id="graceModalTitle" class="modal-title">Định Mệnh Rồi!</h2>
+            <div class="modal-quote">
+                "Em định bỏ chị đi đâu?"
+                <strong>Ở lại với Ms Grace cả đời nhé! ❤️</strong>
             </div>
-            <!-- Hours -->
-            <div class="bg-red-50 border-2 border-red-200 rounded-lg p-2 md:p-3">
-                <span id="hours" class="block text-2xl md:text-4xl font-bold text-red-600 leading-none">00</span>
-                <span class="text-xs md:text-sm text-red-400 font-bold">Giờ</span>
-            </div>
-            <!-- Minutes -->
-            <div class="bg-red-50 border-2 border-red-200 rounded-lg p-2 md:p-3">
-                <span id="minutes" class="block text-2xl md:text-4xl font-bold text-red-600 leading-none">00</span>
-                <span class="text-xs md:text-sm text-red-400 font-bold">Phút</span>
-            </div>
-            <!-- Seconds -->
-            <div class="bg-red-50 border-2 border-red-200 rounded-lg p-2 md:p-3">
-                <span id="seconds" class="block text-2xl md:text-4xl font-bold text-red-600 leading-none">00</span>
-                <span class="text-xs md:text-sm text-red-400 font-bold">Giây</span>
-            </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex flex-col sm:flex-row gap-3 w-full justify-center mb-6">
-            <button id="motivationBtn" class="hand-drawn-btn flex-1 py-3 px-4 bg-yellow-300 hover:bg-yellow-400 text-red-800 font-bold text-lg">
-                💪 Cày Cuốc
-            </button>
-            
-            <button id="fortuneBtn" class="hand-drawn-btn flex-1 py-3 px-4 bg-red-400 hover:bg-red-500 text-white font-bold text-lg">
-                🥠 Bóc Quẻ
-            </button>
-
-            <button id="quitBtn" class="hand-drawn-btn flex-1 py-3 px-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold text-lg">
-                🚪 Nghỉ Việc
-            </button>
-        </div>
-
-        <!-- Motivation Quote Area -->
-        <div id="messageArea" class="w-full text-lg font-bold hidden text-red-800 italic bg-yellow-50 p-4 border-2 border-dashed border-red-300 rounded-lg"></div>
-
-        <!-- Fortune Result Area -->
-        <div id="fortuneArea" class="hidden w-full mt-2">
-             <div class="bg-red-50 p-4 border-2 border-red-800 rounded-lg relative overflow-hidden transform rotate-1">
-                <div class="absolute top-0 right-0 opacity-20 text-4xl">🧧</div>
-                <h3 class="text-red-800 font-bold uppercase text-xs mb-1 tracking-widest border-b border-red-200 inline-block pb-1">Lời Phán</h3>
-                <p id="fortuneText" class="text-2xl script-font text-red-600 font-bold mb-1"></p>
-                <p id="fortuneSub" class="text-gray-700 text-base font-medium leading-tight"></p>
-             </div>
-        </div>
-    </div>
-
-    <!-- Ms Grace Modal (The Trap) -->
-    <div id="graceModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 hidden backdrop-blur-sm p-4">
-        <div class="hand-drawn-box bg-white text-gray-800 p-6 max-w-sm w-full text-center animate-pop border-4 border-red-600 relative">
-            
-            <div class="text-6xl mb-2 animate-bounce">😤⛓️</div>
-            <h2 class="text-3xl font-bold text-red-600 mb-2 script-font">Định Mệnh Rồi!</h2>
-            
-            <div class="bg-yellow-100 p-3 rounded border border-yellow-300 mb-4 transform -rotate-1">
-                <p class="text-lg font-bold text-gray-800">
-                    "Em định bỏ chị đi đâu?"<br>
-                    <span class="text-red-600 text-xl font-bold block mt-1">Ở lại với Ms Grace cả đời nhé! ❤️</span>
-                </p>
-            </div>
-            
-            <button id="closeModalBtn" class="hand-drawn-btn w-full py-3 bg-gray-800 text-white hover:bg-black font-bold text-lg">
+            <button id="closeModalBtn" class="modal-close-btn" type="button">
                 Dạ em biết lỗi rồi 😭
             </button>
         </div>
     </div>
 
     <script>
-        // --- Hiệu ứng Sản phẩm & Tết Bay (Mix) ---
-        // Thêm icon Tết: Lồng đèn, bao lì xì, hoa mai, pháo
+        // --- Hiệu ứng Sản phẩm & Tết Bay ---
         const items = ['💄', '👠', '👜', '👗', '🧧', '🏮', '🌸', '🌼', '🍍', '💰', '📦', '🛒'];
-        const container = document.getElementById('background-animation');
+        const bgContainer = document.getElementById('background-animation');
 
         function createFloatingItem() {
             const el = document.createElement('div');
             el.innerText = items[Math.floor(Math.random() * items.length)];
             el.classList.add('floating-item');
-            el.style.left = Math.random() * 90 + 'vw'; // Tránh sát lề quá
-            el.style.animationDuration = (Math.random() * 10 + 15) + 's';
-            el.style.fontSize = (Math.random() * 1 + 1.5) + 'rem';
-            container.appendChild(el);
-            setTimeout(() => el.remove(), 25000);
+            el.style.left = Math.random() * 92 + 'vw';
+            el.style.animationDuration = (Math.random() * 10 + 16) + 's';
+            el.style.fontSize = (Math.random() * 0.9 + 1.3) + 'rem';
+            bgContainer.appendChild(el);
+            setTimeout(() => el.remove(), 26000);
         }
-        setInterval(createFloatingItem, 1800);
-        // Tạo sẵn vài cái
-        for(let i=0; i<6; i++) createFloatingItem();
+        setInterval(createFloatingItem, 2000);
+        for (let i = 0; i < 6; i++) createFloatingItem();
 
-        // --- Logic Đếm Ngược (Tết 2026: 17/02/2026) ---
+        // --- Logic Đếm Ngược (Mùng 1 Tết Đinh Mùi 2027: 06/02/2027) ---
         function updateCountdown() {
             const now = new Date().getTime();
-            const fixedTarget = new Date("Feb 17, 2026 00:00:00").getTime();
-            const distance = fixedTarget - now;
+            const target2027 = new Date("Feb 06, 2027 00:00:00").getTime();
+            const distance = target2027 - now;
 
-            if (distance < 0) {
+            if (distance <= 0) {
                 document.getElementById("days").innerText = "00";
+                document.getElementById("hours").innerText = "00";
+                document.getElementById("minutes").innerText = "00";
+                document.getElementById("seconds").innerText = "00";
                 return;
             }
 
@@ -232,7 +555,7 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // --- Data: 15 câu mỗi loại ---
+        // --- Data ---
         const motivationQuotes = [
             "Làm nhiệt tình, cuối năm hình mình lên bảng vàng!",
             "Deadline dí? Chạy nhanh hơn deadline là được!",
@@ -242,9 +565,9 @@
             "Khách hàng khó tính là khách hàng... nhiều tiền.",
             "Tập trung cao độ, tối về ngủ ngon!",
             "Mỗi đơn hàng là một niềm vui (và hoa hồng).",
-            "Thần thái Lasy: Tự tin, Chăm chỉ, Sang chảnh.",
+            "Thần thái L.ASY: Tự tin, Chăm chỉ, Sang chảnh.",
             "Nghèo thì lâu, giàu thì mấy hồi (nếu chăm).",
-            "Sắp Tết rồi, bánh chưng cần có nhân thịt!",
+            "Sắp Tết 2027 rồi, bánh chưng cần có nhân thịt!",
             "Áp lực tạo nên kim cương (hoặc tạo nên nếp nhăn, nhớ dưỡng da).",
             "Hãy làm việc như thể bạn là cổ đông lớn nhất.",
             "Tương lai khóc hay cười phụ thuộc vào độ lười quá khứ.",
@@ -269,56 +592,56 @@
             { text: "Yên Vui", sub: "Cười cả ngày... vì sếp đi vắng (nhưng mai sếp về)." }
         ];
 
-        // --- Logic Buttons ---
+        // --- Interactions ---
         const motivationBtn = document.getElementById('motivationBtn');
         const fortuneBtn = document.getElementById('fortuneBtn');
         const quitBtn = document.getElementById('quitBtn');
-        
+
         const messageArea = document.getElementById('messageArea');
         const fortuneArea = document.getElementById('fortuneArea');
         const fortuneText = document.getElementById('fortuneText');
         const fortuneSub = document.getElementById('fortuneSub');
-        
+
         const graceModal = document.getElementById('graceModal');
+        const graceModalCard = document.getElementById('graceModalCard');
         const closeModalBtn = document.getElementById('closeModalBtn');
-        const modalContent = graceModal.querySelector('div');
 
         function hideAllAreas() {
             messageArea.classList.add('hidden');
             fortuneArea.classList.add('hidden');
         }
 
-        // 1. Motivation
         motivationBtn.addEventListener('click', () => {
             hideAllAreas();
             const randomQuote = motivationQuotes[Math.floor(Math.random() * motivationQuotes.length)];
             messageArea.innerText = `✨ "${randomQuote}"`;
             messageArea.classList.remove('hidden');
+            messageArea.classList.remove('animate-pop');
+            void messageArea.offsetWidth;
             messageArea.classList.add('animate-pop');
-            setTimeout(() => messageArea.classList.remove('animate-pop'), 300);
         });
 
-        // 2. Fortune
         fortuneBtn.addEventListener('click', () => {
             hideAllAreas();
             fortuneArea.classList.remove('hidden');
-            fortuneText.innerText = "⏳ Đang lắc...";
+            fortuneText.innerText = "⏳ Đang lắc quẻ...";
             fortuneSub.innerText = "";
-            
+
             setTimeout(() => {
                 const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
                 fortuneText.innerText = `🌟 Quẻ ${randomFortune.text}`;
                 fortuneSub.innerText = randomFortune.sub;
+                fortuneArea.classList.remove('animate-pop');
+                void fortuneArea.offsetWidth;
                 fortuneArea.classList.add('animate-pop');
-                setTimeout(() => fortuneArea.classList.remove('animate-pop'), 300);
-            }, 600);
+            }, 550);
         });
 
-        // 3. Quit (Trap)
         quitBtn.addEventListener('click', () => {
             graceModal.classList.remove('hidden');
-            modalContent.classList.add('shake');
-            setTimeout(() => modalContent.classList.remove('shake'), 500);
+            graceModalCard.classList.remove('shake');
+            void graceModalCard.offsetWidth;
+            graceModalCard.classList.add('shake');
         });
 
         closeModalBtn.addEventListener('click', () => {
@@ -327,7 +650,6 @@
             messageArea.innerText = "Ngoan! Quay lại làm việc đi nhé. 👋";
             messageArea.classList.remove('hidden');
         });
-
     </script>
 </body>
 </html>

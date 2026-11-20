@@ -3,183 +3,553 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Công Cụ Ghép Ảnh Nguyên Bản (Không Cắt)</title>
+    <title>Ghép Ảnh Lưới Nguyên Bản — L.ASY Studio</title>
+    <meta name="description" content="Công cụ ghép ảnh lưới giữ nguyên tỷ lệ ảnh gốc (không cắt góc), tự động chia 3–6 cột và xuất ảnh chất lượng cao.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; background: #f4f4f9; text-align: center; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { color: #333; }
-        
-        /* Khu vực kéo thả */
+        :root {
+            --bg-paper: #FAF7F2;
+            --bg-elevated: #FFFFFF;
+            --bg-subtle: #F3EDE3;
+            --border-sand: #E6DDD0;
+            --border-strong: #D4C7B4;
+            --ink-primary: #1C1917;
+            --ink-secondary: #575049;
+            --ink-muted: #847A6E;
+            --crimson: #B93829;
+            --crimson-dark: #94281C;
+            --gold: #B67E1E;
+            --gold-soft: #FBF5E8;
+            --sage: #2D6A4F;
+            --sage-hover: #21503B;
+            --shadow-card: 0 2px 4px rgba(28, 25, 23, 0.04), 0 12px 32px rgba(28, 25, 23, 0.06);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-paper);
+            color: var(--ink-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .top-bar {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px 24px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-sand);
+            color: var(--ink-primary);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            border-color: var(--ink-primary);
+            transform: translateX(-2px);
+        }
+
+        .studio-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: var(--gold-soft);
+            color: var(--gold);
+            border: 1px solid rgba(182, 126, 30, 0.25);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 24px auto 56px;
+            padding: 0 24px;
+        }
+
+        .studio-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-sand);
+            border-radius: 22px;
+            padding: 36px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(1.75rem, 3.5vw, 2.35rem);
+            color: var(--ink-primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: var(--ink-secondary);
+            font-size: 0.95rem;
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        /* Drop Zone */
         #drop-zone {
-            border: 3px dashed #aaa; border-radius: 10px; padding: 50px;
-            cursor: pointer; background: #fafafa; transition: 0.3s;
-            color: #666; font-size: 18px; margin-bottom: 20px;
+            border: 2px dashed var(--border-strong);
+            border-radius: 16px;
+            padding: 44px 24px;
+            cursor: pointer;
+            background: var(--bg-paper);
+            transition: all 0.2s ease;
+            text-align: center;
+            color: var(--ink-secondary);
         }
-        #drop-zone.dragover { border-color: #2196F3; background: #e3f2fd; color: #1565C0; }
 
-        /* Vùng điều khiển */
-        .controls-panel { display: none; margin-bottom: 20px; border-top: 1px solid #eee; padding-top: 20px; }
-        .control-group { margin: 10px 0; display: flex; justify-content: center; align-items: center; gap: 10px; }
-        label { font-weight: bold; }
-        
-        button#download-btn {
-            padding: 10px 20px; font-size: 16px; background: #4CAF50; color: white;
-            border: none; border-radius: 5px; cursor: pointer; transition: 0.2s;
+        #drop-zone:hover,
+        #drop-zone.dragover {
+            border-color: var(--crimson);
+            background: #FDF2F0;
+            color: var(--crimson);
         }
-        button#download-btn:hover { background: #388E3C; }
 
-        /* Preview ảnh */
-        #preview-container { margin-top: 20px; }
-        #preview-img { max-width: 100%; height: auto; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        #canvas { display: none; } /* Canvas ẩn, chỉ dùng để xử lý */
+        .drop-icon {
+            width: 44px;
+            height: 44px;
+            margin: 0 auto 12px;
+            border-radius: 12px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-sand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ink-primary);
+        }
+
+        .drop-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--ink-primary);
+            margin-bottom: 4px;
+        }
+
+        .drop-sub {
+            font-size: 0.84rem;
+            color: var(--ink-muted);
+        }
+
+        /* Controls Panel */
+        .controls-panel {
+            display: none;
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-sand);
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 18px 20px;
+            background: var(--bg-paper);
+            border: 1px solid var(--border-sand);
+            border-radius: 14px;
+            margin-bottom: 24px;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .control-label {
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: var(--ink-primary);
+        }
+
+        input[type="color"] {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            background: #FFFFFF;
+            padding: 2px;
+            cursor: pointer;
+        }
+
+        .swatch-btn {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 1px solid var(--border-strong);
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+
+        .swatch-btn:hover {
+            transform: scale(1.12);
+        }
+
+        .padding-range {
+            accent-color: var(--crimson);
+            cursor: pointer;
+        }
+
+        .mono-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            color: var(--ink-secondary);
+            min-width: 42px;
+        }
+
+        .btn-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 11px 20px;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 600;
+            background: var(--sage);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.15s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--sage-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-ghost {
+            padding: 11px 16px;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: var(--bg-elevated);
+            color: var(--ink-secondary);
+            border: 1px solid var(--border-sand);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--ink-primary);
+            color: var(--ink-primary);
+        }
+
+        /* Preview */
+        .preview-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 0.82rem;
+            color: var(--ink-muted);
+        }
+
+        .meta-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.76rem;
+            color: var(--ink-primary);
+            background: var(--bg-subtle);
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+
+        #preview-container {
+            background: var(--bg-paper);
+            border: 1px solid var(--border-sand);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        #preview-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            box-shadow: 0 4px 16px rgba(28, 25, 23, 0.1);
+            display: block;
+            margin: 0 auto;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 0 16px;
+            }
+            .studio-card {
+                padding: 24px 18px;
+            }
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn-group {
+                justify-content: stretch;
+            }
+            .btn-primary, .btn-ghost {
+                flex: 1;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
+    <nav class="top-bar">
+        <a href="../index.html" class="back-link">← L.ASY Studio</a>
+        <span class="studio-pill">Image Studio</span>
+    </nav>
 
-<div class="container">
-    <h2>Ghép Ảnh Lưới (Giữ Nguyên Ảnh Gốc, Không Cắt)</h2>
-    <p>Quăng file vào, công cụ tự tính số cột (3-6) và thêm viền để ảnh không bị mất góc.</p>
+    <main class="container">
+        <div class="studio-card">
+            <div class="header">
+                <h1>Ghép Ảnh Lưới Nguyên Bản</h1>
+                <p>Tự động chia lưới 3–6 cột cân đối và căn giữa từng ảnh theo tỷ lệ gốc để không bao giờ bị cắt mất góc.</p>
+            </div>
 
-    <div id="drop-zone">Kéo & Thả ảnh vào đây hoặc Click để chọn file</div>
-    <input type="file" id="file-input" multiple accept="image/*" style="display: none;">
+            <div id="drop-zone" role="button" tabindex="0" aria-label="Kéo thả hoặc chọn ảnh để ghép">
+                <div class="drop-icon" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                </div>
+                <div class="drop-title" id="drop-title">Kéo &amp; Thả nhiều ảnh vào đây</div>
+                <div class="drop-sub">hoặc nhấn để chọn file từ máy tính (JPG, PNG, WebP)</div>
+            </div>
+            <input type="file" id="file-input" multiple accept="image/*" style="display: none;">
 
-    <div id="controls-panel" class="controls-panel">
-        <div class="control-group">
-            <label for="bg-color">Màu nền khoảng trống:</label>
-            <input type="color" id="bg-color" value="#ffffff"> <!-- Mặc định nền trắng -->
+            <div id="controls-panel" class="controls-panel">
+                <div class="toolbar">
+                    <div class="control-group">
+                        <label class="control-label" for="bg-color">Màu nền:</label>
+                        <input type="color" id="bg-color" value="#ffffff" title="Chọn màu nền tùy ý">
+                        <button type="button" class="swatch-btn" style="background: #ffffff;" data-color="#ffffff" title="Trắng"></button>
+                        <button type="button" class="swatch-btn" style="background: #FAF7F2;" data-color="#FAF7F2" title="Kem Studio"></button>
+                        <button type="button" class="swatch-btn" style="background: #1C1917;" data-color="#1C1917" title="Đen"></button>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="gap-range">Khoảng cách:</label>
+                        <input type="range" id="gap-range" class="padding-range" min="0" max="6" step="1" value="0">
+                        <span id="gap-value" class="mono-val">0%</span>
+                    </div>
+
+                    <div class="btn-group">
+                        <button id="reset-btn" class="btn-ghost" type="button">Chọn lại</button>
+                        <button id="download-btn" class="btn-primary" type="button">Tải Ảnh Kết Quả</button>
+                    </div>
+                </div>
+
+                <div class="preview-meta">
+                    <span>Bản xem trước (nén nhẹ để hiển thị nhanh)</span>
+                    <span id="grid-stats" class="meta-badge">0 ảnh</span>
+                </div>
+
+                <div id="preview-container">
+                    <img id="preview-img" alt="Bản xem trước ảnh ghép lưới">
+                </div>
+            </div>
         </div>
-        <button id="download-btn">Tải Ảnh Kết Quả (Chất Lượng Cao)</button>
-        <div id="preview-container">
-            <p>Bản xem trước (giảm dung lượng):</p>
-            <img id="preview-img" alt="Bản xem trước">
-        </div>
-    </div>
-</div>
+    </main>
 
-<canvas id="canvas"></canvas>
+    <canvas id="canvas"></canvas>
 
-<script>
-    const dropZone = document.getElementById('drop-zone');
-    const fileInput = document.getElementById('file-input');
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    const previewImg = document.getElementById('preview-img');
-    const controlsPanel = document.getElementById('controls-panel');
-    const downloadBtn = document.getElementById('download-btn');
-    const bgColorInput = document.getElementById('bg-color');
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const dropTitle = document.getElementById('drop-title');
+        const fileInput = document.getElementById('file-input');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const previewImg = document.getElementById('preview-img');
+        const controlsPanel = document.getElementById('controls-panel');
+        const downloadBtn = document.getElementById('download-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const bgColorInput = document.getElementById('bg-color');
+        const gapRange = document.getElementById('gap-range');
+        const gapValue = document.getElementById('gap-value');
+        const gridStats = document.getElementById('grid-stats');
 
-    let loadedImages = [];
+        let loadedImages = [];
 
-    // --- Xử lý sự kiện kéo thả và chọn file ---
-    dropZone.addEventListener('click', () => fileInput.click());
-    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-    dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
-    fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
-    bgColorInput.addEventListener('input', () => processImages()); // Vẽ lại khi đổi màu nền
-
-    // --- Đọc file ảnh ---
-    async function handleFiles(files) {
-        const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
-        if (imageFiles.length === 0) return;
-
-        dropZone.innerText = "Đang tải ảnh...";
-        loadedImages = [];
-
-        for (let file of imageFiles) {
-            const img = await loadImage(file);
-            loadedImages.push(img);
-        }
-
-        processImages();
-        dropZone.innerText = "Kéo & Thả ảnh vào đây hoặc Click để chọn lại";
-    }
-
-    function loadImage(file) {
-        return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => resolve(img);
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                fileInput.click();
+            }
         });
-    }
-
-    // --- Thuật toán ghép ảnh CHÍNH (Giữ nguyên ảnh gốc) ---
-    function processImages() {
-        const n = loadedImages.length;
-        if (n === 0) return;
-
-        // 1. TÍNH TOÁN LƯỚI GẦN VUÔNG NHẤT (3-6 cột)
-        let cols = Math.ceil(Math.sqrt(n));
-        if (n >= 3) {
-            if (cols < 3) cols = 3;
-            if (cols > 6) cols = 6;
-        }
-        const rows = Math.ceil(n / cols);
-
-        // 2. XÁC ĐỊNH KÍCH THƯỚC Ô VUÔNG CHUẨN (Bảo toàn chất lượng)
-        // Tìm cạnh lớn nhất của tất cả ảnh để làm kích thước cho mỗi ô vuông
-        let maxSide = 0;
-        loadedImages.forEach(img => {
-            maxSide = Math.max(maxSide, img.width, img.height);
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
         });
-        
-        // Giới hạn nhẹ để tránh crash trình duyệt nếu ảnh quá lớn, nhưng vẫn giữ nét
-        const tileSize = Math.min(maxSide, 2500); 
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
 
-        // 3. THIẾT LẬP CANVAS TỔNG
-        canvas.width = cols * tileSize;
-        canvas.height = rows * tileSize;
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+        bgColorInput.addEventListener('input', () => processImages());
+        gapRange.addEventListener('input', () => {
+            gapValue.textContent = gapRange.value + '%';
+            processImages();
+        });
 
-        // 4. VẼ NỀN (Màu người dùng chọn)
-        ctx.fillStyle = bgColorInput.value;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        document.querySelectorAll('.swatch-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                bgColorInput.value = btn.dataset.color;
+                processImages();
+            });
+        });
 
-        // 5. VẼ TỪNG ÁNH (Thuật toán Fit-in, không cắt)
-        loadedImages.forEach((img, index) => {
-            const col = index % cols;
-            const row = Math.floor(index / cols);
+        resetBtn.addEventListener('click', () => {
+            loadedImages = [];
+            fileInput.value = '';
+            controlsPanel.style.display = 'none';
+            dropTitle.textContent = 'Kéo & Thả nhiều ảnh vào đây';
+        });
 
-            // Tính toán vị trí gốc của ô vuông
-            const xOffset = col * tileSize;
-            const yOffset = row * tileSize;
+        async function handleFiles(files) {
+            const imageFiles = Array.from(files).filter((file) => file.type.startsWith('image/'));
+            if (imageFiles.length === 0) return;
 
-            // Thuật toán tính tỷ lệ để ảnh nằm trọn trong ô vuông (Fit inside)
-            let drawWidth, drawHeight, drawX, drawY;
-            const imageRatio = img.width / img.height;
+            dropTitle.textContent = `Đang tải ${imageFiles.length} ảnh...`;
+            loadedImages = [];
 
-            if (imageRatio > 1) { // Ảnh ngang
-                drawWidth = tileSize;
-                drawHeight = tileSize / imageRatio;
-                drawX = xOffset;
-                drawY = yOffset + (tileSize - drawHeight) / 2; // Căn giữa dọc
-            } else { // Ảnh dọc hoặc vuông
-                drawHeight = tileSize;
-                drawWidth = tileSize * imageRatio;
-                drawX = xOffset + (tileSize - drawWidth) / 2; // Căn giữa ngang
-                drawY = yOffset;
+            for (const file of imageFiles) {
+                const img = await loadImage(file);
+                loadedImages.push(img);
             }
 
-            // Vẽ ảnh gốc (đã co dãn tỷ lệ) vào canvas
-            ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+            processImages();
+            dropTitle.textContent = `Đã nạp ${loadedImages.length} ảnh — Kéo thả hoặc nhấn để chọn lại`;
+        }
+
+        function loadImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => resolve(img);
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function processImages() {
+            const n = loadedImages.length;
+            if (n === 0) return;
+
+            // 1. Tính toán lưới gần vuông nhất (3-6 cột)
+            let cols = Math.ceil(Math.sqrt(n));
+            if (n >= 3) {
+                if (cols < 3) cols = 3;
+                if (cols > 6) cols = 6;
+            }
+            const rows = Math.ceil(n / cols);
+
+            // 2. Xác định kích thước ô vuông chuẩn
+            let maxSide = 0;
+            loadedImages.forEach((img) => {
+                maxSide = Math.max(maxSide, img.width, img.height);
+            });
+            const tileSize = Math.min(maxSide, 2500);
+            const padding = Math.round((tileSize * Number(gapRange.value)) / 100);
+            const innerSize = Math.max(tileSize - padding * 2, 10);
+
+            // 3. Thiết lập Canvas tổng
+            canvas.width = cols * tileSize;
+            canvas.height = rows * tileSize;
+
+            // 4. Vẽ nền
+            ctx.fillStyle = bgColorInput.value;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 5. Vẽ từng ảnh (Fit-in, không cắt)
+            loadedImages.forEach((img, index) => {
+                const col = index % cols;
+                const row = Math.floor(index / cols);
+
+                const xOffset = col * tileSize + padding;
+                const yOffset = row * tileSize + padding;
+
+                let drawWidth, drawHeight, drawX, drawY;
+                const imageRatio = img.width / img.height;
+
+                if (imageRatio > 1) {
+                    drawWidth = innerSize;
+                    drawHeight = innerSize / imageRatio;
+                    drawX = xOffset;
+                    drawY = yOffset + (innerSize - drawHeight) / 2;
+                } else {
+                    drawHeight = innerSize;
+                    drawWidth = innerSize * imageRatio;
+                    drawX = xOffset + (innerSize - drawWidth) / 2;
+                    drawY = yOffset;
+                }
+
+                ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+            });
+
+            // 6. Hiển thị preview & thông số
+            previewImg.src = canvas.toDataURL('image/jpeg', 0.8);
+            gridStats.textContent = `${n} ảnh • ${cols}×${rows} • ${canvas.width}×${canvas.height}px`;
+            controlsPanel.style.display = 'block';
+        }
+
+        downloadBtn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = `LASY_GhepAnh_${Date.now()}.jpg`;
+            link.href = canvas.toDataURL('image/jpeg', 1.0);
+            link.click();
         });
-
-        // 6. HIỂN THỊ PREVIEW (JPEG chất lượng vừa phải để load nhanh)
-        previewImg.src = canvas.toDataURL("image/jpeg", 0.8);
-        controlsPanel.style.display = "block";
-    }
-
-    // --- Tải ảnh về (Chất lượng gốc 100%) ---
-    downloadBtn.addEventListener('click', () => {
-        const link = document.createElement('a');
-        link.download = `VietGhep_Full_${new Date().getTime()}.jpg`;
-        link.href = canvas.toDataURL("image/jpeg", 1.0); // Chất lượng cao nhất
-        link.click();
-    });
-</script>
-
+    </script>
 </body>
 </html>

@@ -1,84 +1,62 @@
 <div align="center">
 
-# 🚀 Miasteam Agency Website
-(M'Project)
+# L.ASY Studio
 
-**Source code chính thức cho website [miasteam.vn](https://miasteam.vn)**
+**Không gian công cụ nội bộ cho sáng tạo nội dung, xử lý hình ảnh & đánh giá hiệu suất KOL**
 
-</div>
-
-<div align="center">
-
-[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/[USERNAME]/[REPO]/pages.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/[USERNAME]/[REPO]/actions/workflows/pages.yml)
-[![Jekyll](https://img.shields.io/badge/Tech-Jekyll-red?style=for-the-badge&logo=jekyll)](https://jekyllrb.com/)
-[![Tailwind CSS](https://img.shields.io/badge/CSS-Tailwind-blue?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![Deploy L.ASY Studio to GitHub Pages](https://github.com/pixelaquarius/miasteam/actions/workflows/pages.yml/badge.svg)](https://github.com/pixelaquarius/miasteam/actions/workflows/pages.yml)
+[![Static Site](https://img.shields.io/badge/Architecture-100%25%20Client--Side-B93829?style=flat-square)](https://pages.github.com/)
+[![Tết Đinh Mùi](https://img.shields.io/badge/Tết%202027-06%2F02%2F2027-C58B2A?style=flat-square)](./tetlasy/index.html)
 
 </div>
 
 ---
 
-## Overview
+## Tổng quan (Overview)
 
-Dự án này là website chính thức của Miasteam (M'Project), một agency chuyên về **Tăng trưởng E-commerce & Performance Marketing**. Website được xây dựng trên nền tảng Jekyll (static site) để đảm bảo tốc độ tải trang, bảo mật và khả năng SEO vượt trội.
+**L.ASY Studio** là bộ công cụ web tĩnh (100% HTML/CSS/JavaScript thuần phía client, không cần backend hay database) được thiết kế phục vụ vận hành và sáng tạo hằng ngày cho team, triển khai tự động qua **GitHub Pages**.
 
-Website đóng vai trò là portolio, giới thiệu các dịch vụ cốt lõi, case study thực tế và là kênh thu thập lead (khách hàng tiềm năng) chính của agency.
+## Danh sách công cụ
 
-![Project Preview Image](assets/uploads/project-preview.png)
+| Công cụ | Đường dẫn | Mô tả |
+| :--- | :--- | :--- |
+| **Tết L.ASY 2027** | [`tetlasy/index.html`](./tetlasy/index.html) | Đếm ngược Tết Nguyên Đán Đinh Mùi (**06/02/2027**), tạo động lực **Cày Cuốc**, **Bóc Quẻ** đầu xuân và tương tác **Nghỉ Việc**. |
+| **Ghép Ảnh Lưới** | [`ghepanh/index.html`](./ghepanh/index.html) | Ghép nhiều ảnh thành lưới vuông 3–6 cột bằng HTML5 Canvas, giữ nguyên tỷ lệ ảnh gốc (fit-in, không cắt góc), tùy chỉnh màu nền/khoảng cách và xuất ảnh chất lượng cao. |
+| **KOL Performance Auditor** | [`checkkol/index.html`](./checkkol/index.html) | Phân tích dữ liệu Kalodata DOM/HTML, chấm điểm tương thích theo Short-Video / Livestream track, đối chiếu Top 20 Vietnam Beauty Brands, lưu lịch sử & so sánh Before/After. |
 
-## ✨ Tính năng Nổi bật
+## Cấu trúc thư mục
 
-* **Tĩnh (Static):** Tốc độ tải trang cực nhanh, tăng điểm Google Lighthouse và cải thiện trải nghiệm người dùng.
-* **Hero Slider:** Sử dụng **Swiper.js** để tạo slider giới thiệu linh hoạt, thu hút ngay từ giây đầu tiên.
-* **Tab Dịch vụ:** Cấu trúc dịch vụ (Performance Ads, E-com Enabler, Analytics) rõ ràng bằng tab tương tác.
-* **Responsive Toàn diện:** Sử dụng **Tailwind CSS** đảm bảo hiển thị hoàn hảo trên mọi thiết bị (Desktop, Tablet, Mobile).
-* **Tương tác (Interactivity):** Tích hợp **Alpine.js** cho các thành phần tương tác gọn nhẹ (menu, popup...) mà không cần jQuery.
-* **Dễ dàng Mở rộng:** Quản lý bài viết blog và case study thông qua cấu trúc thư mục `_posts` và `_case-studies` của Jekyll.
-* **SEO-Friendly:** Cấu trúc sitemap, meta tags và URL chuẩn SEO được tối ưu tự động.
+```text
+.
+├── .github/
+│   └── workflows/
+│       └── pages.yml       # CI/CD tự động deploy lên GitHub Pages
+├── checkkol/
+│   └── index.html          # KOL Compatibility & Performance Auditor
+├── ghepanh/
+│   └── index.html          # Công cụ ghép ảnh lưới nguyên bản
+├── tetlasy/
+│   └── index.html          # Đếm ngược Tết Đinh Mùi 2027 & Bóc Quẻ
+├── index.html              # Trang chủ L.ASY Studio Hub
+└── README.md
+```
 
----
+## Chạy thử trên máy (Local Preview)
 
-## 🛠️ Công nghệ Sử dụng (Tech Stack)
+Vì toàn bộ dự án là static site thuần, bạn có thể mở trực tiếp `index.html` hoặc chạy một local server bất kỳ:
 
-* **Framework:** [Jekyll](https://jekyllrb.com/)
-* **Styling:** [Tailwind CSS](https://tailwindcss.com/)
-* **JavaScript:** [Alpine.js](https://alpinejs.dev/), [Swiper.js](https://swiperjs.com/)
-* **Deployment:** [GitHub Pages](https://pages.github.com/)
-* **Icons:** [Font Awesome](https://fontawesome.com/)
+```bash
+# Sử dụng Python 3
+python3 -m http.server 8080
 
----
+# Hoặc sử dụng Node.js
+npx serve .
+```
 
-## ⚙️ Cài đặt và Chạy (Running Locally)
+Sau đó truy cập `http://localhost:8080` trên trình duyệt.
 
-Để chạy dự án này trên máy local, bạn cần cài đặt Ruby, Bundler và Jekyll.
+## Triển khai (GitHub Pages Deployment)
 
-1.  **Clone dự án:**
-    ```bash
-    git clone [https://github.com/](https://github.com/)[USERNAME]/[REPO].git
-    cd [REPO]
-    ```
+Dự án tự động build và deploy lên **GitHub Pages** mỗi khi có commit được push lên nhánh `main` thông qua workflow [`.github/workflows/pages.yml`](./.github/workflows/pages.yml).
 
-2.  **Cài đặt dependencies:**
-    (Đảm bảo bạn đã cài đặt `bundler`: `gem install bundler`)
-    ```bash
-    bundle install
-    ```
-
-3.  **Chạy server local:**
-    ```bash
-    bundle exec jekyll serve --livereload
-    ```
-
-4.  Mở trình duyệt và truy cập `http://127.0.0.1:4000/` để xem website.
-
-## 🚀 Triển khai (Deployment)
-
-Dự án này được cấu hình để tự động triển khai (CI/CD) lên **GitHub Pages** mỗi khi có thay đổi được push lên nhánh `main`.
-
-Quá trình này được quản lý bởi file `.github/workflows/pages.yml`.
-
----
-
-## 📄 Giấy phép (License)
-
-Dự án này được cấp phép theo **MIT License**. Xem file `LICENSE` để biết thêm chi tiết.
+> **Lưu ý cấu hình lần đầu trên GitHub:** Vào **Settings → Pages → Build and deployment → Source** và chọn **GitHub Actions**.
