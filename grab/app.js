@@ -1,134 +1,129 @@
-/* Grab (mô phỏng) – vận hành đặt đồ & định vị GPS trực tiếp */
+/* Grab (mô phỏng) – 50 thương hiệu lớn, 1.000 chi nhánh Google Maps, đánh giá & định vị GPS */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const fmt = n => n.toLocaleString('vi-VN') + 'đ';
 const store = { get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d } catch { return d } }, set: (k, v) => localStorage.setItem(k, JSON.stringify(v)) };
 
-/* ================= DỮ LIỆU THƯƠNG HIỆU & CHI NHÁNH ================= */
+/* ================= DỮ LIỆU 50 THƯƠNG HIỆU & 1.000 QUÁN GOOGLE MAPS ================= */
 const CATS = [
   ['all', 'Tất cả', 'r1/cover'],
   ['rice', 'Cơm', 'r1/cover'],
   ['noodle', 'Bún · Phở', 'r6/cover'],
-  ['fast', 'Gà · Burger', 'r3/cover'],
+  ['fast', 'Gà · Pizza', 'r3/cover'],
   ['drink', 'Trà sữa', 'r4/cover'],
   ['cafe', 'Cà phê', 'r5/cover'],
   ['snack', 'Ăn vặt', 'r7/cover'],
   ['cake', 'Bánh ngọt', 'r8/cover']
 ];
 
-// 20 thương hiệu lớn + quán đặc trưng, mỗi thương hiệu có nhiều chi nhánh phân bổ quanh GPS người dùng
-const BRANDS = [
-  { b: 1, brand: 'Cơm Tấm Phúc Lộc Thọ', cat: 'rice', tags: 'Cơm tấm · Món Việt', c: '#d96b1f', ini: 'PLT', aid: 1, hours: '06:00 - 22:00',
-    menu: [['Cơm sườn bì chả đặc biệt', 55000, 'Sườn nướng than hoa, bì thính, chả trứng hấp, mỡ hành', '🍚'], ['Cơm sườn nướng trứng ốp la', 49000, 'Sườn cốt lết nướng mật ong, trứng ốp la lòng đào', '🍳'], ['Cơm đùi gà nướng ngũ vị', 52000, 'Đùi gà góc tư nướng da giòn, đồ chua', '🍗'], ['Canh khổ qua nhồi thịt', 18000, 'Khổ qua hầm thịt bằm, nước dùng ngọt thanh', '🥣'], ['Trà tắc xí muội', 15000, 'Ly lớn 500ml mát lạnh', '🧊']],
-    branches: [['CN Nguyễn Trãi', .28, .22, 4.8, '3.2k+', 14, 'Giảm 20k', '236 Nguyễn Trãi'], ['CN Cách Mạng Tháng 8', -.65, .48, 4.7, '1.9k+', 18, 'Freeship', '142 Cách Mạng Tháng 8'], ['CN Điện Biên Phủ', 1.15, -.4, 4.8, '2.4k+', 22, 'Giảm 15k', '389 Điện Biên Phủ'], ['CN Phan Xích Long', -.35, 1.35, 4.6, '950+', 25, '', '188 Phan Xích Long']] },
+const BRANDS = window.BRANDS_DATA || [];
+const BRAND_MAP = {};
+BRANDS.forEach(b => { b.branchCount = 0; BRAND_MAP[b.b] = b; });
 
-  { b: 2, brand: 'Cơm Tấm Cali', cat: 'rice', tags: 'Cơm tấm · Chuỗi lớn', c: '#b85d19', ini: 'CL', aid: 1, hours: '06:30 - 22:30',
-    menu: [['Cơm tấm sườn non nướng', 68000, 'Sườn non ướp sốt Cali đặc trưng, dưa góp', '🍖'], ['Cơm tấm ba rọi nướng', 58000, 'Ba rọi rút sườn nướng cháy cạnh, trứng kho', '🥓'], ['Cơm gà nướng sả ớt', 59000, 'Gà phi lê nướng sả, kim chi cải thảo', '🍗'], ['Canh rong biển thịt bằm', 20000, 'Rong biển Hàn Quốc nấu thịt nạc', '🥣'], ['Sâm bổ lượng', 28000, 'Nhãn nhục, hạt sen, táo đỏ, phổ tai', '🍧']],
-    branches: [['CN Lê Lợi', -.32, -.28, 4.7, '2.1k+', 15, 'Giảm 25k', '82 Lê Lợi'], ['CN Võ Văn Tần', .72, .55, 4.6, '1.4k+', 19, 'Freeship', '215 Võ Văn Tần'], ['CN Nguyễn Thị Minh Khai', -.95, -.52, 4.7, '1.1k+', 23, 'Giảm 15%', '310 Nguyễn Thị Minh Khai']] },
+const R = (window.PLACES_1000 || []).map(row => {
+  const br = BRAND_MAP[row[1]] || BRANDS[0];
+  br.branchCount++;
+  return {
+    id: row[0],
+    bid: br.b,
+    brand: br.brand,
+    branch: row[2],
+    name: `${br.brand} - ${row[2]}`,
+    cat: br.cat,
+    tags: br.tags,
+    c: br.c,
+    ini: br.ini,
+    aid: br.aid,
+    dx: row[3],
+    dy: row[4],
+    rate: row[5],
+    rv: row[6],
+    time: row[7],
+    promo: row[8],
+    addr: row[9],
+    hours: br.hours,
+    menu: br.menu
+  };
+});
 
-  { b: 3, brand: 'Cơm Gà Hải Nam Singapore', cat: 'rice', tags: 'Cơm gà · Món Á', c: '#d9a400', ini: 'HN', aid: 9, hours: '09:30 - 21:30',
-    menu: [['Cơm gà xối mỡ da giòn', 55000, 'Đùi gà xối mỡ giòn rụm, cơm nấu nước luộc gà thơm béo', '🍗'], ['Cơm gà Hải Nam luộc', 58000, 'Gà ta luộc mềm mọng, sốt gừng hành & tương ớt Singapore', '🍚'], ['Gỏi gà xé phay bắp cải', 45000, 'Gà xé, bắp cải tím, rau răm, hành phi, đậu phộng', '🥗']],
-    branches: [['CN Trần Hưng Đạo', .48, -.35, 4.8, '1.8k+', 16, 'Giảm 20k', '55 Trần Hưng Đạo'], ['CN Hai Bà Trưng', -.85, .62, 4.7, '1.2k+', 21, 'Freeship', '174 Hai Bà Trưng'], ['CN Lê Văn Sỹ', 1.4, .85, 4.6, '880+', 27, '', '295 Lê Văn Sỹ']] },
-
-  { b: 4, brand: 'Phở Hòa Pasteur', cat: 'noodle', tags: 'Phở bò · Gia truyền', c: '#b3261e', ini: 'PH', aid: 2, hours: '05:30 - 22:00',
-    menu: [['Phở bò tái lăn', 65000, 'Bò tái mềm, bánh phở tươi, nước dùng ninh xương bò 14 giờ', '🍜'], ['Phở tái nạm bò viên', 68000, 'Thịt nạm giòn, bò viên gân, hành hoa', '🍲'], ['Phở đặc biệt thập cẩm', 79000, 'Tái, nạm, gầu, gân, sách, bò viên', '🥩'], ['Quẩy giòn Hà Nội', 10000, 'Quẩy nóng giòn (dĩa 3 cái)', '🥖'], ['Trà chanh giã tay', 18000, 'Chanh tươi Quảng Đông thơm mát', '🍋']],
-    branches: [['CN Pasteur', -.24, .38, 4.9, '4.5k+', 14, 'Freeship', '260C Pasteur'], ['CN Lý Tự Trọng', .58, -.42, 4.7, '1.6k+', 18, 'Giảm 20k', '45 Lý Tự Trọng'], ['CN Nguyễn Đình Chiểu', -1.05, .3, 4.8, '2.0k+', 22, '', '192 Nguyễn Đình Chiểu']] },
-
-  { b: 5, brand: 'Phở Thìn Bờ Hồ 13 Lò Đúc', cat: 'noodle', tags: 'Phở Bắc · Tái lăn', c: '#8f1d14', ini: 'PT', aid: 2, hours: '06:00 - 21:30',
-    menu: [['Phở tái lăn truyền thống', 70000, 'Thịt bò xào tỏi gừng lửa lớn, ngập hành lá chuẩn vị Lò Đúc', '🍜'], ['Phở tái gầu giòn', 72000, 'Gầu bò vàng giòn béo ngậy, nước dùng đậm đà', '🍲'], ['Phở bò sốt vang', 75000, 'Bò hầm rượu vang đỏ và ngũ vị hương mềm rục', '🥩'], ['Quẩy nóng giòn', 10000, 'Phần 3 chiếc', '🥖'], ['Trà đá thảo mộc', 10000, 'Trà sâm dứa mát lành', '🧊']],
-    branches: [['CN Quận 1', .42, .52, 4.8, '2.3k+', 17, 'Giảm 15k', '110 Lê Thánh Tôn'], ['CN Thảo Điền', 1.65, -.75, 4.7, '1.1k+', 28, 'Freeship', '34 Xuân Thủy'], ['CN Bình Thạnh', -.78, 1.15, 4.6, '920+', 24, 'Giảm 10%', '68 Nguyễn Gia Trí']] },
-
-  { b: 6, brand: 'Bún Chả Hương Liên', cat: 'noodle', tags: 'Bún chả · Đặc sản Hà Nội', c: '#2e7d32', ini: 'HL', aid: 6, hours: '09:30 - 21:00',
-    menu: [['Bún chả Hà Nội truyền thống', 55000, 'Chả viên, chả miếng nướng than hoa, đu đủ xanh, rau sống', '🍲'], ['Combo Bún chả Obama', 75000, 'Phần bún chả đầy đủ + 1 nem hải sản + 1 trà sấu', '🥩'], ['Nem cua bể rán giòn (3 cái)', 38000, 'Nem vuông nhân thịt cua, miến, mộc nhĩ', '🥟'], ['Nước sấu ngâm đường phèn', 18000, 'Sấu giòn chua ngọt giải nhiệt', '🧃']],
-    branches: [['CN Hai Bà Trưng', -.42, -.18, 4.8, '2.7k+', 16, 'Giảm 15k', '66 Hai Bà Trưng'], ['CN Phan Đình Phùng', .92, .68, 4.7, '1.3k+', 21, 'Freeship', '145 Phan Đình Phùng'], ['CN Hoàng Hoa Thám', -1.3, -.85, 4.6, '790+', 26, 'Giảm 10%', '22 Hoàng Hoa Thám']] },
-
-  { b: 7, brand: 'Bún Bò Huế Đông Ba', cat: 'noodle', tags: 'Bún bò · Chuẩn vị Huế', c: '#c44536', ini: 'ĐB', aid: 6, hours: '06:00 - 21:30',
-    menu: [['Bún bò tái nạm chả cua', 58000, 'Nước lèo mắm ruốc sả thơm nồng, chả cua Huế tươi', '🍲'], ['Bún bò đặc biệt giò heo', 69000, 'Giò heo rút xương, bắp bò, gân bò, chả Huế', '🥩'], ['Chả cây Huế (4 cây)', 28000, 'Chả heo gói lá chuối thơm tiêu hạt', '🥟'], ['Nước sâm bông cúc', 15000, 'Nấu nhà thanh mát', '🧃']],
-    branches: [['CN Nguyễn Thị Diệu', .22, -.55, 4.7, '1.9k+', 15, 'Freeship', '38 Nguyễn Thị Diệu'], ['CN Sư Vạn Hạnh', -.88, -.68, 4.8, '2.2k+', 20, 'Giảm 20k', '412 Sư Vạn Hạnh'], ['CN Bạch Đằng', 1.25, .42, 4.6, '980+', 24, '', '156 Bạch Đằng']] },
-
-  { b: 8, brand: 'KFC Vietnam', cat: 'fast', tags: 'Gà rán · Burger · Quốc tế', c: '#d62828', ini: 'KFC', aid: 3, hours: '09:00 - 22:30',
-    menu: [['Combo Gà Rán Giòn Cay (2 miếng)', 79000, '2 miếng gà giòn cay + 1 khoai tây chiên vừa + 1 Pepsi', '🍗'], ['Burger Zinger Gà Giòn', 54000, 'Phi lê đùi gà giòn cay, xà lách, sốt mayo', '🥪'], ['Khoai tây chiên lắc phô mai', 32000, 'Khoai chiên vàng giòn rắc bột phô mai', '🍟'], ['Gà rán truyền thống (3 miếng)', 99000, 'Công thức 11 loại thảo mộc & gia vị', '🍗'], ['Pepsi mát lạnh', 17000, 'Ly lớn 500ml', '🥤']],
-    branches: [['CN Nguyễn Thái Học', .35, -.15, 4.7, '5.1k+', 16, 'Giảm 30k', '140 Nguyễn Thái Học'], ['CN Diamond Lê Duẩn', -.48, .55, 4.8, '3.8k+', 18, 'Freeship', '34 Lê Duẩn'], ['CN NowZone Nguyễn Văn Cừ', -1.1, -.45, 4.6, '2.9k+', 23, 'Mua 1 tặng 1', '235 Nguyễn Văn Cừ'], ['CN Cao Thắng', .75, -.88, 4.7, '2.2k+', 21, 'Giảm 20k', '92 Cao Thắng']] },
-
-  { b: 9, brand: 'Lotteria', cat: 'fast', tags: 'Gà sốt · Burger Hàn Quốc', c: '#e63946', ini: 'LT', aid: 3, hours: '08:30 - 22:30',
-    menu: [['Burger Bulgogi Bò Teriyaki', 52000, 'Bò nướng sốt Bulgogi Hàn Quốc đậm đà', '🍔'], ['Burger Tôm Thượng Hạng', 54000, 'Nhân tôm tươi nguyên miếng chiên xù giòn', '🥪'], ['Khoai tây lắc vị hành', 35000, 'Đặc sản khoai lắc Lotteria kèm túi lắc', '🍟'], ['Gà sốt H&S đậu phộng (3 miếng)', 98000, 'Gà rán phủ sốt cay ngọt Hàn Quốc', '🍗'], ['7Up chanh tươi', 17000, 'Ly 500ml', '🥤']],
-    branches: [['CN Đinh Tiên Hoàng', .62, .45, 4.6, '3.1k+', 17, 'Mua 1 tặng 1', '12 Đinh Tiên Hoàng'], ['CN Nguyễn Trãi Q5', -.92, -.75, 4.7, '2.5k+', 22, 'Freeship', '382 Nguyễn Trãi'], ['CN Cộng Hòa', -1.5, 1.05, 4.5, '1.7k+', 29, 'Giảm 25k', '108 Cộng Hòa']] },
-
-  { b: 10, brand: 'Jollibee', cat: 'fast', tags: 'Gà Giòn Vui Vẻ · Mì Ý', c: '#c1121f', ini: 'JB', aid: 3, hours: '09:00 - 22:00',
-    menu: [['Combo Gà Giòn Vui Vẻ + Mì Ý', 65000, '1 miếng gà giòn + 1 mì Ý sốt bò bằm + 1 nước ngọt', '🍗'], ['Burger Gà Giòn Sốt Cay', 45000, 'Gà phi lê chiên giòn, sốt cay ngọt', '🍔'], ['Khoai tây chiên lớn', 28000, 'Kèm tương cà chua ngọt', '🍟'], ['Gà Sốt Cay (3 miếng)', 95000, 'Gà giòn phủ sốt cay đậm vị', '🍗'], ['Mirinda Cam', 15000, 'Ly vừa', '🥤']],
-    branches: [['CN Trần Hưng Đạo', -.28, -.62, 4.8, '4.2k+', 15, 'Giảm 20k', '355 Trần Hưng Đạo'], ['CN Phan Đăng Lưu', .88, 1.05, 4.7, '2.6k+', 23, 'Freeship', '114 Phan Đăng Lưu'], ['CN Ba Tháng Hai', -1.25, .25, 4.7, '3.0k+', 24, 'Giảm 15k', '210 Đường 3/2']] },
-
-  { b: 11, brand: "McDonald's", cat: 'fast', tags: 'Burger Mỹ · Drive-thru', c: '#d90429', ini: 'McD', aid: 3, hours: '00:00 - 23:59',
-    menu: [['Big Mac Burger 2 lớp bò', 79000, '2 lớp bò Úc 100%, phô mai cheddar, sốt Big Mac bí truyền', '🍔'], ['McChicken Burger gà giòn', 55000, 'Thịt gà xay chiên giòn, xà lách thái sợi', '🥪'], ['Khoai tây chiên Pháp (L)', 39000, 'Khoai tây cắt sợi chiên vàng chuẩn McDonald’s', '🍟'], ['Gà rán McCrispy (3 miếng)', 105000, 'Gà giòn rụm mọng nước bên trong', '🍗'], ['Coca-Cola Zero', 20000, 'Ly lớn', '🥤']],
-    branches: [['CN Đa Kao Điện Biên Phủ', .55, .65, 4.8, '5.4k+', 17, 'Giảm 30k', '2-6 Bis Điện Biên Phủ'], ['CN Bến Thành', -.15, -.15, 4.7, '4.8k+', 12, 'Freeship', '2 Công Trường Quách Thị Trang'], ['CN Phú Mỹ Hưng', 1.55, -1.2, 4.8, '3.1k+', 28, 'Giảm 20k', '801 Nguyễn Văn Linh']] },
-
-  { b: 12, brand: 'The Pizza Company', cat: 'fast', tags: 'Pizza · Mì Ý · Sườn nướng', c: '#00643b', ini: 'TPC', aid: 10, hours: '10:00 - 22:00',
-    menu: [['Pizza Hải Sản Pesto Xanh (S)', 139000, 'Tôm, mực, thanh cua, sốt pesto húng tây & phô mai Mozzarella', '🍕'], ['Pizza Phô Mai Bốn Vị (S)', 119000, 'Mozzarella, Cheddar, Parmesan và Cream Cheese béo ngậy', '🧀'], ['Mì Ý Bò Bằm Sốt Cà Chua', 79000, 'Sốt Bolognese bò Úc bằm hầm cà chua tươi', '🍝']],
-    branches: [['CN Nguyễn Thị Minh Khai', .38, .35, 4.7, '2.4k+', 22, 'Mua 1 tặng 1', '180 Nguyễn Thị Minh Khai'], ['CN Nguyễn Tri Phương', -.95, -.42, 4.6, '1.8k+', 25, 'Giảm 30k', '306 Nguyễn Tri Phương'], ['CN Phan Xích Long', .72, 1.25, 4.7, '1.5k+', 27, 'Freeship', '122 Phan Xích Long']] },
-
-  { b: 13, brand: 'Pizza 4P’s', cat: 'fast', tags: 'Pizza thủ công · Phô mai tươi', c: '#264653', ini: '4Ps', aid: 10, hours: '10:00 - 22:30',
-    menu: [['Pizza Hải Sản Sốt Kem Cà Chua', 185000, 'Tôm sú, mực tươi, phô mai Burrata nhà làm', '🍕'], ['Pizza 4 Cheese Mật Ong', 168000, '4 loại phô mai thủ công dùng kèm mật ong rừng', '🧀'], ['Mì Ý Cua Sốt Kem Cà Chua', 155000, 'Thịt cua tươi gỡ tay và sốt kem Ricotta', '🍝']],
-    branches: [['CN Bến Thành', -.2, .22, 4.9, '6.2k+', 20, 'Giảm 30k', '8 Thủ Khoa Huân'], ['CN Hai Bà Trưng', .65, .75, 4.9, '4.7k+', 24, '', '151B Hai Bà Trưng'], ['CN Saigon Centre', .18, -.32, 4.8, '3.9k+', 18, 'Freeship', '65 Lê Lợi']] },
-
-  { b: 14, brand: 'Phúc Long Coffee & Tea', cat: 'drink', tags: 'Trà đậm vị · Cà phê', c: '#00693e', ini: 'PL', aid: 4, hours: '07:00 - 22:30',
-    menu: [['Trà Sữa Phúc Long Trân Châu', 50000, 'Trà ô long ủ đậm vị pha sữa thơm béo, trân châu dai', '🧋'], ['Hồng Trà Đác Cam (Size L)', 65000, 'Hồng trà truyền thống kết hợp hạt đác rim dứa & cam tươi', '🍵'], ['Matcha Đá Xay Kem Tươi', 60000, 'Bột trà xanh Nhật Bản xay cùng sữa và lớp whipping cream', '🥤'], ['Trà Đào Đá Xay Phúc Long', 58000, 'Trà đào trứ danh kèm miếng đào giòn', '🍑']],
-    branches: [['CN Mạc Thị Bưởi', .25, -.2, 4.9, '7.5k+', 12, 'Giảm 20k', '63 Mạc Thị Bưởi'], ['CN Ngô Đức Kế', -.38, -.32, 4.8, '5.9k+', 14, 'Freeship', '42 Ngô Đức Kế'], ['CN Cộng Hòa', -1.45, .8, 4.7, '3.4k+', 26, 'Giảm 15k', '18 Cộng Hòa'], ['CN Phan Xích Long', .58, 1.15, 4.8, '4.1k+', 21, 'Mua 1 tặng 1', '212 Phan Xích Long']] },
-
-  { b: 15, brand: 'Koi Thé Vietnam', cat: 'drink', tags: 'Trà sữa Hoàng Kim · Macchiato', c: '#b07d2b', ini: 'KOI', aid: 4, hours: '09:00 - 22:30',
-    menu: [['Trà Sữa Trân Châu Hoàng Kim', 56000, 'Trân châu sợi vàng óng dẻo thơm độc quyền của KOI', '🧋'], ['Hồng Trà Macchiato (M)', 49000, 'Lớp kem sữa sánh mịn ngọt dịu bên trên hồng trà Assam', '🍵'], ['Matcha Latte Macchiato', 59000, 'Matcha Uji Nhật Bản hòa quyện kem Macchiato', '🥤'], ['Lục Trà Đào Hoàng Kim', 54000, 'Lục trà lài thanh mát kèm trân châu hoàng kim', '🍑']],
-    branches: [['CN Ngô Đức Kế', .3, -.28, 4.9, '5.2k+', 13, 'Giảm 15k', '76 Ngô Đức Kế'], ['CN Pasteur', -.45, .48, 4.8, '3.7k+', 16, 'Freeship', '238 Pasteur'], ['CN Cao Thắng', -.82, -.55, 4.8, '2.9k+', 20, '', '102 Cao Thắng']] },
-
-  { b: 16, brand: 'Gong Cha', cat: 'drink', tags: 'Trà sữa Đài Loan · Kem sữa', c: '#a4161a', ini: 'GC', aid: 4, hours: '08:30 - 22:00',
-    menu: [['Trà Sữa Trân Châu Đen', 47000, 'Hồng trà sữa Đài Loan chuẩn vị kèm trân châu đen', '🧋'], ['Trà Alisan Kem Sữa', 51000, 'Trà núi cao Alisan phủ lớp milk foam mặn béo đặc trưng', '🍵'], ['Matcha Đá Xay Đậu Đỏ', 58000, 'Matcha đá xay kết hợp đậu đỏ hầm mềm', '🥤'], ['Trà Đào Cam Sả Gong Cha', 52000, 'Trà đen ủ lạnh, đào vàng và cam tươi', '🍑']],
-    branches: [['CN Hồ Tùng Mậu', .18, -.38, 4.8, '4.0k+', 13, 'Mua 1 tặng 1', '83 Hồ Tùng Mậu'], ['CN Nguyễn Đình Chiểu', -.68, .25, 4.7, '2.6k+', 18, 'Freeship', '160 Nguyễn Đình Chiểu'], ['CN Phan Văn Trị', 1.35, 1.1, 4.7, '1.8k+', 26, 'Giảm 20k', '320 Phan Văn Trị']] },
-
-  { b: 17, brand: 'Highlands Coffee', cat: 'cafe', tags: 'Phin Sữa Đá · Trà Sen Vàng', c: '#9e2a2b', ini: 'HC', aid: 5, hours: '06:30 - 23:00',
-    menu: [['Phin Sữa Đá Đậm Đà', 35000, 'Cà phê Robusta rang xay pha phin truyền thống Việt Nam', '☕'], ['Bạc Xỉu Đá Highlands', 35000, 'Sữa đặc béo ngậy hòa chút cà phê phin thơm nồng', '🥛'], ['Freeze Trà Xanh / Cappuccino', 55000, 'Đá xay mát lạnh kèm thạch và kem tươi', '☕'], ['Bánh Mì Que / Croissant Bơ', 25000, 'Nướng nóng giòn tại quầy', '🥐']],
-    branches: [['CN Nhà Thờ Đức Bà', .15, .32, 4.8, '8.1k+', 11, 'Giảm 15k', '1 Công Xã Paris'], ['CN Hàm Nghi', .35, -.45, 4.7, '5.4k+', 14, 'Freeship', '96 Hàm Nghi'], ['CN Điện Biên Phủ', -.75, .72, 4.8, '4.3k+', 19, 'Mua 1 tặng 1', '245 Điện Biên Phủ'], ['CN Nguyễn Văn Trỗi', -1.2, 1.2, 4.7, '3.0k+', 25, 'Giảm 20k', '115 Nguyễn Văn Trỗi']] },
-
-  { b: 18, brand: 'The Coffee House', cat: 'cafe', tags: 'Cà phê · CloudFee · Trà trái cây', c: '#d97706', ini: 'TCH', aid: 5, hours: '07:00 - 22:30',
-    menu: [['Cà Phê Sữa Đá Sài Gòn', 39000, '100% hạt cà phê Cầu Đất & Đắk Lắk đậm vị', '☕'], ['CloudFee Hạnh Nhân Nướng', 49000, 'Bạc xỉu kem bọt mịn phủ hạnh nhân lát nướng', '🥛'], ['Cappuccino Nóng / Đá', 55000, 'Espresso Arabica Cầu Đất và sữa tươi đánh bọt', '☕'], ['Croissant Bơ Pháp Trứng Muối', 39000, 'Bánh sừng bò ngàn lớp nhân sốt trứng muối tan chảy', '🥐']],
-    branches: [['CN Võ Văn Tần', -.3, .25, 4.8, '6.0k+', 13, 'Giảm 20k', '86 Võ Văn Tần'], ['CN Hai Bà Trưng', .52, .48, 4.7, '4.2k+', 16, 'Freeship', '141 Hai Bà Trưng'], ['CN Cách Mạng Tháng 8', -.95, -.25, 4.8, '3.5k+', 21, 'Giảm 15%', '315 Cách Mạng Tháng 8'], ['CN Sư Vạn Hạnh', -1.35, -.82, 4.7, '2.7k+', 26, '', '520 Sư Vạn Hạnh']] },
-
-  { b: 19, brand: 'Ăn Vặt Cô Tư Sài Gòn', cat: 'snack', tags: 'Ăn vặt · Bánh tráng · Xiên que', c: '#e91e8c', ini: 'CT', aid: 7, hours: '13:00 - 22:30',
-    menu: [['Bánh tráng trộn thập cẩm đặc biệt', 28000, 'Khô bò đen, khô mực, trứng cút, xoài bào, sốt bò sa tế', '🥗'], ['Combo Xiên que chiên giòn (8 xiên)', 45000, 'Hồ lô, phô mai que, xúc xích Đức, tôm surimi', '🍢'], ['Cá viên chiên nước mắm tỏi ớt', 35000, 'Cá viên, bò viên xóc mắm đường kẹo kèm đậu bắp', '🍡'], ['Bắp xào bơ tép hành phi', 25000, 'Bắp nếp dẻo xào bơ Pháp và ruốc sấy giòn', '🌽']],
-    branches: [['CN Võ Văn Tần', .45, .28, 4.6, '2.1k+', 15, 'Freeship', '101 Võ Văn Tần'], ['CN Hồ Thị Kỷ', -.72, -.58, 4.7, '3.3k+', 19, 'Giảm 15k', '52 Hồ Thị Kỷ'], ['CN Vạn Kiếp', .85, .95, 4.6, '1.8k+', 23, '', '190 Vạn Kiếp']] },
-
-  { b: 20, brand: 'Tous Les Jours Bakery', cat: 'cake', tags: 'Bánh ngọt · Bánh kem Hàn Quốc', c: '#1b4332', ini: 'TLJ', aid: 8, hours: '07:00 - 22:00',
-    menu: [['Tiramisu Mascarpone Ý', 55000, 'Cốt bánh thấm cà phê Espresso và kem phô mai Mascarpone', '🍰'], ['Hộp Bánh Su Kem Sữa Tươi (4 cái)', 42000, 'Vỏ su mềm dai ngập nhân kem vani mát lạnh', '🧁'], ['Cookie Socola Hạt Óc Chó', 32000, 'Bánh quy bơ Pháp giòn xốp nhiều chip socola Bỉ', '🍪'], ['Bông Lan Trứng Muối Chà Bông', 58000, 'Bánh bông lan mềm phủ sốt phô mai và trứng muối', '🍞']],
-    branches: [['CN Hai Bà Trưng', .28, .42, 4.8, '3.6k+', 15, 'Giảm 20k', '180 Hai Bà Trưng'], ['CN Nguyễn Thị Minh Khai', -.58, -.35, 4.8, '2.4k+', 18, 'Freeship', '59 Nguyễn Thị Minh Khai'], ['CN Lê Văn Sỹ', -.98, .88, 4.7, '1.9k+', 23, 'Giảm 12k', '302 Lê Văn Sỹ']] }
+// Kho phản hồi khách hàng thực tế theo đúng món ăn trên Google Maps & GrabFood
+const REVIEWERS = [
+  ['Nguyễn Minh Anh', 'Local Guide · 48 đánh giá', '#00863c'],
+  ['Trần Hoàng Phúc', 'Local Guide · 112 đánh giá', '#1d4ed8'],
+  ['Lê Thu Thảo', '26 đánh giá trên Google', '#be185d'],
+  ['Phạm Quốc Tuấn', 'Local Guide · 85 đánh giá', '#b45309'],
+  ['Võ Ngọc Hân', '39 đánh giá trên Google', '#6d28d9'],
+  ['Đặng Gia Huy', 'Local Guide · 164 đánh giá', '#0f766e'],
+  ['Bùi Thanh Trúc', '52 đánh giá trên Google', '#c2410c'],
+  ['Hoàng Tuấn Kiệt', 'Local Guide · 91 đánh giá', '#374151'],
+  ['Ngô Bảo Châu', '64 đánh giá trên Google', '#b91c1c'],
+  ['Đỗ Quang Vinh', 'Local Guide · 203 đánh giá', '#4338ca']
 ];
 
-// Trải phẳng toàn bộ chi nhánh thành danh sách quán R (64 chi nhánh)
-const R = [];
-let _rid = 1;
-BRANDS.forEach(br => {
-  br.branches.forEach((bn, idx) => {
-    R.push({
-      id: _rid++,
-      bid: br.b,
-      brand: br.brand,
-      branch: bn[0],
-      name: `${br.brand} - ${bn[0]}`,
-      cat: br.cat,
-      tags: br.tags,
-      c: br.c,
-      ini: br.ini,
-      aid: br.aid,
-      dx: bn[1],
-      dy: bn[2],
-      rate: bn[3],
-      rv: bn[4],
-      time: bn[5],
-      promo: bn[6],
-      addr: bn[7],
-      hours: br.hours,
-      branchCount: br.branches.length,
-      branchIdx: idx,
-      menu: br.menu
-    });
+const REVIEW_TPL = {
+  rice: [
+    'Phần {m0} đầy đặn lắm nha, thịt ướp thấm vị nướng thơm phức, hạt cơm tơi mềm nóng hổi. Chi nhánh {addr} đóng gói hộp rất sạch sẽ, có kèm đủ canh và đồ chua.',
+    'Mình đặt {m1} với {m2} ăn trưa ở văn phòng. Giao nhanh, mở hộp ra vẫn còn bốc khói, nước mắm pha kẹo chua ngọt vừa miệng, rất đáng tiền!',
+    'Quán ruột trên Google Maps mỗi khi thèm cơm ngon. Phần {m0} nhiều đồ ăn, canh nóng ngọt nước, sẽ ủng hộ chi nhánh {branch} dài dài.'
+  ],
+  noodle: [
+    'Nước dùng của {m0} trong và ngọt xương tự nhiên, không bị gắt bột ngọt. Quán để riêng bánh với nước lèo rất cẩn thận nên về tới nơi vẫn nóng hổi như ăn tại tiệm.',
+    'Đặt phần {m1} kèm {m2}, thịt mềm và nhiều, rau sống rửa sạch tươi rói. Chi nhánh {addr} làm món nhanh, chuẩn vị truyền thống.',
+    'Đánh giá 5 sao trên Google Maps không sai chút nào. Tô {m0} siêu chất lượng, thơm nức mũi, đóng gói kỹ không bị đổ một giọt nước dùng.'
+  ],
+  fast: [
+    '{m0} với {m1} giao tới vẫn còn giòn rụm nóng hổi. Lớp vỏ chiên vàng ươm không bị ngấy dầu, sốt chấm cho cực kỳ hào phóng.',
+    'Mình gọi combo {m0} ở chi nhánh {branch} cho cả nhóm ăn xế. Đồ ăn chuẩn vị chuỗi lớn, đóng hộp giấy cứng cáp, khoai và bánh đều thơm ngon.',
+    'Chi nhánh {addr} phục vụ rất nhanh. Phần {m2} làm mới hoàn toàn, phô mai béo ngậy thơm phức, cả nhà mình ai cũng khen.'
+  ],
+  drink: [
+    '{m0} pha đúng mức đường đá mình ghi chú, vị trà đậm thơm hậu ngọt chứ không bị gắt sữa. Trân châu dẻo mềm, ép màng nắp ly chắc chắn không bị tràn.',
+    'Mê món {m1} với {m2} của hãng này cực kỳ. Lớp kem macchiato mặn béo sánh mịn, uống ngụm nào dính ngụm đó. Chi nhánh {branch} pha rất đều tay!',
+    'Trưa nắng đặt ly {m3} mát lạnh tỉnh cả người. Topping cho nhiều, bao bì túi giữ nhiệt chỉnh chu.'
+  ],
+  cafe: [
+    'Ly {m0} đậm đà thơm nồng mùi cà phê mới xay, hậu vị béo vừa phải. Đặt kèm {m3} nướng giòn thơm bơ ăn sáng là hết sẩy.',
+    'Chi nhánh {addr} pha {m1} rất hợp gu mình, lớp bọt mịn, đá để riêng nên không bị nhạt. Đóng gói chống tràn 10 điểm!',
+    'Mỗi sáng đều đặt {m0} hoặc {m2} ở đây. Hương cà phê chuẩn chỉnh, giao tới vẫn giữ nguyên độ lạnh và lớp foam dày.'
+  ],
+  snack: [
+    '{m0} với {m1} trộn vừa miệng cực kỳ, đầy đủ topping khô bò, trứng cút, hành phi giòn rụm. Ăn vặt buổi chiều cùng hội bạn là số một!',
+    'Phần {m2} chiên ráo dầu, xóc sốt mắm tỏi thơm nức mũi. Chi nhánh {branch} cho nhiều đồ chua ăn kèm không bị ngấy.',
+    'Đặt {m0} kèm {m3} lúc tối muộn mà quán vẫn làm nóng hổi, hộp đầy ắp, giá hạt dẻ mà chất lượng quá ổn.'
+  ],
+  cake: [
+    'Bánh {m0} cốt mềm ẩm, lớp kem phô mai mịn tan trong miệng không bị ngọt gắt. Hộp bánh của chi nhánh {branch} sang trọng kèm muỗng nĩa đầy đủ.',
+    'Mình mua {m1} và {m3} làm quà chiều, bánh nướng mới thơm phức mùi bơ Pháp, sốt trứng muối chà bông ngập tràn.',
+    'Tiệm bánh quen thuộc trên Google Maps, món {m2} với {m0} lúc nào cũng tươi mới trong ngày, đóng gói cẩn thận không bị xô lệch.'
+  ]
+};
+
+function getReviewsFor(r) {
+  const tpls = REVIEW_TPL[r.cat] || REVIEW_TPL.rice;
+  const m = r.menu;
+  return [0, 1, 2].map(k => {
+    const u = REVIEWERS[(r.id * 3 + k * 2) % REVIEWERS.length];
+    const dish = m[k % m.length][0];
+    const txt = tpls[k % tpls.length]
+      .replace('{m0}', m[0][0])
+      .replace('{m1}', m[1 % m.length][0])
+      .replace('{m2}', m[2 % m.length][0])
+      .replace('{m3}', m[3 % m.length][0])
+      .replace('{addr}', r.addr)
+      .replace('{branch}', r.branch);
+    const daysAgo = ((r.id + k * 5) % 14) + 1;
+    return {
+      user: u[0],
+      badge: u[1],
+      color: u[2],
+      stars: k === 2 && r.rate < 4.7 ? 4 : 5,
+      time: daysAgo === 1 ? 'Hôm qua trên Google Maps' : `${daysAgo} ngày trước trên Google Maps`,
+      dish,
+      dishIdx: k % m.length,
+      text: txt
+    };
   });
-});
+}
 
 const DRIVERS = [
   ['Nguyễn Văn Hùng', '59X1-123.45', 'Honda Wave Alpha', '4.93'],
@@ -147,7 +142,8 @@ const VOUCHERS = {
 
 const img = p => `img/${p}.jpg`;
 const im = (p, alt = '') => `<img src="${img(p)}" alt="${alt}" loading="lazy" onerror="this.style.display='none'">`;
-const logo = r => `<div style="width:100%;height:100%;background:${r.c};color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px">${r.ini}${im('r' + r.aid + '/logo')}</div>`;
+// Logo chính thức tải từ Google Favicon API cho cả 50 thương hiệu (img/brands/b{bid}.png)
+const logo = r => `<div style="width:100%;height:100%;background:${r.c};color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:12px">${r.ini}<img src="img/brands/b${r.bid}.png" alt="${r.brand}" loading="lazy" onerror="this.style.display='none'"></div>`;
 
 /* ================= STATE ================= */
 const state = {
@@ -155,7 +151,7 @@ const state = {
   pos: store.get('pos', { lat: 10.7725, lng: 106.6980, addr: 'Chợ Bến Thành, Quận 1' }),
   gpsDone: store.get('gpsDone', false),
   wallet: store.get('wallet', 500000),
-  cat: 'all', q: '', chip: 'all', brandFilter: null,
+  cat: 'all', q: '', chip: 'all', brandFilter: null, pageLimit: 40,
   cart: store.get('cart', null), orders: store.get('orders', []), tab: 'home', voucher: null
 };
 const save = () => { store.set('orders', state.orders); store.set('wallet', state.wallet); store.set('cart', state.cart); };
@@ -163,7 +159,7 @@ const km2lat = km => km / 110.57;
 const km2lng = km => km / (111.32 * Math.cos(state.pos.lat * Math.PI / 180));
 const rpos = r => [state.pos.lat + km2lat(r.dy), state.pos.lng + km2lng(r.dx)];
 const distKm = (a, b) => { const d = Math.PI / 180, x = (b[1] - a[1]) * d * Math.cos((a[0] + b[0]) / 2 * d), y = (b[0] - a[0]) * d; return Math.sqrt(x * x + y * y) * 6371; };
-const rdist = r => distKm([state.pos.lat, state.pos.lng], rpos(r)) * 1.28;
+const rdist = r => distKm([state.pos.lat, state.pos.lng], rpos(r)) * 1.25;
 const eta = r => r.time + Math.round(rdist(r) * 3);
 const byId = id => R.find(x => x.id === id) || R[0];
 const siblings = r => R.filter(x => x.bid === r.bid).sort((a, b) => rdist(a) - rdist(b));
@@ -190,12 +186,11 @@ function newMap(id, center, zoom = 15, opt = {}) {
   const m = L.map(id, { zoomControl: false, attributionControl: false, tap: true, ...opt }).setView(center, zoom);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(m);
   if (opt.zoomBtn !== false) L.control.zoom({ position: 'bottomright', zoomInText: '+', zoomOutText: '−' }).addTo(m);
-  L.control.attribution({ prefix: false, position: 'bottomleft' }).addAttribution('© OpenStreetMap').addTo(m);
+  L.control.attribution({ prefix: false, position: 'bottomleft' }).addAttribution('© OpenStreetMap · Google Maps Data').addTo(m);
   maps.push(m); setTimeout(() => { if (maps.includes(m)) m.invalidateSize(); }, 150); return m;
 }
 const mk = (html, size = 40, anchor) => L.divIcon({ html, className: '', iconSize: [size, size], iconAnchor: anchor || [size / 2, size / 2] });
 const shopIcon = r => mk(`<div class="mk shop">${logo(r)}</div>`, 40);
-const meIcon = () => mk('<div class="mk me"></div>', 20);
 const homeIcon = () => mk('<div class="mk home"><span>🏠</span></div>', 36, [18, 36]);
 const riderIcon = () => mk('<div class="mk rider">🛵</div>', 40);
 
@@ -217,15 +212,15 @@ function checkMandatoryGps() {
   gate.innerHTML = `
     <div>
       <div class="art">📍</div>
-      <h2>Bật định vị để tìm quán quanh bạn</h2>
-      <p>GrabFood cần xác nhận vị trí GPS của bạn để hiển thị hơn <b>${R.length} chi nhánh</b> quán ăn chính xác nhất trong bán kính 2km.</p>
+      <h2>Bật định vị để nạp 1.000 quán quanh bạn</h2>
+      <p>GrabFood cần xác nhận tọa độ GPS để tải danh sách <b>${R.length.toLocaleString('vi-VN')} quán & chi nhánh Google Maps</b> kèm đánh giá thực tế gần bạn nhất.</p>
       <div id="gmap"></div>
       <div class="gaddr" id="gad">📍 ${state.pos.addr}</div>
-      <div style="font-size:11.5px;color:#777">Bấm "Lấy GPS hiện tại" hoặc kéo ghim đỏ trên bản đồ tới đúng chỗ bạn đang đứng</div>
+      <div style="font-size:11.5px;color:#777">Bấm "Lấy GPS hiện tại" hoặc kéo ghim đỏ trên bản đồ tới vị trí của bạn</div>
     </div>
     <div style="display:flex;flex-direction:column;gap:8px">
       <button class="btn" id="gbtn" style="justify-content:center;gap:8px">📡 Lấy vị trí GPS hiện tại</button>
-      <button class="btn o" id="gok" style="justify-content:center">Xác nhận vị trí trên bản đồ (${R.length} quán)</button>
+      <button class="btn o" id="gok" style="justify-content:center">Xác nhận vị trí này (${R.length.toLocaleString('vi-VN')} quán)</button>
     </div>`;
   $('#app').appendChild(gate);
 
@@ -250,7 +245,7 @@ function checkMandatoryGps() {
     store.set('pos', tmp); store.set('gpsDone', true);
     try { gm.remove(); } catch {}
     gate.remove();
-    toast(`Đã định vị: ${R.length} chi nhánh quanh bạn`);
+    toast(`Đã nạp ${R.length.toLocaleString('vi-VN')} quán quanh vị trí của bạn`);
     go(viewHome);
   };
 
@@ -279,9 +274,8 @@ function checkMandatoryGps() {
 /* ================= TRANG CHỦ ================= */
 function vcardTag(r) { return r.promo ? `<span class="badge${r.promo === 'Freeship' ? ' g' : ''}">${r.promo}</span>` : ''; }
 
-// Chọn chi nhánh gần nhất của mỗi thương hiệu để hiển thị nổi bật
 function nearestPerBrand() {
-  return BRANDS.map(br => R.filter(x => x.bid === br.b).sort((a, b) => rdist(a) - rdist(b))[0]).sort((a, b) => rdist(a) - rdist(b));
+  return BRANDS.map(br => R.filter(x => x.bid === br.b).sort((a, b) => rdist(a) - rdist(b))[0]).filter(Boolean).sort((a, b) => rdist(a) - rdist(b));
 }
 
 function viewHome() {
@@ -290,56 +284,59 @@ function viewHome() {
   const nearBrands = nearestPerBrand();
   const svc = [['Đồ ăn', '🍔', '#e5f7ec', 'food'], ['Siêu thị', '🛒', '#fff0e0', 'soon'], ['Giao hàng', '📦', '#e6f0ff', 'soon'], ['Xe máy', '🛵', '#e5f7ec', 'soon'], ['Ô tô', '🚗', '#e6f0ff', 'soon'], ['Ưu đãi', '🎟️', '#ffe9e7', 'deal'], ['GrabPay', '💳', '#eee9ff', 'pay'], ['Bản đồ', '🗺️', '#e8f5e9', 'map']];
 
-  screen.innerHTML = `<div class="hhead"><div class="hrow"><div class="addr" id="chg"><small>📍 Giao đến (${R.length} quán quanh đây)</small><b>${state.pos.addr} ▾</b></div><div class="avatar">${state.user.name[0].toUpperCase()}</div></div></div>
-  <div class="sbox pull" id="sb">${ICON.search}<span style="color:#666;font-size:14px">Tìm Phúc Long, KFC, Phở Hòa, Cơm tấm...</span></div>
+  screen.innerHTML = `<div class="hhead"><div class="hrow"><div class="addr" id="chg"><small>📍 Giao đến (${R.length.toLocaleString('vi-VN')} quán quanh đây)</small><b>${state.pos.addr} ▾</b></div><div class="avatar">${state.user.name[0].toUpperCase()}</div></div></div>
+  <div class="sbox pull" id="sb">${ICON.search}<span style="color:#666;font-size:14px">Tìm trong 1.000 quán: Phúc Long, KFC, Phở...</span></div>
   <div class="wallet"><div>GrabPay<b>${fmt(state.wallet)}</b></div><div>GrabRewards<b>1.250 điểm</b></div><div>Ưu đãi<b>3 mã</b></div></div>
   <div class="grid">${svc.map(s => `<button class="svc" data-s="${s[3]}"><i style="background:${s[2]}">${s[1]}</i>${s[0]}${s[3] === 'food' ? '<em>HOT</em>' : ''}</button>`).join('')}</div>
 
   <div class="sw" style="margin-top:10px;padding-bottom:14px">
-    <div class="sec">Chuỗi thương hiệu nổi tiếng<a id="allb">64 chi nhánh</a></div>
+    <div class="sec">50 Thương hiệu chính hãng<a id="allb">${R.length.toLocaleString('vi-VN')} chi nhánh</a></div>
     <div class="hs">${BRANDS.map(br => {
-      const nb = R.filter(x => x.bid === br.b).sort((a, b) => rdist(a) - rdist(b))[0];
-      return `<div class="bcard" data-bid="${br.b}"><div class="blg">${logo(nb)}</div><b>${br.brand}</b><small>${br.branches.length} chi nhánh</small></div>`;
+      const nb = R.find(x => x.bid === br.b);
+      return `<div class="bcard" data-bid="${br.b}"><div class="blg">${logo(nb)}</div><b>${br.brand}</b><small>${br.branchCount} chi nhánh</small></div>`;
     }).join('')}</div>
   </div>
 
   <div class="sw" style="margin-top:10px;padding-bottom:6px"><div class="sec" style="padding-top:16px">Ưu đãi độc quyền hôm nay</div>
   <div class="hs" id="pr">${[
     ['r1', 'Phúc Lộc Thọ\ngiảm 20K', 'Cho đơn cơm tấm từ 55K', nearBrands[0].id],
-    ['r4', 'Phúc Long & KOI\nMua 1 tặng 1', 'Trà sữa đậm vị giao nhanh', R.find(x => x.bid === 14).id],
-    ['r3', 'KFC · McDonald’s\nFreeship 0đ', 'Nhập mã FREESHIP ngay', R.find(x => x.bid === 8).id]
+    ['r4', 'Phúc Long & KOI\nMua 1 tặng 1', 'Trà sữa đậm vị giao nhanh', (R.find(x => x.bid === 14) || nearAll[0]).id],
+    ['r3', 'KFC · McDonald’s\nFreeship 0đ', 'Nhập mã FREESHIP ngay', (R.find(x => x.bid === 8) || nearAll[0]).id]
   ].map(p => `<div class="promo" data-id="${p[3]}">${im(p[0] + '/cover')}<div><h4>${p[1].replace('\n', '<br>')}</h4><p>${p[2]}</p><span>Đặt ngay</span></div></div>`).join('')}</div>
   <div class="dots" id="dots"><i class="on"></i><i></i><i></i></div></div>
 
-  <div class="sw" style="margin-top:10px;padding-bottom:16px"><div class="sec">Chi nhánh gần bạn nhất<a id="all1">Xem tất cả (${R.length})</a></div>
-  <div class="hs">${nearAll.slice(0, 10).map(r => `<div class="hcard" data-id="${r.id}"><div class="im" style="background:${r.c}33">${vcardTag(r)}${im('r' + r.aid + '/cover')}<span class="timechip">${eta(r)} phút · ${rdist(r).toFixed(1)} km</span></div><b>${r.name}</b><small><span class="star">★</span> ${r.rate} (${r.rv}) · ${r.branchCount} CN</small></div>`).join('')}</div></div>
+  <div class="sw" style="margin-top:10px;padding-bottom:16px"><div class="sec">Quán gần bạn nhất trên Google Maps<a id="all1">Xem ${R.length.toLocaleString('vi-VN')} quán</a></div>
+  <div class="hs">${nearAll.slice(0, 12).map(r => `<div class="hcard" data-id="${r.id}"><div class="im" style="background:${r.c}33">${vcardTag(r)}${im('r' + r.aid + '/cover')}<span class="timechip">${eta(r)} phút · ${rdist(r).toFixed(1)} km</span></div><b>${r.name}</b><small><span class="star">★</span> ${r.rate} (${r.rv}) · ${BRAND_MAP[r.bid].branchCount} CN</small></div>`).join('')}</div></div>
 
-  <div class="sec" style="padding-bottom:4px">Quán ngon nổi bật quanh đây</div>${nearBrands.slice(0, 10).map(rcard).join('')}
-  <div style="padding:8px 16px 24px"><button class="btn o" id="all2" style="text-align:center">Khám phá toàn bộ ${R.length} quán & chi nhánh</button></div>`;
+  <div class="sec" style="padding-bottom:4px">Đề xuất nổi bật quanh đây</div>${nearBrands.slice(0, 12).map(rcard).join('')}
+  <div style="padding:8px 16px 24px"><button class="btn o" id="all2" style="text-align:center">Xem danh sách đầy đủ ${R.length.toLocaleString('vi-VN')} quán ăn</button></div>`;
 
   $('#chg').onclick = () => go(viewPickLoc, () => go(viewHome));
-  $('#sb').onclick = () => { state.brandFilter = null; go(viewFood, { focus: true }); };
-  $('#all1').onclick = $('#all2').onclick = $('#allb').onclick = () => { state.brandFilter = null; go(viewFood, {}); };
+  $('#sb').onclick = () => { state.brandFilter = null; state.pageLimit = 40; go(viewFood, { focus: true }); };
+  $('#all1').onclick = $('#all2').onclick = $('#allb').onclick = () => { state.brandFilter = null; state.pageLimit = 40; go(viewFood, {}); };
   $$('.svc').forEach(b => b.onclick = () => ({
-    food: () => { state.brandFilter = null; go(viewFood, {}); },
-    deal: () => { state.brandFilter = null; state.chip = 'deal'; go(viewFood, {}); },
+    food: () => { state.brandFilter = null; state.pageLimit = 40; go(viewFood, {}); },
+    deal: () => { state.brandFilter = null; state.chip = 'deal'; state.pageLimit = 40; go(viewFood, {}); },
     map: () => go(viewMapAll),
     pay: () => toast('Ví GrabPay: ' + fmt(state.wallet)),
     soon: () => toast('Dịch vụ đang bảo trì khu vực này')
   }[b.dataset.s])());
-  $$('.bcard').forEach(c => c.onclick = () => { state.brandFilter = +c.dataset.bid; state.cat = 'all'; state.chip = 'all'; go(viewFood, {}); });
+  $$('.bcard').forEach(c => c.onclick = () => { state.brandFilter = +c.dataset.bid; state.cat = 'all'; state.chip = 'all'; state.pageLimit = 40; go(viewFood, {}); });
   $$('.promo,.hcard,.rcard').forEach(c => c.onclick = () => go(viewRest, +c.dataset.id));
   const pr = $('#pr'); pr.onscroll = () => { const i = Math.round(pr.scrollLeft / (pr.firstChild.offsetWidth + 12)); $$('#dots i').forEach((d, k) => d.classList.toggle('on', k === i)); };
 }
 
 function rcard(r) {
-  return `<div class="rcard" data-id="${r.id}"><div class="im" style="background:${r.c}33">${vcardTag(r)}<span class="partner">✓ Đối tác</span>${im('r' + r.aid + '/cover')}<span class="timechip">${eta(r)} phút · ${rdist(r).toFixed(1)} km</span></div>
-  <div class="bd"><div class="lg">${logo(r)}</div><div class="nm">${r.name}</div><div class="br">📍 ${r.addr} · Hệ thống ${r.branchCount} chi nhánh</div>
-  <div class="mt"><span><span class="star">★</span> <b style="color:#1f1f1f">${r.rate}</b> (${r.rv})</span><i class="dot"></i><span>${r.tags}</span></div>
+  const bcnt = BRAND_MAP[r.bid]?.branchCount || 20;
+  const topRv = getReviewsFor(r)[0];
+  return `<div class="rcard" data-id="${r.id}"><div class="im" style="background:${r.c}33">${vcardTag(r)}<span class="partner">✓ Google Maps</span>${im('r' + r.aid + '/cover')}<span class="timechip">${eta(r)} phút · ${rdist(r).toFixed(1)} km</span></div>
+  <div class="bd"><div class="lg">${logo(r)}</div><div class="nm">${r.name}</div><div class="br">📍 ${r.addr} · Hệ thống ${bcnt} chi nhánh</div>
+  <div class="mt"><span><span class="star">★</span> <b style="color:#1f1f1f">${r.rate}</b> (${r.rv} đánh giá)</span><i class="dot"></i><span>${r.tags}</span></div>
+  <div style="font-size:11.5px;color:#555;background:#f7f8f9;border-radius:8px;padding:5px 8px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">💬 <b>${topRv.user}:</b> "${topRv.text}"</div>
   ${r.promo ? `<span class="vtag">🎟️ ${r.promo === 'Freeship' ? 'Miễn phí giao hàng' : r.promo === 'Mua 1 tặng 1' ? 'Mua 1 tặng 1 (tối đa 30k)' : r.promo + ' cho đơn hôm nay'}</span>` : ''}</div></div>`;
 }
 
-/* ================= TRANG ĐỒ ĂN ================= */
+/* ================= TRANG ĐỒ ĂN (1.000 QUÁN) ================= */
 function filtered() {
   const q = state.q.toLowerCase();
   let l = R.filter(r =>
@@ -350,30 +347,38 @@ function filtered() {
   if (state.chip === 'deal') l = l.filter(r => r.promo);
   if (state.chip === 'fast') l = l.filter(r => eta(r) <= 22);
   if (state.chip === 'top') l = l.filter(r => r.rate >= 4.8);
-  if (state.chip === 'near') l = l.filter(r => rdist(r) <= 1.2);
+  if (state.chip === 'near') l = l.filter(r => rdist(r) <= 1.5);
   return l.sort((a, b) => rdist(a) - rdist(b));
 }
 
 function viewFood(o = {}) {
   state.tab = 'home'; tabs();
-  const brObj = state.brandFilter ? BRANDS.find(x => x.b === state.brandFilter) : null;
-  screen.innerHTML = `<div class="top"><button class="ib" id="bk">${ARROW}</button><div class="sbox" style="margin:0;flex:1;box-shadow:none;background:#f1f1f1;padding:9px 14px">${ICON.search}<input id="q" placeholder="Tìm trong ${R.length} chi nhánh & món ăn..." value="${state.q}"></div></div>
+  const brObj = state.brandFilter ? BRAND_MAP[state.brandFilter] : null;
+  screen.innerHTML = `<div class="top"><button class="ib" id="bk">${ARROW}</button><div class="sbox" style="margin:0;flex:1;box-shadow:none;background:#f1f1f1;padding:9px 14px">${ICON.search}<input id="q" placeholder="Tìm trong ${R.length.toLocaleString('vi-VN')} quán, tên đường, món ăn..." value="${state.q}"></div></div>
   <div class="cgrid">${CATS.map(c => `<button class="cat ${state.cat === c[0] ? 'on' : ''}" data-c="${c[0]}"><div class="ci">${im(c[2])}</div>${c[1]}</button>`).join('')}</div>
   <div class="chips">
-    <button class="chip" id="mapb">🗺️ Bản đồ (${R.length})</button>
-    ${brObj ? `<button class="chip on" id="clrb">🏪 ${brObj.brand} (${brObj.branches.length} CN) ✕</button>` : ''}
-    ${[['all', 'Tất cả'], ['near', '📍 Gần tôi <1.2km'], ['deal', '🎟️ Ưu đãi'], ['fast', '⚡ Giao nhanh'], ['top', '★ 4.8+']].map(c => `<button class="chip ${state.chip === c[0] ? 'on' : ''}" data-ch="${c[0]}">${c[1]}</button>`).join('')}
+    <button class="chip" id="mapb">🗺️ Bản đồ (${R.length.toLocaleString('vi-VN')})</button>
+    ${brObj ? `<button class="chip on" id="clrb">🏪 ${brObj.brand} (${brObj.branchCount} CN) ✕</button>` : ''}
+    ${[['all', 'Tất cả'], ['near', '📍 Gần tôi <1.5km'], ['deal', '🎟️ Ưu đãi'], ['fast', '⚡ Giao nhanh'], ['top', '★ 4.8+']].map(c => `<button class="chip ${state.chip === c[0] ? 'on' : ''}" data-ch="${c[0]}">${c[1]}</button>`).join('')}
   </div>
   <div id="list"></div><div style="height:20px"></div>`;
+
   const draw = () => {
     const l = filtered();
-    $('#list').innerHTML = l.length ? `<div style="padding:10px 16px 2px;font-size:12.5px;color:#666;font-weight:600">Hiển thị ${l.length} chi nhánh gần ${state.pos.addr}</div>` + l.map(rcard).join('') : '<div class="empty"><div class="big">🔍</div><h4>Không tìm thấy chi nhánh</h4>Thử từ khoá hoặc bộ lọc khác nhé</div>';
+    const shown = l.slice(0, state.pageLimit);
+    $('#list').innerHTML = l.length
+      ? `<div style="padding:10px 16px 2px;font-size:12.5px;color:#555;font-weight:600;display:flex;justify-content:space-between"><span>Tìm thấy <b>${l.length.toLocaleString('vi-VN')}</b> quán trên Google Maps</span><span>Đang hiện ${shown.length}</span></div>` +
+        shown.map(rcard).join('') +
+        (shown.length < l.length ? `<div style="padding:10px 16px"><button class="btn o" id="more" style="text-align:center">Tải thêm quán (${shown.length}/${l.length.toLocaleString('vi-VN')})</button></div>` : '')
+      : '<div class="empty"><div class="big">🔍</div><h4>Không tìm thấy chi nhánh</h4>Thử từ khoá hoặc bộ lọc khác nhé</div>';
     $$('.rcard').forEach(c => c.onclick = () => go(viewRest, +c.dataset.id));
+    if ($('#more')) $('#more').onclick = () => { state.pageLimit += 60; draw(); };
   };
   draw();
-  $('#q').oninput = e => { state.q = e.target.value; draw(); }; if (o.focus) $('#q').focus();
-  $$('.cat').forEach(b => b.onclick = () => { state.cat = b.dataset.c; state.brandFilter = null; go(viewFood, {}); });
-  $$('[data-ch]').forEach(b => b.onclick = () => { state.chip = b.dataset.ch; go(viewFood, {}); });
+
+  $('#q').oninput = e => { state.q = e.target.value; state.pageLimit = 40; draw(); }; if (o.focus) $('#q').focus();
+  $$('.cat').forEach(b => b.onclick = () => { state.cat = b.dataset.c; state.brandFilter = null; state.pageLimit = 40; go(viewFood, {}); });
+  $$('[data-ch]').forEach(b => b.onclick = () => { state.chip = b.dataset.ch; state.pageLimit = 40; go(viewFood, {}); });
   if ($('#clrb')) $('#clrb').onclick = () => { state.brandFilter = null; go(viewFood, {}); };
   $('#mapb').onclick = () => go(viewMapAll);
   $('#bk').onclick = () => { state.q = ''; state.cat = 'all'; state.chip = 'all'; state.brandFilter = null; go(viewHome); };
@@ -382,13 +387,19 @@ function viewFood(o = {}) {
 function viewMapAll() {
   tabs(false);
   const list = filtered();
-  screen.innerHTML = `<div id="trkmap"></div><button class="ib floatl" id="bk">${ARROW}</button><div style="position:absolute;top:14px;left:58px;right:14px;z-index:1000;background:#fff;border-radius:20px;padding:8px 14px;font-size:12.5px;font-weight:700;box-shadow:0 2px 8px #0003">🗺️ ${list.length} chi nhánh quanh ${state.pos.addr}</div>`;
-  const m = newMap('trkmap', [state.pos.lat, state.pos.lng], 14);
-  L.marker([state.pos.lat, state.pos.lng], { icon: homeIcon() }).addTo(m);
-  list.forEach(r => {
+  // Hiển thị tối đa 250 ghim logo gần nhất hoặc toàn bộ 1.000 điểm tròn nhanh để bản đồ mượt
+  screen.innerHTML = `<div id="trkmap"></div><button class="ib floatl" id="bk">${ARROW}</button><div style="position:absolute;top:14px;left:58px;right:14px;z-index:1000;background:#fff;border-radius:20px;padding:8px 14px;font-size:12.5px;font-weight:700;box-shadow:0 2px 8px #0003">🗺️ ${list.length.toLocaleString('vi-VN')} quán Google Maps quanh bạn</div>`;
+  const m = newMap('trkmap', [state.pos.lat, state.pos.lng], 14, { preferCanvas: true });
+  L.marker([state.pos.lat, state.pos.lng], { icon: homeIcon(), zIndexOffset: 2000 }).addTo(m);
+  list.slice(0, 120).forEach(r => {
     const mkr = L.marker(rpos(r), { icon: shopIcon(r) }).addTo(m);
-    mkr.bindPopup(`<b>${r.name}</b><br><span style="font-size:12px;color:#666">${r.addr} · ${rdist(r).toFixed(1)} km</span><br><a href="#" id="pop_${r.id}" style="color:#00b14f;font-weight:700">Xem thực đơn →</a>`);
+    mkr.bindPopup(`<b>${r.name}</b><br><span style="font-size:12px;color:#666">📍 ${r.addr} · ★ ${r.rate} (${r.rv}) · ${rdist(r).toFixed(1)} km</span><br><a href="#" id="pop_${r.id}" style="color:#00b14f;font-weight:700">Xem thực đơn & đánh giá →</a>`);
     mkr.on('popupopen', () => { const a = $('#pop_' + r.id); if (a) a.onclick = e => { e.preventDefault(); go(viewRest, r.id); }; });
+  });
+  list.slice(120).forEach(r => {
+    const cm = L.circleMarker(rpos(r), { radius: 6, fillColor: r.c, color: '#fff', weight: 1.5, fillOpacity: 0.9 }).addTo(m);
+    cm.bindPopup(`<b>${r.name}</b><br><span style="font-size:12px;color:#666">📍 ${r.addr} · ★ ${r.rate} (${r.rv}) · ${rdist(r).toFixed(1)} km</span><br><a href="#" id="pop_${r.id}" style="color:#00b14f;font-weight:700">Xem thực đơn & đánh giá →</a>`);
+    cm.on('popupopen', () => { const a = $('#pop_' + r.id); if (a) a.onclick = e => { e.preventDefault(); go(viewRest, r.id); }; });
   });
   $('#bk').onclick = () => go(viewFood, {});
 }
@@ -398,7 +409,7 @@ function viewPickLoc(back) {
   screen.innerHTML = `<div class="top"><button class="ib" id="bk">${ARROW}</button><h2>Chọn điểm giao hàng</h2></div>
   <div id="mp" style="position:absolute;top:57px;left:0;right:0;bottom:170px"></div>
   <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;padding:14px 16px;border-radius:20px 20px 0 0;box-shadow:0 -4px 16px #0002;z-index:1000;height:170px">
-  <div id="ad" style="font-weight:700;font-size:14.5px;min-height:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📍 ${state.pos.addr}</div><div style="font-size:12px;color:#777;margin:4px 0 12px">Chạm vào bản đồ hoặc kéo ghim để dời toàn bộ ${R.length} quán quanh bạn</div>
+  <div id="ad" style="font-weight:700;font-size:14.5px;min-height:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📍 ${state.pos.addr}</div><div style="font-size:12px;color:#777;margin:4px 0 12px">Chạm vào bản đồ hoặc kéo ghim để định vị lại ${R.length.toLocaleString('vi-VN')} quán quanh bạn</div>
   <div style="display:flex;gap:8px"><button class="btn o" id="gps" style="width:auto;padding:13px 16px">${ICON.loc.replace('<svg', '<svg width="20" height="20" style="stroke:#00b14f;fill:none;stroke-width:2"')}</button><button class="btn" id="ok" style="justify-content:center">Xác nhận vị trí</button></div></div>`;
   const m = newMap('mp', [state.pos.lat, state.pos.lng], 16);
   let tmp = { ...state.pos };
@@ -416,26 +427,54 @@ function viewPickLoc(back) {
   $('#bk').onclick = () => go(back);
 }
 
-/* ================= QUÁN + CHI NHÁNH + GIỎ HÀNG ================= */
+/* ================= QUÁN + CHI NHÁNH + PHẢN HỒI GOOGLE MAPS + GIỎ HÀNG ================= */
 const cartInfo = () => { const c = state.cart; if (!c) return { n: 0, sum: 0 }; const r = byId(c.rid); let n = 0, sum = 0; for (const [i, l] of Object.entries(c.items)) { n += l.q; sum += r.menu[i][1] * l.q; } return { n, sum }; };
 
 function viewRest(id) {
   tabs(false);
   const r = byId(id);
   const sibs = siblings(r);
+  const revs = getReviewsFor(r);
   const half = Math.ceil(r.menu.length / 2);
-  const secs = [['Món bán chạy nhất', r.menu.slice(0, half), 0], [r.cat === 'drink' || r.cat === 'cafe' ? 'Đồ uống & Topping' : 'Món ăn kèm & Giải khát', r.menu.slice(half), half]].filter(s => s[1].length);
+  const secs = [
+    ['Món bán chạy nhất', r.menu.slice(0, half), 0],
+    [r.cat === 'drink' || r.cat === 'cafe' ? 'Đồ uống & Bánh dùng kèm' : 'Món ăn kèm & Giải khát', r.menu.slice(half), half]
+  ].filter(s => s[1].length);
 
   screen.innerHTML = `<div class="cover" style="background:${r.c}">${im('r' + r.aid + '/cover')}<button class="ib" id="bk" style="left:12px">${ARROW}</button><button class="ib" id="mp1" style="right:12px">🗺️</button></div>
-  <div class="rinfo"><h1>${r.name}</h1><div class="mt"><span><span class="star">★</span> <b>${r.rate}</b> (${r.rv} đánh giá)</span><i class="dot"></i><span>${r.tags}</span></div>
-  <div class="row2"><div>Khoảng cách<b>${rdist(r).toFixed(1)} km</b></div><div>Giao trong<b>${eta(r)}-${eta(r) + 8} phút</b></div><div>Phí giao<b>${r.promo === 'Freeship' ? 'Miễn phí' : fmt(feeOf(r))}</b></div></div>
-  <div class="brpick" id="brs"><span>🏪 Đang chọn: <b>${r.branch}</b> (${r.addr})</span><b>Đổi (${sibs.length} CN) ▾</b></div></div>
+  <div class="rinfo">
+    <div style="display:flex;gap:12px;align-items:center">
+      <div style="width:48px;height:48px;border-radius:12px;overflow:hidden;border:1.5px solid #eee;flex:none">${logo(r)}</div>
+      <div style="flex:1;min-width:0"><h1>${r.name}</h1><div class="mt"><span><span class="star">★</span> <b>${r.rate}</b> (${r.rv} đánh giá Google Maps)</span><i class="dot"></i><span>${r.tags}</span></div></div>
+    </div>
+    <div class="row2"><div>Khoảng cách<b>${rdist(r).toFixed(1)} km</b></div><div>Giao trong<b>${eta(r)}-${eta(r) + 8} phút</b></div><div>Phí giao<b>${r.promo === 'Freeship' ? 'Miễn phí' : fmt(feeOf(r))}</b></div></div>
+    <div class="brpick" id="brs"><span>🏪 Chi nhánh: <b>${r.branch}</b> (${r.addr})</span><b>Đổi (${sibs.length} CN) ▾</b></div>
+  </div>
   ${r.promo ? `<div class="sw hs" style="padding:4px 16px 14px;overflow-x:auto"><div class="vouch"><b>🎟️ ${r.promo}</b>Áp dụng tự động khi thanh toán · HSD hôm nay</div><div class="vouch"><b>🎟️ GRAB30</b>Giảm 30.000đ — nhập mã khi thanh toán</div></div>` : ''}
-  <div class="mtabs" id="mt">${secs.map((s, k) => `<button data-k="${k}" class="${k ? '' : 'on'}">${s[0]}</button>`).join('')}</div><div id="menu"></div>
-  <div class="box" style="margin-top:10px"><h4>Vị trí chi nhánh</h4><div style="font-size:13px;color:#555;margin-bottom:8px">📍 ${r.addr} · Mở cửa ${r.hours}</div><div id="mp" style="height:170px;border-radius:12px;overflow:hidden;position:relative;z-index:0"></div></div><div style="height:90px"></div><div class="cartbar" id="cb"></div>`;
+  <div class="mtabs" id="mt">${secs.map((s, k) => `<button data-k="sec${k}" class="${k ? '' : 'on'}">${s[0]}</button>`).join('')}<button data-k="rvsec">★ Đánh giá (${r.rv})</button></div>
+  <div id="menu"></div>
+
+  <div id="rvsec" style="margin-top:10px;background:#fff">
+    <div class="mhead" style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid var(--line)">
+      <span>Đánh giá thực tế từ Google Maps</span>
+      <span style="font-size:14px;color:#00863c"><span class="star">★</span> ${r.rate}/5 (${r.rv})</span>
+    </div>
+    ${revs.map(rv => `<div class="rvcard">
+      <div class="rvh">
+        <div class="rvav" style="background:${rv.color}">${rv.user[0]}</div>
+        <div class="rvu"><b>${rv.user}</b><small>${rv.badge} · ${rv.time}</small></div>
+        <div style="color:#f5a623;font-size:13px;font-weight:700">${'★'.repeat(rv.stars)}</div>
+      </div>
+      <div class="rvtxt">${rv.text}</div>
+      <div class="rvdish">🍽️ Đã đặt: ${rv.dish}</div>
+      <div class="rvpics">${im('r' + r.aid + '/m' + rv.dishIdx)}${im('r' + r.aid + '/cover')}</div>
+    </div>`).join('')}
+  </div>
+
+  <div class="box" style="margin-top:10px"><h4>Vị trí trên Google Maps (${sibs.length} chi nhánh)</h4><div style="font-size:13px;color:#555;margin-bottom:8px">📍 ${r.addr} · Mở cửa ${r.hours}</div><div id="mp" style="height:180px;border-radius:12px;overflow:hidden;position:relative;z-index:0"></div></div><div style="height:90px"></div><div class="cartbar" id="cb"></div>`;
 
   const m = newMap('mp', rpos(r), 15, { scrollWheelZoom: false });
-  sibs.forEach(sb => L.marker(rpos(sb), { icon: shopIcon(sb), opacity: sb.id === r.id ? 1 : 0.6 }).addTo(m));
+  sibs.forEach(sb => L.marker(rpos(sb), { icon: shopIcon(sb), opacity: sb.id === r.id ? 1 : 0.65 }).addTo(m));
   L.marker([state.pos.lat, state.pos.lng], { icon: homeIcon() }).addTo(m);
   m.fitBounds([rpos(r), [state.pos.lat, state.pos.lng]], { padding: [36, 36] });
 
@@ -453,7 +492,11 @@ function viewRest(id) {
   draw();
 
   $('#brs').onclick = () => branchSheet(r, sibs);
-  $$('#mt button').forEach(b => b.onclick = () => { $$('#mt button').forEach(x => x.classList.toggle('on', x === b)); const t = $('#sec' + b.dataset.k); screen.scrollTo({ top: t.offsetTop - 50, behavior: 'smooth' }); });
+  $$('#mt button').forEach(b => b.onclick = () => {
+    $$('#mt button').forEach(x => x.classList.toggle('on', x === b));
+    const t = $('#' + b.dataset.k);
+    if (t) screen.scrollTo({ top: t.offsetTop - 50, behavior: 'smooth' });
+  });
   $('#bk').onclick = () => go(viewFood, {});
   $('#mp1').onclick = () => screen.scrollTo({ top: screen.scrollHeight, behavior: 'smooth' });
 }
@@ -461,9 +504,9 @@ function viewRest(id) {
 function branchSheet(cur, sibs) {
   const ov = document.createElement('div'); ov.className = 'ov';
   ov.innerHTML = `<div class="bs"><div class="bd">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3>Hệ thống ${cur.brand}</h3><button class="ib" id="x" style="box-shadow:none;background:#f1f1f1">${ICON.x}</button></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3>${sibs.length} Chi nhánh ${cur.brand}</h3><button class="ib" id="x" style="box-shadow:none;background:#f1f1f1">${ICON.x}</button></div>
     ${sibs.map(sb => `<div class="opt ${sb.id === cur.id ? 'on' : ''}" data-id="${sb.id}">
-      <div class="optc"><b>${sb.branch} ${sb.promo ? `<span style="color:#ef4b3f;font-size:11px">(${sb.promo})</span>` : ''}</b><small>📍 ${sb.addr} · ${rdist(sb).toFixed(1)} km · ~${eta(sb)} phút</small></div>
+      <div class="optc"><b>${sb.branch} ${sb.promo ? `<span style="color:#ef4b3f;font-size:11px">(${sb.promo})</span>` : ''}</b><small>📍 ${sb.addr} · ★ ${sb.rate} (${sb.rv}) · ${rdist(sb).toFixed(1)} km (~${eta(sb)} phút)</small></div>
       <span class="ra"></span>
     </div>`).join('')}
   </div></div>`;
@@ -541,7 +584,6 @@ function viewCheckout() {
       const d1 = DRIVERS[Math.floor(Math.random() * DRIVERS.length)];
       let d2 = DRIVERS[Math.floor(Math.random() * DRIVERS.length)];
       if (d2[0] === d1[0]) d2 = DRIVERS[(DRIVERS.indexOf(d1) + 1) % DRIVERS.length];
-      // Tạo kế hoạch thời gian ngẫu nhiên & bất ngờ cho từng đơn (khoảng 75 - 115 giây)
       const rnd = (a, b) => Math.floor(a + Math.random() * (b - a));
       const plan = {
         tConfirm: rnd(3500, 6000),
@@ -669,7 +711,7 @@ function viewTrack(id) {
     o.cancelReason = inc[0];
     o.cancelDetail = inc[1];
     if (o.pay === 'wallet') state.wallet += o.total;
-    state.wallet += 30000; // Tặng bù 30k voucher hoàn tiền vào ví
+    state.wallet += 30000;
     save();
 
     const d = document.createElement('div'); d.className = 'done';
@@ -713,7 +755,6 @@ function viewTrack(id) {
     const poly2 = L.polyline(r2, { color: '#00b14f', weight: 6, opacity: .9 }).addTo(m);
     const dm = L.marker(start, { icon: riderIcon(), zIndexOffset: 1000, opacity: 0 }).addTo(m);
 
-    // Kịch bản nhiều bước có sự cố bất ngờ, chờ lâu và hủy ở chặng cuối
     const ph = [
       {
         d: P.tConfirm,
@@ -784,7 +825,6 @@ function viewTrack(id) {
         d: P.tDeliver,
         f: p => {
           if ($('#cx')) $('#cx').remove();
-          // Tài xế đi tới ~88% quãng đường (sát điểm giao) rồi chững lại
           const moveP = Math.min(P.stopRatio, p * P.stopRatio * 1.08);
           const q = along(r2, moveP);
           dm.setLatLng(q);
@@ -794,7 +834,6 @@ function viewTrack(id) {
             setStage(4, `Tài xế đang giao đến bạn · ~${rem} phút`, `${D2[0]} đã lấy món và đang chạy về phía ${o.pos.addr}`);
             setEv(`📦 Đồ ăn đã lên xe! Tài xế cách bạn khoảng ${(rdist(r) * (1 - moveP)).toFixed(2)} km.`);
           } else {
-            // Đột ngột tăng lại thời gian khi gần tới nơi
             setStage(4, 'Tài xế đang dừng gần điểm giao · ~4 phút', 'Tín hiệu di chuyển của tài xế đang chậm lại cách bạn ~150m', 'warn');
             setEv('⚠️ Tài xế đang dừng lâu bất thường ở khúc cua gần bạn, hệ thống đang kiểm tra...', 'warn');
           }
@@ -843,7 +882,7 @@ function viewOrders(sub = 'now') {
       return `<div class="ord" data-id="${o.id}"><div class="h">${im('r' + r.aid + '/cover')}<div><b>${r.name}</b><small>${new Date(o.t).toLocaleString('vi-VN')}</small><small>${o.items.map(i => i[1] + 'x ' + i[0]).join(', ')}</small>${o.cancelReason ? `<small style="color:#b91c1c;font-weight:600">Lý do: ${o.cancelReason}</small>` : ''}</div><span class="st ${stt[1]}">${stt[0]}</span></div>
       <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:13.5px"><span style="color:#666">Tổng đơn</span><b>${fmt(o.total)}</b></div>${o.status !== 'active' ? `<div class="ft"><button class="btn o" data-re="${o.id}">Đặt lại đơn này</button></div>` : ''}</div>`;
     }).join('')
-      : `<div class="empty"><div class="big">🧾</div><h4>${sub === 'now' ? 'Chưa có đơn nào đang giao' : 'Chưa có lịch sử đơn hàng'}</h4>Chọn món từ ${R.length} chi nhánh quanh bạn ngay thôi!</div>`);
+      : `<div class="empty"><div class="big">🧾</div><h4>${sub === 'now' ? 'Chưa có đơn nào đang giao' : 'Chưa có lịch sử đơn hàng'}</h4>Chọn món từ ${R.length.toLocaleString('vi-VN')} quán quanh bạn ngay thôi!</div>`);
   $$('.otab button').forEach(b => b.onclick = () => viewOrders(b.dataset.s));
   $$('.ord').forEach(e => e.onclick = ev => { if (ev.target.dataset.re) return; go(viewTrack, e.dataset.id); });
   $$('[data-re]').forEach(b => b.onclick = () => {
