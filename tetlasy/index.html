@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>L.ASY Tết 2027 — Đếm Ngược Tết Đinh Mùi</title>
-    <meta name="description" content="Đếm ngược Tết Nguyên Đán Đinh Mùi 2027 (06/02/2027) cùng L.ASY Studio: Cày Cuốc, Bóc Quẻ đầu xuân và tương tác giải trí.">
+    <title>L.ASY Tết 2027 — Đếm Ngược Nghỉ Tết &amp; Gieo Quẻ 3D</title>
+    <meta name="description" content="Đếm ngược lịch nghỉ Tết Nguyên Đán Đinh Mùi 2027 (04/02/2027 - 28 tháng Chạp) cùng L.ASY Studio với mô phỏng lắc ống xăm 3D và 24 kịch bản quẻ thực tế.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-paper: #FAF7F2;
             --bg-elevated: #FFFFFF;
             --bg-subtle: #F3EDE3;
             --border-sand: #E6DDD0;
+            --border-strong: #D4C7B4;
             --ink-primary: #1C1917;
             --ink-secondary: #575049;
             --ink-muted: #847A6E;
@@ -21,7 +22,10 @@
             --crimson-dark: #94281C;
             --crimson-soft: #FDF2F0;
             --gold: #B67E1E;
+            --gold-bright: #D99B26;
             --gold-soft: #FBF5E8;
+            --sage: #2D6A4F;
+            --sage-soft: #EEF6F2;
             --shadow-card: 0 2px 4px rgba(28, 25, 23, 0.04), 0 16px 40px rgba(28, 25, 23, 0.07);
         }
 
@@ -45,7 +49,6 @@
             position: relative;
         }
 
-        /* Top Bar */
         .top-bar {
             position: relative;
             z-index: 20;
@@ -80,9 +83,36 @@
             transform: translateX(-2px);
         }
 
+        .top-right-pills {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sound-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-sand);
+            color: var(--ink-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sound-toggle:hover {
+            border-color: var(--ink-primary);
+            color: var(--ink-primary);
+        }
+
         .year-pill {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
+            font-size: 0.74rem;
             font-weight: 600;
             padding: 6px 12px;
             border-radius: 999px;
@@ -91,7 +121,6 @@
             border: 1px solid rgba(185, 56, 41, 0.22);
         }
 
-        /* Floating Background */
         #background-animation {
             position: fixed;
             inset: 0;
@@ -104,7 +133,7 @@
             position: absolute;
             bottom: -50px;
             animation: floatUp 22s linear infinite;
-            opacity: 0.45;
+            opacity: 0.42;
             pointer-events: none;
         }
 
@@ -113,13 +142,12 @@
             100% { transform: translateY(-115vh) rotate(320deg); }
         }
 
-        /* Main Stage */
         .stage {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 28px 20px 48px;
+            padding: 24px 20px 56px;
             position: relative;
             z-index: 10;
         }
@@ -130,9 +158,9 @@
             border: 1px solid var(--border-sand);
             border-radius: 24px;
             box-shadow: var(--shadow-card);
-            padding: 40px 36px;
+            padding: 36px 34px;
             width: 100%;
-            max-width: 680px;
+            max-width: 740px;
             text-align: center;
         }
 
@@ -146,16 +174,16 @@
             border: 1px solid rgba(182, 126, 30, 0.25);
             color: var(--gold);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
+            font-size: 0.74rem;
             font-weight: 700;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
 
         h1 {
             font-family: 'Playfair Display', Georgia, serif;
-            font-size: clamp(2rem, 4.8vw, 3rem);
+            font-size: clamp(2rem, 4.5vw, 2.9rem);
             font-weight: 700;
             color: var(--ink-primary);
             line-height: 1.15;
@@ -169,9 +197,9 @@
         }
 
         .subtitle {
-            font-size: 0.96rem;
+            font-size: 0.95rem;
             color: var(--ink-secondary);
-            margin-bottom: 32px;
+            margin-bottom: 8px;
         }
 
         .subtitle strong {
@@ -179,25 +207,39 @@
             font-weight: 600;
         }
 
-        /* Countdown Grid */
+        .holiday-note {
+            display: inline-flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.74rem;
+            color: var(--ink-muted);
+            background: var(--bg-paper);
+            border: 1px solid var(--border-sand);
+            border-radius: 999px;
+            padding: 5px 14px;
+            margin-bottom: 26px;
+        }
+
         .countdown-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 14px;
-            margin-bottom: 30px;
+            gap: 12px;
+            margin-bottom: 26px;
         }
 
         .time-box {
             background: var(--bg-paper);
             border: 1px solid var(--border-sand);
             border-radius: 16px;
-            padding: 18px 10px;
+            padding: 16px 10px;
         }
 
         .time-val {
             display: block;
             font-family: 'JetBrains Mono', monospace;
-            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-size: clamp(1.7rem, 4vw, 2.4rem);
             font-weight: 700;
             color: var(--crimson);
             line-height: 1.1;
@@ -206,14 +248,13 @@
         .time-label {
             display: block;
             margin-top: 6px;
-            font-size: 0.74rem;
+            font-size: 0.72rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.06em;
             color: var(--ink-muted);
         }
 
-        /* Action Buttons */
         .actions-row {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -276,7 +317,6 @@
             color: var(--ink-primary);
         }
 
-        /* Result Areas */
         .hidden {
             display: none !important;
         }
@@ -287,54 +327,389 @@
             border-radius: 14px;
             padding: 16px 20px;
             color: #6B4408;
-            font-size: 0.98rem;
+            font-size: 0.96rem;
             font-weight: 500;
             font-style: italic;
             line-height: 1.55;
         }
 
-        .fortune-card {
-            background: var(--crimson-soft);
-            border: 1px solid rgba(185, 56, 41, 0.25);
-            border-radius: 16px;
-            padding: 20px 22px;
+        /* ==================== 3D FORTUNE SHAKER STAGE ==================== */
+        .fortune-stage {
+            margin-top: 8px;
+            background: var(--bg-paper);
+            border: 1px solid var(--border-sand);
+            border-radius: 20px;
+            padding: 26px 22px;
+            text-align: center;
+        }
+
+        .shaker-header {
+            margin-bottom: 12px;
+        }
+
+        .shaker-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--ink-primary);
+        }
+
+        .shaker-hint {
+            font-size: 0.84rem;
+            color: var(--ink-muted);
+            margin-top: 4px;
+        }
+
+        .scene-3d {
+            perspective: 950px;
+            perspective-origin: 50% 40%;
+            height: 280px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
             position: relative;
+            overflow: visible;
+            margin: 8px 0 18px;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .scene-3d:active {
+            cursor: grabbing;
+        }
+
+        .tube-shadow {
+            position: absolute;
+            bottom: 10px;
+            width: 140px;
+            height: 22px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at center, rgba(28, 25, 23, 0.24), transparent 70%);
+            transition: transform 0.1s ease, opacity 0.1s ease;
+            pointer-events: none;
+        }
+
+        .bamboo-rig {
+            position: relative;
+            width: 128px;
+            height: 200px;
+            margin-bottom: 20px;
+            transform-style: preserve-3d;
+            transform-origin: 50% 85%;
+            will-change: transform;
+        }
+
+        /* Sticks Bundle */
+        .sticks-bundle {
+            position: absolute;
+            top: -54px;
+            left: 16px;
+            right: 16px;
+            height: 110px;
+            transform-style: preserve-3d;
+            pointer-events: none;
+        }
+
+        .stick-3d {
+            position: absolute;
+            bottom: 0;
+            width: 9px;
+            height: 112px;
+            border-radius: 4px 4px 2px 2px;
+            background: linear-gradient(90deg, #D9B37C 0%, #F2D7A8 45%, #B88B4A 100%);
+            border: 1px solid rgba(110, 74, 28, 0.35);
+            transform-origin: bottom center;
+            box-shadow: 1px 0 3px rgba(0, 0, 0, 0.12);
+            will-change: transform;
+        }
+
+        .stick-3d::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 18px;
+            border-radius: 3px 3px 0 0;
+            background: linear-gradient(90deg, #9E2A1C, #D14736, #8A2216);
+        }
+
+        .stick-3d.chosen {
+            z-index: 30;
+            background: linear-gradient(90deg, #E8C06A 0%, #FFF0B8 50%, #C89228 100%);
+            box-shadow: 0 0 18px rgba(217, 155, 38, 0.65);
+            transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+        }
+
+        /* Bamboo Cylinder Body */
+        .bamboo-body {
+            position: absolute;
+            inset: 0;
+            border-radius: 12px 12px 22px 22px;
+            background: linear-gradient(
+                90deg,
+                #5C3419 0%,
+                #8C542B 22%,
+                #B87844 48%,
+                #8A5026 78%,
+                #4F2B13 100%
+            );
+            box-shadow:
+                inset 0 8px 14px rgba(0, 0, 0, 0.38),
+                inset 0 -10px 18px rgba(0, 0, 0, 0.45),
+                0 12px 24px rgba(28, 25, 23, 0.22);
+            transform: translateZ(12px);
             overflow: hidden;
         }
 
-        .fortune-tag {
-            display: inline-block;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.68rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--crimson);
-            margin-bottom: 6px;
+        /* Rim Opening */
+        .bamboo-rim {
+            position: absolute;
+            top: -10px;
+            left: -2px;
+            right: -2px;
+            height: 22px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at center, #2A160A 55%, #7A4722 72%, #C9915B 100%);
+            border: 2px solid #C89228;
+            transform: translateZ(14px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
         }
 
-        .fortune-title {
+        /* Bamboo Nodes & Gold Bands */
+        .bamboo-band {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 7px;
+            background: linear-gradient(90deg, #8F651A, #F3CD74 50%, #7C5613);
+            opacity: 0.9;
+        }
+
+        .band-top { top: 28px; }
+        .band-bottom { bottom: 26px; }
+
+        .bamboo-seal {
+            position: absolute;
+            top: 52%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 48px;
+            height: 74px;
+            border-radius: 6px;
+            background: #B93829;
+            border: 2px solid #F3CD74;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #FFF5D6;
             font-family: 'Playfair Display', serif;
-            font-size: 1.65rem;
             font-weight: 700;
-            color: var(--crimson-dark);
+            font-size: 0.95rem;
+            line-height: 1.15;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+        }
+
+        .bamboo-seal span {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.56rem;
+            letter-spacing: 0.1em;
+            opacity: 0.9;
+            margin-top: 3px;
+        }
+
+        .shaker-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .shake-cta {
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            background: var(--crimson);
+            color: #FFFFFF;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            font-size: 0.94rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(185, 56, 41, 0.25);
+            transition: all 0.2s ease;
+        }
+
+        .shake-cta:hover:not(:disabled) {
+            background: var(--crimson-dark);
+            transform: translateY(-2px);
+        }
+
+        .shake-cta:disabled {
+            opacity: 0.65;
+            cursor: wait;
+        }
+
+        /* ==================== AUTHENTIC FORTUNE SLIP ==================== */
+        .fortune-slip {
+            margin-top: 20px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-strong);
+            border-radius: 18px;
+            padding: 26px 24px;
+            text-align: left;
+            box-shadow: 0 12px 32px rgba(28, 25, 23, 0.08);
+            position: relative;
+        }
+
+        .slip-top {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding-bottom: 14px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-sand);
+        }
+
+        .slip-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--ink-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .slip-level {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.74rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .level-great { background: #FDF2F0; color: #B93829; border: 1px solid rgba(185, 56, 41, 0.28); }
+        .level-good { background: #FBF5E8; color: #9A6610; border: 1px solid rgba(182, 126, 30, 0.28); }
+        .level-peace { background: #EEF6F2; color: #2D6A4F; border: 1px solid rgba(45, 106, 79, 0.25); }
+        .level-caution { background: #F3EDE3; color: #575049; border: 1px solid #D4C7B4; }
+
+        .slip-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--ink-primary);
+            margin-bottom: 12px;
+        }
+
+        .slip-poem {
+            background: var(--bg-paper);
+            border-left: 3px solid var(--crimson);
+            border-radius: 0 12px 12px 0;
+            padding: 14px 18px;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--ink-primary);
+            margin-bottom: 18px;
+            white-space: pre-line;
+        }
+
+        .aspects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .aspect-box {
+            background: var(--bg-paper);
+            border: 1px solid var(--border-sand);
+            border-radius: 12px;
+            padding: 12px 14px;
+        }
+
+        .aspect-label {
+            font-size: 0.74rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--crimson);
             margin-bottom: 4px;
         }
 
-        .fortune-sub {
-            font-size: 0.94rem;
+        .aspect-text {
+            font-size: 0.85rem;
             color: var(--ink-secondary);
             line-height: 1.5;
         }
 
-        /* Animations */
+        .slip-advice {
+            background: var(--gold-soft);
+            border: 1px solid rgba(182, 126, 30, 0.25);
+            border-radius: 12px;
+            padding: 13px 16px;
+            font-size: 0.88rem;
+            color: #6B4408;
+            line-height: 1.55;
+            margin-bottom: 16px;
+        }
+
+        .slip-advice strong {
+            color: #4D3004;
+        }
+
+        .slip-footer {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-sand);
+        }
+
+        .lucky-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.76rem;
+            color: var(--ink-muted);
+        }
+
+        .slip-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .mini-btn {
+            padding: 7px 13px;
+            border-radius: 8px;
+            border: 1px solid var(--border-strong);
+            background: var(--bg-elevated);
+            color: var(--ink-primary);
+            font-family: 'Be Vietnam Pro', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .mini-btn:hover {
+            background: var(--bg-subtle);
+        }
+
         .animate-pop {
-            animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         @keyframes popIn {
-            0% { transform: scale(0.92); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+            0% { transform: scale(0.94) translateY(8px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
         }
 
         .shake {
@@ -372,10 +747,7 @@
             box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
         }
 
-        .modal-emoji {
-            font-size: 3rem;
-            margin-bottom: 10px;
-        }
+        .modal-emoji { font-size: 3rem; margin-bottom: 10px; }
 
         .modal-title {
             font-family: 'Playfair Display', serif;
@@ -417,23 +789,14 @@
             transition: background-color 0.2s ease;
         }
 
-        .modal-close-btn:hover {
-            background: #332E2A;
-        }
+        .modal-close-btn:hover { background: #332E2A; }
 
-        @media (max-width: 600px) {
-            .studio-card {
-                padding: 28px 20px;
-            }
-            .countdown-grid {
-                gap: 8px;
-            }
-            .time-box {
-                padding: 14px 6px;
-            }
-            .actions-row {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 640px) {
+            .studio-card { padding: 24px 18px; }
+            .countdown-grid { gap: 8px; }
+            .time-box { padding: 14px 6px; }
+            .actions-row { grid-template-columns: 1fr; }
+            .aspects-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -442,19 +805,29 @@
 
     <nav class="top-bar">
         <a href="../index.html" class="back-link">← L.ASY Studio</a>
-        <span class="year-pill">ĐINH MÙI • 2027</span>
+        <div class="top-right-pills">
+            <button id="soundToggleBtn" class="sound-toggle" type="button" title="Bật/tắt âm thanh lắc thẻ tre">
+                🔊 Âm thanh: Bật
+            </button>
+            <span class="year-pill">ĐINH MÙI • 2027</span>
+        </div>
     </nav>
 
     <main class="stage">
         <div class="studio-card">
-            <div class="brand-crest">L.ASY • TẾT NGUYÊN ĐÁN</div>
+            <div class="brand-crest">L.ASY • NGHỈ TẾT NHÀ NƯỚC 2027</div>
 
-            <h1>Đếm Ngược <span>Tết 2027</span></h1>
+            <h1>Đếm Ngược <span>Nghỉ Tết 2027</span></h1>
             <p class="subtitle">
-                Cùng nhau về đích ngày <strong>06/02/2027</strong> (Mùng 1 Tết Đinh Mùi)
+                Chính thức bước vào kỳ nghỉ Tết từ <strong>04/02/2027</strong> (28 tháng Chạp)
             </p>
+            <div class="holiday-note">
+                <span>Kỳ nghỉ Nhà nước: 04/02 – 10/02/2027 (7 ngày)</span>
+                <span>•</span>
+                <span>Mùng 1 Tết: 06/02/2027</span>
+            </div>
 
-            <div class="countdown-grid" aria-label="Bộ đếm ngược tới Tết 2027">
+            <div class="countdown-grid" aria-label="Bộ đếm ngược tới ngày nghỉ Tết 04/02/2027">
                 <div class="time-box">
                     <span id="days" class="time-val">00</span>
                     <span class="time-label">Ngày</span>
@@ -478,7 +851,7 @@
                     💪 Cày Cuốc
                 </button>
                 <button id="fortuneBtn" class="action-btn btn-fortune" type="button">
-                    🥠 Bóc Quẻ
+                    🎋 Bóc Quẻ 3D
                 </button>
                 <button id="quitBtn" class="action-btn btn-quit" type="button">
                     🚪 Nghỉ Việc
@@ -487,11 +860,75 @@
 
             <div id="messageArea" class="message-box hidden" role="status"></div>
 
-            <div id="fortuneArea" class="fortune-card hidden" role="status">
-                <span class="fortune-tag">Lời Phán Đầu Xuân</span>
-                <p id="fortuneText" class="fortune-title"></p>
-                <p id="fortuneSub" class="fortune-sub"></p>
-            </div>
+            <!-- 3D Fortune Shaking Stage -->
+            <section id="fortuneStage" class="fortune-stage hidden" aria-label="Mô phỏng lắc ống xăm 3D">
+                <div class="shaker-header">
+                    <h2 class="shaker-title">Gieo Quẻ Đầu Xuân 2027</h2>
+                    <p class="shaker-hint" id="shakerHint">
+                        Nhấn nút bên dưới hoặc kéo lắc trực tiếp ống xăm 3D để rút quẻ
+                    </p>
+                </div>
+
+                <div class="scene-3d" id="scene3d" title="Nhấn hoặc kéo để lắc ống xăm 3D">
+                    <div class="tube-shadow" id="tubeShadow"></div>
+                    <div class="bamboo-rig" id="bambooRig">
+                        <div class="sticks-bundle" id="sticksBundle"></div>
+                        <div class="bamboo-rim"></div>
+                        <div class="bamboo-body">
+                            <div class="bamboo-band band-top"></div>
+                            <div class="bamboo-seal">
+                                L.ASY
+                                <span>ĐINH MÙI</span>
+                            </div>
+                            <div class="bamboo-band band-bottom"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="shaker-controls">
+                    <button id="shakeStartBtn" class="shake-cta" type="button">
+                        🎋 Lắc Ống Xăm 3D
+                    </button>
+                </div>
+
+                <!-- Authentic Fortune Result Slip -->
+                <article id="fortuneSlip" class="fortune-slip hidden" aria-live="polite">
+                    <div class="slip-top">
+                        <span id="slipNum" class="slip-num">QUẺ SỐ 01</span>
+                        <span id="slipLevel" class="slip-level level-great">ĐẠI CÁT</span>
+                    </div>
+                    <h3 id="slipTitle" class="slip-title">Tên Quẻ</h3>
+                    <div id="slipPoem" class="slip-poem"></div>
+                    <div class="aspects-grid">
+                        <div class="aspect-box">
+                            <div class="aspect-label">Công danh &amp; Sự nghiệp</div>
+                            <div id="aspectWork" class="aspect-text"></div>
+                        </div>
+                        <div class="aspect-box">
+                            <div class="aspect-label">Tài lộc &amp; Chi tiêu</div>
+                            <div id="aspectMoney" class="aspect-text"></div>
+                        </div>
+                        <div class="aspect-box">
+                            <div class="aspect-label">Tình duyên &amp; Gia đạo</div>
+                            <div id="aspectLove" class="aspect-text"></div>
+                        </div>
+                        <div class="aspect-box">
+                            <div class="aspect-label">Sức khỏe &amp; Tinh thần</div>
+                            <div id="aspectHealth" class="aspect-text"></div>
+                        </div>
+                    </div>
+                    <div class="slip-advice">
+                        <strong>Lời khuyên năm Đinh Mùi:</strong> <span id="slipAdvice"></span>
+                    </div>
+                    <div class="slip-footer">
+                        <span id="slipLucky" class="lucky-meta">Số may mắn: -- • Màu hợp: --</span>
+                        <div class="slip-actions">
+                            <button id="copyFortuneBtn" class="mini-btn" type="button">Sao chép quẻ</button>
+                            <button id="reshakeBtn" class="mini-btn" type="button">Lắc lại quẻ khác</button>
+                        </div>
+                    </div>
+                </article>
+            </section>
         </div>
     </main>
 
@@ -511,7 +948,7 @@
     </div>
 
     <script>
-        // --- Hiệu ứng Sản phẩm & Tết Bay ---
+        // --- Floating Background ---
         const items = ['💄', '👠', '👜', '👗', '🧧', '🏮', '🌸', '🌼', '🍍', '💰', '📦', '🛒'];
         const bgContainer = document.getElementById('background-animation');
 
@@ -525,14 +962,14 @@
             bgContainer.appendChild(el);
             setTimeout(() => el.remove(), 26000);
         }
-        setInterval(createFloatingItem, 2000);
+        setInterval(createFloatingItem, 2100);
         for (let i = 0; i < 6; i++) createFloatingItem();
 
-        // --- Logic Đếm Ngược (Mùng 1 Tết Đinh Mùi 2027: 06/02/2027) ---
+        // --- Countdown to Official Vietnam Tết 2027 Holiday (04/02/2027 - 28 tháng Chạp) ---
         function updateCountdown() {
-            const now = new Date().getTime();
-            const target2027 = new Date("Feb 06, 2027 00:00:00").getTime();
-            const distance = target2027 - now;
+            const now = Date.now();
+            const holidayStart = new Date("Feb 04, 2027 00:00:00").getTime();
+            const distance = holidayStart - now;
 
             if (distance <= 0) {
                 document.getElementById("days").innerText = "00";
@@ -555,7 +992,7 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // --- Data ---
+        // --- Motivation Quotes ---
         const motivationQuotes = [
             "Làm nhiệt tình, cuối năm hình mình lên bảng vàng!",
             "Deadline dí? Chạy nhanh hơn deadline là được!",
@@ -567,48 +1004,543 @@
             "Mỗi đơn hàng là một niềm vui (và hoa hồng).",
             "Thần thái L.ASY: Tự tin, Chăm chỉ, Sang chảnh.",
             "Nghèo thì lâu, giàu thì mấy hồi (nếu chăm).",
-            "Sắp Tết 2027 rồi, bánh chưng cần có nhân thịt!",
+            "Sắp nghỉ Tết 2027 rồi, bánh chưng cần có nhân thịt!",
             "Áp lực tạo nên kim cương (hoặc tạo nên nếp nhăn, nhớ dưỡng da).",
             "Hãy làm việc như thể bạn là cổ đông lớn nhất.",
             "Tương lai khóc hay cười phụ thuộc vào độ lười quá khứ.",
             "Vượt qua KPI, đời em sẽ nở hoa!"
         ];
 
-        const fortunes = [
-            { text: "Đại Cát", sub: "Tiền vào cửa trước... lẻn ngay ra cửa sau." },
-            { text: "Đào Hoa", sub: "Ra ngõ gặp người yêu... cũ đòi nợ 500k." },
-            { text: "Thăng Quan", sub: "Sếp hứa tăng lương... bằng niềm tin và hy vọng." },
-            { text: "Bình An", sub: "Cả ngày không ai réo tên... vì công ty mất mạng." },
-            { text: "Tài Lộc", sub: "Trúng số độc đắc... ở trong giấc mơ trưa nay." },
-            { text: "May Mắn", sub: "Nhặt được ví tiền... của chính mình rớt 5 phút trước." },
-            { text: "Sức Khỏe", sub: "Ăn được ngủ được... lăn còn nhanh hơn đi bộ." },
-            { text: "Hỷ Sự", sub: "Crush nhắn tin 'muốn gặp em'... để mời đi đám cưới nó." },
-            { text: "Như Ý", sub: "Cầu mưa được nắng, cầu tiền được... việc." },
-            { text: "Vinh Hoa", sub: "Được lên tivi... mục tìm trẻ lạc." },
-            { text: "Phú Quý", sub: "Vàng đeo đầy người... toàn vàng giả mua Shopee." },
-            { text: "Cát Tường", sub: "Mọi việc suôn sẻ... trừ cái deadline chiều nay." },
-            { text: "Lợi Lộc", sub: "Bạn bè lì xì... toàn voucher hết hạn sử dụng." },
-            { text: "Tương Phùng", sub: "Gặp lại cố nhân... nó nhờ mượn tiền đóng hụi." },
-            { text: "Yên Vui", sub: "Cười cả ngày... vì sếp đi vắng (nhưng mai sếp về)." }
+        // --- 24 Kịch Bản Quẻ Đầu Xuân Thực Tế (Tết Đinh Mùi 2027) ---
+        const realFortunes = [
+            {
+                number: "01", level: "Đại Cát", levelClass: "level-great",
+                title: "Lý Ngư Hóa Long",
+                poem: "Nước xuân dâng ngập bến sông dài,\nCá chép vượt môn hóa rồng bay.\nBền chí bao ngày nay gặp hội,\nCông thành danh toại rạng tương lai.",
+                work: "Bước ngoặt lớn trong sự nghiệp, dự án ấp ủ lâu nay dễ được duyệt hoặc bứt phá doanh số vượt kỳ vọng.",
+                money: "Nguồn thu chính và phụ đều tăng; có cơ hội nhận thưởng hoặc hợp đồng giá trị cao.",
+                love: "Gia đạo hòa thuận, người độc thân dễ gặp nhân duyên đồng điệu qua công việc.",
+                health: "Tinh thần phấn chấn, thể lực dồi dào; chỉ cần giữ nhịp ngủ nghỉ điều độ.",
+                advice: "Hãy tự tin nắm lấy cơ hội mới vào đầu năm, đừng ngại đảm nhận vai trò dẫn dắt.",
+                luckyNum: "09, 68", luckyColor: "Đỏ son, Vàng kim"
+            },
+            {
+                number: "02", level: "Thượng Cát", levelClass: "level-great",
+                title: "Xuân Phong Đắc Ý",
+                poem: "Gió xuân thổi nhẹ nở ngàn hoa,\nQuý nhân đưa lối bước đường xa.\nMở lòng đón nhận duyên lành tới,\nThuận buồm xuôi gió khắp gần xa.",
+                work: "Có quý nhân (cấp trên hoặc đối tác lớn) nâng đỡ, tháo gỡ nút thắt cũ một cách êm đẹp.",
+                money: "Tiền bạc hanh thông, chi tiêu thoải mái nhưng vẫn dư dả tích lũy.",
+                love: "Tình cảm ấm áp, những hiểu lầm cũ dần được hóa giải nhờ sự chân thành.",
+                health: "Khí huyết lưu thông tốt, thích hợp bắt đầu thói quen vận động nhẹ mỗi sáng.",
+                advice: "Giữ thái độ khiêm tốn và biết ơn những người đã hỗ trợ mình trong giai đoạn khó khăn.",
+                luckyNum: "03, 27", luckyColor: "Xanh ngọc, Trắng kem"
+            },
+            {
+                number: "03", level: "Thượng Cát", levelClass: "level-good",
+                title: "Vân Khai Kiến Nhật",
+                poem: "Mây mù tan biến lộ vầng dương,\nTrăm việc dần thông suốt dặm trường.\nĐừng ngại đường xa nhiều dốc đá,\nQua cơn bĩ cực tới thanh lương.",
+                work: "Những bế tắc cuối năm cũ sẽ dần sáng tỏ từ giữa quý I; kiên trì thêm một nhịp sẽ thấy kết quả.",
+                money: "Thu nhập ổn định trở lại, các khoản nợ hoặc tiền kẹt có dấu hiệu hồi về.",
+                love: "Người thương thấu hiểu áp lực của bạn hơn, tạo chỗ dựa tinh thần vững vàng.",
+                health: "Cần chú ý giải tỏa căng thẳng vai gáy và hạn chế thức khuya sau Tết.",
+                advice: "Đừng vội bỏ cuộc khi chưa thấy kết quả ngay trong tháng Giêng; ánh sáng đang ở ngay phía trước.",
+                luckyNum: "06, 18", luckyColor: "Vàng nhạt, Xanh dương"
+            },
+            {
+                number: "04", level: "Trung Cát", levelClass: "level-good",
+                title: "Tùng Bách Trường Thanh",
+                poem: "Thông reo đỉnh núi vững ngàn năm,\nGió tuyết chẳng lay chí âm thầm.\nChậm rãi từng bước xây nền móng,\nHương lành tự tỏa chẳng cần thăm.",
+                work: "Không bùng nổ chớp nhoáng nhưng cực kỳ bền vững; năng lực chuyên môn được đồng nghiệp nể trọng.",
+                money: "Tích tiểu thành đại, tránh các kênh đầu tư lướt sóng rủi ro cao.",
+                love: "Tình cảm chín muồi theo thời gian, phù hợp tính chuyện gắn bó lâu dài.",
+                health: "Sức đề kháng tốt, nên duy trì ăn uống thanh đạm và uống đủ nước.",
+                advice: "Tập trung nâng cao kỹ năng cốt lõi thay vì chạy theo xu hướng nhất thời.",
+                luckyNum: "04, 15", luckyColor: "Xanh rêu, Nâu gỗ"
+            },
+            {
+                number: "05", level: "Tiểu Cát", levelClass: "level-peace",
+                title: "Mai Hoa Tái Tiếu",
+                poem: "Cành mai hé nụ giữa sương mai,\nNhỏ bé nhưng thơm ngát dặm dài.\nChẳng cần ồn ào khoe sắc thắm,\nNiềm vui bình dị vẫn tròn đầy.",
+                work: "Công việc trôi chảy ở mức vừa phải, hoàn thành tốt KPI mà không bị quá tải.",
+                money: "Có những khoản lộc nhỏ bất ngờ (lì xì, hoa hồng, hoàn tiền) giúp tâm trạng vui vẻ.",
+                love: "Những cử chỉ quan tâm nhỏ hằng ngày mang lại hạnh phúc lớn cho cả hai.",
+                health: "Ngủ ngon giấc hơn, tinh thần nhẹ nhõm nếu biết buông bớt lo âu vặt.",
+                advice: "Trân trọng những niềm vui nhỏ và dành thời gian cho gia đình trong dịp đầu xuân.",
+                luckyNum: "02, 12", luckyColor: "Hồng phấn, Vàng mơ"
+            },
+            {
+                number: "06", level: "Bình An", levelClass: "level-peace",
+                title: "Tĩnh Thủy Lưu Thâm",
+                poem: "Dòng sông lặng lẽ chảy xuôi dòng,\nSâu thẳm bên trong chẳng đục trong.\nGiữ tâm an tĩnh qua năm mới,\nVạn sự bình yên ở trong lòng.",
+                work: "Năm thiên về ổn định và củng cố nội lực hơn là nhảy việc hay thay đổi đột ngột.",
+                money: "Thu chi cân bằng, không thiếu thốn nhưng cần lập quỹ dự phòng rõ ràng.",
+                love: "Bình yên, ít sóng gió; người độc thân nên mở rộng giao lưu nhẹ nhàng.",
+                health: "Tâm an thì thân khỏe; hạn chế tiếp xúc quá nhiều tin tức tiêu cực.",
+                advice: "Chậm lại một nhịp để lắng nghe bản thân muốn gì thực sự trong năm 2027.",
+                luckyNum: "01, 10", luckyColor: "Xanh biển, Bạc"
+            },
+            {
+                number: "07", level: "Cẩn Trọng", levelClass: "level-caution",
+                title: "Phong Ba Tạm Khởi",
+                poem: "Biển lặng đôi khi nổi sóng cồn,\nNgười khôn giữ lái chớ bồn chồn.\nNói năng cẩn trọng từng câu chữ,\nGiữ mình an ổn vượt cơn giông.",
+                work: "Dễ gặp hiểu lầm trong giao tiếp nội bộ hoặc thay đổi yêu cầu đột ngột từ khách hàng.",
+                money: "Tránh cho vay mượn số tiền lớn hoặc ký kết giấy tờ khi chưa đọc kỹ điều khoản.",
+                love: "Tránh tranh cãi vì chuyện nhỏ lúc nóng giận; lùi một bước biển rộng trời cao.",
+                health: "Chú ý hệ tiêu hóa và giữ ấm cơ thể khi thời tiết giao mùa.",
+                advice: "Làm việc có văn bản xác nhận rõ ràng, giữ bình tĩnh trước mọi tình huống phát sinh.",
+                luckyNum: "05, 19", luckyColor: "Trắng ngà, Xám nhạt"
+            },
+            {
+                number: "08", level: "Đại Cát", levelClass: "level-great",
+                title: "Kim Ngọc Mãn Đường",
+                poem: "Ngọc sáng trong nhà rạng ánh vàng,\nLộc trời ban xuống cửa khang trang.\nChăm chỉ gieo mầm từ thuở trước,\nNay mùa quả ngọt nở mênh mang.",
+                work: "Năng suất làm việc đạt đỉnh cao, dễ được giao trọng trách hoặc tăng thu nhập xứng đáng.",
+                money: "Tài vận vượng phát, đặc biệt với người làm kinh doanh, thương mại điện tử và sáng tạo nội dung.",
+                love: "Gia đình có tin vui, không khí sum vầy ấm áp.",
+                health: "Năng lượng tích cực lan tỏa, cần cân bằng giữa làm việc và nghỉ ngơi cuối tuần.",
+                advice: "Khi có lộc, hãy trích một phần nhỏ chia sẻ hoặc làm việc thiện để giữ phúc lâu dài.",
+                luckyNum: "08, 88", luckyColor: "Vàng đồng, Đỏ trầm"
+            },
+            {
+                number: "09", level: "Trung Cát", levelClass: "level-good",
+                title: "Hạc Lập Kê Quần",
+                poem: "Chim hạc vươn cao giữa nắng hồng,\nTài năng tự khắc lộ bên trong.\nGiữ vững lập trường đường mình chọn,\nRồi sẽ vươn xa vượt biển đông.",
+                work: "Ý tưởng cá nhân được đánh giá cao, phù hợp để đề xuất sáng kiến mới.",
+                money: "Thu nhập tăng theo năng lực thực tế, không dựa vào may rủi.",
+                love: "Sự tự tin giúp bạn thu hút ánh nhìn tích cực từ người xung quanh.",
+                health: "Chú ý mỏi mắt do màn hình; áp dụng quy tắc nghỉ mắt mỗi 30 phút.",
+                advice: "Đừng ngại khác biệt nếu bạn đã tính toán kỹ và có số liệu chứng minh.",
+                luckyNum: "07, 21", luckyColor: "Trắng tinh, Xanh coban"
+            },
+            {
+                number: "10", level: "Thượng Cát", levelClass: "level-good",
+                title: "Song Hỷ Lâm Môn",
+                poem: "Đôi chim én lượn báo tin lành,\nHoa thắm đầu hiên nở biếc xanh.\nMột việc thành công kéo việc nữa,\nNiềm vui nối tiếp suốt năm hành.",
+                work: "Vừa hoàn thành tốt mục tiêu cá nhân vừa có thành tích chung xuất sắc cùng đội ngũ.",
+                money: "Có song song hai nguồn thu ổn định, giúp kế hoạch tài chính nhẹ nhàng hơn.",
+                love: "Tin vui về tình cảm, đính ước hoặc sum họp gia đình.",
+                health: "Tinh thần lạc quan giúp cơ thể phục hồi rất nhanh.",
+                advice: "Biết sẻ chia niềm vui với đồng nghiệp và người thân sẽ nhân đôi may mắn.",
+                luckyNum: "02, 22", luckyColor: "Hồng đào, Đỏ tươi"
+            },
+            {
+                number: "11", level: "Tiểu Cát", levelClass: "level-peace",
+                title: "Thảo Mộc Phùng Xuân",
+                poem: "Cỏ cây gặp tiết mưa xuân ấm,\nĐâm chồi nảy lộc khắp non ngàn.\nChẳng cần gấp gáp đòi hoa sớm,\nĐủ nắng đủ sương tự rỡ ràng.",
+                work: "Giai đoạn gieo hạt và học hỏi thêm công cụ mới; quả ngọt sẽ đến từ giữa năm.",
+                money: "Tiền vào đều đặn, đủ chi dùng và có dư một khoản tiết kiệm nhỏ.",
+                love: "Mối quan hệ phát triển tự nhiên, không gượng ép.",
+                health: "Thích hợp thanh lọc cơ thể sau những ngày tiệc tùng Tết.",
+                advice: "Kiên nhẫn đầu tư cho kiến thức và sức khỏe ngay từ tháng Giêng.",
+                luckyNum: "03, 14", luckyColor: "Xanh lá non, Kem"
+            },
+            {
+                number: "12", level: "Cẩn Trọng", levelClass: "level-caution",
+                title: "Thủ Cựu Đãi Thời",
+                poem: "Giữ thành vững chắc đợi thời cơ,\nChớ vội xuất quân lúc mịt mờ.\nTính kỹ trăm đường rồi hãy bước,\nAn toàn trên hết khỏi âu lo.",
+                work: "Chưa phải lúc thích hợp để thay đổi đột ngột; hãy giữ vững vị trí hiện tại và hoàn thiện quy trình.",
+                money: "Kiểm soát mua sắm cảm tính đầu năm, tránh thâm hụt ngân sách.",
+                love: "Dành thời gian lắng nghe nhiều hơn là phán xét.",
+                health: "Ngủ đủ giấc và tránh lạm dụng cà phê khi chạy deadline.",
+                advice: "Chờ thời cơ chín muồi (khoảng quý II) hãy triển khai kế hoạch lớn.",
+                luckyNum: "05, 11", luckyColor: "Nâu đất, Be"
+            },
+            {
+                number: "13", level: "Trung Cát", levelClass: "level-good",
+                title: "Đồng Tâm Hiệp Lực",
+                poem: "Một cây chẳng thể nên non cao,\nNhiều tay góp sức sóng dạt dào.\nChân thành kết nối cùng đồng đội,\nKhó mấy rồi đây cũng vượt qua.",
+                work: "Làm việc nhóm cực kỳ ăn ý, hỗ trợ lẫn nhau giúp tiến độ nhanh gấp đôi.",
+                money: "Lộc đến từ sự hợp tác, chia sẻ dự án hoặc giới thiệu khách hàng.",
+                love: "Bạn bè, người thân luôn sẵn sàng lắng nghe và giúp đỡ khi bạn cần.",
+                health: "Tham gia hoạt động thể thao cùng bạn bè giúp duy trì động lực tốt hơn.",
+                advice: "Chủ động kết nối và giữ hòa khí với mọi người xung quanh.",
+                luckyNum: "06, 24", luckyColor: "Cam đất, Vàng ấm"
+            },
+            {
+                number: "14", level: "Thượng Cát", levelClass: "level-great",
+                title: "Thiên Quan Tứ Phúc",
+                poem: "Trời xanh ban phúc xuống nhân gian,\nĐức dày tự khắc hưởng bình an.\nTâm sáng việc ngay không hổ thẹn,\nĐường đời rộng mở bước thênh thang.",
+                work: "Uy tín cá nhân lên cao, được giao những khách hàng hoặc dự án trọng điểm.",
+                money: "Tài chính vững vàng, ít gặp hao hụt vô cớ.",
+                love: "Gia đạo yên ấm, con cháu hoặc người thân có tin vui học hành, công việc.",
+                health: "Trạng thái cân bằng cả thể chất lẫn tinh thần.",
+                advice: "Giữ vững sự tử tế và minh bạch trong mọi giao dịch.",
+                luckyNum: "09, 16", luckyColor: "Vàng kim, Trắng"
+            },
+            {
+                number: "15", level: "Bình An", levelClass: "level-peace",
+                title: "Thu Nguyệt Chiếu Đình",
+                poem: "Trăng sáng soi hiên gió nhẹ đưa,\nTrong lòng thanh thản chuyện nắng mưa.\nKhông tham quá mức lòng tự nhẹ,\nĐủ đầy hạnh phúc biết thế vừa.",
+                work: "Áp lực giảm bớt so với năm trước, có thời gian sắp xếp lại quy trình gọn gàng hơn.",
+                money: "Không đột biến lớn nhưng đủ đầy, không phải lo nghĩ chuyện cơm áo.",
+                love: "Yêu thương nhẹ nhàng, tôn trọng không gian riêng của nhau.",
+                health: "Tâm trạng thư thái, giấc ngủ sâu.",
+                advice: "Đừng so sánh nhịp đi của mình với người khác; đi đều và vui là thắng.",
+                luckyNum: "07, 17", luckyColor: "Bạc, Xanh pastel"
+            },
+            {
+                number: "16", level: "Tiểu Cát", levelClass: "level-peace",
+                title: "Đông Khứ Xuân Lai",
+                poem: "Giá rét qua rồi nắng ấm lên,\nMọi điều cũ kỹ gửi vào quên.\nMở cửa đón chào trang giấy mới,\nTự tay viết tiếp chặng đường êm.",
+                work: "Khởi đầu mới mẻ, thích hợp dọn dẹp lại bàn làm việc, kế hoạch và mục tiêu năm.",
+                money: "Chi tiêu hợp lý đầu năm giúp giữ được đà tích lũy tốt.",
+                love: "Nếu vừa bước qua chuyện buồn cũ, đây là lúc trái tim sẵn sàng bình yên trở lại.",
+                health: "Nên đi kiểm tra sức khỏe định kỳ đầu năm để yên tâm công tác.",
+                advice: "Khép lại chuyện không vui của năm cũ để bước vào năm Đinh Mùi thật nhẹ nhõm.",
+                luckyNum: "01, 20", luckyColor: "Xanh ngọc, Trắng"
+            },
+            {
+                number: "17", level: "Đại Cát", levelClass: "level-great",
+                title: "Nhật Xuất Đông Phương",
+                poem: "Mặt trời ló dạng phía trời đông,\nRực rỡ muôn tia chiếu sáng trong.\nChí lớn nay đà gặp vận hội,\nMột bước vươn lên rạng núi sông.",
+                work: "Thời cơ vàng để bứt phá, thăng tiến hoặc ra mắt sản phẩm/chiến dịch chủ lực.",
+                money: "Doanh thu và lợi nhuận tăng trưởng rõ rệt.",
+                love: "Rạng rỡ, tràn đầy năng lượng tích cực thu hút nhân duyên tốt.",
+                health: "Tràn trề sinh lực, thích hợp cho những chuyến đi xa hoặc thử thách mới.",
+                advice: "Quyết đoán đúng lúc, đừng để sự do dự làm trôi mất cơ hội tốt.",
+                luckyNum: "01, 09", luckyColor: "Đỏ cam, Vàng rực"
+            },
+            {
+                number: "18", level: "Cẩn Trọng", levelClass: "level-caution",
+                title: "Ẩm Thủy Tư Nguyên",
+                poem: "Uống nước nhớ nguồn chớ vội quên,\nĐi xa vẫn nhớ gốc vững bền.\nLời nói vội vàng dễ sinh chuyện,\nSuy xét kỹ càng mới vững nền.",
+                work: "Cần chú ý kiểm tra kỹ số liệu, hợp đồng và file gửi khách hàng trước khi bấm gửi.",
+                money: "Hạn chế mua sắm trả góp hoặc đầu tư theo lời rủ rê thiếu cơ sở.",
+                love: "Quan tâm hỏi thăm bố mẹ, người lớn tuổi trong nhà nhiều hơn.",
+                health: "Chú ý an toàn giao thông khi đi du xuân, chúc Tết.",
+                advice: "Chậm lại 5 giây trước khi quyết định hoặc phản hồi tin nhắn lúc đang mệt.",
+                luckyNum: "04, 13", luckyColor: "Xanh than, Be"
+            },
+            {
+                number: "19", level: "Trung Cát", levelClass: "level-good",
+                title: "Ngọc Trác Thành Khí",
+                poem: "Ngọc quý không mài chẳng sáng trong,\nNgười tài rèn giũa mới nên công.\nKhó khăn hôm nay là bài học,\nMai sau rạng rỡ giữa đám đông.",
+                work: "Khối lượng việc có thể hơi nhiều lúc đầu năm nhưng giúp bạn lên tay rất nhanh.",
+                money: "Tiền công xứng đáng với mồ hôi công sức bỏ ra.",
+                love: "Cùng nhau vượt qua bận rộn giúp hai người thêm gắn kết.",
+                health: "Nhớ giãn cơ và đứng dậy đi lại sau mỗi giờ ngồi máy tính.",
+                advice: "Xem thử thách là cơ hội nâng cấp bản thân thay vì gánh nặng.",
+                luckyNum: "05, 25", luckyColor: "Trắng ngọc, Xanh dương"
+            },
+            {
+                number: "20", level: "Thượng Cát", levelClass: "level-good",
+                title: "Quý Nhân Tương Trợ",
+                poem: "Đường xa chợt gặp bạn đồng hành,\nChia sẻ gánh nặng bước đường nhanh.\nMở lòng chân thật cùng giao hảo,\nViệc khó rồi đây cũng hóa thành.",
+                work: "Dễ gặp được mentor, đối tác hoặc đồng nghiệp cực kỳ có tâm hỗ trợ.",
+                money: "Có cơ hội hợp tác sinh lời tốt trong nửa đầu năm.",
+                love: "Bạn bè làm mai mối hoặc tạo cơ hội gặp người phù hợp.",
+                health: "Tinh thần vui vẻ, ít ốm vặt.",
+                advice: "Giữ liên lạc với những mối quan hệ chất lượng và luôn sòng phẳng, uy tín.",
+                luckyNum: "06, 28", luckyColor: "Vàng nhạt, Xanh mint"
+            },
+            {
+                number: "21", level: "Tiểu Cát", levelClass: "level-peace",
+                title: "Hòa Khí Sinh Tài",
+                poem: "Một câu nhường nhịn ấm lòng nhau,\nHòa khí trong nhà phúc về sau.\nCười tươi đón khách niềm vui tới,\nLộc nhỏ tự nhiên chảy dạt dào.",
+                work: "Môi trường làm việc thân thiện, khách hàng dễ tính khi bạn giữ thái độ niềm nở.",
+                money: "Bán hàng hoặc giao dịch thuận lợi nhờ sự khéo léo trong giao tiếp.",
+                love: "Không khí gia đình đầm ấm, tiếng cười ngập tràn ngày xuân.",
+                health: "Giảm hẳn căng thẳng đầu óc.",
+                advice: "Nụ cười và sự tử tế là chìa khóa mở mọi cánh cửa trong năm Đinh Mùi.",
+                luckyNum: "02, 16", luckyColor: "Hồng san hô, Kem"
+            },
+            {
+                number: "22", level: "Bình An", levelClass: "level-peace",
+                title: "Hải Yến Hà Thanh",
+                poem: "Biển lặng sông trong sóng êm đềm,\nNgày dài trôi nhẹ giấc ngủ êm.\nChẳng cầu sóng gió hay hư ảo,\nChỉ mong bình dị suốt ngày đêm.",
+                work: "Mọi việc diễn ra theo đúng lịch trình dự kiến, ít biến cố bất ngờ.",
+                money: "Đủ dùng, có thể dành dụm cho một chuyến du lịch nhỏ trong năm.",
+                love: "An toàn, tin tưởng và đồng hành nhẹ nhàng.",
+                health: "Tốt, thích hợp duy trì thói quen đi bộ buổi chiều.",
+                advice: "Đôi khi sự bình thường, không sóng gió chính là phúc phần lớn nhất.",
+                luckyNum: "08, 18", luckyColor: "Xanh da trời, Trắng"
+            },
+            {
+                number: "23", level: "Trung Cát", levelClass: "level-good",
+                title: "Khai Môn Kiến Hỷ",
+                poem: "Mở cửa đầu xuân đón ánh hồng,\nTin vui bay tới khắp non sông.\nViệc cũ khép tròn trang sử đẹp,\nChào đón hành trình mới thành công.",
+                work: "Có tin vui về dự án mới, khách hàng mới hoặc kế hoạch mở rộng đầu năm.",
+                money: "Mở hàng đầu năm suôn sẻ, dòng tiền lưu thông tốt.",
+                love: "Nhận được lời chúc và sự quan tâm chân thành từ những người tưởng đã ít liên lạc.",
+                health: "Khởi sắc rõ rệt khi giữ nhịp sinh hoạt điều độ.",
+                advice: "Hãy chủ động gửi lời chúc đầu năm tới những người bạn trân quý.",
+                luckyNum: "03, 29", luckyColor: "Đỏ rượu, Vàng kem"
+            },
+            {
+                number: "24", level: "Cẩn Trọng", levelClass: "level-caution",
+                title: "Tam Tư Nhi Hậu Hành",
+                poem: "Nghĩ kỹ ba lần trước bước chân,\nChớ nghe lời ngọt vội tin thân.\nGiữ tâm sáng suốt phân hư thực,\nAn nhiên tự tại suốt mùa xuân.",
+                work: "Cẩn thận trước các lời hứa hẹn quá tốt hoặc deadline quá gấp thiếu thực tế.",
+                money: "Bảo mật thông tin tài khoản, tránh click các đường link lạ dịp mua sắm Tết.",
+                love: "Đừng để lời đồn bên ngoài ảnh hưởng tới niềm tin giữa hai người.",
+                health: "Hạn chế đồ ngọt, dầu mỡ quá nhiều trong tuần Tết.",
+                advice: "Cẩn tắc vô áy náy — sự tỉnh táo sẽ giúp bạn tránh được 99% rắc rối không đáng có.",
+                luckyNum: "07, 14", luckyColor: "Xanh đen, Bạc"
+            }
         ];
 
-        // --- Interactions ---
+        // --- Web Audio API: Bamboo Rattle Synthesizer ---
+        let audioCtx = null;
+        let soundEnabled = true;
+        const soundToggleBtn = document.getElementById('soundToggleBtn');
+
+        soundToggleBtn.addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            soundToggleBtn.textContent = soundEnabled ? '🔊 Âm thanh: Bật' : '🔇 Âm thanh: Tắt';
+        });
+
+        function playBambooClick(intensity = 1) {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    audioCtx = new AudioContext();
+                }
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                const filter = audioCtx.createBiquadFilter();
+
+                osc.type = 'triangle';
+                const baseFreq = 580 + Math.random() * 520;
+                osc.frequency.setValueAtTime(baseFreq, now);
+                osc.frequency.exponentialRampToValueAtTime(180, now + 0.045);
+
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(1100, now);
+                filter.Q.setValueAtTime(3.5, now);
+
+                gain.gain.setValueAtTime(0.09 * intensity, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.055);
+            } catch (e) {
+                // Ignore audio errors on restricted devices
+            }
+        }
+
+        // --- 3D Fortune Tube Setup & Physics Animation ---
+        const sticksBundle = document.getElementById('sticksBundle');
+        const bambooRig = document.getElementById('bambooRig');
+        const tubeShadow = document.getElementById('tubeShadow');
+        const scene3d = document.getElementById('scene3d');
+        const shakeStartBtn = document.getElementById('shakeStartBtn');
+        const shakerHint = document.getElementById('shakerHint');
+        const fortuneSlip = document.getElementById('fortuneSlip');
+
+        const STICK_COUNT = 13;
+        const stickElements = [];
+
+        function initSticks() {
+            sticksBundle.innerHTML = '';
+            stickElements.length = 0;
+            for (let i = 0; i < STICK_COUNT; i++) {
+                const stick = document.createElement('div');
+                stick.className = 'stick-3d';
+                const spread = (i - (STICK_COUNT - 1) / 2);
+                const leftPx = 42 + spread * 5.2;
+                const baseRot = spread * 2.4;
+                const baseZ = (i % 3 - 1) * 10;
+                const baseY = Math.abs(spread) * 1.4;
+
+                stick.style.left = `${leftPx}px`;
+                stick.dataset.baseRot = baseRot;
+                stick.dataset.baseZ = baseZ;
+                stick.dataset.baseY = baseY;
+                stick.style.transform = `translate3d(0, ${baseY}px, ${baseZ}px) rotateZ(${baseRot}deg)`;
+                sticksBundle.appendChild(stick);
+                stickElements.push(stick);
+            }
+        }
+        initSticks();
+
+        let isShaking = false;
+        let currentFortune = null;
+
+        function resetSticksPose() {
+            stickElements.forEach((stick) => {
+                stick.classList.remove('chosen');
+                const r = Number(stick.dataset.baseRot);
+                const z = Number(stick.dataset.baseZ);
+                const y = Number(stick.dataset.baseY);
+                stick.style.transform = `translate3d(0, ${y}px, ${z}px) rotateZ(${r}deg)`;
+            });
+            bambooRig.style.transform = 'rotateX(0deg) rotateY(0deg) rotateZ(0deg) translate3d(0, 0, 0)';
+            tubeShadow.style.transform = 'scale(1)';
+        }
+
+        function trigger3DShake() {
+            if (isShaking) return;
+            isShaking = true;
+            shakeStartBtn.disabled = true;
+            shakeStartBtn.textContent = '⏳ Đang lắc ống xăm...';
+            shakerHint.textContent = 'Thành tâm khấn nguyện năm mới Đinh Mùi 2027...';
+            fortuneSlip.classList.add('hidden');
+            resetSticksPose();
+
+            const duration = 1650;
+            const start = performance.now();
+            let lastClickTime = 0;
+
+            function animateFrame(now) {
+                const elapsed = now - start;
+                const t = Math.min(elapsed / duration, 1);
+                // Smooth envelope: ramp up fast, sustain, ease out
+                const envelope = Math.sin(t * Math.PI) * (1 - t * 0.25);
+
+                // 3D tube motion
+                const rotZ = Math.sin(elapsed * 0.032) * 19 * envelope;
+                const rotX = Math.cos(elapsed * 0.025) * 14 * envelope;
+                const rotY = Math.sin(elapsed * 0.019) * 18 * envelope;
+                const transY = -Math.abs(Math.sin(elapsed * 0.032)) * 22 * envelope;
+                const transX = Math.sin(elapsed * 0.045) * 10 * envelope;
+
+                bambooRig.style.transform =
+                    `translate3d(${transX.toFixed(1)}px, ${transY.toFixed(1)}px, 0) ` +
+                    `rotateX(${rotX.toFixed(1)}deg) rotateY(${rotY.toFixed(1)}deg) rotateZ(${rotZ.toFixed(1)}deg)`;
+
+                const shadowScale = 1 - Math.abs(transY) * 0.01;
+                tubeShadow.style.transform = `translateX(${transX.toFixed(1)}px) scale(${shadowScale.toFixed(2)})`;
+
+                // Individual sticks rattling in 3D
+                stickElements.forEach((stick, idx) => {
+                    const baseR = Number(stick.dataset.baseRot);
+                    const baseZ = Number(stick.dataset.baseZ);
+                    const baseY = Number(stick.dataset.baseY);
+                    const phase = idx * 1.37;
+                    const jitterY = -Math.abs(Math.sin(elapsed * 0.045 + phase)) * 18 * envelope;
+                    const jitterR = Math.sin(elapsed * 0.05 + phase) * 8 * envelope;
+                    const jitterX = Math.cos(elapsed * 0.04 + phase) * 3 * envelope;
+
+                    stick.style.transform =
+                        `translate3d(${jitterX.toFixed(1)}px, ${(baseY + jitterY).toFixed(1)}px, ${baseZ}px) ` +
+                        `rotateZ(${(baseR + jitterR).toFixed(1)}deg)`;
+                });
+
+                // Bamboo rattle sound ticks
+                if (now - lastClickTime > 95 + Math.random() * 55 && t < 0.9) {
+                    playBambooClick(0.6 + envelope * 0.5);
+                    lastClickTime = now;
+                }
+
+                if (t < 1) {
+                    requestAnimationFrame(animateFrame);
+                } else {
+                    finishShakeAndDraw();
+                }
+            }
+
+            requestAnimationFrame(animateFrame);
+        }
+
+        function finishShakeAndDraw() {
+            bambooRig.style.transform = 'rotateX(6deg) rotateY(0deg) rotateZ(0deg) translate3d(0, 0, 0)';
+            tubeShadow.style.transform = 'scale(1)';
+
+            // Pick a chosen stick in the center-ish area and eject it in 3D
+            const chosenIdx = 4 + Math.floor(Math.random() * 5);
+            const chosenStick = stickElements[chosenIdx];
+            chosenStick.classList.add('chosen');
+            chosenStick.style.transform = 'translate3d(0, -96px, 38px) rotateZ(0deg) rotateX(-12deg) scale(1.18)';
+            playBambooClick(1.2);
+
+            // Pick random authentic fortune
+            currentFortune = realFortunes[Math.floor(Math.random() * realFortunes.length)];
+
+            setTimeout(() => {
+                renderFortuneSlip(currentFortune);
+                isShaking = false;
+                shakeStartBtn.disabled = false;
+                shakeStartBtn.textContent = '🎋 Lắc Lại Quẻ Khác';
+                shakerHint.textContent = `Đã rút được Quẻ Số ${currentFortune.number} — ${currentFortune.title}`;
+            }, 620);
+        }
+
+        function renderFortuneSlip(f) {
+            document.getElementById('slipNum').textContent = `QUẺ SỐ ${f.number}`;
+            const levelEl = document.getElementById('slipLevel');
+            levelEl.textContent = f.level;
+            levelEl.className = `slip-level ${f.levelClass}`;
+
+            document.getElementById('slipTitle').textContent = f.title;
+            document.getElementById('slipPoem').textContent = f.poem;
+            document.getElementById('aspectWork').textContent = f.work;
+            document.getElementById('aspectMoney').textContent = f.money;
+            document.getElementById('aspectLove').textContent = f.love;
+            document.getElementById('aspectHealth').textContent = f.health;
+            document.getElementById('slipAdvice').textContent = f.advice;
+            document.getElementById('slipLucky').textContent = `Số may mắn: ${f.luckyNum} • Màu hợp: ${f.luckyColor}`;
+
+            fortuneSlip.classList.remove('hidden');
+            fortuneSlip.classList.remove('animate-pop');
+            void fortuneSlip.offsetWidth;
+            fortuneSlip.classList.add('animate-pop');
+        }
+
+        // Interactive tilt on pointer hover/drag over 3D scene
+        scene3d.addEventListener('mousemove', (e) => {
+            if (isShaking) return;
+            const rect = scene3d.getBoundingClientRect();
+            const nx = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+            const ny = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+            bambooRig.style.transform = `rotateY(${(nx * 14).toFixed(1)}deg) rotateX(${(-ny * 10).toFixed(1)}deg)`;
+        });
+
+        scene3d.addEventListener('mouseleave', () => {
+            if (!isShaking) {
+                bambooRig.style.transform = 'rotateX(0deg) rotateY(0deg) rotateZ(0deg)';
+            }
+        });
+
+        scene3d.addEventListener('click', trigger3DShake);
+        shakeStartBtn.addEventListener('click', trigger3DShake);
+        document.getElementById('reshakeBtn').addEventListener('click', trigger3DShake);
+
+        // Copy fortune text
+        const copyFortuneBtn = document.getElementById('copyFortuneBtn');
+        copyFortuneBtn.addEventListener('click', () => {
+            if (!currentFortune) return;
+            const f = currentFortune;
+            const text =
+                `🎋 L.ASY TẾT ĐINH MÙI 2027 — QUẺ SỐ ${f.number} (${f.level})\n` +
+                `✨ ${f.title}\n\n` +
+                `${f.poem}\n\n` +
+                `• Công danh: ${f.work}\n` +
+                `• Tài lộc: ${f.money}\n` +
+                `• Tình duyên: ${f.love}\n` +
+                `• Sức khỏe: ${f.health}\n` +
+                `• Lời khuyên: ${f.advice}\n` +
+                `🍀 Số may mắn: ${f.luckyNum} | Màu hợp: ${f.luckyColor}`;
+
+            navigator.clipboard.writeText(text).then(() => {
+                copyFortuneBtn.textContent = '✓ Đã sao chép';
+                setTimeout(() => {
+                    copyFortuneBtn.textContent = 'Sao chép quẻ';
+                }, 1800);
+            });
+        });
+
+        // --- Main Action Buttons ---
         const motivationBtn = document.getElementById('motivationBtn');
         const fortuneBtn = document.getElementById('fortuneBtn');
         const quitBtn = document.getElementById('quitBtn');
 
         const messageArea = document.getElementById('messageArea');
-        const fortuneArea = document.getElementById('fortuneArea');
-        const fortuneText = document.getElementById('fortuneText');
-        const fortuneSub = document.getElementById('fortuneSub');
-
+        const fortuneStage = document.getElementById('fortuneStage');
         const graceModal = document.getElementById('graceModal');
         const graceModalCard = document.getElementById('graceModalCard');
         const closeModalBtn = document.getElementById('closeModalBtn');
 
         function hideAllAreas() {
             messageArea.classList.add('hidden');
-            fortuneArea.classList.add('hidden');
+            fortuneStage.classList.add('hidden');
         }
 
         motivationBtn.addEventListener('click', () => {
@@ -623,18 +1555,14 @@
 
         fortuneBtn.addEventListener('click', () => {
             hideAllAreas();
-            fortuneArea.classList.remove('hidden');
-            fortuneText.innerText = "⏳ Đang lắc quẻ...";
-            fortuneSub.innerText = "";
-
-            setTimeout(() => {
-                const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
-                fortuneText.innerText = `🌟 Quẻ ${randomFortune.text}`;
-                fortuneSub.innerText = randomFortune.sub;
-                fortuneArea.classList.remove('animate-pop');
-                void fortuneArea.offsetWidth;
-                fortuneArea.classList.add('animate-pop');
-            }, 550);
+            fortuneStage.classList.remove('hidden');
+            fortuneStage.classList.remove('animate-pop');
+            void fortuneStage.offsetWidth;
+            fortuneStage.classList.add('animate-pop');
+            // Auto-start 3D shake if no fortune drawn yet
+            if (!currentFortune) {
+                setTimeout(trigger3DShake, 220);
+            }
         });
 
         quitBtn.addEventListener('click', () => {
