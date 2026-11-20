@@ -257,37 +257,200 @@
             pointer-events: none;
         }
 
-        .shaker-controls { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
-        .shake-cta { padding: 11px 20px; border-radius: 12px; border: none; background: var(--crimson); color: #FFFFFF; font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
-        .draw-cta { padding: 11px 20px; border-radius: 12px; border: none; background: var(--sage); color: #FFFFFF; font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
-        .draw-cta:disabled { background: #CBD5E1; color: #64748B; cursor: not-allowed; }
+        /* Horizontal Wooden Fortune Stick & Ancient Book Slip */
+        .slip-perspective { perspective: 1200px; margin-top: 14px; }
 
-        .slip-perspective { perspective: 1200px; margin-top: 16px; }
-        .fortune-slip { background: var(--bg-elevated); border: 1px solid var(--border-strong); border-radius: 18px; padding: 20px; text-align: left; }
+        .horizontal-bamboo-stick {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: linear-gradient(180deg, #E8C98E 0%, #D2A65E 52%, #B5843B 100%);
+            border: 2px solid #7C4D1B;
+            border-radius: 10px 26px 26px 10px;
+            padding: 10px 18px 10px 0;
+            margin-bottom: 14px;
+            box-shadow: 0 6px 18px rgba(68, 40, 12, 0.25), inset 0 2px 3px rgba(255, 245, 214, 0.65);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stick-red-tip {
+            background: linear-gradient(180deg, #B93829 0%, #8E2216 100%);
+            color: #FDE68A;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 10px 14px;
+            border-right: 2px solid #D99B26;
+            letter-spacing: 0.08em;
+            white-space: nowrap;
+        }
+
+        .stick-engraved-text {
+            flex: 1;
+            text-align: center;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.18rem;
+            font-weight: 700;
+            color: #3E1F08;
+            letter-spacing: 0.04em;
+            text-shadow: 0 1px 0 rgba(255, 244, 214, 0.7);
+        }
+
+        .stick-level-seal {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 4px;
+            background: #9E2418;
+            color: #FFF5D6;
+            border: 1px solid #FCD34D;
+            white-space: nowrap;
+        }
+
+        /* Ancient Woodblock Book (Cổ Thư Giải Quẻ) */
+        .ancient-book-page {
+            background: #F4E7CE;
+            background-image:
+                radial-gradient(circle at 50% 30%, rgba(255, 250, 235, 0.65), rgba(218, 195, 154, 0.45)),
+                repeating-linear-gradient(90deg, transparent 0, transparent 38px, rgba(139, 94, 52, 0.06) 38px, rgba(139, 94, 52, 0.06) 39px);
+            border: 3px double #7A4B24;
+            border-radius: 6px;
+            padding: 20px 18px;
+            text-align: left;
+            color: #2D1B0E;
+            box-shadow: inset 0 0 24px rgba(122, 75, 36, 0.18), 0 10px 26px rgba(28, 20, 12, 0.16);
+            position: relative;
+        }
+
+        .ancient-book-page::before {
+            content: "";
+            position: absolute;
+            inset: 5px;
+            border: 1px solid rgba(122, 75, 36, 0.45);
+            pointer-events: none;
+        }
+
         .flip-reveal { animation: flip3dIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-        @keyframes flip3dIn { 0% { transform: rotateX(-35deg) translateY(16px); opacity: 0; } 100% { transform: rotateX(0deg) translateY(0); opacity: 1; } }
+        @keyframes flip3dIn { 0% { transform: rotateX(-25deg) translateY(14px); opacity: 0; } 100% { transform: rotateX(0deg) translateY(0); opacity: 1; } }
 
-        .slip-top { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; margin-bottom: 12px; border-bottom: 1px solid var(--border-sand); }
-        .slip-num { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 700; color: var(--ink-muted); }
-        .slip-level { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: 700; padding: 4px 12px; border-radius: 999px; text-transform: uppercase; }
-        .level-great { background: #FDF2F0; color: #B93829; border: 1px solid rgba(185, 56, 41, 0.28); }
-        .level-good { background: #FBF5E8; color: #9A6610; border: 1px solid rgba(182, 126, 30, 0.28); }
-        .level-peace { background: #EEF6F2; color: #2D6A4F; border: 1px solid rgba(45, 106, 79, 0.25); }
-        .level-caution { background: #F3EDE3; color: #575049; border: 1px solid #D4C7B4; }
+        .book-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(122, 75, 36, 0.35);
+        }
 
-        .slip-header-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
-        .slip-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; }
-        .red-stamp { width: 44px; height: 44px; border: 2px solid var(--crimson); border-radius: 8px; color: var(--crimson); font-family: 'Playfair Display', serif; font-weight: 700; font-size: 0.65rem; line-height: 1.1; display: flex; align-items: center; justify-content: center; text-align: center; transform: rotate(-8deg); flex-shrink: 0; }
-        .slip-poem { background: var(--bg-paper); border-left: 3px solid var(--crimson); border-radius: 0 12px 12px 0; padding: 12px 16px; font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.98rem; line-height: 1.65; margin-bottom: 12px; white-space: pre-line; }
-        .aspects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
-        .aspect-box { background: var(--bg-paper); border: 1px solid var(--border-sand); border-radius: 10px; padding: 10px 12px; }
-        .aspect-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--crimson); margin-bottom: 3px; }
-        .aspect-text { font-size: 0.82rem; color: var(--ink-secondary); line-height: 1.45; }
-        .slip-advice { background: var(--gold-soft); border: 1px solid rgba(182, 126, 30, 0.25); border-radius: 10px; padding: 10px 14px; font-size: 0.84rem; color: #6B4408; margin-bottom: 12px; }
-        .slip-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding-top: 10px; border-top: 1px solid var(--border-sand); }
-        .lucky-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.73rem; color: var(--ink-muted); }
+        .book-caption {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #7A4B24;
+        }
+
+        .book-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #2B1708;
+            margin-top: 2px;
+        }
+
+        .red-stamp {
+            width: 46px; height: 46px;
+            border: 2px solid #A82315;
+            border-radius: 4px;
+            color: #A82315;
+            background: rgba(168, 35, 21, 0.06);
+            font-family: 'Playfair Display', serif;
+            font-weight: 700; font-size: 0.64rem; line-height: 1.1;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; transform: rotate(-6deg); flex-shrink: 0;
+        }
+
+        .book-poem-box {
+            background: rgba(255, 250, 238, 0.62);
+            border-top: 1px solid rgba(122, 75, 36, 0.3);
+            border-bottom: 1px solid rgba(122, 75, 36, 0.3);
+            padding: 12px 16px;
+            text-align: center;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-style: italic;
+            font-size: 1.02rem;
+            line-height: 1.75;
+            color: #3A1D08;
+            margin-bottom: 14px;
+            white-space: pre-line;
+        }
+
+        .book-section-label {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: #8C2318;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .book-reading-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 14px;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            color: #2D1B0E;
+        }
+
+        .book-reading-item {
+            padding-left: 10px;
+            border-left: 2px solid #B5843B;
+        }
+
+        .book-reading-item strong {
+            color: #7A2315;
+        }
+
+        .book-advice {
+            background: rgba(181, 132, 59, 0.14);
+            border: 1px dashed #8B5A2B;
+            border-radius: 4px;
+            padding: 10px 14px;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 0.9rem;
+            color: #3E210A;
+            margin-bottom: 12px;
+            line-height: 1.55;
+        }
+
+        .book-footer {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(122, 75, 36, 0.3);
+        }
+
+        .lucky-meta { font-family: 'Playfair Display', Georgia, serif; font-size: 0.82rem; font-style: italic; color: #5C3A1B; }
         .slip-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-        .mini-btn { padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--bg-elevated); color: var(--ink-primary); font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.78rem; font-weight: 600; cursor: pointer; }
+        .mini-btn {
+            padding: 6px 12px; border-radius: 4px;
+            border: 1px solid #8B5A2B; background: #FAF0DC;
+            color: #3E210A; font-family: 'Playfair Display', Georgia, serif;
+            font-size: 0.8rem; font-weight: 700; cursor: pointer;
+        }
+        .mini-btn:hover { background: #EFE0C2; }
 
         /* Career & Customize */
         .quiz-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 14px 0; text-align: left; }
@@ -310,9 +473,10 @@
         .outfit-btn.active { border-color: var(--crimson); background: var(--crimson-soft); color: var(--crimson); }
 
         @media (max-width: 640px) {
-            .quiz-grid, .aspects-grid { grid-template-columns: 1fr; }
+            .quiz-grid { grid-template-columns: 1fr; }
             .dpad-pc, .hud-countdown { display: none; }
             .quest-banner { top: 56px; font-size: 0.7rem; }
+            .stick-engraved-text { font-size: 1rem; }
         }
     </style>
 </head>
@@ -374,19 +538,18 @@
         </form>
     </div>
 
-    <!-- ==================== MODAL 1: AR 3D FORTUNE POPUP (ROTATE + SHAKE >=5 + INVERT POUR) ==================== -->
+    <!-- ==================== MODAL 1: SIMPLIFIED AR 3D FORTUNE POPUP + HORIZONTAL STICK & ANCIENT BOOK ==================== -->
     <div id="fortuneModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
         <div class="modal-card">
             <div class="modal-top-bar">
-                <span class="year-pill">CHÍNH ĐIỆN • ỐNG XĂM AR 3D</span>
+                <span class="year-pill">CHÍNH ĐIỆN • GIEO QUẺ ĐẦU XUÂN</span>
                 <button id="closeFortuneModalBtn" class="modal-close-x" type="button">✕</button>
             </div>
-            <h2 class="shaker-title">Xoay Lắc &amp; Úp Ngược Đổ Quẻ 3D</h2>
 
             <div class="shake-progress-box">
                 <div class="shake-progress-head">
-                    <span id="shakeGuideLabel">Bước 1: Kéo xoay hoặc chạm để lắc ống xăm (ít nhất 5 lần)</span>
-                    <span id="shakeCountText" class="shake-count-pill">0 / 5 lần</span>
+                    <span id="shakeGuideLabel">Chạm hoặc kéo lắc ống xăm 3D (ít nhất 5 lần) rồi xoay úp ngược để đổ quẻ</span>
+                    <span id="shakeCountText" class="shake-count-pill">0 / 5</span>
                 </div>
                 <div class="progress-track"><div id="shakeProgressFill" class="progress-fill"></div></div>
             </div>
@@ -394,37 +557,48 @@
             <div class="canvas-3d-wrap" id="canvas3dWrap">
                 <canvas id="fortune3dCanvas"></canvas>
                 <div id="stickBadgeOverlay" class="stick-badge-overlay hidden">THẺ SỐ 01</div>
-                <div class="ar-hint-badge" id="arHintBadge">Kéo chuột/tay xoay 3D tự do • Lắc ≥5 lần rồi xoay úp ngược để đổ quẻ</div>
-            </div>
-
-            <div class="shaker-controls">
-                <button id="shakeClickBtn" class="shake-cta" type="button">🎋 Lắc Ống Xăm (+1)</button>
-                <button id="invertPourBtn" class="draw-cta" type="button" disabled>🔄 Úp Ngược Đổ Quẻ (Cần 5 lần)</button>
+                <div class="ar-hint-badge" id="arHintBadge">Chạm / Kéo xoay ống xăm 3D trực tiếp • Đủ 5 nhịp kéo úp ngược xuống để đổ quẻ</div>
             </div>
 
             <div class="slip-perspective">
-                <article id="fortuneSlip" class="fortune-slip hidden">
-                    <div class="slip-top">
-                        <span id="slipNum" class="slip-num">QUẺ SỐ 01</span>
-                        <span id="slipLevel" class="slip-level level-great">ĐẠI CÁT</span>
+                <article id="fortuneSlip" class=" hidden">
+                    <!-- 1. Thẻ Quẻ Để Ngang Có Chữ -->
+                    <div class="horizontal-bamboo-stick">
+                        <div id="slipNum" class="stick-red-tip">ĐỆ 01 QUẺ</div>
+                        <div id="stickEngravedTitle" class="stick-engraved-text">LÝ NGƯ HÓA LONG</div>
+                        <div id="slipLevel" class="stick-level-seal">ĐẠI CÁT</div>
                     </div>
-                    <div class="slip-header-row">
-                        <h3 id="slipTitle" class="slip-title">Tên Quẻ</h3>
-                        <div class="red-stamp">ĐINH<br>MÙI<br>2027</div>
-                    </div>
-                    <div id="slipPoem" class="slip-poem"></div>
-                    <div class="aspects-grid">
-                        <div class="aspect-box"><div class="aspect-label">Công danh &amp; Sự nghiệp</div><div id="aspectWork" class="aspect-text"></div></div>
-                        <div class="aspect-box"><div class="aspect-label">Tài lộc &amp; Chi tiêu</div><div id="aspectMoney" class="aspect-text"></div></div>
-                        <div class="aspect-box"><div class="aspect-label">Tình duyên &amp; Gia đạo</div><div id="aspectLove" class="aspect-text"></div></div>
-                        <div class="aspect-box"><div class="aspect-label">Sức khỏe &amp; Tinh thần</div><div id="aspectHealth" class="aspect-text"></div></div>
-                    </div>
-                    <div class="slip-advice"><strong>Lời khuyên năm Đinh Mùi:</strong> <span id="slipAdvice"></span></div>
-                    <div class="slip-footer">
-                        <span id="slipLucky" class="lucky-meta">Số may mắn: -- • Màu hợp: --</span>
-                        <div class="slip-actions">
-                            <button id="copyFortuneBtn" class="mini-btn" type="button">Sao chép quẻ</button>
-                            <button id="reshakeBtn" class="mini-btn" type="button">Lắc lại từ đầu</button>
+
+                    <!-- 2. Sách Xưa Luận Giải Quẻ Phía Dưới -->
+                    <div class="ancient-book-page">
+                        <div class="book-header">
+                            <div>
+                                <div class="book-caption">Cổ Thư Giải Quẻ • Xuân Đinh Mùi 2027</div>
+                                <h3 id="slipTitle" class="book-title">Đệ 01 Quẻ: Lý Ngư Hóa Long</h3>
+                            </div>
+                            <div class="red-stamp">L.ASY<br>LINH<br>THIÊNG</div>
+                        </div>
+
+                        <div id="slipPoem" class="book-poem-box"></div>
+
+                        <div class="book-section-label">📜 Luận Giải Chi Tiết Trong Sách Xưa</div>
+                        <div class="book-reading-list">
+                            <div class="book-reading-item"><strong>• Công danh &amp; Sự nghiệp:</strong> <span id="aspectWork"></span></div>
+                            <div class="book-reading-item"><strong>• Tài lộc &amp; Chi tiêu:</strong> <span id="aspectMoney"></span></div>
+                            <div class="book-reading-item"><strong>• Tình duyên &amp; Gia đạo:</strong> <span id="aspectLove"></span></div>
+                            <div class="book-reading-item"><strong>• Sức khỏe &amp; Tinh thần:</strong> <span id="aspectHealth"></span></div>
+                        </div>
+
+                        <div class="book-advice">
+                            <strong>Lời bàn cổ nhân:</strong> <span id="slipAdvice"></span>
+                        </div>
+
+                        <div class="book-footer">
+                            <span id="slipLucky" class="lucky-meta">Số cát tường: -- • Sắc hợp: --</span>
+                            <div class="slip-actions">
+                                <button id="copyFortuneBtn" class="mini-btn" type="button">Sao chép lời quẻ</button>
+                                <button id="reshakeBtn" class="mini-btn" type="button">Xin quẻ khác</button>
+                            </div>
                         </div>
                     </div>
                 </article>
@@ -1280,8 +1454,6 @@
         const canvas3dWrap = document.getElementById("canvas3dWrap");
         const canvasEl = document.getElementById("fortune3dCanvas");
         const stickBadgeOverlay = document.getElementById("stickBadgeOverlay");
-        const shakeClickBtn = document.getElementById("shakeClickBtn");
-        const invertPourBtn = document.getElementById("invertPourBtn");
         const shakeCountText = document.getElementById("shakeCountText");
         const shakeProgressFill = document.getElementById("shakeProgressFill");
         const shakeGuideLabel = document.getElementById("shakeGuideLabel");
@@ -1292,7 +1464,7 @@
         let shakeClicks = 0, currentFortune = null, modalThreeReady = false;
         let mScene, mCamera, mRenderer, tubeGroup, stickMeshes = [], chosenMesh = null;
         let arRotX = 0.25, arRotY = 0, arDrag = false, arPrev = { x: 0, y: 0 }, arDragDist = 0, arShakeAccum = 0;
-        let impulseVel = 0, lastShakeImpulseTime = 0, pouringOut = false, pourStart = 0, sticksRetracted = false;
+        let impulseVel = 0, lastShakeImpulseTime = 0, pouringOut = false, pourStart = 0;
 
         function initModalThree() {
             if (typeof THREE === "undefined") return;
@@ -1355,7 +1527,6 @@
                 if (!modalThreeReady || fortuneModal.classList.contains("hidden")) return;
 
                 if (pouringOut && chosenMesh) {
-                    // Smoothly tilt tube upside down + retract other sticks inside + pour chosen stick out!
                     arRotX += (2.45 - arRotX) * 0.12;
                     tubeGroup.rotation.x = arRotX;
                     tubeGroup.rotation.y = arRotY;
@@ -1363,14 +1534,12 @@
                     const p = Math.min((now - pourStart) / 900, 1);
                     const ease = 1 - Math.pow(1 - p, 3);
 
-                    // Retract other 19 sticks inside the bamboo tube
                     stickMeshes.forEach(s => {
                         if (s === chosenMesh) return;
                         const d = s.userData;
                         s.position.y = d.by - ease * 0.72;
                     });
 
-                    // Chosen stick slides out from the inverted mouth!
                     const d = chosenMesh.userData;
                     chosenMesh.position.set(d.bx * (1 - ease), d.by + ease * 1.95, d.bz + ease * 0.45);
                     chosenMesh.rotation.set(d.rx, d.ry + ease * Math.PI * 1.5, d.rz);
@@ -1405,7 +1574,7 @@
         }
 
         function resetShakeSession() {
-            shakeClicks = 0; pouringOut = false; currentFortune = null; sticksRetracted = false;
+            shakeClicks = 0; pouringOut = false; currentFortune = null;
             arRotX = 0.25; arRotY = 0; arShakeAccum = 0;
             fortuneSlip.classList.add("hidden"); stickBadgeOverlay.classList.add("hidden");
             if (modalThreeReady) {
@@ -1420,14 +1589,14 @@
 
         function updateShakeUI() {
             shakeProgressFill.style.width = Math.min((shakeClicks / MIN_SHAKES) * 100, 100) + "%";
-            shakeCountText.textContent = `${shakeClicks} / ${MIN_SHAKES} lần`;
+            shakeCountText.textContent = `${shakeClicks} / ${MIN_SHAKES}`;
             if (shakeClicks < MIN_SHAKES) {
                 const remain = MIN_SHAKES - shakeClicks;
-                shakeGuideLabel.textContent = `Bước 1: Kéo lắc hoặc chạm ống xăm thêm ${remain} lần nữa`;
-                invertPourBtn.disabled = true; invertPourBtn.textContent = `🔄 Úp Ngược Đổ Quẻ (Còn ${remain} lần)`;
+                shakeGuideLabel.textContent = `Chạm hoặc kéo lắc ống xăm thêm ${remain} lần nữa`;
+                arHintBadge.textContent = `Chạm / Kéo lắc trực tiếp ống xăm 3D (${shakeClicks}/5)`;
             } else {
-                shakeGuideLabel.textContent = `Bước 2: Kéo xoay úp ngược ống xăm xuống (hoặc bấm nút) để đổ quẻ!`;
-                invertPourBtn.disabled = false; invertPourBtn.textContent = `🔄 Úp Ngược Đổ Quẻ Ngay`;
+                shakeGuideLabel.textContent = `Đã đủ ${shakeClicks} nhịp! Kéo xoay úp ngược ống xăm xuống (hoặc chạm) để đổ quẻ!`;
+                arHintBadge.textContent = `✨ Đã đủ 5 nhịp! Kéo xoay úp ngược xuống hoặc chạm để đổ thẻ quẻ ra`;
             }
         }
 
@@ -1441,10 +1610,11 @@
         function triggerInvertPour() {
             if (shakeClicks < MIN_SHAKES || pouringOut || currentFortune) return;
             currentFortune = realFortunes[Math.floor(Math.random() * realFortunes.length)];
-            stickBadgeOverlay.textContent = `THẺ SỐ ${currentFortune.number}`;
+            stickBadgeOverlay.textContent = `ĐỆ ${currentFortune.number} QUẺ`;
             stickBadgeOverlay.classList.remove("hidden");
             playBambooClick(1.3);
-            player.chat = `Vừa đổ được quẻ ${currentFortune.title} ✨`; player.chatTimer = 260;
+            player.chat = `Vừa rút được Đệ ${currentFortune.number} Quẻ: ${currentFortune.title} ✨`;
+            player.chatTimer = 260;
 
             if (modalThreeReady && stickMeshes.length > 0) {
                 chosenMesh = stickMeshes[Math.floor(Math.random() * stickMeshes.length)];
@@ -1453,7 +1623,7 @@
             } else renderFortuneSlip(currentFortune);
         }
 
-        // AR 3D Orbit + Drag-Shake + Upside-Down Pour Detection
+        // Direct AR 3D Orbit + Drag-Shake + Upside-Down Pour
         canvas3dWrap.addEventListener("pointerdown", (e) => {
             arDrag = true; arDragDist = 0; arPrev = { x: e.clientX, y: e.clientY };
         });
@@ -1466,35 +1636,38 @@
             arRotX = Math.max(-0.5, Math.min(2.8, arRotX + dy * 0.015));
             arPrev = { x: e.clientX, y: e.clientY };
 
-            // Rapid drag shaking counts toward shakeClicks!
-            if (arShakeAccum > 95) {
+            if (arShakeAccum > 90) {
                 arShakeAccum = 0;
                 registerShakeImpulse();
             }
-            // If tilted upside down (> 115 deg ~ 2.0 rad) after >=5 shakes -> pour fortune out!
-            if (arRotX > 2.0 && shakeClicks >= MIN_SHAKES && !currentFortune) {
+            if (arRotX > 1.85 && shakeClicks >= MIN_SHAKES && !currentFortune) {
                 arDrag = false;
                 triggerInvertPour();
             }
         });
         window.addEventListener("pointerup", () => {
-            if (arDrag && arDragDist < 8 && !fortuneModal.classList.contains("hidden")) {
-                registerShakeImpulse();
+            if (arDrag && arDragDist < 10 && !fortuneModal.classList.contains("hidden")) {
+                if (shakeClicks >= MIN_SHAKES && !currentFortune) {
+                    triggerInvertPour();
+                } else {
+                    registerShakeImpulse();
+                }
             }
             arDrag = false;
         });
 
         function renderFortuneSlip(f) {
-            document.getElementById("slipNum").textContent = `QUẺ SỐ ${f.number}`;
-            const lv = document.getElementById("slipLevel"); lv.textContent = f.level; lv.className = `slip-level ${f.levelClass}`;
-            document.getElementById("slipTitle").textContent = f.title;
+            document.getElementById("slipNum").textContent = `ĐỆ ${f.number} QUẺ`;
+            document.getElementById("stickEngravedTitle").textContent = `${f.title.toUpperCase()} • ${f.level.toUpperCase()}`;
+            document.getElementById("slipLevel").textContent = f.level;
+            document.getElementById("slipTitle").textContent = `Đệ ${f.number} Quẻ: ${f.title}`;
             document.getElementById("slipPoem").textContent = f.poem;
             document.getElementById("aspectWork").textContent = f.work;
             document.getElementById("aspectMoney").textContent = f.money;
             document.getElementById("aspectLove").textContent = f.love;
             document.getElementById("aspectHealth").textContent = f.health;
             document.getElementById("slipAdvice").textContent = f.advice;
-            document.getElementById("slipLucky").textContent = `Số may mắn: ${f.luckyNum} • Màu hợp: ${f.luckyColor}`;
+            document.getElementById("slipLucky").textContent = `Số cát tường: ${f.luckyNum} • Sắc hợp: ${f.luckyColor}`;
             fortuneSlip.classList.remove("hidden"); fortuneSlip.classList.remove("flip-reveal");
             void fortuneSlip.offsetWidth; fortuneSlip.classList.add("flip-reveal");
         }
@@ -1515,15 +1688,13 @@
         }
 
         document.getElementById("closeFortuneModalBtn").addEventListener("click", closeFortuneModal);
-        shakeClickBtn.addEventListener("click", registerShakeImpulse);
-        invertPourBtn.addEventListener("click", triggerInvertPour);
         document.getElementById("reshakeBtn").addEventListener("click", resetShakeSession);
         document.getElementById("copyFortuneBtn").addEventListener("click", (e) => {
             if (!currentFortune) return;
             const f = currentFortune;
-            navigator.clipboard.writeText(`🎋 CHÙA 3D L.ASY 2027 — QUẺ SỐ ${f.number} (${f.level})\n✨ ${f.title}\n\n${f.poem}\n\n• Công danh: ${f.work}\n• Tài lộc: ${f.money}\n• Tình duyên: ${f.love}\n• Sức khỏe: ${f.health}\n• Lời khuyên: ${f.advice}`).then(() => {
+            navigator.clipboard.writeText(`🎋 CỔ THƯ GIẢI QUẺ L.ASY 2027 — ĐỆ ${f.number} QUẺ (${f.level})\n✨ ${f.title}\n\n${f.poem}\n\n• Công danh: ${f.work}\n• Tài lộc: ${f.money}\n• Tình duyên: ${f.love}\n• Sức khỏe: ${f.health}\n• Lời bàn cổ nhân: ${f.advice}`).then(() => {
                 e.currentTarget.textContent = "✓ Đã sao chép";
-                setTimeout(() => { e.currentTarget.textContent = "Sao chép quẻ"; }, 1800);
+                setTimeout(() => { e.currentTarget.textContent = "Sao chép lời quẻ"; }, 1800);
             });
         });
 
