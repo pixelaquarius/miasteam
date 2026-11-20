@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chùa 3D L.ASY 2027 — Đi Chùa Online &amp; Bóc Quẻ 3D</title>
-    <meta name="description" content="Thế giới Chùa 3D L.ASY Tết Đinh Mùi 2027: Đi bộ 3D từ ngoài cổng chùa vào thắp hương, theo mũi tên vào chính điện lắc quẻ 3D (tối thiểu 5 lần), chơi online cùng mọi người và xem độ hợp Cày Cuốc vs Nghỉ Việc.">
+    <title>Chùa 3D L.ASY 2027 — Đi Chùa Online &amp; Gieo Quẻ AR 3D</title>
+    <meta name="description" content="Thế giới Chùa 3D L.ASY Tết Đinh Mùi 2027: Đồ họa 3D chân thực, sư thầy & 3 đồ đệ quét sân, tới gần bàn tự mở popup AR 3D xoay úp ngược đổ quẻ.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
@@ -30,368 +30,183 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
+            width: 100%; height: 100%; overflow: hidden;
             font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #1C140E;
-            color: var(--ink-primary);
-            user-select: none;
-            touch-action: none;
+            background: #1C140E; color: var(--ink-primary);
+            user-select: none; touch-action: none;
         }
 
-        #world3dCanvas {
-            position: fixed;
-            inset: 0;
-            width: 100vw;
-            height: 100vh;
-            display: block;
-        }
-
-        /* Projected 3D Labels (Names & Chat Bubbles above 3D Characters) */
-        #labelsLayer {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 10;
-            overflow: hidden;
-        }
+        #world3dCanvas { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; }
+        #labelsLayer { position: fixed; inset: 0; pointer-events: none; z-index: 10; overflow: hidden; }
 
         .char-label {
-            position: absolute;
-            transform: translate(-50%, -100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            position: absolute; transform: translate(-50%, -100%);
+            display: flex; flex-direction: column; align-items: center;
             will-change: left, top;
         }
 
         .char-bubble {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.96);
             border: 1px solid var(--border-strong);
-            border-radius: 10px;
-            padding: 3px 9px;
-            font-size: 0.72rem;
-            color: var(--ink-primary);
-            max-width: 190px;
-            text-align: center;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            border-radius: 10px; padding: 3px 9px;
+            font-size: 0.72rem; color: var(--ink-primary);
+            max-width: 210px; text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.22);
+            margin-bottom: 4px; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis;
         }
 
         .char-name {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.66rem;
-            font-weight: 700;
-            padding: 2px 7px;
-            border-radius: 6px;
-            background: rgba(28, 25, 23, 0.8);
-            color: #FFFDF9;
-            white-space: nowrap;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; font-weight: 700;
+            padding: 2px 7px; border-radius: 6px;
+            background: rgba(28, 25, 23, 0.82); color: #FFFDF9; white-space: nowrap;
         }
 
-        .char-label.is-me .char-name {
-            background: var(--crimson);
-            border: 1px solid #FCD34D;
-        }
+        .char-label.is-me .char-name { background: var(--crimson); border: 1px solid #FCD34D; }
 
         /* Top HUD */
         .hud-top {
-            position: fixed;
-            top: 12px;
-            left: 12px;
-            right: 12px;
-            z-index: 25;
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 8px;
-            pointer-events: none;
+            position: fixed; top: 12px; left: 12px; right: 12px; z-index: 25;
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 8px; pointer-events: none;
         }
 
-        .hud-group {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-            pointer-events: auto;
-        }
+        .hud-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; pointer-events: auto; }
 
         .hud-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 7px 12px;
-            border-radius: 999px;
-            background: rgba(250, 247, 242, 0.94);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--border-strong);
-            color: var(--ink-primary);
-            text-decoration: none;
-            font-size: 0.76rem;
-            font-weight: 600;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 7px 12px; border-radius: 999px;
+            background: rgba(250, 247, 242, 0.94); backdrop-filter: blur(8px);
+            border: 1px solid var(--border-strong); color: var(--ink-primary);
+            text-decoration: none; font-size: 0.76rem; font-weight: 600;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2); cursor: pointer;
         }
 
         .hud-pill:hover { background: #FFFFFF; }
 
         .hud-countdown {
-            background: rgba(28, 25, 23, 0.9);
-            color: #FFFDF9;
-            border: 1px solid rgba(217, 155, 38, 0.55);
-            border-radius: 14px;
-            padding: 6px 14px;
-            text-align: center;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-            pointer-events: auto;
+            background: rgba(28, 25, 23, 0.9); color: #FFFDF9;
+            border: 1px solid rgba(217, 155, 38, 0.55); border-radius: 14px;
+            padding: 6px 14px; text-align: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25); pointer-events: auto;
         }
 
-        .hud-cd-title {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.62rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: #FCD34D;
-        }
+        .hud-cd-title { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em; color: #FCD34D; }
+        .hud-cd-time { font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; font-weight: 700; }
 
-        .hud-cd-time {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.88rem;
-            font-weight: 700;
-        }
+        .online-dot { width: 8px; height: 8px; border-radius: 50%; background: #22C55E; animation: pulseDot 1.6s infinite; }
+        @keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(1.25); } }
 
-        .online-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #22C55E;
-            animation: pulseDot 1.6s infinite;
-        }
-
-        @keyframes pulseDot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.45; transform: scale(1.25); }
-        }
-
-        /* Quest Banner */
         .quest-banner {
-            position: fixed;
-            top: 64px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 22;
-            background: rgba(255, 255, 255, 0.94);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--border-strong);
-            border-radius: 999px;
-            padding: 5px 14px;
-            font-size: 0.76rem;
-            font-weight: 600;
-            color: var(--ink-primary);
+            position: fixed; top: 64px; left: 50%; transform: translateX(-50%); z-index: 22;
+            background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(8px);
+            border: 1px solid var(--border-strong); border-radius: 999px;
+            padding: 5px 14px; font-size: 0.76rem; font-weight: 600; color: var(--ink-primary);
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-            max-width: 94vw;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            display: flex; align-items: center; gap: 8px; white-space: nowrap; max-width: 94vw;
+            overflow: hidden; text-overflow: ellipsis;
         }
 
         .quest-step-tag {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.66rem;
-            padding: 2px 8px;
-            border-radius: 999px;
-            background: var(--crimson);
-            color: #FFFFFF;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.66rem;
+            padding: 2px 8px; border-radius: 999px; background: var(--crimson); color: #FFFFFF;
         }
 
-        /* Context Interact Button */
         .interact-prompt {
-            position: fixed;
-            bottom: 136px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 28;
-            padding: 11px 22px;
-            border-radius: 999px;
-            border: 2px solid #FCD34D;
-            background: var(--crimson);
-            color: #FFFFFF;
-            font-family: 'Be Vietnam Pro', sans-serif;
-            font-size: 0.88rem;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 8px 24px rgba(185, 56, 41, 0.5);
+            position: fixed; bottom: 136px; left: 50%; transform: translateX(-50%); z-index: 28;
+            padding: 11px 22px; border-radius: 999px; border: 2px solid #FCD34D;
+            background: var(--crimson); color: #FFFFFF;
+            font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.88rem; font-weight: 700;
+            cursor: pointer; box-shadow: 0 8px 24px rgba(185, 56, 41, 0.5);
             animation: floatBtn 1.4s ease-in-out infinite;
         }
+        @keyframes floatBtn { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -4px); } }
 
-        @keyframes floatBtn {
-            0%, 100% { transform: translate(-50%, 0); }
-            50% { transform: translate(-50%, -4px); }
-        }
-
-        /* Virtual Analog Joystick (Bottom-Left - works on Phone & Mouse) */
+        /* Joystick & PC D-Pad */
         .joystick-zone {
-            position: fixed;
-            bottom: 72px;
-            left: 18px;
-            width: 112px;
-            height: 112px;
-            border-radius: 50%;
-            background: rgba(28, 25, 23, 0.45);
-            border: 2px solid rgba(255, 255, 255, 0.35);
-            backdrop-filter: blur(4px);
-            z-index: 26;
-            touch-action: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: fixed; bottom: 72px; left: 18px; width: 112px; height: 112px;
+            border-radius: 50%; background: rgba(28, 25, 23, 0.45);
+            border: 2px solid rgba(255, 255, 255, 0.35); backdrop-filter: blur(4px);
+            z-index: 26; touch-action: none; display: flex; align-items: center; justify-content: center;
         }
 
         .joystick-knob {
-            width: 46px;
-            height: 46px;
-            border-radius: 50%;
-            background: rgba(250, 247, 242, 0.92);
-            border: 2px solid var(--crimson);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
-            pointer-events: none;
-            transform: translate(0px, 0px);
+            width: 46px; height: 46px; border-radius: 50%;
+            background: rgba(250, 247, 242, 0.92); border: 2px solid var(--crimson);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35); pointer-events: none;
         }
 
-        /* PC On-Screen Directional Buttons (Bottom-Right) */
         .dpad-pc {
-            position: fixed;
-            bottom: 72px;
-            right: 18px;
-            z-index: 26;
-            display: grid;
-            grid-template-columns: repeat(3, 38px);
-            grid-template-rows: repeat(2, 38px);
-            gap: 4px;
+            position: fixed; bottom: 72px; right: 18px; z-index: 26;
+            display: grid; grid-template-columns: repeat(3, 38px); grid-template-rows: repeat(2, 38px); gap: 4px;
         }
 
         .dpad-btn {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            background: rgba(28, 25, 23, 0.68);
-            color: #FFFFFF;
-            font-size: 0.95rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 38px; height: 38px; border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.35); background: rgba(28, 25, 23, 0.68);
+            color: #FFFFFF; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
         }
-
         .dpad-btn:active { background: var(--crimson); }
 
-        /* Bottom Chat Bar */
         .hud-bottom {
-            position: fixed;
-            bottom: 14px;
-            left: 14px;
-            right: 14px;
-            z-index: 25;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            pointer-events: none;
+            position: fixed; bottom: 14px; left: 14px; right: 14px; z-index: 25;
+            display: flex; align-items: center; justify-content: center; gap: 10px; pointer-events: none;
         }
 
         .chat-bar {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(250, 247, 242, 0.95);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--border-strong);
-            border-radius: 999px;
-            padding: 5px 6px 5px 14px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-            pointer-events: auto;
-            width: 100%;
-            max-width: 440px;
+            display: flex; align-items: center; gap: 6px;
+            background: rgba(250, 247, 242, 0.95); backdrop-filter: blur(8px);
+            border: 1px solid var(--border-strong); border-radius: 999px;
+            padding: 5px 6px 5px 14px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            pointer-events: auto; width: 100%; max-width: 440px;
         }
 
         .chat-bar input {
-            flex: 1;
-            border: none;
-            background: transparent;
-            outline: none;
-            font-family: 'Be Vietnam Pro', sans-serif;
-            font-size: 0.82rem;
-            color: var(--ink-primary);
-            min-width: 0;
+            flex: 1; border: none; background: transparent; outline: none;
+            font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.82rem; color: var(--ink-primary); min-width: 0;
         }
 
         .chat-send-btn {
-            padding: 6px 14px;
-            border-radius: 999px;
-            border: none;
-            background: var(--ink-primary);
-            color: #FFFFFF;
-            font-size: 0.78rem;
-            font-weight: 600;
-            cursor: pointer;
+            padding: 6px 14px; border-radius: 999px; border: none;
+            background: var(--ink-primary); color: #FFFFFF; font-size: 0.78rem; font-weight: 600; cursor: pointer;
         }
 
         .hidden { display: none !important; }
 
-        /* ==================== MODALS ==================== */
+        /* ==================== MODALS WITH SMOOTH FADE-IN ==================== */
         .modal-backdrop {
-            position: fixed;
-            inset: 0;
-            z-index: 60;
-            background: rgba(28, 25, 23, 0.74);
-            backdrop-filter: blur(6px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-            overflow-y: auto;
+            position: fixed; inset: 0; z-index: 60;
+            background: rgba(28, 25, 23, 0.72); backdrop-filter: blur(6px);
+            display: flex; align-items: center; justify-content: center;
+            padding: 16px; overflow-y: auto;
+            opacity: 0; transition: opacity 0.45s ease;
+        }
+
+        .modal-backdrop.show {
+            opacity: 1;
         }
 
         .modal-card {
-            background: var(--bg-paper);
-            border: 1px solid var(--border-strong);
-            border-radius: 22px;
-            padding: 24px;
-            width: 100%;
-            max-width: 660px;
-            max-height: 92vh;
-            overflow-y: auto;
+            background: var(--bg-paper); border: 1px solid var(--border-strong);
+            border-radius: 22px; padding: 22px; width: 100%; max-width: 660px;
+            max-height: 92vh; overflow-y: auto;
             box-shadow: 0 28px 70px rgba(0, 0, 0, 0.35);
-            position: relative;
-            text-align: center;
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; text-align: center;
+            transform: scale(0.92) translateY(14px);
+            transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        @keyframes popIn {
-            0% { transform: scale(0.94) translateY(8px); opacity: 0; }
-            100% { transform: scale(1) translateY(0); opacity: 1; }
+        .modal-backdrop.show .modal-card {
+            transform: scale(1) translateY(0);
         }
 
         .modal-top-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
 
         .year-pill {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.72rem;
-            font-weight: 600;
-            padding: 5px 12px;
-            border-radius: 999px;
-            background: var(--crimson-soft);
-            color: var(--crimson);
-            border: 1px solid rgba(185, 56, 41, 0.22);
+            font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: 600;
+            padding: 5px 12px; border-radius: 999px;
+            background: var(--crimson-soft); color: var(--crimson); border: 1px solid rgba(185, 56, 41, 0.22);
         }
 
         .modal-close-x {
@@ -401,7 +216,7 @@
             display: inline-flex; align-items: center; justify-content: center;
         }
 
-        .shaker-title { font-family: 'Playfair Display', serif; font-size: 1.45rem; font-weight: 700; color: var(--ink-primary); }
+        .shaker-title { font-family: 'Playfair Display', serif; font-size: 1.42rem; font-weight: 700; color: var(--ink-primary); }
 
         .shake-progress-box {
             background: var(--bg-elevated); border: 1px solid var(--border-sand);
@@ -418,23 +233,33 @@
         .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold-bright), var(--crimson)); border-radius: 999px; transition: width 0.25s ease; }
 
         .canvas-3d-wrap {
-            position: relative; width: 100%; height: 265px; border-radius: 16px;
+            position: relative; width: 100%; height: 290px; border-radius: 16px;
             background: radial-gradient(circle at 50% 42%, #FFFDF9 0%, #EFE5D5 70%, #E4D6C1 100%);
-            border: 1px solid var(--border-sand); overflow: hidden; margin-bottom: 14px; cursor: pointer;
+            border: 1px solid var(--border-sand); overflow: hidden; margin-bottom: 12px;
+            cursor: grab; touch-action: none;
         }
 
+        .canvas-3d-wrap:active { cursor: grabbing; }
         #fortune3dCanvas { width: 100%; height: 100%; display: block; }
+
+        .ar-hint-badge {
+            position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+            background: rgba(28, 25, 23, 0.78); color: #FFFDF9;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+            padding: 4px 12px; border-radius: 999px; pointer-events: none; white-space: nowrap;
+        }
 
         .stick-badge-overlay {
             position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
-            background: rgba(28, 25, 23, 0.88); color: #FFF5D6;
+            background: rgba(28, 25, 23, 0.9); color: #FFF5D6;
             font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 700;
-            padding: 6px 14px; border-radius: 999px; border: 1px solid rgba(217, 155, 38, 0.6);
+            padding: 6px 14px; border-radius: 999px; border: 1px solid rgba(217, 155, 38, 0.65);
+            pointer-events: none;
         }
 
         .shaker-controls { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
-        .shake-cta { padding: 12px 22px; border-radius: 12px; border: none; background: var(--crimson); color: #FFFFFF; font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.92rem; font-weight: 600; cursor: pointer; }
-        .draw-cta { padding: 12px 22px; border-radius: 12px; border: none; background: var(--sage); color: #FFFFFF; font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.92rem; font-weight: 600; cursor: pointer; }
+        .shake-cta { padding: 11px 20px; border-radius: 12px; border: none; background: var(--crimson); color: #FFFFFF; font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+        .draw-cta { padding: 11px 20px; border-radius: 12px; border: none; background: var(--sage); color: #FFFFFF; font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
         .draw-cta:disabled { background: #CBD5E1; color: #64748B; cursor: not-allowed; }
 
         .slip-perspective { perspective: 1200px; margin-top: 16px; }
@@ -486,14 +311,12 @@
 
         @media (max-width: 640px) {
             .quiz-grid, .aspects-grid { grid-template-columns: 1fr; }
-            .dpad-pc { display: none; }
-            .hud-countdown { display: none; }
+            .dpad-pc, .hud-countdown { display: none; }
             .quest-banner { top: 56px; font-size: 0.7rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Full-Screen 3D World -->
     <canvas id="world3dCanvas"></canvas>
     <div id="labelsLayer"></div>
 
@@ -511,7 +334,7 @@
         </div>
 
         <div class="hud-group">
-            <div class="hud-pill" id="onlineStatusPill" title="Kết nối phòng đi chùa online">
+            <div class="hud-pill" id="onlineStatusPill">
                 <span class="online-dot"></span>
                 <span id="onlineCounter">Đang kết nối...</span>
             </div>
@@ -522,15 +345,13 @@
     <!-- Quest Banner -->
     <div class="quest-banner" id="questBanner">
         <span class="quest-step-tag" id="questStepTag">BƯỚC 1/3</span>
-        <span id="questBannerText">Ngoài Cổng Tam Quan • Dùng Joystick / WASD đi vào sân chùa thắp hương</span>
+        <span id="questBannerText">Ngoài Cổng Tam Quan • Đi vào sân chùa thắp hương, lại gần bàn xin quẻ popup AR tự mở</span>
     </div>
 
     <!-- Interact Prompt -->
-    <button id="interactPrompt" class="interact-prompt hidden" type="button">
-        🕯️ Thắp Hương Thành Tâm [E]
-    </button>
+    <button id="interactPrompt" class="interact-prompt hidden" type="button">🕯️ Thắp Hương [E]</button>
 
-    <!-- Virtual Analog Joystick (Phone & Touch/Mouse) -->
+    <!-- Virtual Analog Joystick -->
     <div id="joystickZone" class="joystick-zone" title="Kéo để di chuyển nhân vật 3D">
         <div id="joystickKnob" class="joystick-knob"></div>
     </div>
@@ -548,23 +369,23 @@
     <!-- Bottom Chat Bar -->
     <div class="hud-bottom">
         <form id="chatForm" class="chat-bar">
-            <input id="chatInput" type="text" maxlength="60" placeholder="Nhắn lời chúc đầu xuân (hoặc nói chuyện với bot)..." autocomplete="off">
+            <input id="chatInput" type="text" maxlength="60" placeholder="Nhắn lời chúc hoặc hỏi thăm Sư Thầy / Tiểu Sư..." autocomplete="off">
             <button class="chat-send-btn" type="submit">Gửi</button>
         </form>
     </div>
 
-    <!-- ==================== MODAL 1: 3D FORTUNE POPUP (MIN 5 CLICKS) ==================== -->
+    <!-- ==================== MODAL 1: AR 3D FORTUNE POPUP (ROTATE + SHAKE >=5 + INVERT POUR) ==================== -->
     <div id="fortuneModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
         <div class="modal-card">
             <div class="modal-top-bar">
-                <span class="year-pill">CHÍNH ĐIỆN • LẮC ỐNG XĂM 3D</span>
+                <span class="year-pill">CHÍNH ĐIỆN • ỐNG XĂM AR 3D</span>
                 <button id="closeFortuneModalBtn" class="modal-close-x" type="button">✕</button>
             </div>
-            <h2 class="shaker-title">Gieo Quẻ Đầu Xuân Đinh Mùi 2027</h2>
+            <h2 class="shaker-title">Xoay Lắc &amp; Úp Ngược Đổ Quẻ 3D</h2>
 
             <div class="shake-progress-box">
                 <div class="shake-progress-head">
-                    <span id="shakeGuideLabel">Hướng dẫn: Nhấn vào ống xăm 3D ít nhất 5 lần để thành tâm lắc quẻ</span>
+                    <span id="shakeGuideLabel">Bước 1: Kéo xoay hoặc chạm để lắc ống xăm (ít nhất 5 lần)</span>
                     <span id="shakeCountText" class="shake-count-pill">0 / 5 lần</span>
                 </div>
                 <div class="progress-track"><div id="shakeProgressFill" class="progress-fill"></div></div>
@@ -573,11 +394,12 @@
             <div class="canvas-3d-wrap" id="canvas3dWrap">
                 <canvas id="fortune3dCanvas"></canvas>
                 <div id="stickBadgeOverlay" class="stick-badge-overlay hidden">THẺ SỐ 01</div>
+                <div class="ar-hint-badge" id="arHintBadge">Kéo chuột/tay xoay 3D tự do • Lắc ≥5 lần rồi xoay úp ngược để đổ quẻ</div>
             </div>
 
             <div class="shaker-controls">
-                <button id="shakeClickBtn" class="shake-cta" type="button">🎋 Lắc Thêm (+1 lần)</button>
-                <button id="drawStickBtn" class="draw-cta" type="button" disabled>✨ Rút Quẻ (Còn 5 lần)</button>
+                <button id="shakeClickBtn" class="shake-cta" type="button">🎋 Lắc Ống Xăm (+1)</button>
+                <button id="invertPourBtn" class="draw-cta" type="button" disabled>🔄 Úp Ngược Đổ Quẻ (Cần 5 lần)</button>
             </div>
 
             <div class="slip-perspective">
@@ -602,7 +424,7 @@
                         <span id="slipLucky" class="lucky-meta">Số may mắn: -- • Màu hợp: --</span>
                         <div class="slip-actions">
                             <button id="copyFortuneBtn" class="mini-btn" type="button">Sao chép quẻ</button>
-                            <button id="reshakeBtn" class="mini-btn" type="button">Lắc lại (reset 5 lần)</button>
+                            <button id="reshakeBtn" class="mini-btn" type="button">Lắc lại từ đầu</button>
                         </div>
                     </div>
                 </article>
@@ -751,7 +573,156 @@
             } catch (e) {}
         }
 
-        // ==================== 3. TRUE 3D TEMPLE WORLD (THREE.JS) ====================
+        // ==================== 3. PROCEDURAL REALISTIC TEXTURES ====================
+        function makeStoneTexture() {
+            const c = document.createElement("canvas"); c.width = 512; c.height = 512;
+            const g = c.getContext("2d");
+            g.fillStyle = "#C7B8A3"; g.fillRect(0, 0, 512, 512);
+            for (let y = 0; y < 512; y += 64) {
+                for (let x = 0; x < 512; x += 64) {
+                    const v = 182 + Math.floor(Math.random() * 24);
+                    g.fillStyle = `rgb(${v}, ${v - 12}, ${v - 26})`;
+                    g.fillRect(x + 2, y + 2, 60, 60);
+                    for (let k = 0; k < 25; k++) {
+                        g.fillStyle = `rgba(90,75,60,${Math.random() * 0.14})`;
+                        g.fillRect(x + Math.random() * 60, y + Math.random() * 60, 3, 3);
+                    }
+                }
+            }
+            const tex = new THREE.CanvasTexture(c);
+            tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(16, 16);
+            return tex;
+        }
+
+        function makeRoofTileTexture() {
+            const c = document.createElement("canvas"); c.width = 256; c.height = 256;
+            const g = c.getContext("2d");
+            g.fillStyle = "#8C2318"; g.fillRect(0, 0, 256, 256);
+            for (let y = 0; y < 256; y += 24) {
+                for (let x = 0; x < 256; x += 16) {
+                    g.fillStyle = (x / 16) % 2 === 0 ? "#A32D20" : "#7A1D13";
+                    g.fillRect(x, y, 14, 22);
+                    g.fillStyle = "rgba(255,210,160,0.12)";
+                    g.fillRect(x, y, 14, 4);
+                }
+            }
+            const tex = new THREE.CanvasTexture(c);
+            tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(6, 3);
+            return tex;
+        }
+
+        function makeWoodTexture(baseHex = "#6E3B1E", darkHex = "#4A2410") {
+            const c = document.createElement("canvas"); c.width = 256; c.height = 256;
+            const g = c.getContext("2d");
+            g.fillStyle = baseHex; g.fillRect(0, 0, 256, 256);
+            for (let i = 0; i < 65; i++) {
+                g.strokeStyle = darkHex;
+                g.globalAlpha = 0.18 + Math.random() * 0.22;
+                g.lineWidth = 1 + Math.random() * 3;
+                g.beginPath();
+                const x = Math.random() * 256;
+                g.moveTo(x, 0);
+                g.bezierCurveTo(x + 8, 85, x - 8, 170, x, 256);
+                g.stroke();
+            }
+            return new THREE.CanvasTexture(c);
+        }
+
+        function makeBambooTexture() {
+            const c = document.createElement("canvas"); c.width = 256; c.height = 256;
+            const g = c.getContext("2d");
+            const grad = g.createLinearGradient(0, 0, 256, 0);
+            grad.addColorStop(0, "#7C4A21"); grad.addColorStop(0.5, "#B87A42"); grad.addColorStop(1, "#6E3F1A");
+            g.fillStyle = grad; g.fillRect(0, 0, 256, 256);
+            for (let i = 0; i < 90; i++) {
+                g.fillStyle = `rgba(55, 28, 10, ${Math.random() * 0.22})`;
+                g.fillRect(Math.random() * 256, 0, 1.5, 256);
+            }
+            [64, 192].forEach(ny => {
+                g.fillStyle = "rgba(45, 22, 8, 0.55)"; g.fillRect(0, ny, 256, 5);
+                g.fillStyle = "rgba(240, 200, 140, 0.35)"; g.fillRect(0, ny + 5, 256, 2);
+            });
+            return new THREE.CanvasTexture(c);
+        }
+
+        // ==================== 4. ARTICULATED REALISTIC 3D CHARACTERS ====================
+        function createArticulatedCharacter({ robeColor, isMonk = false, hasHat = false, hasBroom = false, hairColor = 0x1f1916 }) {
+            const group = new THREE.Group();
+            const robeMat = new THREE.MeshStandardMaterial({ color: robeColor, roughness: 0.72 });
+            const skinMat = new THREE.MeshStandardMaterial({ color: 0xf5cfb0, roughness: 0.65 });
+
+            // Robe Skirt + Torso
+            const skirt = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.38, 0.75, 16), robeMat);
+            skirt.position.y = 0.55; skirt.castShadow = true; group.add(skirt);
+
+            const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.24, 0.52, 16), robeMat);
+            torso.position.y = 1.15; torso.castShadow = true; group.add(torso);
+
+            // Collar / Sash
+            const collar = new THREE.Mesh(
+                new THREE.TorusGeometry(0.2, 0.045, 8, 16),
+                new THREE.MeshStandardMaterial({ color: isMonk ? 0x9a3412 : 0xd99b26, roughness: 0.5 })
+            );
+            collar.rotation.x = Math.PI / 2; collar.position.y = 1.4; group.add(collar);
+
+            // Legs
+            const legGeo = new THREE.CylinderGeometry(0.08, 0.07, 0.45, 10);
+            const legMat = new THREE.MeshStandardMaterial({ color: 0x292524, roughness: 0.8 });
+            const legL = new THREE.Mesh(legGeo, legMat); legL.position.set(-0.11, 0.22, 0);
+            const legR = new THREE.Mesh(legGeo, legMat); legR.position.set(0.11, 0.22, 0);
+            group.add(legL, legR);
+
+            // Articulated Arms
+            const armGeo = new THREE.CylinderGeometry(0.07, 0.06, 0.52, 10);
+            const armL = new THREE.Mesh(armGeo, robeMat); armL.position.set(-0.32, 1.12, 0); armL.castShadow = true;
+            const armR = new THREE.Mesh(armGeo, robeMat); armR.position.set(0.32, 1.12, 0); armR.castShadow = true;
+            group.add(armL, armR);
+
+            // Optional Bamboo Broom for Sweeping Novice
+            if (hasBroom) {
+                const broomGroup = new THREE.Group();
+                const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 1.3, 8), new THREE.MeshStandardMaterial({ color: 0x8b5a2b }));
+                handle.position.y = -0.3;
+                const bristles = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.35, 10), new THREE.MeshStandardMaterial({ color: 0xd6b370, roughness: 0.9 }));
+                bristles.position.y = -0.95;
+                broomGroup.add(handle, bristles);
+                broomGroup.position.set(0, -0.15, 0.22);
+                broomGroup.rotation.x = 0.55;
+                armR.add(broomGroup);
+            }
+
+            // Head & Hair
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.24, 18, 18), skinMat);
+            head.position.y = 1.66; head.castShadow = true; group.add(head);
+
+            if (!isMonk) {
+                const hair = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.255, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.58),
+                    new THREE.MeshStandardMaterial({ color: hairColor, roughness: 0.85 })
+                );
+                hair.position.y = 1.68; hair.rotation.x = -0.18; group.add(hair);
+            }
+
+            if (hasHat) {
+                const hat = new THREE.Mesh(
+                    new THREE.ConeGeometry(0.46, 0.22, 20),
+                    new THREE.MeshStandardMaterial({ color: 0xe7c888, roughness: 0.85 })
+                );
+                hat.position.y = 1.88; group.add(hat);
+            }
+
+            // Eyes
+            const eyeMat = new THREE.MeshBasicMaterial({ color: 0x1c1917 });
+            const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 8), eyeMat);
+            const eyeR = eyeL.clone();
+            eyeL.position.set(-0.08, 1.68, 0.21); eyeR.position.set(0.08, 1.68, 0.21);
+            group.add(eyeL, eyeR);
+
+            group.userData = { torso, skirt, armL, armR, legL, legR };
+            return group;
+        }
+
+        // ==================== 5. REALISTIC 3D TEMPLE WORLD ====================
         const worldCanvas = document.getElementById("world3dCanvas");
         const labelsLayer = document.getElementById("labelsLayer");
         const interactPrompt = document.getElementById("interactPrompt");
@@ -761,270 +732,271 @@
 
         const myId = "p_" + Math.random().toString(36).slice(2, 9);
         const player = {
-            id: myId, x: 0, z: 22, rotY: Math.PI, speed: 0.16,
+            id: myId, x: 0, z: 22.5, rotY: Math.PI, speed: 0.16,
             name: "Bạn (L.ASY)", color: "#B93829",
             chat: "Mới tới cổng chùa 🏯", chatTimer: 260, walkPhase: 0
         };
 
-        let hasLitIncense = false, nearTarget = null;
+        let hasLitIncense = false, nearTarget = null, modalOpenedByProximity = false, suppressedAutoModal = false;
         let wScene, wCamera, wRenderer, playerMesh;
-        const smokePuffs = [], guideArrows = [];
-
-        function create3DCharacter(colorHex) {
-            const group = new THREE.Group();
-            const body = new THREE.Mesh(
-                new THREE.CylinderGeometry(0.32, 0.42, 1.05, 16),
-                new THREE.MeshStandardMaterial({ color: colorHex, roughness: 0.55 })
-            );
-            body.position.y = 0.72;
-            group.add(body);
-
-            const head = new THREE.Mesh(
-                new THREE.SphereGeometry(0.32, 16, 16),
-                new THREE.MeshStandardMaterial({ color: 0xfde4c8, roughness: 0.6 })
-            );
-            head.position.y = 1.52;
-            group.add(head);
-
-            // Simple face eyes
-            const eyeMat = new THREE.MeshBasicMaterial({ color: 0x1c1917 });
-            const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), eyeMat);
-            const eyeR = eyeL.clone();
-            eyeL.position.set(-0.1, 1.55, 0.28);
-            eyeR.position.set(0.1, 1.55, 0.28);
-            group.add(eyeL, eyeR);
-
-            // Shadow
-            const shadow = new THREE.Mesh(
-                new THREE.CircleGeometry(0.45, 16),
-                new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.28 })
-            );
-            shadow.rotation.x = -Math.PI / 2;
-            shadow.position.y = 0.03;
-            group.add(shadow);
-
-            group.userData = { body, head };
-            return group;
-        }
+        const smokePuffs = [], guideArrows = [], petals = [];
 
         function createLabelEl(id, name, isMe = false) {
             const el = document.createElement("div");
             el.className = "char-label" + (isMe ? " is-me" : "");
             el.id = "lbl_" + id;
-            const bubble = document.createElement("div");
-            bubble.className = "char-bubble hidden";
-            const nm = document.createElement("div");
-            nm.className = "char-name";
-            nm.textContent = name;
-            el.appendChild(bubble);
-            el.appendChild(nm);
+            const bubble = document.createElement("div"); bubble.className = "char-bubble hidden";
+            const nm = document.createElement("div"); nm.className = "char-name"; nm.textContent = name;
+            el.appendChild(bubble); el.appendChild(nm);
             labelsLayer.appendChild(el);
             return { el, bubble, nm };
         }
 
         function init3DWorld() {
             wScene = new THREE.Scene();
-            wScene.background = new THREE.Color(0xf4dec1);
-            wScene.fog = new THREE.Fog(0xf4dec1, 22, 65);
+            wScene.background = new THREE.Color(0xf5dfc3);
+            wScene.fog = new THREE.FogExp2(0xf5dfc3, 0.015);
 
-            wCamera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 120);
+            wCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 140);
             wRenderer = new THREE.WebGLRenderer({ canvas: worldCanvas, antialias: true });
             wRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
             wRenderer.setSize(window.innerWidth, window.innerHeight);
+            wRenderer.shadowMap.enabled = true;
+            wRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            wRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+            wRenderer.toneMappingExposure = 1.05;
 
-            wScene.add(new THREE.AmbientLight(0xfff5e4, 0.85));
-            const sun = new THREE.DirectionalLight(0xfff8eb, 1.05);
-            sun.position.set(14, 24, 16);
+            // Golden-Hour Temple Lighting
+            wScene.add(new THREE.HemisphereLight(0xfff8eb, 0x8b6b4a, 0.72));
+            const sun = new THREE.DirectionalLight(0xfff1d6, 1.35);
+            sun.position.set(18, 28, 16);
+            sun.castShadow = true;
+            sun.shadow.mapSize.set(2048, 2048);
+            sun.shadow.camera.near = 2; sun.shadow.camera.far = 85;
+            sun.shadow.camera.left = -28; sun.shadow.camera.right = 28;
+            sun.shadow.camera.top = 28; sun.shadow.camera.bottom = -28;
             wScene.add(sun);
 
-            // Ground & Courtyard
-            const ground = new THREE.Mesh(
-                new THREE.PlaneGeometry(90, 90),
-                new THREE.MeshStandardMaterial({ color: 0xd5be9f, roughness: 0.9 })
-            );
-            ground.rotation.x = -Math.PI / 2;
-            wScene.add(ground);
+            const stoneTex = makeStoneTexture();
+            const roofTex = makeRoofTileTexture();
+            const woodTex = makeWoodTexture();
 
-            const walkway = new THREE.Mesh(
-                new THREE.BoxGeometry(5.5, 0.05, 42),
-                new THREE.MeshStandardMaterial({ color: 0xb09678, roughness: 0.85 })
+            // Stone Courtyard & Garden Ground
+            const garden = new THREE.Mesh(
+                new THREE.PlaneGeometry(110, 110),
+                new THREE.MeshStandardMaterial({ color: 0x7b8c5a, roughness: 0.95 })
             );
-            walkway.position.set(0, 0.02, 4);
-            wScene.add(walkway);
+            garden.rotation.x = -Math.PI / 2; garden.receiveShadow = true;
+            wScene.add(garden);
 
-            // 1. Cổng Tam Quan (Outer Gate at z = 16)
-            const pillarMat = new THREE.MeshStandardMaterial({ color: 0x9e2a1c, roughness: 0.5 });
-            const goldMat = new THREE.MeshStandardMaterial({ color: 0xd99b26, roughness: 0.35, metalness: 0.4 });
-            [-3.6, 3.6].forEach(px => {
-                const p = new THREE.Mesh(new THREE.BoxGeometry(0.9, 4.6, 0.9), pillarMat);
-                p.position.set(px, 2.3, 16);
-                wScene.add(p);
+            const courtyard = new THREE.Mesh(
+                new THREE.BoxGeometry(28, 0.12, 44),
+                new THREE.MeshStandardMaterial({ map: stoneTex, bumpMap: stoneTex, bumpScale: 0.05, roughness: 0.85 })
+            );
+            courtyard.position.set(0, 0.06, 4); courtyard.receiveShadow = true;
+            wScene.add(courtyard);
+
+            const woodMat = new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.65 });
+            const roofMat = new THREE.MeshStandardMaterial({ map: roofTex, roughness: 0.55 });
+            const goldMat = new THREE.MeshStandardMaterial({ color: 0xd99b26, roughness: 0.3, metalness: 0.6 });
+            const redLacquerMat = new THREE.MeshStandardMaterial({ color: 0x9e2418, roughness: 0.42 });
+
+            // 1. Cổng Tam Quan (Detailed 3D Gate at z = 16)
+            [-4.2, -2.1, 2.1, 4.2].forEach((px, idx) => {
+                const h = idx === 1 || idx === 2 ? 5.0 : 3.9;
+                const col = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.34, h, 16), redLacquerMat);
+                col.position.set(px, h / 2, 16); col.castShadow = true; wScene.add(col);
+                const plinth = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.35, 0.9), new THREE.MeshStandardMaterial({ map: stoneTex }));
+                plinth.position.set(px, 0.18, 16); wScene.add(plinth);
             });
-            const gateRoof = new THREE.Mesh(new THREE.BoxGeometry(9.6, 0.8, 1.8), pillarMat);
-            gateRoof.position.set(0, 4.9, 16);
-            wScene.add(gateRoof);
-            const gateSign = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.7, 1.9), goldMat);
-            gateSign.position.set(0, 4.2, 16);
-            wScene.add(gateSign);
+            const gateMainRoof = new THREE.Mesh(new THREE.ConeGeometry(4.6, 1.8, 4), roofMat);
+            gateMainRoof.rotation.y = Math.PI / 4; gateMainRoof.scale.set(1.5, 1, 0.65);
+            gateMainRoof.position.set(0, 5.7, 16); gateMainRoof.castShadow = true; wScene.add(gateMainRoof);
 
-            // 2. Lư Hương (Incense Burner at z = 4)
-            const burner = new THREE.Mesh(
-                new THREE.CylinderGeometry(0.95, 0.7, 1.25, 20),
-                new THREE.MeshStandardMaterial({ color: 0xb67e1e, roughness: 0.35, metalness: 0.55 })
-            );
-            burner.position.set(0, 0.62, 4);
-            wScene.add(burner);
+            const gateSign = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.72, 0.25), woodMat);
+            gateSign.position.set(0, 4.35, 16.2); wScene.add(gateSign);
 
-            // 3. Chính Điện (Main Temple Hall at z = -12)
-            const hallFloor = new THREE.Mesh(
-                new THREE.BoxGeometry(16, 0.4, 11),
-                new THREE.MeshStandardMaterial({ color: 0xe8d9c5, roughness: 0.8 })
-            );
-            hallFloor.position.set(0, 0.2, -12);
-            wScene.add(hallFloor);
+            // 2. Bronze Lư Hương (Incense Cauldron at z = 4)
+            const burnerBase = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.35, 0.45, 24), new THREE.MeshStandardMaterial({ map: stoneTex }));
+            burnerBase.position.set(0, 0.26, 4); burnerBase.receiveShadow = true; wScene.add(burnerBase);
+            const bronzeMat = new THREE.MeshStandardMaterial({ color: 0x8f6118, roughness: 0.32, metalness: 0.75 });
+            const cauldron = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.62, 0.95, 24), bronzeMat);
+            cauldron.position.set(0, 0.95, 4); cauldron.castShadow = true; wScene.add(cauldron);
+            const cauldronRim = new THREE.Mesh(new THREE.TorusGeometry(0.84, 0.08, 12, 24), bronzeMat);
+            cauldronRim.rotation.x = Math.PI / 2; cauldronRim.position.set(0, 1.42, 4); wScene.add(cauldronRim);
+            const ashBed = new THREE.Mesh(new THREE.CylinderGeometry(0.76, 0.76, 0.06, 20), new THREE.MeshStandardMaterial({ color: 0x3b2f2a, roughness: 0.95 }));
+            ashBed.position.set(0, 1.4, 4); wScene.add(ashBed);
 
-            [-6.5, -2.5, 2.5, 6.5].forEach(px => {
-                const col = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.38, 5.2, 14), pillarMat);
-                col.position.set(px, 2.8, -7.2);
-                wScene.add(col);
+            // 3. Chính Điện (Grand Temple Hall at z = -12)
+            const hallPlatform = new THREE.Mesh(new THREE.BoxGeometry(17, 0.6, 12), new THREE.MeshStandardMaterial({ map: stoneTex }));
+            hallPlatform.position.set(0, 0.3, -12); hallPlatform.receiveShadow = true; wScene.add(hallPlatform);
+
+            // Steps
+            for (let s = 0; s < 3; s++) {
+                const step = new THREE.Mesh(new THREE.BoxGeometry(6.5, 0.2, 0.7), new THREE.MeshStandardMaterial({ map: stoneTex }));
+                step.position.set(0, 0.1 + s * 0.2, -5.6 - s * 0.65); step.receiveShadow = true; wScene.add(step);
+            }
+
+            [-7.2, -3.2, 3.2, 7.2].forEach(px => {
+                const col = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.36, 5.4, 16), redLacquerMat);
+                col.position.set(px, 3.2, -6.8); col.castShadow = true; wScene.add(col);
             });
-            const hallBack = new THREE.Mesh(
-                new THREE.BoxGeometry(15.5, 5.2, 0.6),
-                new THREE.MeshStandardMaterial({ color: 0xfff3e0, roughness: 0.7 })
-            );
-            hallBack.position.set(0, 2.8, -17);
-            wScene.add(hallBack);
-            const hallRoof = new THREE.Mesh(new THREE.ConeGeometry(12.2, 3.2, 4), pillarMat);
-            hallRoof.rotation.y = Math.PI / 4;
-            hallRoof.position.set(0, 6.9, -12);
-            wScene.add(hallRoof);
+            const hallBackWall = new THREE.Mesh(new THREE.BoxGeometry(16, 5.4, 0.6), new THREE.MeshStandardMaterial({ color: 0xf7e7ce, roughness: 0.8 }));
+            hallBackWall.position.set(0, 3.2, -17.5); wScene.add(hallBackWall);
 
-            // Fortune Altar & Glowing 3D Bamboo Tube at z = -13.5
-            const altar = new THREE.Mesh(
-                new THREE.BoxGeometry(3.6, 1.1, 1.4),
-                new THREE.MeshStandardMaterial({ color: 0x6b2c14, roughness: 0.6 })
-            );
-            altar.position.set(0, 0.95, -13.5);
-            wScene.add(altar);
+            // Double-tiered curved roof
+            const lowerRoof = new THREE.Mesh(new THREE.ConeGeometry(13.5, 2.4, 4), roofMat);
+            lowerRoof.rotation.y = Math.PI / 4; lowerRoof.scale.set(1.1, 1, 0.82);
+            lowerRoof.position.set(0, 6.8, -12); lowerRoof.castShadow = true; wScene.add(lowerRoof);
 
-            const altarTube = new THREE.Mesh(
-                new THREE.CylinderGeometry(0.28, 0.25, 0.75, 16),
-                goldMat
-            );
-            altarTube.position.set(0, 1.85, -13.5);
-            wScene.add(altarTube);
+            const upperRoof = new THREE.Mesh(new THREE.ConeGeometry(9.5, 2.2, 4), roofMat);
+            upperRoof.rotation.y = Math.PI / 4; upperRoof.scale.set(1.1, 1, 0.82);
+            upperRoof.position.set(0, 8.3, -12); upperRoof.castShadow = true; wScene.add(upperRoof);
 
-            // 4. Ms Grace HR Desk (Right Courtyard x = 8.5, z = 4)
-            const graceDesk = new THREE.Mesh(
-                new THREE.BoxGeometry(2.8, 1.0, 1.3),
-                new THREE.MeshStandardMaterial({ color: 0xfdf2f0, roughness: 0.5 })
-            );
-            graceDesk.position.set(8.5, 0.5, 4);
-            wScene.add(graceDesk);
+            // Fortune Altar Table inside Chính Điện (z = -13.5)
+            const altar = new THREE.Mesh(new THREE.BoxGeometry(3.8, 1.05, 1.5), woodMat);
+            altar.position.set(0, 1.1, -13.5); altar.castShadow = true; wScene.add(altar);
+            const altarCloth = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.7, 1.54), redLacquerMat);
+            altarCloth.position.set(0, 1.15, -13.5); wScene.add(altarCloth);
 
-            // 5. Guided Glowing Floor Arrows (z = 1.5, -1.5, -4.5)
-            [-1.5, -4.5, 10].forEach((az, i) => {
+            const altarTube = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.21, 0.68, 16), new THREE.MeshStandardMaterial({ map: makeBambooTexture(), roughness: 0.45 }));
+            altarTube.position.set(0, 1.95, -13.5); wScene.add(altarTube);
+
+            // 4. Ms Grace HR Desk (x = 9, z = 4)
+            const graceDesk = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.95, 1.3), woodMat);
+            graceDesk.position.set(9, 0.55, 4); graceDesk.castShadow = true; wScene.add(graceDesk);
+
+            // 5. Guided Glowing Floor Arrows
+            [-1.5, -4.2, 10].forEach((az, i) => {
                 const arrow = new THREE.Mesh(
-                    new THREE.ConeGeometry(0.55, 1.2, 3),
+                    new THREE.ConeGeometry(0.55, 1.25, 3),
                     new THREE.MeshBasicMaterial({ color: i === 2 ? 0xb93829 : 0x2d6a4f, transparent: true, opacity: 0.85 })
                 );
-                arrow.rotation.x = -Math.PI / 2;
-                arrow.position.set(0, 0.12, az);
+                arrow.rotation.x = -Math.PI / 2; arrow.position.set(0, 0.16, az);
                 wScene.add(arrow);
                 guideArrows.push({ mesh: arrow, isHall: i < 2 });
             });
 
-            // 6. Blossom Trees (Mai & Đào)
+            // 6. Realistic Blossom Trees (Mai Vàng & Đào Hồng)
             const treePositions = [
-                { x: -9, z: 10, c: 0xfbbf24 }, { x: -10, z: -2, c: 0xf59e0b },
-                { x: 9, z: 12, c: 0xfb7185 }, { x: 11, z: -3, c: 0xf43f5e }
+                { x: -10.5, z: 11, c: 0xfbbf24 }, { x: -11, z: -1, c: 0xf59e0b },
+                { x: 10.5, z: 12, c: 0xfb7185 }, { x: 11.5, z: -2, c: 0xf43f5e }
             ];
             treePositions.forEach(t => {
-                const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.3, 2.2, 8), new THREE.MeshStandardMaterial({ color: 0x5c3419 }));
-                trunk.position.set(t.x, 1.1, t.z);
-                wScene.add(trunk);
-                const crown = new THREE.Mesh(new THREE.SphereGeometry(1.65, 12, 12), new THREE.MeshStandardMaterial({ color: t.c, roughness: 0.7 }));
-                crown.position.set(t.x, 3.0, t.z);
-                wScene.add(crown);
+                const tGroup = new THREE.Group();
+                const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.34, 2.8, 10), woodMat);
+                trunk.position.y = 1.4; trunk.castShadow = true; tGroup.add(trunk);
+                const blossomMat = new THREE.MeshStandardMaterial({ color: t.c, roughness: 0.75 });
+                [[-0.7, 2.9, 0.3, 1.05], [0.8, 3.1, -0.2, 1.15], [0, 3.6, 0.1, 1.25], [0.2, 2.6, 0.8, 0.9]].forEach(([bx, by, bz, br]) => {
+                    const puff = new THREE.Mesh(new THREE.DodecahedronGeometry(br, 1), blossomMat);
+                    puff.position.set(bx, by, bz); puff.castShadow = true; tGroup.add(puff);
+                });
+                tGroup.position.set(t.x, 0, t.z);
+                wScene.add(tGroup);
             });
 
-            // Player 3D Mesh + Label
-            playerMesh = create3DCharacter(player.color);
+            // Falling petals
+            for (let i = 0; i < 36; i++) {
+                const pet = new THREE.Mesh(
+                    new THREE.PlaneGeometry(0.14, 0.14),
+                    new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0xfbbf24 : 0xfb7185, side: THREE.DoubleSide })
+                );
+                pet.position.set((Math.random() - 0.5) * 26, 2 + Math.random() * 6, (Math.random() - 0.5) * 32);
+                wScene.add(pet);
+                petals.push({ mesh: pet, speed: 0.015 + Math.random() * 0.02, sway: Math.random() * 6 });
+            }
+
+            // Player 3D Mesh
+            playerMesh = createArticulatedCharacter({ robeColor: player.color });
             playerMesh.position.set(player.x, 0, player.z);
             wScene.add(playerMesh);
             player.labelObj = createLabelEl("me", player.name, true);
         }
 
-        // ==================== 4. SMART INTERACTIVE BOTS + REAL MULTIPLAYER (MQTT) ====================
-        const botConfigs = [
-            { id: "b1", name: "Ms Grace 👑", color: "#991B1B", x: 8.5, z: 2.6, isBoss: true, chat: "Ai nộp đơn nghỉ việc ra đây!" },
-            { id: "b2", name: "Minh Anh", color: "#0284C7", x: -3.2, z: 8, routeIdx: 0, chat: "Đang đi vào cổng chùa 🏯" },
-            { id: "b3", name: "Tuấn Kiệt", color: "#D97706", x: 3.0, z: 5, routeIdx: 1, chat: "Thắp hương xong rồi nè 🙏" },
-            { id: "b4", name: "Bảo Ngọc", color: "#DB2777", x: -2.0, z: -9, routeIdx: 2, chat: "Vừa xin quẻ Đại Cát ✨" },
-            { id: "b5", name: "Hoàng Long", color: "#059669", x: 3.5, z: -8, routeIdx: 3, chat: "Chúc L.ASY năm mới phát tài!" }
-        ];
-        const botRoute = [
-            { x: -1.8, z: 14, line: "Mới tới cổng chùa, đông vui quá!" },
-            { x: -1.2, z: 5.5, line: "Thắp nén hương cầu KPI 2027 🙏" },
-            { x: -1.5, z: -11, line: "Vào Chính Điện lắc quẻ 3D thôi!" },
-            { x: 6.5, z: 4.5, line: "Ghẹo Ms Grace xin trà sữa 🧋" }
+        // ==================== 6. PURPOSEFUL TEMPLE NPCS (1 SƯ THẦY + 3 ĐỒ ĐỆ + MS GRACE) ====================
+        const templeNpcs = [
+            {
+                id: "master", name: "Sư Thầy Trụ Trì", robeColor: "#C2410C", isMonk: true,
+                x: -3.2, z: -8.5, role: "master",
+                chat: "Nam Mô A Di Đà Phật 🙏 Chúc thí chủ tâm an năm Đinh Mùi",
+                waypoints: [{ x: -3.2, z: -8.5 }, { x: -2.5, z: -4.5 }, { x: -3.2, z: -8.5 }]
+            },
+            {
+                id: "novice1", name: "Tiểu Minh (Quét Sân)", robeColor: "#64748B", isMonk: true, hasBroom: true,
+                x: -4.5, z: 6.0, role: "sweeper",
+                chat: "Quét sạch lá vàng đón khách đi chùa 🧹",
+                waypoints: [{ x: -4.5, z: 6.0 }, { x: -2.2, z: 9.0 }, { x: 2.4, z: 8.5 }, { x: -3.8, z: 3.0 }]
+            },
+            {
+                id: "novice2", name: "Tiểu Tâm (Hương Đăng)", robeColor: "#64748B", isMonk: true,
+                x: 2.2, z: 4.5, role: "incense",
+                chat: "Mời thí chủ thắp nén hương thơm tại Lư Hương 🕯️",
+                waypoints: [{ x: 2.2, z: 4.5 }, { x: 1.6, z: 2.5 }, { x: 2.2, z: 4.5 }]
+            },
+            {
+                id: "novice3", name: "Tiểu An (Chăm Cây)", robeColor: "#64748B", isMonk: true, hasHat: true,
+                x: -8.5, z: 9.5, role: "gardener",
+                chat: "Hoa mai năm nay nở rộ đúng Tết 2027 🌸",
+                waypoints: [{ x: -8.5, z: 9.5 }, { x: -8.5, z: 0.5 }, { x: -8.5, z: 9.5 }]
+            },
+            {
+                id: "grace", name: "Ms Grace 👑", robeColor: "#991B1B", isBoss: true,
+                x: 9.0, z: 2.7, role: "boss",
+                chat: "Ai muốn xem hợp Cày Cuốc hay Nghỉ Việc qua đây!"
+            }
         ];
 
-        const bots = [];
-        function initBots() {
-            botConfigs.forEach(cfg => {
-                const mesh = create3DCharacter(cfg.color);
+        const npcInstances = [];
+        function initTempleNpcs() {
+            templeNpcs.forEach(cfg => {
+                const mesh = createArticulatedCharacter({
+                    robeColor: cfg.robeColor, isMonk: !!cfg.isMonk, hasHat: !!cfg.hasHat, hasBroom: !!cfg.hasBroom
+                });
                 mesh.position.set(cfg.x, 0, cfg.z);
                 wScene.add(mesh);
-                bots.push({
+                npcInstances.push({
                     ...cfg, mesh, labelObj: createLabelEl(cfg.id, cfg.name, false),
-                    wait: 60 + Math.random() * 120, walkPhase: 0, chatTimer: 220
+                    wpIdx: 0, wait: 60 + Math.random() * 100, walkPhase: 0, chatTimer: 260
                 });
             });
         }
 
-        // Bot reacts to your chat!
-        function triggerBotReplies(userMsg) {
+        function triggerNpcReplies(userMsg) {
             const low = userMsg.toLowerCase();
-            bots.forEach((b, idx) => {
+            npcInstances.forEach((n, idx) => {
                 setTimeout(() => {
-                    if (b.isBoss && (low.includes("nghỉ") || low.includes("kpi") || low.includes("lương"))) {
-                        b.chat = "Đừng hòng trốn KPI nhé em! 😤"; b.chatTimer = 240;
-                    } else if (low.includes("chào") || low.includes("hi") || low.includes("hello")) {
-                        b.chat = `Chào ${player.name}! Chúc năm mới phát tài 🧧`; b.chatTimer = 220;
-                    } else if (low.includes("quẻ") || low.includes("lắc")) {
-                        b.chat = "Nhớ lắc đủ 5 lần mới linh nhé! 🎋"; b.chatTimer = 220;
-                    } else if (idx === 1) {
-                        b.chat = "Chúc mừng năm mới Đinh Mùi 2027! 🌸"; b.chatTimer = 220;
+                    if (n.role === "master") {
+                        n.chat = low.includes("quẻ") ? "Thí chủ thành tâm lắc ≥5 nhịp rồi úp ngược ống xăm nhé 🙏" : "Chúc thí chủ năm Đinh Mùi 2027 vạn sự cát tường!";
+                        n.chatTimer = 260;
+                    } else if (n.role === "sweeper" && (low.includes("quét") || low.includes("chào"))) {
+                        n.chat = "Dạ con đang quét sân cho sạch đón Tết ạ 🧹"; n.chatTimer = 220;
+                    } else if (n.role === "boss" && (low.includes("nghỉ") || low.includes("kpi") || low.includes("lương"))) {
+                        n.chat = "Đừng hòng trốn KPI nhé em! 😤"; n.chatTimer = 240;
                     }
-                }, 450 + idx * 350);
+                }, 400 + idx * 300);
             });
         }
 
-        // Real-Time Online Multiplayer via Public MQTT over WebSocket + BroadcastChannel
+        // ==================== 7. MULTIPLAYER (MQTT + BROADCAST) ====================
         const remotePlayers = new Map();
         let mqttClient = null, onlineConnected = false;
-        const MQTT_TOPIC = "lasy/tet2027/temple3d/v1";
+        const MQTT_TOPIC = "lasy/tet2027/temple3d/v2";
 
         function upsertRemotePlayer(data) {
             if (!data || !data.id || data.id === myId) return;
             let rp = remotePlayers.get(data.id);
             if (!rp) {
-                const mesh = create3DCharacter(data.color || "#0284C7");
-                mesh.position.set(data.x || 0, 0, data.z || 20);
+                const mesh = createArticulatedCharacter({ robeColor: data.color || "#0284C7" });
+                mesh.position.set(data.x || 0, 0, data.z || 22);
                 wScene.add(mesh);
                 rp = { ...data, mesh, labelObj: createLabelEl(data.id, data.name || "Khách", false), lastSeen: Date.now() };
                 remotePlayers.set(data.id, rp);
             }
             rp.tx = data.x; rp.tz = data.z; rp.rotY = data.rotY || 0;
-            rp.name = data.name || rp.name;
-            rp.labelObj.nm.textContent = rp.name;
-            rp.chat = data.chat || "";
-            rp.lastSeen = Date.now();
+            rp.name = data.name || rp.name; rp.chat = data.chat || ""; rp.lastSeen = Date.now();
         }
 
         function initMultiplayer() {
-            // 1. BroadcastChannel for instant local-tab sync
             try {
                 const bc = new BroadcastChannel(MQTT_TOPIC);
                 bc.onmessage = (e) => upsertRemotePlayer(e.data);
@@ -1033,17 +1005,11 @@
                 }, 200);
             } catch (e) {}
 
-            // 2. Public MQTT WebSocket for real cross-device online players on GitHub Pages
             if (typeof mqtt !== "undefined") {
                 try {
                     mqttClient = mqtt.connect("wss://broker.emqx.io:8084/mqtt", { clientId: "lasy_" + myId, clean: true, connectTimeout: 5000 });
-                    mqttClient.on("connect", () => {
-                        onlineConnected = true;
-                        mqttClient.subscribe(MQTT_TOPIC);
-                    });
-                    mqttClient.on("message", (_, payload) => {
-                        try { upsertRemotePlayer(JSON.parse(payload.toString())); } catch (e) {}
-                    });
+                    mqttClient.on("connect", () => { onlineConnected = true; mqttClient.subscribe(MQTT_TOPIC); });
+                    mqttClient.on("message", (_, payload) => { try { upsertRemotePlayer(JSON.parse(payload.toString())); } catch (e) {} });
                     setInterval(() => {
                         if (mqttClient && mqttClient.connected) {
                             mqttClient.publish(MQTT_TOPIC, JSON.stringify({
@@ -1059,20 +1025,15 @@
             setInterval(() => {
                 const now = Date.now();
                 for (const [k, rp] of remotePlayers.entries()) {
-                    if (now - rp.lastSeen > 6000) {
-                        wScene.remove(rp.mesh);
-                        rp.labelObj.el.remove();
-                        remotePlayers.delete(k);
-                    }
+                    if (now - rp.lastSeen > 6000) { wScene.remove(rp.mesh); rp.labelObj.el.remove(); remotePlayers.delete(k); }
                 }
-                const total = 1 + bots.length + remotePlayers.size;
-                onlineCounter.textContent = `${total} đang đi chùa${onlineConnected ? " (Online)" : ""}`;
+                const total = 1 + npcInstances.length + remotePlayers.size;
+                onlineCounter.textContent = `${total} tại Chùa${onlineConnected ? " (Online)" : ""}`;
             }, 1000);
         }
 
-        // ==================== 5. CONTROLS: JOYSTICK (PHONE) + KEYS/BUTTONS (PC) ====================
-        const keys = {};
-        const dpadState = { up: false, down: false, left: false, right: false };
+        // ==================== 8. CONTROLS (JOYSTICK + PC D-PAD + KEYS) ====================
+        const keys = {}, dpadState = { up: false, down: false, left: false, right: false };
         let joyVec = { x: 0, y: 0 };
 
         window.addEventListener("keydown", (e) => {
@@ -1082,7 +1043,6 @@
         });
         window.addEventListener("keyup", (e) => { keys[e.key.toLowerCase()] = false; });
 
-        // PC On-Screen D-Pad
         document.querySelectorAll(".dpad-btn").forEach(btn => {
             const dir = btn.dataset.dir;
             btn.addEventListener("pointerdown", (e) => { e.preventDefault(); dpadState[dir] = true; });
@@ -1090,45 +1050,37 @@
             btn.addEventListener("pointerleave", () => { dpadState[dir] = false; });
         });
 
-        // Virtual Analog Joystick
         const joystickZone = document.getElementById("joystickZone");
         const joystickKnob = document.getElementById("joystickKnob");
         let joyActive = false, joyCenter = { x: 0, y: 0 };
         const MAX_JOY = 34;
 
-        function updateJoystick(clientX, clientY) {
-            let dx = clientX - joyCenter.x;
-            let dy = clientY - joyCenter.y;
+        function updateJoystick(cx, cy) {
+            let dx = cx - joyCenter.x, dy = cy - joyCenter.y;
             const dist = Math.hypot(dx, dy);
             if (dist > MAX_JOY) { dx = (dx / dist) * MAX_JOY; dy = (dy / dist) * MAX_JOY; }
             joystickKnob.style.transform = `translate(${dx}px, ${dy}px)`;
-            joyVec.x = dx / MAX_JOY;
-            joyVec.y = dy / MAX_JOY;
+            joyVec.x = dx / MAX_JOY; joyVec.y = dy / MAX_JOY;
         }
-
         joystickZone.addEventListener("pointerdown", (e) => {
-            e.preventDefault();
-            joyActive = true;
-            const rect = joystickZone.getBoundingClientRect();
-            joyCenter = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+            e.preventDefault(); joyActive = true;
+            const r = joystickZone.getBoundingClientRect();
+            joyCenter = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
             updateJoystick(e.clientX, e.clientY);
         });
         window.addEventListener("pointermove", (e) => { if (joyActive) updateJoystick(e.clientX, e.clientY); });
         window.addEventListener("pointerup", () => {
-            if (!joyActive) return;
-            joyActive = false;
-            joyVec = { x: 0, y: 0 };
+            if (!joyActive) return; joyActive = false; joyVec = { x: 0, y: 0 };
             joystickKnob.style.transform = "translate(0px, 0px)";
         });
 
         function triggerNearInteract() {
             if (nearTarget === "incense") {
                 hasLitIncense = true;
-                player.chat = "Đã thắp hương thành tâm 🙏";
-                player.chatTimer = 220;
+                player.chat = "Đã thắp hương thành tâm 🙏"; player.chatTimer = 220;
                 playBambooClick(1.15);
                 questStepTag.textContent = "BƯỚC 2/3";
-                questBannerText.textContent = "Đã thắp hương! Đi theo mũi tên xanh vào Chính Điện lắc quẻ 3D";
+                questBannerText.textContent = "Đã thắp hương! Đi thẳng vào bàn Chính Điện, popup quẻ AR 3D sẽ tự mở";
             } else if (nearTarget === "altar") {
                 openFortuneModal();
             } else if (nearTarget === "grace") {
@@ -1139,43 +1091,42 @@
 
         document.getElementById("chatForm").addEventListener("submit", (e) => {
             e.preventDefault();
-            const inp = document.getElementById("chatInput");
-            const txt = inp.value.trim();
+            const inp = document.getElementById("chatInput"), txt = inp.value.trim();
             if (!txt) return;
-            player.chat = txt;
-            player.chatTimer = 260;
-            triggerBotReplies(txt);
-            inp.value = "";
-            inp.blur();
+            player.chat = txt; player.chatTimer = 260;
+            triggerNpcReplies(txt);
+            inp.value = ""; inp.blur();
         });
 
-        // Project 3D position to 2D screen label
         function projectLabel(pos3d, labelObj, nameText, chatText) {
-            const v = pos3d.clone();
-            v.y += 2.25;
-            v.project(wCamera);
-            if (v.z > 1) {
-                labelObj.el.classList.add("hidden");
-                return;
-            }
+            const v = pos3d.clone(); v.y += 2.3; v.project(wCamera);
+            if (v.z > 1) { labelObj.el.classList.add("hidden"); return; }
             labelObj.el.classList.remove("hidden");
-            const sx = (v.x * 0.5 + 0.5) * window.innerWidth;
-            const sy = (-v.y * 0.5 + 0.5) * window.innerHeight;
-            labelObj.el.style.left = sx + "px";
-            labelObj.el.style.top = sy + "px";
+            labelObj.el.style.left = ((v.x * 0.5 + 0.5) * window.innerWidth) + "px";
+            labelObj.el.style.top = ((-v.y * 0.5 + 0.5) * window.innerHeight) + "px";
             labelObj.nm.textContent = nameText;
-            if (chatText) {
-                labelObj.bubble.textContent = chatText;
-                labelObj.bubble.classList.remove("hidden");
+            if (chatText) { labelObj.bubble.textContent = chatText; labelObj.bubble.classList.remove("hidden"); }
+            else labelObj.bubble.classList.add("hidden");
+        }
+
+        function animateArticulated(mesh, phase, isSweeping = false) {
+            const { armL, armR, legL, legR } = mesh.userData;
+            if (isSweeping) {
+                armR.rotation.x = -0.45 + Math.sin(Date.now() * 0.008) * 0.35;
+                armR.rotation.z = Math.cos(Date.now() * 0.008) * 0.2;
+                armL.rotation.x = -0.2;
+                legL.rotation.x = Math.sin(phase) * 0.35;
+                legR.rotation.x = -Math.sin(phase) * 0.35;
             } else {
-                labelObj.bubble.classList.add("hidden");
+                const swing = Math.sin(phase) * 0.45;
+                armL.rotation.x = swing; armR.rotation.x = -swing;
+                legL.rotation.x = -swing; legR.rotation.x = swing;
             }
         }
 
         function animate3DWorld() {
             requestAnimationFrame(animate3DWorld);
 
-            // Movement vector from Keyboard + D-pad + Joystick
             let mx = joyVec.x, mz = joyVec.y;
             if (keys["a"] || keys["arrowleft"] || dpadState.left) mx -= 1;
             if (keys["d"] || keys["arrowright"] || dpadState.right) mx += 1;
@@ -1188,79 +1139,71 @@
                 player.x = Math.max(-18, Math.min(18, player.x + nx * player.speed));
                 player.z = Math.max(-15.5, Math.min(26, player.z + nz * player.speed));
                 player.rotY = Math.atan2(nx, nz);
-                player.walkPhase += 0.24;
+                player.walkPhase += 0.22;
+                animateArticulated(playerMesh, player.walkPhase);
+            } else {
+                animateArticulated(playerMesh, 0);
             }
             if (player.chatTimer > 0) player.chatTimer--;
 
-            playerMesh.position.set(player.x, Math.abs(Math.sin(player.walkPhase)) * 0.08, player.z);
+            playerMesh.position.set(player.x, 0, player.z);
             playerMesh.rotation.y = player.rotY;
 
             // Smooth 3rd-person follow camera
-            const camTargetX = player.x * 0.7;
-            const camTargetZ = player.z + 9.2;
-            wCamera.position.x += (camTargetX - wCamera.position.x) * 0.1;
+            wCamera.position.x += (player.x * 0.7 - wCamera.position.x) * 0.1;
             wCamera.position.y += (5.8 - wCamera.position.y) * 0.1;
-            wCamera.position.z += (camTargetZ - wCamera.position.z) * 0.1;
-            wCamera.lookAt(player.x, 1.35, player.z - 2.5);
+            wCamera.position.z += (player.z + 9.2 - wCamera.position.z) * 0.1;
+            wCamera.lookAt(player.x, 1.4, player.z - 2.5);
 
-            // Guide Arrows visibility & pulse
+            // Guide Arrows
             const pulse = 0.55 + Math.sin(Date.now() * 0.006) * 0.4;
-            guideArrows.forEach(a => {
-                a.mesh.visible = a.isHall ? hasLitIncense : !hasLitIncense;
-                a.mesh.material.opacity = pulse;
+            guideArrows.forEach(a => { a.mesh.visible = a.isHall ? hasLitIncense : !hasLitIncense; a.mesh.material.opacity = pulse; });
+
+            // Falling Petals
+            petals.forEach(p => {
+                p.mesh.position.y -= p.speed;
+                p.mesh.position.x += Math.sin(Date.now() * 0.002 + p.sway) * 0.015;
+                p.mesh.rotation.z += 0.03;
+                if (p.mesh.position.y < 0.1) p.mesh.position.y = 6.5;
             });
 
             // 3D Smoke Puffs at Lư Hương
-            if (hasLitIncense && Math.random() < 0.25) {
+            if (hasLitIncense && Math.random() < 0.28) {
                 const puff = new THREE.Mesh(
                     new THREE.SphereGeometry(0.16, 8, 8),
                     new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.65 })
                 );
-                puff.position.set((Math.random() - 0.5) * 0.4, 1.35, 4 + (Math.random() - 0.5) * 0.4);
-                wScene.add(puff);
-                smokePuffs.push(puff);
+                puff.position.set((Math.random() - 0.5) * 0.35, 1.5, 4 + (Math.random() - 0.5) * 0.35);
+                wScene.add(puff); smokePuffs.push(puff);
             }
             for (let i = smokePuffs.length - 1; i >= 0; i--) {
-                const sp = smokePuffs[i];
-                sp.position.y += 0.03;
-                sp.scale.multiplyScalar(1.015);
-                sp.material.opacity -= 0.009;
+                const sp = smokePuffs[i]; sp.position.y += 0.03; sp.scale.multiplyScalar(1.015); sp.material.opacity -= 0.008;
                 if (sp.material.opacity <= 0) { wScene.remove(sp); smokePuffs.splice(i, 1); }
             }
 
-            // Update Interactive Bots
-            bots.forEach(b => {
-                if (!b.isBoss) {
-                    const target = botRoute[b.routeIdx];
-                    const dx = target.x - b.x, dz = target.z - b.z;
-                    const d = Math.hypot(dx, dz);
-                    if (d > 0.4) {
-                        b.x += (dx / d) * 0.055;
-                        b.z += (dz / d) * 0.055;
-                        b.mesh.rotation.y = Math.atan2(dx, dz);
-                        b.walkPhase += 0.15;
+            // Update Purposeful NPCs (1 Master + 3 Novices + Ms Grace)
+            npcInstances.forEach(n => {
+                if (n.waypoints) {
+                    const wp = n.waypoints[n.wpIdx];
+                    const dx = wp.x - n.x, dz = wp.z - n.z, d = Math.hypot(dx, dz);
+                    if (d > 0.3) {
+                        n.x += (dx / d) * 0.04; n.z += (dz / d) * 0.04;
+                        n.mesh.rotation.y = Math.atan2(dx, dz); n.walkPhase += 0.12;
+                        animateArticulated(n.mesh, n.walkPhase, n.role === "sweeper");
                     } else {
-                        b.wait--;
-                        if (b.wait <= 0) {
-                            b.routeIdx = (b.routeIdx + 1) % botRoute.length;
-                            b.chat = botRoute[b.routeIdx].line;
-                            b.chatTimer = 200;
-                            b.wait = 90 + Math.random() * 140;
-                        }
+                        animateArticulated(n.mesh, 0, n.role === "sweeper");
+                        n.wait--;
+                        if (n.wait <= 0) { n.wpIdx = (n.wpIdx + 1) % n.waypoints.length; n.wait = 100 + Math.random() * 140; }
                     }
-                    b.mesh.position.set(b.x, Math.abs(Math.sin(b.walkPhase)) * 0.06, b.z);
-                } else {
-                    // Ms Grace turns toward player when nearby
-                    const dToMe = Math.hypot(player.x - b.x, player.z - b.z);
-                    if (dToMe < 5) {
-                        b.mesh.rotation.y = Math.atan2(player.x - b.x, player.z - b.z);
-                    }
+                    n.mesh.position.set(n.x, 0, n.z);
+                } else if (n.isBoss) {
+                    const dMe = Math.hypot(player.x - n.x, player.z - n.z);
+                    if (dMe < 6) n.mesh.rotation.y = Math.atan2(player.x - n.x, player.z - n.z);
                 }
-                if (b.chatTimer > 0) b.chatTimer--;
-                projectLabel(b.mesh.position, b.labelObj, b.name, b.chatTimer > 0 ? b.chat : "");
+                if (n.chatTimer > 0) n.chatTimer--;
+                projectLabel(n.mesh.position, n.labelObj, n.name, n.chatTimer > 0 ? n.chat : "");
             });
 
-            // Smoothly interpolate Remote Online Players
             remotePlayers.forEach(rp => {
                 rp.mesh.position.x += ((rp.tx || 0) - rp.mesh.position.x) * 0.18;
                 rp.mesh.position.z += ((rp.tz || 0) - rp.mesh.position.z) * 0.18;
@@ -1270,19 +1213,25 @@
 
             projectLabel(playerMesh.position, player.labelObj, player.name, player.chatTimer > 0 ? player.chat : "");
 
-            // Proximity interaction check
+            // Proximity Checks + AUTO-OPEN AR POPUP NEAR ALTAR TABLE!
             const dIncense = Math.hypot(player.x - 0, player.z - 4);
             const dAltar = Math.hypot(player.x - 0, player.z - (-13.5));
-            const dGrace = Math.hypot(player.x - 8.5, player.z - 4);
+            const dGrace = Math.hypot(player.x - 9.0, player.z - 4);
+
+            if (dAltar > 5.0) suppressedAutoModal = false;
+
+            if (dAltar < 4.0 && !suppressedAutoModal && fortuneModal.classList.contains("hidden")) {
+                openFortuneModal();
+            }
 
             nearTarget = null;
             if (dIncense < 3.0 && !hasLitIncense) {
                 nearTarget = "incense";
                 interactPrompt.textContent = "🕯️ Thắp Hương Thành Tâm [E]";
                 interactPrompt.classList.remove("hidden");
-            } else if (dAltar < 3.5) {
+            } else if (dAltar < 4.0) {
                 nearTarget = "altar";
-                interactPrompt.textContent = "🎋 Lắc Ống Xăm 3D (Tối thiểu 5 lần) [E]";
+                interactPrompt.textContent = "🎋 Mở Ống Xăm AR 3D [E]";
                 interactPrompt.classList.remove("hidden");
             } else if (dGrace < 3.2) {
                 nearTarget = "grace";
@@ -1303,11 +1252,11 @@
         });
 
         init3DWorld();
-        initBots();
+        initTempleNpcs();
         initMultiplayer();
         animate3DWorld();
 
-        // ==================== 6. 3D FORTUNE POPUP (MIN 5 CLICKS) ====================
+        // ==================== 9. AR 3D FORTUNE POPUP (ORBIT + SHAKE >=5 + INVERT POUR) ====================
         const realFortunes = [
             { number: "01", level: "Đại Cát", levelClass: "level-great", title: "Lý Ngư Hóa Long", poem: "Nước xuân dâng ngập bến sông dài,\nCá chép vượt môn hóa rồng bay.\nBền chí bao ngày nay gặp hội,\nCông thành danh toại rạng tương lai.", work: "Bước ngoặt lớn trong sự nghiệp, dự án ấp ủ lâu nay dễ được duyệt hoặc bứt phá doanh số vượt kỳ vọng.", money: "Nguồn thu chính và phụ đều tăng; có cơ hội nhận thưởng hoặc hợp đồng giá trị cao.", love: "Gia đạo hòa thuận, người độc thân dễ gặp nhân duyên đồng điệu qua công việc.", health: "Tinh thần phấn chấn, thể lực dồi dào.", advice: "Hãy tự tin nắm lấy cơ hội mới vào đầu năm.", luckyNum: "09, 68", luckyColor: "Đỏ son, Vàng kim" },
             { number: "02", level: "Thượng Cát", levelClass: "level-great", title: "Xuân Phong Đắc Ý", poem: "Gió xuân thổi nhẹ nở ngàn hoa,\nQuý nhân đưa lối bước đường xa.\nMở lòng đón nhận duyên lành tới,\nThuận buồm xuôi gió khắp gần xa.", work: "Có quý nhân nâng đỡ, tháo gỡ nút thắt cũ êm đẹp.", money: "Tiền bạc hanh thông, chi tiêu thoải mái.", love: "Tình cảm ấm áp, hiểu lầm cũ dần hóa giải.", health: "Khí huyết lưu thông tốt.", advice: "Giữ thái độ khiêm tốn và biết ơn.", luckyNum: "03, 27", luckyColor: "Xanh ngọc, Trắng kem" },
@@ -1324,40 +1273,48 @@
         const canvasEl = document.getElementById("fortune3dCanvas");
         const stickBadgeOverlay = document.getElementById("stickBadgeOverlay");
         const shakeClickBtn = document.getElementById("shakeClickBtn");
-        const drawStickBtn = document.getElementById("drawStickBtn");
+        const invertPourBtn = document.getElementById("invertPourBtn");
         const shakeCountText = document.getElementById("shakeCountText");
         const shakeProgressFill = document.getElementById("shakeProgressFill");
         const shakeGuideLabel = document.getElementById("shakeGuideLabel");
+        const arHintBadge = document.getElementById("arHintBadge");
         const fortuneSlip = document.getElementById("fortuneSlip");
 
         const MIN_SHAKES = 5;
         let shakeClicks = 0, currentFortune = null, modalThreeReady = false;
         let mScene, mCamera, mRenderer, tubeGroup, stickMeshes = [], chosenMesh = null;
-        let impulseVel = 0, ejecting = false, ejectStart = 0, lastShakeImpulseTime = 0;
+        let arRotX = 0.25, arRotY = 0, arDrag = false, arPrev = { x: 0, y: 0 }, arDragDist = 0, arShakeAccum = 0;
+        let impulseVel = 0, lastShakeImpulseTime = 0, pouringOut = false, pourStart = 0, sticksRetracted = false;
 
         function initModalThree() {
             if (typeof THREE === "undefined") return;
-            const w = canvas3dWrap.clientWidth || 580, h = canvas3dWrap.clientHeight || 265;
+            const w = canvas3dWrap.clientWidth || 580, h = canvas3dWrap.clientHeight || 290;
             mScene = new THREE.Scene();
             mCamera = new THREE.PerspectiveCamera(40, w / h, 0.1, 100);
-            mCamera.position.set(0, 1.5, 6.1);
-            mCamera.lookAt(0, 0.2, 0);
+            mCamera.position.set(0, 0.8, 6.4);
+            mCamera.lookAt(0, 0, 0);
             mRenderer = new THREE.WebGLRenderer({ canvas: canvasEl, antialias: true, alpha: true });
             mRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
             mRenderer.setSize(w, h, false);
 
-            mScene.add(new THREE.AmbientLight(0xfff5e4, 0.8));
-            const kl = new THREE.DirectionalLight(0xfff8ed, 1.15); kl.position.set(4, 7, 5); mScene.add(kl);
+            mScene.add(new THREE.AmbientLight(0xfff5e4, 0.85));
+            const kl = new THREE.DirectionalLight(0xfff8ed, 1.2); kl.position.set(4, 7, 5); mScene.add(kl);
+            const rl = new THREE.DirectionalLight(0xffd28a, 0.5); rl.position.set(-4, -3, 3); mScene.add(rl);
 
             tubeGroup = new THREE.Group();
             mScene.add(tubeGroup);
 
-            const bodyMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.88, 0.82, 2.35, 36), new THREE.MeshStandardMaterial({ color: 0x8b4f24, roughness: 0.48 }));
+            const bambooTex = makeBambooTexture();
+            const bodyMesh = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.88, 0.82, 2.35, 36),
+                new THREE.MeshStandardMaterial({ map: bambooTex, roughness: 0.45 })
+            );
             bodyMesh.position.y = -0.15; tubeGroup.add(bodyMesh);
+
             const cav = new THREE.Mesh(new THREE.CylinderGeometry(0.76, 0.76, 0.08, 32), new THREE.MeshBasicMaterial({ color: 0x1e1108 }));
             cav.position.y = 1.01; tubeGroup.add(cav);
 
-            const ringMat = new THREE.MeshStandardMaterial({ color: 0xd99b26, roughness: 0.28, metalness: 0.65 });
+            const ringMat = new THREE.MeshStandardMaterial({ color: 0xd99b26, roughness: 0.25, metalness: 0.7 });
             [0.98, 0.62, -0.95].forEach((yPos, idx) => {
                 const r = idx === 0 ? 0.90 : idx === 1 ? 0.885 : 0.84;
                 const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.032, 12, 36), ringMat);
@@ -1369,7 +1326,7 @@
             const stickGeo = new THREE.BoxGeometry(0.085, 2.05, 0.035), tipGeo = new THREE.BoxGeometry(0.088, 0.28, 0.038);
             const stickWoodMat = new THREE.MeshStandardMaterial({ color: 0xe6c48c, roughness: 0.55 });
             const stickTipMat = new THREE.MeshStandardMaterial({ color: 0xc43424, roughness: 0.4 });
-            const chosenMat = new THREE.MeshStandardMaterial({ color: 0xffdf7a, emissive: 0xd99b26, emissiveIntensity: 0.5 });
+            const chosenMat = new THREE.MeshStandardMaterial({ color: 0xffdf7a, emissive: 0xd99b26, emissiveIntensity: 0.55 });
 
             stickMeshes = [];
             for (let i = 0; i < 20; i++) {
@@ -1388,33 +1345,60 @@
             (function tick(now) {
                 requestAnimationFrame(tick);
                 if (!modalThreeReady || fortuneModal.classList.contains("hidden")) return;
-                if (impulseVel > 0.01) {
-                    const t = now - lastShakeImpulseTime;
-                    tubeGroup.rotation.z = Math.sin(t * 0.036) * 0.35 * impulseVel;
-                    tubeGroup.rotation.x = 0.22 + Math.cos(t * 0.028) * 0.2 * impulseVel;
-                    tubeGroup.position.y = Math.abs(Math.sin(t * 0.036)) * 0.32 * impulseVel;
+
+                if (pouringOut && chosenMesh) {
+                    // Smoothly tilt tube upside down + retract other sticks inside + pour chosen stick out!
+                    arRotX += (2.45 - arRotX) * 0.12;
+                    tubeGroup.rotation.x = arRotX;
+                    tubeGroup.rotation.y = arRotY;
+
+                    const p = Math.min((now - pourStart) / 900, 1);
+                    const ease = 1 - Math.pow(1 - p, 3);
+
+                    // Retract other 19 sticks inside the bamboo tube
                     stickMeshes.forEach(s => {
+                        if (s === chosenMesh) return;
                         const d = s.userData;
-                        s.position.y = d.by + Math.abs(Math.sin(t * 0.05 + d.phase)) * 0.35 * impulseVel;
-                        s.rotation.z = d.rz + Math.sin(t * 0.05 + d.phase) * 0.18 * impulseVel;
+                        s.position.y = d.by - ease * 0.72;
                     });
-                    impulseVel *= 0.935;
+
+                    // Chosen stick slides out from the inverted mouth!
+                    const d = chosenMesh.userData;
+                    chosenMesh.position.set(d.bx * (1 - ease), d.by + ease * 1.95, d.bz + ease * 0.45);
+                    chosenMesh.rotation.set(d.rx, d.ry + ease * Math.PI * 1.5, d.rz);
+
+                    if (p >= 1) {
+                        pouringOut = false;
+                        renderFortuneSlip(currentFortune);
+                    }
                 } else {
-                    tubeGroup.rotation.z *= 0.85; tubeGroup.rotation.x += (0.24 - tubeGroup.rotation.x) * 0.1;
-                    tubeGroup.position.y *= 0.85; tubeGroup.rotation.y += 0.004;
+                    if (impulseVel > 0.01) {
+                        const t = now - lastShakeImpulseTime;
+                        tubeGroup.rotation.z = Math.sin(t * 0.036) * 0.35 * impulseVel;
+                        tubeGroup.rotation.x = arRotX + Math.cos(t * 0.028) * 0.2 * impulseVel;
+                        tubeGroup.rotation.y = arRotY;
+                        tubeGroup.position.y = Math.abs(Math.sin(t * 0.036)) * 0.28 * impulseVel;
+                        stickMeshes.forEach(s => {
+                            const d = s.userData;
+                            s.position.y = d.by + Math.abs(Math.sin(t * 0.05 + d.phase)) * 0.35 * impulseVel;
+                            s.rotation.z = d.rz + Math.sin(t * 0.05 + d.phase) * 0.18 * impulseVel;
+                        });
+                        impulseVel *= 0.935;
+                    } else {
+                        tubeGroup.rotation.z *= 0.85;
+                        tubeGroup.rotation.x += (arRotX - tubeGroup.rotation.x) * 0.16;
+                        tubeGroup.rotation.y += (arRotY - tubeGroup.rotation.y) * 0.16;
+                        tubeGroup.position.y *= 0.85;
+                    }
                 }
-                if (ejecting && chosenMesh) {
-                    const p = Math.min((now - ejectStart) / 650, 1), ease = 1 - Math.pow(1 - p, 3), d = chosenMesh.userData;
-                    chosenMesh.position.set(d.bx * (1 - ease), d.by + ease * 1.48, d.bz + ease * 0.78);
-                    chosenMesh.rotation.set(d.rx * (1 - ease) + ease * 0.25, d.ry + ease * Math.PI * 2, d.rz * (1 - ease));
-                    if (p >= 1) { ejecting = false; renderFortuneSlip(currentFortune); }
-                }
+
                 mRenderer.render(mScene, mCamera);
             })(performance.now());
         }
 
         function resetShakeSession() {
-            shakeClicks = 0; ejecting = false; currentFortune = null;
+            shakeClicks = 0; pouringOut = false; currentFortune = null; sticksRetracted = false;
+            arRotX = 0.25; arRotY = 0; arShakeAccum = 0;
             fortuneSlip.classList.add("hidden"); stickBadgeOverlay.classList.add("hidden");
             if (modalThreeReady) {
                 stickMeshes.forEach(s => {
@@ -1431,35 +1415,66 @@
             shakeCountText.textContent = `${shakeClicks} / ${MIN_SHAKES} lần`;
             if (shakeClicks < MIN_SHAKES) {
                 const remain = MIN_SHAKES - shakeClicks;
-                shakeGuideLabel.textContent = `Nhấn vào ống xăm 3D thêm ít nhất ${remain} lần nữa để mở quẻ`;
-                drawStickBtn.disabled = true; drawStickBtn.textContent = `✨ Rút Quẻ (Còn ${remain} lần)`;
+                shakeGuideLabel.textContent = `Bước 1: Kéo lắc hoặc chạm ống xăm thêm ${remain} lần nữa`;
+                invertPourBtn.disabled = true; invertPourBtn.textContent = `🔄 Úp Ngược Đổ Quẻ (Còn ${remain} lần)`;
             } else {
-                shakeGuideLabel.textContent = `Đã đủ ${shakeClicks} lần lắc! Có thể lắc thêm hoặc bấm Rút Quẻ`;
-                drawStickBtn.disabled = false; drawStickBtn.textContent = `✨ Rút Quẻ Ngay`;
+                shakeGuideLabel.textContent = `Bước 2: Kéo xoay úp ngược ống xăm xuống (hoặc bấm nút) để đổ quẻ!`;
+                invertPourBtn.disabled = false; invertPourBtn.textContent = `🔄 Úp Ngược Đổ Quẻ Ngay`;
             }
         }
 
-        function handleShakeClick() {
-            if (ejecting) return;
+        function registerShakeImpulse() {
+            if (pouringOut || currentFortune) return;
             shakeClicks++; impulseVel = 1.05; lastShakeImpulseTime = performance.now();
             playBambooClick(0.85 + Math.min(shakeClicks, 6) * 0.06);
             updateShakeUI();
         }
 
-        function handleDrawStick() {
-            if (shakeClicks < MIN_SHAKES || ejecting) return;
+        function triggerInvertPour() {
+            if (shakeClicks < MIN_SHAKES || pouringOut || currentFortune) return;
             currentFortune = realFortunes[Math.floor(Math.random() * realFortunes.length)];
             stickBadgeOverlay.textContent = `THẺ SỐ ${currentFortune.number}`;
             stickBadgeOverlay.classList.remove("hidden");
             playBambooClick(1.3);
-            player.chat = `Vừa xin được quẻ ${currentFortune.title} ✨`;
-            player.chatTimer = 260;
+            player.chat = `Vừa đổ được quẻ ${currentFortune.title} ✨`; player.chatTimer = 260;
+
             if (modalThreeReady && stickMeshes.length > 0) {
                 chosenMesh = stickMeshes[Math.floor(Math.random() * stickMeshes.length)];
                 chosenMesh.userData.shaft.material = chosenMesh.userData.chosenMat;
-                ejecting = true; ejectStart = performance.now();
+                pouringOut = true; pourStart = performance.now();
             } else renderFortuneSlip(currentFortune);
         }
+
+        // AR 3D Orbit + Drag-Shake + Upside-Down Pour Detection
+        canvas3dWrap.addEventListener("pointerdown", (e) => {
+            arDrag = true; arDragDist = 0; arPrev = { x: e.clientX, y: e.clientY };
+        });
+        window.addEventListener("pointermove", (e) => {
+            if (!arDrag || fortuneModal.classList.contains("hidden") || pouringOut) return;
+            const dx = e.clientX - arPrev.x, dy = e.clientY - arPrev.y;
+            arDragDist += Math.hypot(dx, dy);
+            arShakeAccum += Math.hypot(dx, dy);
+            arRotY += dx * 0.015;
+            arRotX = Math.max(-0.5, Math.min(2.8, arRotX + dy * 0.015));
+            arPrev = { x: e.clientX, y: e.clientY };
+
+            // Rapid drag shaking counts toward shakeClicks!
+            if (arShakeAccum > 95) {
+                arShakeAccum = 0;
+                registerShakeImpulse();
+            }
+            // If tilted upside down (> 115 deg ~ 2.0 rad) after >=5 shakes -> pour fortune out!
+            if (arRotX > 2.0 && shakeClicks >= MIN_SHAKES && !currentFortune) {
+                arDrag = false;
+                triggerInvertPour();
+            }
+        });
+        window.addEventListener("pointerup", () => {
+            if (arDrag && arDragDist < 8 && !fortuneModal.classList.contains("hidden")) {
+                registerShakeImpulse();
+            }
+            arDrag = false;
+        });
 
         function renderFortuneSlip(f) {
             document.getElementById("slipNum").textContent = `QUẺ SỐ ${f.number}`;
@@ -1478,16 +1493,22 @@
 
         function openFortuneModal() {
             fortuneModal.classList.remove("hidden");
+            requestAnimationFrame(() => fortuneModal.classList.add("show"));
             if (!modalThreeReady) initModalThree();
             resetShakeSession();
-            questStepTag.textContent = "HOÀN THÀNH";
-            questBannerText.textContent = "Đã vào Chính Điện! Lắc ống xăm 3D tối thiểu 5 lần để rút quẻ";
+            questStepTag.textContent = "BƯỚC 3/3";
+            questBannerText.textContent = "Đã tới Chính Điện! Xoay lắc ống xăm 3D ≥5 lần rồi úp ngược để đổ quẻ";
         }
 
-        document.getElementById("closeFortuneModalBtn").addEventListener("click", () => fortuneModal.classList.add("hidden"));
-        canvas3dWrap.addEventListener("click", handleShakeClick);
-        shakeClickBtn.addEventListener("click", handleShakeClick);
-        drawStickBtn.addEventListener("click", handleDrawStick);
+        function closeFortuneModal() {
+            suppressedAutoModal = true;
+            fortuneModal.classList.remove("show");
+            setTimeout(() => fortuneModal.classList.add("hidden"), 350);
+        }
+
+        document.getElementById("closeFortuneModalBtn").addEventListener("click", closeFortuneModal);
+        shakeClickBtn.addEventListener("click", registerShakeImpulse);
+        invertPourBtn.addEventListener("click", triggerInvertPour);
         document.getElementById("reshakeBtn").addEventListener("click", resetShakeSession);
         document.getElementById("copyFortuneBtn").addEventListener("click", (e) => {
             if (!currentFortune) return;
@@ -1498,7 +1519,7 @@
             });
         });
 
-        // ==================== 7. INTEGRATED CAREER MODAL ====================
+        // ==================== 10. CAREER & CUSTOMIZE MODALS ====================
         const careerModal = document.getElementById("careerModal");
         const qMoney = document.getElementById("qMoney"), qKpi = document.getElementById("qKpi"), qGoal = document.getElementById("qGoal"), qMood = document.getElementById("qMood");
         const workPctLabel = document.getElementById("workPctLabel"), quitPctLabel = document.getElementById("quitPctLabel");
@@ -1530,11 +1551,16 @@
 
         function openCareerModal() {
             careerModal.classList.remove("hidden");
+            requestAnimationFrame(() => careerModal.classList.add("show"));
             quitArena.classList.remove("hidden"); quitTrapView.classList.add("hidden");
             runawayQuitBtn.style.transform = "translate(0, 0)"; stayBtn.style.transform = "scale(1)"; dodgeCount = 0;
         }
+        function closeCareerModal() {
+            careerModal.classList.remove("show");
+            setTimeout(() => careerModal.classList.add("hidden"), 350);
+        }
         document.getElementById("openCareerBtn").addEventListener("click", openCareerModal);
-        document.getElementById("closeCareerModalBtn").addEventListener("click", () => careerModal.classList.add("hidden"));
+        document.getElementById("closeCareerModalBtn").addEventListener("click", closeCareerModal);
 
         const taunts = ["😤 Ms Grace: 'Chị chưa duyệt đâu nhé!'", "⚡ Ms Grace: 'KPI tháng này ai gánh thay em?'", "🧋 Ms Grace: 'Ở lại chị bao trà sữa!'", "🔒 HR: 'Nút nộp đơn đã bị khóa tọa độ!'"];
         function dodgeQuitButton() {
@@ -1552,33 +1578,30 @@
             if (dodgeCount < 3) dodgeQuitButton();
             else { quitArena.classList.add("hidden"); quitTrapView.classList.remove("hidden"); }
         });
-        stayBtn.addEventListener("click", () => {
-            careerModal.classList.add("hidden");
-            player.chat = "Chốt cày KPI nhận thưởng Tết 2027! 💪"; player.chatTimer = 240;
-        });
-        document.getElementById("acceptFateBtn").addEventListener("click", () => {
-            careerModal.classList.add("hidden");
-            player.chat = "Đã nhận trà sữa & ở lại với Ms Grace 🧋"; player.chatTimer = 240;
-        });
+        stayBtn.addEventListener("click", () => { closeCareerModal(); player.chat = "Chốt cày KPI nhận thưởng Tết 2027! 💪"; player.chatTimer = 240; });
+        document.getElementById("acceptFateBtn").addEventListener("click", () => { closeCareerModal(); player.chat = "Đã nhận trà sữa & ở lại với Ms Grace 🧋"; player.chatTimer = 240; });
 
-        // ==================== 8. CUSTOMIZE CHARACTER ====================
         const customModal = document.getElementById("customModal");
         let selectedColor = player.color;
-        document.getElementById("openCustomBtn").addEventListener("click", () => customModal.classList.remove("hidden"));
-        document.getElementById("closeCustomModalBtn").addEventListener("click", () => customModal.classList.add("hidden"));
+        document.getElementById("openCustomBtn").addEventListener("click", () => {
+            customModal.classList.remove("hidden"); requestAnimationFrame(() => customModal.classList.add("show"));
+        });
+        document.getElementById("closeCustomModalBtn").addEventListener("click", () => {
+            customModal.classList.remove("show"); setTimeout(() => customModal.classList.add("hidden"), 350);
+        });
         document.querySelectorAll(".outfit-btn").forEach(btn => {
             btn.addEventListener("click", () => {
                 document.querySelectorAll(".outfit-btn").forEach(b => b.classList.remove("active"));
-                btn.classList.add("active");
-                selectedColor = btn.dataset.color;
+                btn.classList.add("active"); selectedColor = btn.dataset.color;
             });
         });
         document.getElementById("saveCustomBtn").addEventListener("click", () => {
             const nm = document.getElementById("playerNameInput").value.trim();
             if (nm) player.name = nm;
             player.color = selectedColor;
-            playerMesh.userData.body.material.color.set(selectedColor);
-            customModal.classList.add("hidden");
+            playerMesh.userData.torso.material.color.set(selectedColor);
+            playerMesh.userData.skirt.material.color.set(selectedColor);
+            customModal.classList.remove("show"); setTimeout(() => customModal.classList.add("hidden"), 350);
         });
     </script>
 </body>
