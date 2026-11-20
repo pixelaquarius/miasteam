@@ -129,6 +129,22 @@ img{display:block}
 .rvcard .rvdish{display:inline-flex;align-items:center;gap:6px;margin-top:7px;background:#f5f6f7;border-radius:8px;padding:4px 8px;font-size:11.5px;color:#444;font-weight:600}
 .rvcard .rvpics{display:flex;gap:6px;margin-top:8px}
 .rvcard .rvpics img{width:56px;height:56px;border-radius:8px;object-fit:cover;border:1px solid var(--line)}
+/* ---- ride / express / mart ---- */
+.rbox{background:#fff;border-radius:16px;padding:12px 14px;box-shadow:0 2px 10px #0002;margin-bottom:10px}
+.rpin{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:13.5px;cursor:pointer}
+.rpin+.rpin{border-top:1px solid var(--line)}
+.rpin i{width:10px;height:10px;border-radius:50%;background:#1d4ed8;flex:none}
+.rpin i.dst{background:var(--red)}
+.vitem{display:flex;align-items:center;gap:12px;padding:11px 12px;border:1.5px solid var(--line);border-radius:14px;margin-bottom:8px;cursor:pointer}
+.vitem.on{border-color:var(--g);background:#f3fcf7}
+.vitem .vic{font-size:28px;width:44px;height:44px;border-radius:12px;background:#f5f6f7;display:flex;align-items:center;justify-content:center;flex:none}
+.vitem .vinf{flex:1;min-width:0}
+.vitem .vinf b{font-size:14.5px;display:block}
+.vitem .vinf small{font-size:11.5px;color:var(--mut)}
+.vitem .vpr{font-weight:800;font-size:15px;text-align:right}
+.vitem .vpr small{display:block;font-size:10.5px;color:#999;text-decoration:line-through;font-weight:500}
+.dchip{display:inline-block;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:14px;padding:5px 10px;font-size:11.5px;margin:3px 4px 0 0;cursor:pointer;font-weight:600}
+.dchip.on{background:var(--gl);border-color:var(--g);color:var(--gd)}
 .cartbar{position:sticky;bottom:0;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(#fff0,#fff 30%);z-index:30}
 .cartbar button,.btn{width:100%;background:var(--g);color:#fff;border:0;border-radius:26px;padding:14px 18px;font-size:15px;font-weight:700;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 14px #00b14f44}
 .btn{display:block;text-align:center}
