@@ -3,141 +3,733 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hub Công Cụ L.ASY</title>
+    <title>L.ASY Studio — Bộ Công Cụ Vận Hành &amp; Sáng Tạo</title>
+    <meta name="description" content="L.ASY Studio: Không gian công cụ nội bộ cho chiến dịch Tết Đinh Mùi 2027, ghép ảnh lưới nguyên bản và kiểm tra hiệu suất KOL.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2563eb;
-            --hover-color: #1d4ed8;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
+            --bg-paper: #FAF7F2;
+            --bg-elevated: #FFFFFF;
+            --bg-subtle: #F3EDE3;
+            --border-sand: #E6DDD0;
+            --border-strong: #D4C7B4;
+            --ink-primary: #1C1917;
+            --ink-secondary: #575049;
+            --ink-muted: #847A6E;
+            --accent-crimson: #B93829;
+            --accent-crimson-hover: #992B1E;
+            --accent-crimson-soft: #FDF2F0;
+            --accent-gold: #B67E1E;
+            --accent-gold-soft: #FBF5E8;
+            --accent-sage: #2D6A4F;
+            --accent-sage-soft: #EEF6F2;
+            --shadow-card: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px rgba(28, 25, 23, 0.04);
+            --shadow-hover: 0 4px 12px rgba(28, 25, 23, 0.06), 0 20px 40px rgba(28, 25, 23, 0.08);
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 8px;
         }
 
-        * {
+        *, *::before, *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            background-color: var(--bg-paper);
+            background-image:
+                radial-gradient(ellipse 80% 50% at 50% -10%, rgba(185, 56, 41, 0.06), transparent),
+                radial-gradient(ellipse 60% 40% at 90% 10%, rgba(182, 126, 30, 0.05), transparent);
+            color: var(--ink-primary);
+            font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
             line-height: 1.6;
-            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .container {
-            max-width: 1000px;
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Top Studio Navigation */
+        .studio-nav {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: rgba(250, 247, 242, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-sand);
+        }
+
+        .nav-inner {
+            max-width: 1120px;
             margin: 0 auto;
+            padding: 0 24px;
+            height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 50px;
+        .brand-mark {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .header h1 {
-            font-size: 2.5rem;
-            color: var(--text-main);
-            margin-bottom: 12px;
+        .brand-monogram {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: var(--ink-primary);
+            color: var(--bg-paper);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
             font-weight: 700;
+            font-size: 1.125rem;
+            letter-spacing: -0.02em;
+            box-shadow: 0 2px 6px rgba(28, 25, 23, 0.14);
         }
 
-        .header p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
+        .brand-text {
+            display: flex;
+            flex-direction: column;
         }
 
-        .grid-container {
+        .brand-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--ink-primary);
+            line-height: 1.2;
+        }
+
+        .brand-sub {
+            font-size: 0.72rem;
+            color: var(--ink-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-countdown-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 14px;
+            border-radius: 999px;
+            background: var(--accent-crimson-soft);
+            border: 1px solid rgba(185, 56, 41, 0.22);
+            color: var(--accent-crimson);
+            font-size: 0.78rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .nav-countdown-link:hover {
+            background: var(--accent-crimson);
+            color: #FFFFFF;
+            border-color: var(--accent-crimson);
+        }
+
+        .nav-countdown-mono {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        /* Main Container */
+        .main-wrap {
+            flex: 1;
+            max-width: 1120px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 52px 24px 72px;
+        }
+
+        /* Editorial Hero */
+        .hero {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: 1.35fr 0.95fr;
+            gap: 32px;
+            align-items: end;
+            padding-bottom: 44px;
+            margin-bottom: 44px;
+            border-bottom: 1px solid var(--border-sand);
+        }
+
+        .hero-eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--accent-crimson);
+            margin-bottom: 14px;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(2.25rem, 4.5vw, 3.35rem);
+            font-weight: 700;
+            line-height: 1.12;
+            letter-spacing: -0.02em;
+            color: var(--ink-primary);
+            margin-bottom: 16px;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--accent-crimson);
+            font-weight: 600;
+        }
+
+        .hero-desc {
+            font-size: 1.02rem;
+            color: var(--ink-secondary);
+            max-width: 560px;
+            line-height: 1.65;
+        }
+
+        /* Tet 2027 Spotlight Panel */
+        .tet-spotlight {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-sand);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .tet-spotlight:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--border-strong);
+        }
+
+        .spotlight-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .spotlight-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--accent-gold);
+            background: var(--accent-gold-soft);
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+
+        .spotlight-date {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--ink-muted);
+        }
+
+        .spotlight-timer {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .timer-cell {
+            background: var(--bg-paper);
+            border: 1px solid var(--border-sand);
+            border-radius: var(--radius-sm);
+            padding: 10px 6px;
+            text-align: center;
+        }
+
+        .timer-num {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--ink-primary);
+            line-height: 1.15;
+        }
+
+        .timer-unit {
+            display: block;
+            font-size: 0.68rem;
+            color: var(--ink-muted);
+            margin-top: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .spotlight-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            color: var(--ink-secondary);
+            padding-top: 4px;
+        }
+
+        .spotlight-cta {
+            color: var(--accent-crimson);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Section Header */
+        .section-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--ink-primary);
+            letter-spacing: -0.01em;
+        }
+
+        .section-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--ink-muted);
+        }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: 24px;
         }
 
         .tool-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 24px;
-            text-decoration: none;
-            color: inherit;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-sand);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            box-shadow: var(--shadow-card);
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            justify-content: space-between;
+            gap: 24px;
+            transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+            position: relative;
         }
 
         .tool-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            border-color: var(--primary-color);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--border-strong);
         }
 
-        .tool-icon {
-            font-size: 2.5rem;
-            margin-bottom: 16px;
-            background: #eff6ff;
-            width: 60px;
-            height: 60px;
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .tool-icon-wrap {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        .icon-tet {
+            background: var(--accent-crimson-soft);
+            color: var(--accent-crimson);
+        }
+
+        .icon-grid {
+            background: var(--accent-gold-soft);
+            color: var(--accent-gold);
+        }
+
+        .icon-kol {
+            background: var(--accent-sage-soft);
+            color: var(--accent-sage);
+        }
+
+        .tool-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: var(--bg-subtle);
+            color: var(--ink-secondary);
         }
 
         .tool-title {
             font-size: 1.25rem;
-            font-weight: 600;
+            font-weight: 700;
+            color: var(--ink-primary);
             margin-bottom: 8px;
-            color: var(--primary-color);
+            letter-spacing: -0.01em;
         }
 
         .tool-desc {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            line-height: 1.5;
+            font-size: 0.92rem;
+            color: var(--ink-secondary);
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .tool-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            font-size: 0.82rem;
+            color: var(--ink-muted);
+        }
+
+        .tool-features li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tool-features li::before {
+            content: "";
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--border-strong);
+            flex-shrink: 0;
+        }
+
+        .card-action {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 18px;
+            border-top: 1px solid var(--bg-subtle);
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--ink-primary);
+        }
+
+        .card-arrow {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-paper);
+            border: 1px solid var(--border-sand);
+            transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .tool-card:hover .card-arrow {
+            transform: translateX(3px);
+            background: var(--ink-primary);
+            color: #FFFFFF;
+            border-color: var(--ink-primary);
+        }
+
+        /* Footer */
+        .studio-footer {
+            border-top: 1px solid var(--border-sand);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer-inner {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 22px 24px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 0.8rem;
+            color: var(--ink-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--ink-primary);
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 960px) {
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 28px;
+            }
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .nav-inner {
+                padding: 0 16px;
+            }
+            .brand-sub {
+                display: none;
+            }
+            .main-wrap {
+                padding: 36px 16px 56px;
+            }
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+            .tool-card {
+                padding: 22px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Danh Sách Công Cụ</h1>
-            <p>Chọn một tiện ích bên dưới để bắt đầu sử dụng</p>
+    <header class="studio-nav">
+        <div class="nav-inner">
+            <a href="./index.html" class="brand-mark">
+                <div class="brand-monogram" aria-hidden="true">L</div>
+                <div class="brand-text">
+                    <span class="brand-name">L.ASY Studio</span>
+                    <span class="brand-sub">Creative &amp; Operations Hub</span>
+                </div>
+            </a>
+            <div class="nav-right">
+                <a href="./tetlasy/index.html" class="nav-countdown-link" id="navTetLink">
+                    <span>Tết Đinh Mùi 2027</span>
+                    <span class="nav-countdown-mono" id="navDaysLeft">-- ngày</span>
+                </a>
+            </div>
         </div>
+    </header>
 
-        <div class="grid-container">
-            <!-- Thẻ Tool 1: tetlasy -->
-            <a href="./tetlasy/index.html" class="tool-card">
-                <div class="tool-icon">🧧</div>
-                <div class="tool-title">Tết L.ASY</div>
-                <div class="tool-desc">Quản lý nội dung, hình ảnh và chiến dịch cho sự kiện Tết.</div>
-            </a>
+    <main class="main-wrap">
+        <section class="hero" aria-labelledby="studio-heading">
+            <div>
+                <p class="hero-eyebrow">Internal Workspace • 100% Client-Side</p>
+                <h1 id="studio-heading">Không gian công cụ của <em>L.ASY Studio</em></h1>
+                <p class="hero-desc">
+                    Tập hợp các tiện ích nội bộ giúp team theo dõi cột mốc chiến dịch Tết 2027, xử lý hình ảnh nguyên bản và đánh giá hiệu suất KOL nhanh chóng ngay trên trình duyệt.
+                </p>
+            </div>
 
-            <!-- Thẻ Tool 2: ghepanh -->
-            <a href="./ghepanh/index.html" class="tool-card">
-                <div class="tool-icon">🖼️</div>
-                <div class="tool-title">Ghép Ảnh</div>
-                <div class="tool-desc">Tiện ích xử lý, điều chỉnh và ghép hình ảnh nhanh chóng.</div>
+            <a href="./tetlasy/index.html" class="tet-spotlight" aria-label="Mở trang đếm ngược Tết Đinh Mùi 2027">
+                <div class="spotlight-top">
+                    <span class="spotlight-label">Tết Đinh Mùi 2027</span>
+                    <span class="spotlight-date">06 / 02 / 2027</span>
+                </div>
+                <div class="spotlight-timer">
+                    <div class="timer-cell">
+                        <span class="timer-num" id="hubDays">--</span>
+                        <span class="timer-unit">Ngày</span>
+                    </div>
+                    <div class="timer-cell">
+                        <span class="timer-num" id="hubHours">--</span>
+                        <span class="timer-unit">Giờ</span>
+                    </div>
+                    <div class="timer-cell">
+                        <span class="timer-num" id="hubMinutes">--</span>
+                        <span class="timer-unit">Phút</span>
+                    </div>
+                    <div class="timer-cell">
+                        <span class="timer-num" id="hubSeconds">--</span>
+                        <span class="timer-unit">Giây</span>
+                    </div>
+                </div>
+                <div class="spotlight-footer">
+                    <span>Mùng 1 Tết Nguyên Đán</span>
+                    <span class="spotlight-cta">Mở Tết L.ASY →</span>
+                </div>
             </a>
+        </section>
 
-            <!-- Thẻ Tool 3: trackinggmv -->
-            <a href="./checkkol/index.html" class="tool-card">
-                <div class="tool-icon">❤️</div>
-                <div class="tool-title">Kiểm tra hiệu suất KOL</div>
-                <div class="tool-desc">Quét kênh KOL và kiểm tra các yếu tố của KOL để lựa chọn đúng.</div>
-            </a>
+        <section aria-labelledby="tools-heading">
+            <div class="section-head">
+                <h2 id="tools-heading" class="section-title">Công cụ đang hoạt động</h2>
+                <span class="section-meta">03 tiện ích sẵn sàng</span>
+            </div>
 
-            <!-- Mẫu thẻ dự phòng cho công cụ mới -->
-            <a href="#" class="tool-card" style="opacity: 0.6; border-style: dashed;">
-                <div class="tool-icon" style="background: #f1f5f9;">➕</div>
-                <div class="tool-title" style="color: #64748b;">Công cụ mới</div>
-                <div class="tool-desc">Khu vực dành cho các tiện ích đang được phát triển.</div>
-            </a>
+            <div class="tools-grid">
+                <!-- Tool 1: Tết L.ASY 2027 -->
+                <a href="./tetlasy/index.html" class="tool-card" id="card-tetlasy">
+                    <div>
+                        <div class="card-header">
+                            <div class="tool-icon-wrap icon-tet" aria-hidden="true">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 2v4M8 6h8l2 4v7a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3v-7l2-4z"/>
+                                    <path d="M9 11h6M12 20v2"/>
+                                </svg>
+                            </div>
+                            <span class="tool-badge">Campaign 2027</span>
+                        </div>
+                        <h3 class="tool-title">Tết L.ASY 2027</h3>
+                        <p class="tool-desc">
+                            Đếm ngược tới Mùng 1 Tết Đinh Mùi (06/02/2027), tiếp lửa chạy KPI cuối năm và bóc quẻ đầu xuân.
+                        </p>
+                        <ul class="tool-features">
+                            <li>Đếm ngược trực tiếp theo thời gian thực</li>
+                            <li>Bóc quẻ may mắn &amp; câu truyền động lực</li>
+                            <li>Tương tác giải trí cùng Ms Grace</li>
+                        </ul>
+                    </div>
+                    <div class="card-action">
+                        <span>Mở Tết L.ASY</span>
+                        <span class="card-arrow" aria-hidden="true">→</span>
+                    </div>
+                </a>
+
+                <!-- Tool 2: Ghép Ảnh Lưới -->
+                <a href="./ghepanh/index.html" class="tool-card" id="card-ghepanh">
+                    <div>
+                        <div class="card-header">
+                            <div class="tool-icon-wrap icon-grid" aria-hidden="true">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                                    <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                                    <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                                    <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                                </svg>
+                            </div>
+                            <span class="tool-badge">Image Studio</span>
+                        </div>
+                        <h3 class="tool-title">Ghép Ảnh Lưới</h3>
+                        <p class="tool-desc">
+                            Ghép hàng loạt ảnh thành lưới vuông cân đối mà vẫn giữ nguyên tỷ lệ ảnh gốc, không cắt xén góc.
+                        </p>
+                        <ul class="tool-features">
+                            <li>Tự động chia lưới 3–6 cột tối ưu</li>
+                            <li>Tùy chỉnh màu nền &amp; khoảng cách viền</li>
+                            <li>Xuất file JPEG độ phân giải gốc</li>
+                        </ul>
+                    </div>
+                    <div class="card-action">
+                        <span>Mở Ghép Ảnh</span>
+                        <span class="card-arrow" aria-hidden="true">→</span>
+                    </div>
+                </a>
+
+                <!-- Tool 3: Kiểm tra hiệu suất KOL -->
+                <a href="./checkkol/index.html" class="tool-card" id="card-checkkol">
+                    <div>
+                        <div class="card-header">
+                            <div class="tool-icon-wrap icon-kol" aria-hidden="true">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 3v18h18"/>
+                                    <path d="M7 15l4-4 4 3 5-6"/>
+                                </svg>
+                            </div>
+                            <span class="tool-badge">Analytics</span>
+                        </div>
+                        <h3 class="tool-title">Kiểm tra hiệu suất KOL</h3>
+                        <p class="tool-desc">
+                            Phân tích dữ liệu Kalodata DOM/HTML để chấm điểm độ phù hợp của KOL theo ngành hàng Beauty &amp; Personal Care.
+                        </p>
+                        <ul class="tool-features">
+                            <li>Chấm điểm theo Video &amp; Livestream Track</li>
+                            <li>Đối chiếu Top 20 Vietnam Beauty Brands</li>
+                            <li>Lưu lịch sử &amp; so sánh Before / After</li>
+                        </ul>
+                    </div>
+                    <div class="card-action">
+                        <span>Mở KOL Auditor</span>
+                        <span class="card-arrow" aria-hidden="true">→</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="studio-footer">
+        <div class="footer-inner">
+            <span>L.ASY Studio • Chạy tĩnh 100% trên trình duyệt</span>
+            <div class="footer-links">
+                <a href="./tetlasy/index.html">Tết 2027</a>
+                <a href="./ghepanh/index.html">Ghép Ảnh</a>
+                <a href="./checkkol/index.html">KOL Auditor</a>
+                <a href="https://github.com/pixelaquarius/miasteam" target="_blank" rel="noopener noreferrer">GitHub</a>
+            </div>
         </div>
-    </div>
+    </footer>
+
+    <script>
+        (function () {
+            const targetTime = new Date("Feb 06, 2027 00:00:00").getTime();
+
+            function pad(n) {
+                return n < 10 ? "0" + n : String(n);
+            }
+
+            function updateHubCountdown() {
+                const now = Date.now();
+                const diff = targetTime - now;
+
+                if (diff <= 0) {
+                    document.getElementById("hubDays").textContent = "00";
+                    document.getElementById("hubHours").textContent = "00";
+                    document.getElementById("hubMinutes").textContent = "00";
+                    document.getElementById("hubSeconds").textContent = "00";
+                    document.getElementById("navDaysLeft").textContent = "Chúc Mừng Năm Mới";
+                    return;
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById("hubDays").textContent = pad(days);
+                document.getElementById("hubHours").textContent = pad(hours);
+                document.getElementById("hubMinutes").textContent = pad(minutes);
+                document.getElementById("hubSeconds").textContent = pad(seconds);
+                document.getElementById("navDaysLeft").textContent = "Còn " + days + " ngày";
+            }
+
+            updateHubCountdown();
+            setInterval(updateHubCountdown, 1000);
+        })();
+    </script>
 </body>
 </html>
