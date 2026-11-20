@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chùa 3D L.ASY 2027 — Đi Chùa Online &amp; Gieo Quẻ AR 3D</title>
-    <meta name="description" content="Thế giới Chùa 3D L.ASY Tết Đinh Mùi 2027: Đồ họa 3D chân thực, sư thầy & 3 đồ đệ quét sân, tới gần bàn tự mở popup AR 3D xoay úp ngược đổ quẻ.">
+    <title>Chùa Vạn Phúc 3D 2027 — Đi Chùa Online &amp; Gieo Quẻ AR 3D</title>
+    <meta name="description" content="Thế giới Chùa Vạn Phúc 3D Tết Đinh Mùi 2027: Đồ họa 3D chân thực, sư thầy & 3 đồ đệ quét sân, tới gần bàn tự mở popup AR 3D lắc quẻ và xem Cổ Thư Giải Quẻ.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
@@ -591,7 +591,7 @@
                                 <div class="book-caption">Cổ Thư Giải Quẻ • Xuân Đinh Mùi 2027</div>
                                 <h3 id="slipTitle" class="book-title">Đệ 01 Quẻ: Lý Ngư Hóa Long</h3>
                             </div>
-                            <div class="red-stamp">L.ASY<br>LINH<br>THIÊNG</div>
+                            <div class="red-stamp">VẠN<br>PHÚC<br>TỰ</div>
                         </div>
 
                         <div id="slipPoem" class="book-poem-box"></div>
@@ -1163,7 +1163,7 @@
 
         const myId = "p_" + Math.random().toString(36).slice(2, 9);
         let savedProfile = null;
-        try { savedProfile = JSON.parse(localStorage.getItem("lasy_temple_profile") || "null"); } catch (e) {}
+        try { savedProfile = JSON.parse(localStorage.getItem("vanphuc_temple_profile") || "null"); } catch (e) {}
         const player = {
             id: myId, x: 0, z: 29, rotY: Math.PI, speed: 0.15,
             name: (savedProfile && savedProfile.name) || randomPilgrimName(),
@@ -1615,7 +1615,7 @@
             });
             // Center lintel + prominent red-gold signboard clearly below eaves
             const lintelC = new THREE.Mesh(new THREE.BoxGeometry(4.6, 1.1, 0.7), plasterMat); lintelC.position.set(0, 5.05, 0); lintelC.castShadow = true; gate.add(lintelC);
-            const sign = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 0.82), new THREE.MeshStandardMaterial({ map: makeTextPanel(["CHÙA L.ASY"], { w: 1024, h: 264, font: "700 140px 'Playfair Display', serif" }), roughness: 0.45 }));
+            const sign = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 0.82), new THREE.MeshStandardMaterial({ map: makeTextPanel(["CHÙA VẠN PHÚC"], { w: 1024, h: 264, font: "700 104px 'Playfair Display', serif" }), roughness: 0.45 }));
             sign.position.set(0, 5.02, 0.37); gate.add(sign);
             const signBack = sign.clone(); signBack.rotation.y = Math.PI; signBack.position.z = -0.37; gate.add(signBack);
             // Side lintels
@@ -2005,7 +2005,7 @@
         // ==================== 7. MULTIPLAYER (MQTT + BROADCAST + EVENTS) ====================
         const remotePlayers = new Map();
         let mqttClient = null, onlineConnected = false, bcChannel = null;
-        const MQTT_TOPIC = "lasy/tet2027/temple3d/v3";
+        const MQTT_TOPIC = "vanphuc/tet2027/temple3d/v3";
         const seenEventIds = new Set();
 
         function publishEvent(evt) {
@@ -2065,7 +2065,7 @@
 
             if (typeof mqtt !== "undefined") {
                 try {
-                    mqttClient = mqtt.connect("wss://broker.emqx.io:8084/mqtt", { clientId: "lasy_" + myId, clean: true, connectTimeout: 5000 });
+                    mqttClient = mqtt.connect("wss://broker.emqx.io:8084/mqtt", { clientId: "vp_" + myId, clean: true, connectTimeout: 5000 });
                     mqttClient.on("connect", () => { onlineConnected = true; mqttClient.subscribe(MQTT_TOPIC); });
                     mqttClient.on("message", (_, payload) => { try { handleIncomingMsg(JSON.parse(payload.toString())); } catch (e) {} });
                     setInterval(() => {
@@ -2770,7 +2770,7 @@
         document.getElementById("copyFortuneBtn").addEventListener("click", (e) => {
             if (!currentFortune) return;
             const f = currentFortune;
-            navigator.clipboard.writeText(`🎋 CỔ THƯ GIẢI QUẺ L.ASY 2027 — ĐỆ ${f.number} QUẺ (${f.level})\n✨ ${f.title}\n\n${f.poem}\n\n• Công danh: ${f.work}\n• Tài lộc: ${f.money}\n• Tình duyên: ${f.love}\n• Sức khỏe: ${f.health}\n• Lời bàn cổ nhân: ${f.advice}`).then(() => {
+            navigator.clipboard.writeText(`🎋 CỔ THƯ GIẢI QUẺ CHÙA VẠN PHÚC 2027 — ĐỆ ${f.number} QUẺ (${f.level})\n✨ ${f.title}\n\n${f.poem}\n\n• Công danh: ${f.work}\n• Tài lộc: ${f.money}\n• Tình duyên: ${f.love}\n• Sức khỏe: ${f.health}\n• Lời bàn cổ nhân: ${f.advice}`).then(() => {
                 e.currentTarget.textContent = "✓ Đã sao chép";
                 setTimeout(() => { e.currentTarget.textContent = "Sao chép lời quẻ"; }, 1800);
             });
@@ -2793,8 +2793,8 @@
             quitPctLabel.textContent = `🚪 Muốn Nghỉ Việc: ${quitPct}%`;
             workMeterFill.style.width = workPct + "%";
             if (workPct >= 70) {
-                careerVerdictBox.innerHTML = `<strong>Kết luận: Chiến thần KPI L.ASY (${workPct}% hợp Cày Cuốc)!</strong> Ví tiền và mục tiêu Tết 2027 đang gọi tên bạn.`;
-                graceTauntBox.textContent = `💖 Sếp: "Sếp biết ngay mà! Em sinh ra để cày KPI cùng L.ASY!"`;
+                careerVerdictBox.innerHTML = `<strong>Kết luận: Chiến thần KPI Công Sở (${workPct}% hợp Cày Cuốc)!</strong> Ví tiền và mục tiêu Tết 2027 đang gọi tên bạn.`;
+                graceTauntBox.textContent = `💖 Sếp: "Sếp biết ngay mà! Em sinh ra để gánh KPI cùng team rồi!"`;
             } else if (workPct >= 45) {
                 careerVerdictBox.innerHTML = `<strong>Kết luận: Nửa muốn nghỉ, nửa thèm thưởng (${workPct}% / ${quitPct}%).</strong> Uống ly trà sữa rồi chốt nốt KPI nhé!`;
                 graceTauntBox.textContent = `🧋 Sếp: "Đừng dao động em ơi, thưởng Tết Đinh Mùi đang chờ!"`;
@@ -2919,7 +2919,7 @@
             if (nm) player.name = nm;
             player.gender = draftGender; player.outfit = draftOutfit; player.color = draftColor;
             try {
-                localStorage.setItem("lasy_temple_profile", JSON.stringify({
+                localStorage.setItem("vanphuc_temple_profile", JSON.stringify({
                     name: player.name, gender: player.gender, outfit: player.outfit, color: player.color
                 }));
             } catch (e) {}
@@ -2930,7 +2930,7 @@
         init3DWorld();
         initTempleNpcs();
         initMultiplayer();
-        for (let k = 0; k < 3; k++) plantIncense("Chùa L.ASY", false);
+        for (let k = 0; k < 3; k++) plantIncense("Chùa Vạn Phúc", false);
         updateIncensePill();
         animate3DWorld();
     </script>
