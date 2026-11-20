@@ -485,6 +485,57 @@
             pointer-events: none; z-index: 24;
         }
 
+
+        .merit-pill { font-family: 'JetBrains Mono', monospace; background: linear-gradient(135deg, #FFFDF5, #FDECC8); color: #8A4B08; border-color: rgba(217, 155, 38, 0.55); transition: transform 0.2s ease; }
+        .merit-pill.pop { transform: scale(1.1); }
+        .merit-toast {
+            position: fixed; bottom: 185px; left: 50%; transform: translateX(-50%); z-index: 32;
+            padding: 6px 14px; border-radius: 999px; background: rgba(28, 25, 23, 0.86);
+            color: #FDE68A; font-size: 0.78rem; font-weight: 700; pointer-events: none;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3); transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+        .sutra-panel {
+            position: fixed; right: 16px; bottom: 164px; z-index: 45; width: min(390px, calc(100vw - 32px));
+            max-height: calc(100vh - 235px); display: flex; flex-direction: column;
+            background: rgba(250, 245, 232, 0.96); backdrop-filter: blur(10px);
+            border: 1.5px solid #C69B53; border-radius: 18px; padding: 14px 16px;
+            box-shadow: 0 20px 50px rgba(20, 12, 6, 0.38); color: #2D2218;
+        }
+        .sutra-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+        .sutra-stats {
+            display: flex; align-items: center; justify-content: space-between; gap: 8px;
+            background: #F4E9D2; border: 1px solid #DFCCA8; border-radius: 10px;
+            padding: 7px 10px; font-size: 0.74rem; font-weight: 600; margin-bottom: 8px;
+        }
+        .sutra-tabs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 8px; }
+        .sutra-tab {
+            padding: 6px 8px; border-radius: 8px; border: 1px solid #DFCCA8; background: #FFFDF8;
+            font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.72rem; font-weight: 600;
+            color: #5C4630; cursor: pointer; text-align: center;
+        }
+        .sutra-tab.active { background: #B93829; color: #FFFFFF; border-color: #94281C; }
+        .sutra-scroll {
+            overflow-y: auto; flex: 1; background: #FFFDF8; border: 1px solid #E5D6B8;
+            border-radius: 12px; padding: 10px 12px; margin-bottom: 10px;
+            font-family: 'Playfair Display', Georgia, serif; font-size: 0.9rem; line-height: 1.7;
+        }
+        .sutra-line { padding: 4px 6px; border-radius: 6px; transition: background 0.3s ease; }
+        .sutra-line.active-line { background: #FDECC8; color: #7C2D12; font-weight: 700; }
+        .sutra-actions { display: flex; gap: 8px; }
+        .sutra-bell-btn {
+            flex: 1; padding: 9px 10px; border-radius: 10px; border: 1px solid #C69B53;
+            background: #FBF5E8; color: #78350F; font-family: 'Be Vietnam Pro', sans-serif;
+            font-size: 0.78rem; font-weight: 700; cursor: pointer;
+        }
+        .sutra-bell-btn:active { transform: scale(0.97); }
+        .sutra-stand-btn {
+            padding: 9px 12px; border-radius: 10px; border: none; background: #B93829;
+            color: #FFFFFF; font-family: 'Be Vietnam Pro', sans-serif; font-size: 0.78rem; font-weight: 700; cursor: pointer;
+        }
+        @media (max-width: 640px) {
+            .sutra-panel { left: 12px; right: 12px; width: auto; bottom: 72px; max-height: 55vh; }
+        }
+
     </style>
 </head>
 <body>
@@ -508,6 +559,7 @@
                 <span class="online-dot"></span>
                 <span id="onlineCounter">Đang kết nối...</span>
             </div>
+            <div class="hud-pill merit-pill" id="meritPill" title="Điểm Công Đức từ Quét Lá & Đọc Kinh AFK">🪷 Phước: 0</div>
             <button id="soundToggleBtn" class="hud-pill" type="button">🔊 Âm thanh</button>
         </div>
     </div>
@@ -539,6 +591,27 @@
             <button class="chat-send-btn" type="submit">Gửi</button>
         </form>
     </div>
+
+
+    <div id="meritToast" class="merit-toast hidden"></div>
+
+    <!-- ==================== FLOATING SUTRA & AFK MEDITATION PANEL ==================== -->
+    <aside id="sutraPanel" class="sutra-panel hidden" aria-label="Đọc Kinh Phật Tích Phước">
+        <div class="sutra-head">
+            <span class="year-pill">🪷 CHIẾU TỤNG KINH • CẦU AN</span>
+            <span id="meritRankTag" style="font-size:0.7rem;font-weight:700;color:#8A4B08;">Thí Chủ Sơ Tâm</span>
+        </div>
+        <div class="sutra-stats">
+            <span id="sutraAfkTimer">⏳ Ngồi thiền: 00:00</span>
+            <span id="sutraRateLabel" style="color:#B93829;">+1 Phước / 3s (AFK)</span>
+        </div>
+        <div class="sutra-tabs" id="sutraTabs"></div>
+        <div class="sutra-scroll" id="sutraBody"></div>
+        <div class="sutra-actions">
+            <button id="woodFishBtn" class="sutra-bell-btn" type="button">🥢 Gõ Mõ (+1 Phước)</button>
+            <button id="standUpBtn" class="sutra-stand-btn" type="button">🚶 Đứng dậy</button>
+        </div>
+    </aside>
 
     <!-- ==================== MODAL 1: SIMPLIFIED AR 3D FORTUNE POPUP + HORIZONTAL STICK & ANCIENT BOOK ==================== -->
     <div id="fortuneModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
@@ -790,6 +863,44 @@
                 osc.start(now); osc.stop(now + 0.055);
             } catch (e) {}
         }
+
+        function playWoodFish() {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === "suspended") audioCtx.resume();
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(620, now);
+                osc.frequency.exponentialRampToValueAtTime(420, now + 0.09);
+                gain.gain.setValueAtTime(0.14, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(now); osc.stop(now + 0.17);
+            } catch (e) {}
+        }
+
+        function playNoiseBurst(dur = 0.22, freq = 1400, vol = 0.08) {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === "suspended") audioCtx.resume();
+                const sr = audioCtx.sampleRate, len = Math.floor(sr * dur);
+                const buf = audioCtx.createBuffer(1, len, sr), data = buf.getChannelData(0);
+                for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+                const src = audioCtx.createBufferSource(); src.buffer = buf;
+                const filter = audioCtx.createBiquadFilter(); filter.type = "bandpass"; filter.frequency.value = freq; filter.Q.value = 1.2;
+                const gain = audioCtx.createGain(), now = audioCtx.currentTime;
+                gain.gain.setValueAtTime(0.001, now);
+                gain.gain.linearRampToValueAtTime(vol, now + dur * 0.25);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+                src.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
+                src.start(now);
+            } catch (e) {}
+        }
+        const playSweepSound = () => playNoiseBurst(0.18, 1750, 0.075);
+        const playWindSound = () => playNoiseBurst(0.9, 520, 0.1);
 
         // ==================== 3. HIGH-RES SMOOTH PROCEDURAL TEXTURES (ANTI-PIXEL) ====================
         const TEX_SIZE = 1024;
@@ -1182,6 +1293,41 @@
         let hasLitIncense = !!savedState.hasLitIncense, nearTarget = null;
         let suppressedAutoModal = Math.hypot(player.x, player.z - (-13.5)) < 4.5;
         let lastFortuneNum = savedState.lastFortuneNum || null;
+        let meritPoints = Number(savedState.meritPoints || 0);
+        let leavesSwept = Number(savedState.leavesSwept || 0);
+        let sutraSeconds = Number(savedState.sutraSeconds || 0);
+        let playerHasBroom = false, playerSitting = false, sweepActionTimer = 0;
+        const meritPill = document.getElementById("meritPill");
+        const meritToast = document.getElementById("meritToast");
+        let toastTimer = null;
+
+        function getMeritRank(pts) {
+            if (pts >= 500) return "Đại Cát Hộ Pháp";
+            if (pts >= 200) return "Thiện Nhân Công Đức";
+            if (pts >= 50) return "Tĩnh Tâm Cư Sĩ";
+            return "Thí Chủ Sơ Tâm";
+        }
+        function addMerit(pts, msg = "") {
+            meritPoints += pts;
+            if (meritPill) {
+                meritPill.textContent = `🪷 Phước: ${meritPoints}`;
+                meritPill.classList.remove("pop"); void meritPill.offsetWidth; meritPill.classList.add("pop");
+            }
+            const rt = document.getElementById("meritRankTag");
+            if (rt) rt.textContent = getMeritRank(meritPoints);
+            if (msg && meritToast) {
+                meritToast.textContent = msg;
+                meritToast.classList.remove("hidden");
+                meritToast.style.opacity = "1";
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    meritToast.style.opacity = "0";
+                    setTimeout(() => meritToast.classList.add("hidden"), 300);
+                }, 1700);
+            }
+            saveLocalState(false);
+        }
+        if (meritPill) meritPill.textContent = `🪷 Phước: ${meritPoints}`;
 
         function saveLocalState(immediate = false) {
             const doWrite = () => {
@@ -1196,7 +1342,7 @@
                         camYaw: Number(camYaw.toFixed(3)), camPitch: Number(camPitch.toFixed(3)), camDist: Number(camDist.toFixed(2)),
                         soundEnabled, hasLitIncense,
                         localIncenseCount: typeof incenseSticks !== "undefined" ? incenseSticks.length : 3,
-                        lastFortuneNum,
+                        lastFortuneNum, meritPoints, leavesSwept, sutraSeconds,
                         careerQuiz: qMoneyEl ? {
                             qMoney: qMoneyEl.value, qKpi: qKpiEl.value, qGoal: qGoalEl.value, qMood: qMoodEl.value
                         } : (savedState.careerQuiz || null)
@@ -1875,6 +2021,62 @@
             makeBlossomTree(-10, 21, 0xfbbf24, woodMat, 0.9);
             makeBlossomTree(10, 22, 0xfb7185, woodMat, 0.9);
 
+            // ---- Giá Chổi Quét Sân (x = -5.4, z = 6.2) ----
+            const rack = new THREE.Group();
+            [-0.6, 0.6].forEach(rx => {
+                const post = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 1.35, 10), woodMat);
+                post.position.set(rx, 0.675, 0); post.castShadow = true; rack.add(post);
+            });
+            const bar = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.1, 0.1), woodMat); bar.position.set(0, 1.15, 0); rack.add(bar);
+            const rSign = new THREE.Mesh(new THREE.PlaneGeometry(1.45, 0.42), new THREE.MeshStandardMaterial({ map: makeTextPanel(["CHỔI QUÉT LÁ"], { w: 768, h: 220, bg: "#7C4A21", fg: "#FDE68A", border: "#D99B26", font: "700 84px 'Be Vietnam Pro', sans-serif" }), roughness: 0.5 }));
+            rSign.position.set(0, 1.5, 0.02); rack.add(rSign);
+            [-0.35, 0, 0.35].forEach((bx, bi) => {
+                const bg = new THREE.Group();
+                const bh = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 1.3, 8), woodMat); bh.position.y = 0.72; bg.add(bh);
+                const br = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.35, 14, 1, true), new THREE.MeshStandardMaterial({ color: 0xc9a25f, roughness: 0.9, side: THREE.DoubleSide }));
+                br.rotation.x = Math.PI; br.position.y = 0.18; bg.add(br);
+                bg.position.set(bx, 0.04, 0.14); bg.rotation.x = -0.18; bg.rotation.z = (bi - 1) * 0.06; rack.add(bg);
+            });
+            rack.position.set(-5.4, 0.08, 6.2); rack.rotation.y = 0.45; wScene.add(rack);
+            addBoxCol(-6.15, -4.65, 5.65, 6.75);
+
+            // ---- Khu Tụng Kinh & Ngồi Thiền AFK (x = -8.6, z = 1.2) ----
+            const sutraGrp = new THREE.Group();
+            const matBase = new THREE.Mesh(new THREE.BoxGeometry(3.5, 0.14, 3.3), curbMat);
+            matBase.position.y = 0.07; matBase.receiveShadow = true; matBase.castShadow = true; sutraGrp.add(matBase);
+            const bambooMat = new THREE.MeshStandardMaterial({ color: 0xd6ba82, roughness: 0.85 });
+            const tatami = new THREE.Mesh(new THREE.BoxGeometry(3.1, 0.04, 2.9), bambooMat); tatami.position.y = 0.16; tatami.receiveShadow = true; sutraGrp.add(tatami);
+            [[-1.4, -1.3], [1.4, -1.3], [-1.4, 1.3], [1.4, 1.3]].forEach(([px, pz]) => {
+                const col = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.1, 2.75, 16), redLacquerMat);
+                col.position.set(px, 1.5, pz); col.castShadow = true; sutraGrp.add(col);
+            });
+            const sRoof = buildTempleRoof({ w: 3.9, d: 3.8, h: 1.15, ...roofArgs, dragons: false });
+            sRoof.position.y = 2.88; sutraGrp.add(sRoof);
+            const sSign = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 0.56), new THREE.MeshStandardMaterial({ map: makeTextPanel(["TỤNG KINH CẦU AN"], { w: 1024, h: 240, font: "700 88px 'Playfair Display', serif" }), roughness: 0.45 }));
+            sSign.position.set(0, 2.55, 1.55); sutraGrp.add(sSign);
+            const sLan = makeLantern(0xd42a1a, 0.72); sLan.position.set(0, 2.38, 1.25); sutraGrp.add(sLan); swayLanterns.push(sLan);
+
+            // Wooden lectern + Glowing Open Sutra Book + Wooden Fish Mõ + Meditation Cushions
+            const lectern = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.52, 0.55), woodMat);
+            lectern.position.set(0, 0.44, -0.75); lectern.castShadow = true; sutraGrp.add(lectern);
+            const bookL = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.03, 0.4), new THREE.MeshStandardMaterial({ color: 0xfdf4dc, emissive: 0x5c3e10, emissiveIntensity: 0.25 }));
+            bookL.position.set(-0.17, 0.72, -0.75); bookL.rotation.set(0.28, 0, 0.08); sutraGrp.add(bookL);
+            const bookR = bookL.clone(); bookR.position.x = 0.17; bookR.rotation.z = -0.08; sutraGrp.add(bookR);
+            const moWood = new THREE.Mesh(new THREE.SphereGeometry(0.15, 18, 14), redLacquerMat);
+            moWood.scale.set(1.2, 0.85, 1.0); moWood.position.set(0.45, 0.76, -0.72); sutraGrp.add(moWood);
+            const bell = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.16, 18), goldMat);
+            bell.position.set(-0.45, 0.78, -0.72); sutraGrp.add(bell);
+            // Main meditation cushion (Bồ Đoàn) at local (0, 0.2, 0.2) -> world (-8.6, 1.4)
+            const cushionMat = new THREE.MeshStandardMaterial({ color: 0x9e2418, roughness: 0.7 });
+            const cushion = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.46, 0.12, 24), cushionMat);
+            cushion.position.set(0, 0.23, 0.2); cushion.receiveShadow = true; sutraGrp.add(cushion);
+            const cTrim = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.02, 8, 24), goldMat);
+            cTrim.rotation.x = Math.PI / 2; cTrim.position.set(0, 0.29, 0.2); sutraGrp.add(cTrim);
+
+            sutraGrp.position.set(-8.6, 0, 1.2); wScene.add(sutraGrp);
+            const sutraLight = new THREE.PointLight(0xffbe6b, 1.1, 7, 2); sutraLight.position.set(-8.6, 2.2, 1.5); wScene.add(sutraLight);
+            addBoxCol(-9.25, -7.95, 0.1, 0.85); // lectern collider only so player walks cleanly onto mat
+
             // ---- Guided glowing floor arrows ----
             [-1.5, -4.2, 10].forEach((az, i) => {
                 const arrow = new THREE.Mesh(
@@ -1899,7 +2101,7 @@
 
             // Player 3D Mesh
             if (isBlocked(player.x, player.z)) { player.x = 0; player.z = 29; }
-            playerMesh = createArticulatedCharacter({ robeColor: player.color, gender: player.gender, outfit: player.outfit });
+            playerMesh = createArticulatedCharacter({ robeColor: player.color, gender: player.gender, outfit: player.outfit, hasBroom: playerHasBroom });
             playerMesh.position.set(player.x, groundHeight(player.x, player.z), player.z);
             playerMesh.rotation.y = player.rotY;
             wScene.add(playerMesh);
@@ -1909,7 +2111,7 @@
         function rebuildPlayerMesh() {
             const pos = playerMesh.position.clone(), rot = playerMesh.rotation.y;
             wScene.remove(playerMesh);
-            playerMesh = createArticulatedCharacter({ robeColor: player.color, gender: player.gender, outfit: player.outfit });
+            playerMesh = createArticulatedCharacter({ robeColor: player.color, gender: player.gender, outfit: player.outfit, hasBroom: playerHasBroom });
             playerMesh.position.copy(pos); playerMesh.rotation.y = rot;
             wScene.add(playerMesh);
         }
@@ -1956,6 +2158,88 @@
             tie.rotation.x = Math.PI / 2; g.add(tie);
             g.rotation.set(0.25, 0, 1.15);
             return g;
+        }
+
+
+        // ==================== 5c. LÁ RỤNG + QUÉT LÁ TÍCH ĐỨC + GIÓ THỔI BAY ====================
+        const leafShape = new THREE.Shape();
+        leafShape.moveTo(0, -0.14); leafShape.quadraticCurveTo(0.11, -0.02, 0, 0.16);
+        leafShape.quadraticCurveTo(-0.11, -0.02, 0, -0.14);
+        const leafGeo = new THREE.ShapeGeometry(leafShape, 6);
+        const leafColors = [0xd99b26, 0xeab308, 0xc26d1f, 0xd4a12a];
+        const leafMats = leafColors.map(c => new THREE.MeshStandardMaterial({ color: c, roughness: 0.7, side: THREE.DoubleSide }));
+        const groundLeaves = [], fallingLeaves = [], flyingLeaves = [], windRibbons = [];
+        const WIND_THRESHOLD = 28;
+        let windActive = false, windTimer = 0, leafSpawnTick = 0;
+
+        function randomCourtyardLeafPos() {
+            for (let t = 0; t < 12; t++) {
+                const lx = (Math.random() - 0.5) * 23;
+                const lz = -3.8 + Math.random() * 19;
+                if (Math.hypot(lx, lz - 4) < 1.8) continue;
+                if (!isBlocked(lx, lz)) return { x: lx, z: lz };
+            }
+            return { x: -3.2 + (Math.random() - 0.5) * 4, z: 7.5 + (Math.random() - 0.5) * 5 };
+        }
+        function spawnGroundLeaf(x, z) {
+            const lm = new THREE.Mesh(leafGeo, leafMats[Math.floor(Math.random() * leafMats.length)]);
+            lm.rotation.set(-Math.PI / 2 + (Math.random() - 0.5) * 0.12, Math.random() * Math.PI * 2, 0);
+            lm.scale.setScalar(1.35 + Math.random() * 0.5);
+            const h = (Math.abs(x) < 2.2 && z > -4.5) || Math.hypot(x, z - 4) < 3.1 ? 0.15 : 0.11;
+            lm.position.set(x, h, z);
+            wScene.add(lm);
+            groundLeaves.push({ mesh: lm, x, z });
+            if (groundLeaves.length >= WIND_THRESHOLD && typeof npcInstances !== "undefined" && npcInstances.length) triggerWindGust();
+        }
+        function spawnFallingLeaf() {
+            const p = randomCourtyardLeafPos();
+            const lm = new THREE.Mesh(leafGeo, leafMats[Math.floor(Math.random() * leafMats.length)]);
+            lm.scale.setScalar(0.95 + Math.random() * 0.4);
+            lm.position.set(p.x, 4.2 + Math.random() * 2.5, p.z);
+            wScene.add(lm);
+            fallingLeaves.push({ mesh: lm, tx: p.x, tz: p.z, vy: 0.014 + Math.random() * 0.012, sway: Math.random() * 6 });
+        }
+        function triggerWindGust() {
+            if (windActive) return;
+            windActive = true; windTimer = 180;
+            playWindSound();
+            const sweepMaster = npcInstances.find(n => n.role === "sweeper");
+            if (sweepMaster) { sweepMaster.chat = "Gió lớn quá! Thổi bay bớt lá rụng ngoài sân rồi 🍃"; sweepMaster.chatTimer = 240; }
+            // Spawn visible wind streak lines
+            for (let i = 0; i < 12; i++) {
+                const wr = new THREE.Mesh(
+                    new THREE.PlaneGeometry(2.6 + Math.random() * 2, 0.05),
+                    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.42, side: THREE.DoubleSide })
+                );
+                wr.rotation.x = Math.PI / 2; wr.rotation.z = -0.35;
+                wr.position.set(-16 - Math.random() * 10, 0.5 + Math.random() * 3.5, -2 + Math.random() * 16);
+                wScene.add(wr);
+                windRibbons.push({ mesh: wr, spd: 0.32 + Math.random() * 0.18 });
+            }
+            // Lift & blow excess leaves off the courtyard (leave ~10 leaves cleanly)
+            const blowCount = Math.max(8, groundLeaves.length - 10);
+            for (let i = 0; i < blowCount && groundLeaves.length > 10; i++) {
+                const idx = Math.floor(Math.random() * groundLeaves.length);
+                const gl = groundLeaves.splice(idx, 1)[0];
+                flyingLeaves.push({
+                    mesh: gl.mesh, vx: 0.18 + Math.random() * 0.18,
+                    vy: 0.03 + Math.random() * 0.06, vz: -0.06 + (Math.random() - 0.5) * 0.08, life: 95 + Math.random() * 40
+                });
+            }
+        }
+        function sweepLeafAt(idx, byPlayer = true) {
+            const gl = groundLeaves.splice(idx, 1)[0];
+            flyingLeaves.push({
+                mesh: gl.mesh, vx: (Math.random() - 0.5) * 0.12,
+                vy: 0.07 + Math.random() * 0.05, vz: (Math.random() - 0.5) * 0.12, life: 28
+            });
+            if (byPlayer) {
+                leavesSwept++;
+                sweepActionTimer = 20;
+                playSweepSound();
+                addMerit(2, "🧹 Quét lá sân chùa +2 Phước");
+                saveLocalState(true);
+            }
         }
 
         // ==================== 6. PURPOSEFUL TEMPLE NPCS (1 SƯ THẦY + 3 ĐỒ ĐỆ + 2 KHÁCH + SẾP) ====================
@@ -2242,7 +2526,25 @@
         window.addEventListener("pointercancel", releasePointer);
 
         function triggerNearInteract() {
-            if (nearTarget === "incense") {
+            if (nearTarget === "sutra") {
+                if (playerSitting) standUpFromSutra();
+                else sitDownForSutra();
+            } else if (nearTarget === "broom_rack") {
+                playerHasBroom = !playerHasBroom;
+                rebuildPlayerMesh();
+                playBambooClick(1.0);
+                player.chat = playerHasBroom ? "Cầm chổi đi quét lá tích đức 🧹" : "Đã cất chổi vào giá 🙏";
+                player.chatTimer = 200;
+            } else if (nearTarget === "sweep") {
+                sweepActionTimer = 22;
+                let swept = false;
+                for (let i = groundLeaves.length - 1; i >= 0; i--) {
+                    if (Math.hypot(groundLeaves[i].x - player.x, groundLeaves[i].z - player.z) < 2.9) {
+                        sweepLeafAt(i, true); swept = true; break;
+                    }
+                }
+                if (!swept) playSweepSound();
+            } else if (nearTarget === "incense") {
                 hasLitIncense = true;
                 plantIncense(player.name, true);
                 player.chat = `Vừa thắp nén hương thơm (#${incenseSticks.length}) 🙏`; player.chatTimer = 220;
@@ -2280,11 +2582,22 @@
 
         function animateArticulated(mesh, phase, mode = "walk") {
             const { armL, armR, legL, legR } = mesh.userData;
+            const { skirtMeshes } = mesh.userData;
+            if (mode === "meditate") {
+                const breathe = Math.sin(Date.now() * 0.0025) * 0.03;
+                armL.rotation.set(-1.05 + breathe, 0.2, 0.45);
+                armR.rotation.set(-1.05 + breathe, -0.2, -0.45);
+                legL.rotation.set(-1.38, -0.38, 0.15);
+                legR.rotation.set(-1.38, 0.38, -0.15);
+                if (skirtMeshes) skirtMeshes.forEach(s => { s.scale.y = 0.45; });
+                return;
+            }
+            if (skirtMeshes) skirtMeshes.forEach(s => { s.scale.y = 1; });
             if (mode === "carry") {
                 const swing = Math.sin(phase) * 0.45;
                 armL.rotation.x = swing * 0.4;
                 armR.rotation.x = -2.25; armR.rotation.z = -0.25;
-                legL.rotation.x = -swing; legR.rotation.x = swing;
+                armL.rotation.y = 0; armL.rotation.z = 0; armR.rotation.y = 0; legL.rotation.set(-swing, 0, 0); legR.rotation.set(swing, 0, 0);
             } else if (mode === "sweep") {
                 armR.rotation.x = -0.5 + Math.sin(Date.now() * 0.008) * 0.35;
                 armR.rotation.z = Math.cos(Date.now() * 0.008) * 0.2;
@@ -2294,7 +2607,7 @@
             } else {
                 const swing = Math.sin(phase) * 0.45;
                 armL.rotation.x = swing; armR.rotation.x = -swing; armR.rotation.z = 0;
-                legL.rotation.x = -swing; legR.rotation.x = swing;
+                armL.rotation.y = 0; armL.rotation.z = 0; armR.rotation.y = 0; legL.rotation.set(-swing, 0, 0); legR.rotation.set(swing, 0, 0);
             }
         }
 
@@ -2327,7 +2640,11 @@
             if (keys["KeyS"] || keys["s"] || keys["ArrowDown"] || keys["arrowdown"] || dpadState.down) mz += 1;
 
             const mag = Math.hypot(mx, mz);
-            if (mag > 0.1) {
+            if (mag > 0.1 && playerSitting) standUpFromSutra();
+            if (playerSitting) {
+                player.x = -8.6; player.z = 1.4; player.rotY = Math.PI;
+                animateArticulated(playerMesh, 0, "meditate");
+            } else if (mag > 0.1) {
                 const fwd = -mz;
                 const worldDx = mx * Math.cos(camYaw) - fwd * Math.sin(camYaw);
                 const worldDz = -mx * Math.sin(camYaw) - fwd * Math.cos(camYaw);
@@ -2340,12 +2657,15 @@
                 player.walkPhase += 0.22;
                 animateArticulated(playerMesh, player.walkPhase);
                 saveLocalState(false);
+            } else if (sweepActionTimer > 0) {
+                sweepActionTimer--;
+                animateArticulated(playerMesh, nowT * 0.02, "sweep");
             } else {
                 animateArticulated(playerMesh, 0);
             }
             if (player.chatTimer > 0) player.chatTimer--;
 
-            const py = groundHeight(player.x, player.z);
+            const py = playerSitting ? 0.29 - 0.68 : groundHeight(player.x, player.z);
             playerMesh.position.set(player.x, py, player.z);
             playerMesh.rotation.y = player.rotY;
 
@@ -2392,6 +2712,53 @@
                 p.mesh.rotation.x += 0.02; p.mesh.rotation.z += 0.03;
                 if (p.mesh.position.y < 0.15) p.mesh.position.y = 6.5;
             });
+
+            // Player auto-sweeps nearby ground leaves while walking with the broom equipped
+            if (playerHasBroom && !playerSitting && (mag > 0.1 || sweepActionTimer > 0)) {
+                if (mag > 0.1) animateArticulated(playerMesh, player.walkPhase, "sweep");
+                for (let i = groundLeaves.length - 1; i >= 0; i--) {
+                    if (Math.hypot(groundLeaves[i].x - player.x, groundLeaves[i].z - player.z) < 1.85) {
+                        sweepLeafAt(i, true);
+                        break;
+                    }
+                }
+            }
+
+            // Spawn falling leaves & settle on courtyard -> trigger wind if >= WIND_THRESHOLD
+            leafSpawnTick++;
+            if (leafSpawnTick % 85 === 0 && fallingLeaves.length < 8 && groundLeaves.length < 40) spawnFallingLeaf();
+            for (let i = fallingLeaves.length - 1; i >= 0; i--) {
+                const fl = fallingLeaves[i];
+                fl.mesh.position.y -= fl.vy;
+                fl.mesh.position.x += Math.sin(nowT * 0.003 + fl.sway) * 0.012 + (windActive ? 0.12 : 0);
+                fl.mesh.rotation.x += 0.04; fl.mesh.rotation.z += 0.03;
+                if (fl.mesh.position.y <= 0.14) {
+                    wScene.remove(fl.mesh);
+                    fallingLeaves.splice(i, 1);
+                    if (!windActive) spawnGroundLeaf(fl.mesh.position.x, fl.mesh.position.z);
+                }
+            }
+            if (groundLeaves.length >= WIND_THRESHOLD) triggerWindGust();
+            if (windActive) {
+                windTimer--;
+                for (let i = windRibbons.length - 1; i >= 0; i--) {
+                    const wr = windRibbons[i];
+                    wr.mesh.position.x += wr.spd; wr.mesh.position.z -= wr.spd * 0.18;
+                    wr.mesh.material.opacity = Math.max(0, (windTimer / 180) * 0.45);
+                    if (wr.mesh.position.x > 24) { wScene.remove(wr.mesh); windRibbons.splice(i, 1); }
+                }
+                if (windTimer <= 0 || windRibbons.length === 0) {
+                    windActive = false;
+                    while (windRibbons.length) wScene.remove(windRibbons.pop().mesh);
+                }
+            }
+            for (let i = flyingLeaves.length - 1; i >= 0; i--) {
+                const fl = flyingLeaves[i];
+                fl.mesh.position.x += fl.vx; fl.mesh.position.y += fl.vy; fl.mesh.position.z += fl.vz;
+                fl.mesh.rotation.x += 0.14; fl.mesh.rotation.z += 0.18;
+                fl.life--;
+                if (fl.life <= 0) { wScene.remove(fl.mesh); flyingLeaves.splice(i, 1); }
+            }
 
             // Grow & flicker incense sticks + soft rising smoke
             for (let i = 0; i < incenseSticks.length; i++) {
@@ -2458,6 +2825,11 @@
                     }
                 }
 
+                if (n.role === "sweeper") {
+                    for (let li = groundLeaves.length - 1; li >= 0; li--) {
+                        if (Math.hypot(groundLeaves[li].x - n.x, groundLeaves[li].z - n.z) < 1.2) { sweepLeafAt(li, false); break; }
+                    }
+                }
                 if (n.waypoints) {
                     const wp = n.waypoints[n.wpIdx];
                     if (!stepNpcToward(n, wp.x, wp.z, n.role === "pilgrim" ? 0.048 : 0.04, n.role === "sweeper" ? "sweep" : "walk")) {
@@ -2513,6 +2885,9 @@
             const dIncense = Math.hypot(player.x - 0, player.z - 4);
             const dAltar = Math.hypot(player.x - 0, player.z - (-13.5));
             const dGrace = Math.hypot(player.x - 9.0, player.z - 4);
+            const dSutra = Math.hypot(player.x - (-8.6), player.z - 1.4);
+            const dBroom = Math.hypot(player.x - (-5.4), player.z - 6.2);
+            const hasNearbyLeaf = playerHasBroom && groundLeaves.some(gl => Math.hypot(gl.x - player.x, gl.z - player.z) < 2.9);
 
             if (dAltar > 5.0) suppressedAutoModal = false;
             if (dAltar < 4.0 && !suppressedAutoModal && fortuneModal.classList.contains("hidden")) {
@@ -2520,7 +2895,19 @@
             }
 
             nearTarget = null;
-            if (dIncense < 3.2) {
+            if (playerSitting) {
+                nearTarget = "sutra";
+                interactPrompt.textContent = "🚶 Đứng dậy khỏi Chiếu Tụng Kinh [E]";
+                interactPrompt.classList.remove("hidden");
+            } else if (dSutra < 2.6) {
+                nearTarget = "sutra";
+                interactPrompt.textContent = "🪷 Ngồi Đọc Kinh (AFK +Phước) [E]";
+                interactPrompt.classList.remove("hidden");
+            } else if (dBroom < 2.6) {
+                nearTarget = "broom_rack";
+                interactPrompt.textContent = playerHasBroom ? "🧹 Cất Chổi Quét Sân [E]" : "🧹 Lấy Chổi Quét Lá (+Phước) [E]";
+                interactPrompt.classList.remove("hidden");
+            } else if (dIncense < 3.2) {
                 nearTarget = "incense";
                 interactPrompt.textContent = "🕯️ Thắp Hương Thành Tâm [E]";
                 interactPrompt.classList.remove("hidden");
@@ -2531,6 +2918,10 @@
             } else if (dGrace < 3.2) {
                 nearTarget = "grace";
                 interactPrompt.textContent = "⚖️ Gặp Sếp: Cày Cuốc hay Nghỉ Việc? [E]";
+                interactPrompt.classList.remove("hidden");
+            } else if (hasNearbyLeaf) {
+                nearTarget = "sweep";
+                interactPrompt.textContent = "🧹 Vung Chổi Quét Lá (+2 Phước) [E / Click]";
                 interactPrompt.classList.remove("hidden");
             } else {
                 interactPrompt.classList.add("hidden");
@@ -3061,12 +3452,133 @@
             customModal.classList.remove("show"); setTimeout(() => customModal.classList.add("hidden"), 350);
         });
 
+
+        // ==================== 11. KINH PHẬT & TÍCH PHƯỚC AFK ====================
+        const SUTRAS = [
+            {
+                id: "tamkinh", name: "Bát Nhã Tâm Kinh",
+                lines: [
+                    "Quán Tự Tại Bồ Tát hành thâm Bát-nhã Ba-la-mật-đa thời,",
+                    "chiếu kiến ngũ uẩn giai không, độ nhất thiết khổ ách.",
+                    "Xá-lợi-tử! Sắc bất dị không, không bất dị sắc;",
+                    "sắc tức thị không, không tức thị sắc; thọ, tưởng, hành, thức diệc phục như thị.",
+                    "Tâm vô quái ngại, vô quái ngại cố, vô hữu khủng bố,",
+                    "viễn ly điên đảo mộng tưởng, cứu cánh Niết-bàn."
+                ]
+            },
+            {
+                id: "tubi", name: "Kinh Từ Bi (Metta)",
+                lines: [
+                    "Nguyện cho hết thảy mọi loài hữu tình được sống bình an và hạnh phúc.",
+                    "Nguyện không ai lừa dối ai, không ai khinh miệt ai vì bất cứ điều chi.",
+                    "Như người mẹ hiền đem cả sinh mạng che chở đứa con thơ duy nhất,",
+                    "hãy trải rộng tâm từ ái không bờ bến đến khắp muôn phương.",
+                    "Không giận dữ, không oán hờn, giữ lòng thanh tịnh trong từng hơi thở."
+                ]
+            },
+            {
+                id: "hongdanh", name: "Niệm Hồng Danh",
+                lines: [
+                    "Nam Mô Bổn Sư Thích Ca Mâu Ni Phật.",
+                    "Nam Mô A Di Đà Phật — Thân tâm an lạc, trí tuệ sáng soi.",
+                    "Nam Mô Đại Bi Quán Thế Âm Bồ Tát — Cứu khổ ban vui khắp mười phương.",
+                    "Nguyện đem công đức trang nghiêm này, hướng về khắp tất cả chúng sinh."
+                ]
+            },
+            {
+                id: "vankhan", name: "Cầu An Đinh Mùi 2027",
+                lines: [
+                    "Con thành tâm đảnh lễ mười phương chư Phật tại Chùa Vạn Phúc.",
+                    "Cầu cho năm Đinh Mùi 2027 mưa thuận gió hòa, gia đạo bình an sum vầy.",
+                    "Cầu cho công việc hanh thông, trí sáng tâm bền, gặp nhiều quý nhân lành.",
+                    "Cúi xin giữ lòng thiện lành, biết buông bỏ muộn phiền để sống an vui."
+                ]
+            }
+        ];
+
+        const sutraPanel = document.getElementById("sutraPanel");
+        const sutraTabsEl = document.getElementById("sutraTabs");
+        const sutraBodyEl = document.getElementById("sutraBody");
+        const sutraAfkTimerEl = document.getElementById("sutraAfkTimer");
+        const sutraRateLabelEl = document.getElementById("sutraRateLabel");
+        let activeSutraIdx = 0, activeLineIdx = 0, sessionAfkSec = 0, afkInterval = null;
+
+        function renderSutraContent() {
+            const s = SUTRAS[activeSutraIdx];
+            sutraTabsEl.innerHTML = SUTRAS.map((st, idx) =>
+                `<button type="button" class="sutra-tab${idx === activeSutraIdx ? " active" : ""}" data-sidx="${idx}">${st.name}</button>`
+            ).join("");
+            sutraTabsEl.querySelectorAll(".sutra-tab").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    activeSutraIdx = Number(btn.dataset.sidx); activeLineIdx = 0; renderSutraContent();
+                });
+            });
+            sutraBodyEl.innerHTML = s.lines.map((ln, idx) =>
+                `<div class="sutra-line${idx === activeLineIdx ? " active-line" : ""}">${ln}</div>`
+            ).join("");
+            const curLine = sutraBodyEl.querySelector(".active-line");
+            if (curLine) curLine.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        }
+
+        function updateAfkUi(rate) {
+            const m = Math.floor(sessionAfkSec / 60), sc = sessionAfkSec % 60;
+            const pad = n => n < 10 ? "0" + n : n;
+            sutraAfkTimerEl.textContent = `⏳ Ngồi thiền: ${pad(m)}:${pad(sc)}`;
+            sutraRateLabelEl.textContent = `+${rate} Phước / 3s (AFK)`;
+        }
+
+        function sitDownForSutra() {
+            exitFpsLock();
+            playerSitting = true;
+            sessionAfkSec = 0; activeLineIdx = 0;
+            player.x = -8.6; player.z = 1.4; player.rotY = Math.PI;
+            player.chat = "Đang ngồi tụng kinh cầu an 🙏"; player.chatTimer = 260;
+            renderSutraContent();
+            updateAfkUi(1);
+            sutraPanel.classList.remove("hidden");
+            playWoodFish();
+            clearInterval(afkInterval);
+            afkInterval = setInterval(() => {
+                if (!playerSitting) return;
+                sessionAfkSec += 3;
+                sutraSeconds += 3;
+                const rate = sessionAfkSec >= 120 ? 3 : sessionAfkSec >= 30 ? 2 : 1;
+                let bonus = 0;
+                if (sessionAfkSec % 30 === 0) bonus = 5;
+                addMerit(rate + bonus, bonus ? `🪷 Tâm Tĩnh Lặng +${rate + bonus} Phước!` : `🪷 Tụng kinh AFK +${rate} Phước`);
+                activeLineIdx = (activeLineIdx + 1) % SUTRAS[activeSutraIdx].lines.length;
+                renderSutraContent();
+                updateAfkUi(rate);
+                playWoodFish();
+            }, 3000);
+        }
+
+        function standUpFromSutra() {
+            if (!playerSitting) return;
+            playerSitting = false;
+            clearInterval(afkInterval); afkInterval = null;
+            sutraPanel.classList.add("hidden");
+            player.z = 2.6;
+            player.chat = `Công đức viên mãn (+${meritPoints} Phước) 🪷`; player.chatTimer = 200;
+            saveLocalState(true);
+        }
+
+        document.getElementById("standUpBtn").addEventListener("click", standUpFromSutra);
+        document.getElementById("woodFishBtn").addEventListener("click", () => {
+            if (!playerSitting) return;
+            playWoodFish();
+            activeLineIdx = (activeLineIdx + 1) % SUTRAS[activeSutraIdx].lines.length;
+            renderSutraContent();
+            addMerit(1, "🥢 Gõ mõ tụng kinh +1 Phước");
+        });
+
         init3DWorld();
         initTempleNpcs();
         initMultiplayer();
         const initCount = typeof savedState.localIncenseCount === "number" ? Math.max(0, Math.min(INCENSE_MAX, savedState.localIncenseCount)) : 3;
         for (let k = 0; k < initCount; k++) plantIncense("Chùa Vạn Phúc", false);
         updateIncensePill();
+        for (let l = 0; l < 18; l++) { const lp = randomCourtyardLeafPos(); spawnGroundLeaf(lp.x, lp.z); }
         animate3DWorld();
     </script>
 </body>
